@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koch and the Pure Culture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#A4473A"/></marker>
+  <marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#2F5276"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">History · Robert Koch</p>
+    <h1>One microbe, one disease</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · Anthrax</button>
+    <button id="part2" type="button">II · Pure culture</button>
+    <button id="part3" type="button">III · The postulates</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Apparatus and organisms are schematic. Dates and attributions are as usually given in historical accounts and are worth checking against primary sources before teaching.</p>
+</div>
+<script>
+
+
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== shared translation glyphs ===================== */
+const SSU='#D9C89B', LSU='#BBA27A', TRNA_C='#8FB1CF', AA_C='#4F7A3F', CHAIN=['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#B4766E','#5E7F7A'];
+const GRP={np:['nonpolar','#D6C79F'],po:['polar','#A9C4DC'],ac:['acidic','#E7A99B'],ba:['basic','#B9A0C8']};
+const AAS=[['G','Gly','np'],['A','Ala','np'],['V','Val','np'],['L','Leu','np'],['I','Ile','np'],['P','Pro','np'],['F','Phe','np'],['M','Met','np'],['W','Trp','np'],
+ ['S','Ser','po'],['T','Thr','po'],['C','Cys','po'],['N','Asn','po'],['Q','Gln','po'],['Y','Tyr','po'],['D','Asp','ac'],['E','Glu','ac'],['K','Lys','ba'],['R','Arg','ba'],['H','His','ba']];
+const THREE=Object.fromEntries(AAS.map(a=>[a[0],a[1]]));THREE['*']='Stop';
+const CODE='FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+function tr(c){const o='UCAG';const i=16*o.indexOf(c[0])+4*o.indexOf(c[1])+o.indexOf(c[2]);return CODE[i];}
+function sub(x,y,k){return k;} // placeholder
+
+function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
+  const S=v=>v*k;
+  let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
+  return s+'</g>';
+}
+function chain(x,y,k,n,dir=-1){let s='';for(let i=0;i<n;i++){const xx=x-i*k*6,yy=y-i*k*13;s+=`<circle cx="${xx}" cy="${yy}" r="${k*7}" fill="${CHAIN[i%CHAIN.length]}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}return s;}
+function ribosome(cx,my,k,o={}){
+  const S=v=>v*k, sx={E:cx-S(50),P:cx,A:cx+S(50)};
+  let s='';
+  if(o.large!==false)s+=`<path d="M${cx-S(130)} ${my-S(22)} C ${cx-S(156)} ${my-S(160)}, ${cx+S(156)} ${my-S(160)}, ${cx+S(130)} ${my-S(22)} C ${cx+S(80)} ${my-S(36)}, ${cx-S(80)} ${my-S(36)}, ${cx-S(130)} ${my-S(22)} Z" fill="${LSU}" opacity=".55" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
+  if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
+  if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
+  return s;
+}
+
+function timeline(x,y,ev,wrapN,fs,indent,gap,d0){let s='',yy=y;ev.forEach((e,i)=>{const L=wrap(e[1],wrapN);s+=G('a-fade',(d0+i*.4).toFixed(1),T(x,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(x+indent,yy+j*18,l,'lab start '+fs)).join(''));yy+=L.length*18+gap;});return {s,y:yy};}
+/* ===================== text & layout utilities ===================== */
+const FX=(v,d=1)=>Number(v).toFixed(d);
+const SB=t=>`<tspan baseline-shift="-24%" style="font-size:.72em">${t}</tspan>`;
+const SP=t=>`<tspan baseline-shift="super" style="font-size:.72em">${t}</tspan>`;
+function para(x,y,text,wn,cls='note start f13',lh=17,d=0){const L=wrap(text,wn);return {s:G('a-fade',d,L.map((l,j)=>T(x,y+j*lh,l,cls)).join('')),y:y+L.length*lh};}
+function boxItem(x,y,W,head,body,o={}){
+  const L=wrap(body,Math.floor(W/(o.cw||6.3))), H=34+L.length*16+8;
+  return {s:box(x,y,W,o.H||H,o.fill||'#E7DEC9',4)+(o.num?badge(x+14,y+16,o.num):'')+T(x+(o.num?28:12),y+21,head,'lab start f14')
+    +L.map((l,j)=>T(x+12,y+42+j*16,l,'note start f12')).join(''),h:H};
+}
+function bullets(x,y,items,wrapN,o={}){
+  let s='',yy=y;
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=L.length*17+(o.gap||30);});
+  return {s,y:yy};
+}
+function wtable(n,head,rows,cols,o={}){
+  let y=o.y0||30, s=''; const R2=o.R||(n?350:620);
+  s+=G('a-fade',o.d0||0,head.map((h,i)=>T(cols[i][0],y,h,'cname start '+(n?'f13':'f14'))).join('')+ln(cols[0][0]-4,y+7,R2,y+7));
+  y+=26;
+  rows.forEach((r,i)=>{const W=r.map((c,j)=>wrap(c,cols[j][1])); const L=Math.max(...W.map(w=>w.length)); const h=L*16+10;
+    const hi=o.hi===i;
+    s+=G('a-fade',((o.d0||0)+.1*i).toFixed(2),(hi?`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+        :(i%2?'':`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" fill="#E7DEC9" opacity=".5"/>`))
+      +W.map((w,j)=>w.map((l,k)=>T(cols[j][0],y+k*16,l,(j?'note':'lab')+' start '+(n?'f12':'f13'))).join('')).join(''));
+    y+=h;});
+  return {s,y};
+}
+
+/* ===================== DNA-repair toolkit ===================== */
+const BB='#5A4632', NEW='#3E7FA8', LESU='#A4473A', OXO='#7D4A98', METH='#C17A2C', CPDC='#C99A2E', INV='#C17A2C',
+      E1='#9DB4AE', E2='#B4766E', E3='#D9B85A', E4='#A9C4DC', E5='#A9C49A', E6='#C9A9D6', RECAC='#E3B26B', PAPR='#ECE4D2';
+function segAt(segs,i){for(const s of segs)if(i>=s[0]&&i<s[1])return s[2]||BB;return null;}
+/* ladder: n base pairs from x; top strand at y, bottom at y+g.
+   o.top/o.bot = [[i0,i1,col]] strand segments; o.mk = {i:{t:col,b:col,tx:1,bx:1}} (tx/bx = base missing)
+   o.lab=[{i,s,t,col}]; o.dimer=[i]; o.me=[{i,s,op}]; o.nick=[{i,s}] (gap before index i); o.flip=[{i,s,col}] */
+function lad(x,y,n,o={}){
+  const dx=o.dx||12,g=o.g||24,top=o.top||[[0,n,BB]],bot=o.bot||[[0,n,BB]],mk=o.mk||{};
+  let s='';
+  for(let i=0;i<n;i++){const cx=x+i*dx+dx/2, tc=segAt(top,i), bc=segAt(bot,i), m=mk[i]||{};
+    if(tc&&!m.tx){const c=m.t;s+=`<path d="M${FX(cx)} ${FX(y)} V${FX(y+g/2-1.5)}" stroke="${c||tc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}
+    if(bc&&!m.bx){const c=m.b;s+=`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g/2+1.5)}" stroke="${c||bc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}}
+  const bbp=(segs,yy)=>segs.map(sg=>`<path d="M${FX(x+sg[0]*dx)} ${FX(yy)} H${FX(x+sg[1]*dx)}" stroke="${sg[2]||BB}" stroke-width="2.8"/>`).join('');
+  s+=bbp(top,y)+bbp(bot,y+g);
+  (o.nick||[]).forEach(k=>{const xx=x+k.i*dx, yy=k.s==='b'?y+g:y;s+=`<rect x="${FX(xx-2)}" y="${FX(yy-2.5)}" width="4" height="5" fill="${PAPR}"/>`;});
+  (o.dimer||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2-4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.dimerB||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2+4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.flip||[]).forEach(f=>{const cx=x+f.i*dx+dx/2;s+=f.s==='b'?`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g+12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`
+      :`<path d="M${FX(cx)} ${FX(y)} V${FX(y-12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`;});
+  (o.me||[]).forEach(m=>{const cx=x+m.i*dx+dx/2, yy=m.s==='b'?y+g+6:y-6;s+=`<circle cx="${FX(cx)}" cy="${FX(yy)}" r="3.2" fill="${METH}" stroke="${INK}" stroke-width=".6"${m.op?` opacity="${m.op}"`:''}/>`;});
+  (o.lab||[]).forEach(L=>{const cx=x+L.i*dx+dx/2;s+=Tc(FX(cx+(L.dx||0)),FX(L.s==='b'?y+g+(L.dy||16):y-(L.dy||7)),L.t,L.col||'#3A2E22',L.fs||10,'mono mid','600');});
+  if(o.ends)s+=Tc(x-5,y+4,'5′','#6A5B47',10,'mono end')+Tc(x-5,y+g+4,'3′','#6A5B47',10,'mono end')
+    +Tc(x+n*dx+5,y+4,'3′','#6A5B47',10,'mono start')+Tc(x+n*dx+5,y+g+4,'5′','#6A5B47',10,'mono start');
+  return s;
+}
+function prot(cx,cy,rx,ry,fill,label,o={}){
+  return blob(FX(cx),FX(cy),rx,ry,fill,o.op?`opacity="${o.op}"`:'')+(label?Tc(FX(cx),FX(cy+3.8),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function ring(cx,cy,rx,ry,fill,label,o={}){
+  return `<ellipse cx="${FX(cx)}" cy="${FX(cy)}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity=".55" stroke="${INK}" stroke-width="1.1" class="tint"/>`
+    +(label?Tc(FX(cx+(o.ldx||0)),FX(cy+(o.ldy!==undefined?o.ldy:-ry-5)),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function recaFil(x1,x2,y,o={}){let s='';for(let x=x1;x<=x2-8;x+=9)s+=`<rect x="${FX(x)}" y="${FX(y-6)}" width="8" height="12" rx="3" fill="${o.col||RECAC}" stroke="${INK}" stroke-width=".7"/>`;
+  return s+(o.label?Tc(FX((x1+x2)/2),FX(y-11),o.label,'#8C5A1E',10,'mono mid','600'):'');}
+function ssb(cx,y){return `<circle cx="${FX(cx)}" cy="${FX(y)}" r="5" fill="${E4}" stroke="${INK}" stroke-width=".7"/>`;}
+function arw(x1,y1,x2,y2,o={}){const m=o.red?'ahr':o.blue?'ahb':'ahp', c=o.red?'#A4473A':o.blue?'#2F5276':(o.col||'#6A5B47');
+  return `<path d="M${FX(x1)} ${FX(y1)} ${o.q?`Q${FX(o.q[0])} ${FX(o.q[1])} `:'L'}${FX(x2)} ${FX(y2)}" stroke="${c}" stroke-width="${o.w||1.6}" fill="none" marker-end="url(#${m})"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
+function pairBox(cx,cy,t,b,o={}){const w=o.w||62,h=o.h||46;
+  return box(cx-w/2,cy-h/2,w,h,o.fill||'#EFE6D2',5)+Tc(cx,cy-5,t,o.tc||'#3A2E22',o.fs||13,'mono mid','600')
+    +`<path d="M${cx-10} ${cy+1} h20" stroke="${INK}" stroke-width="1" stroke-dasharray="2 2"/>`+Tc(cx,cy+17,b,o.bc||'#3A2E22',o.fs||13,'mono mid','600');}
+function photon(x1,y1,x2,y2,col='#3E7FA8'){const L=Math.hypot(x2-x1,y2-y1), a=Math.atan2(y2-y1,x2-x1)*180/Math.PI; let d='M0 0';
+  for(let t=0;t<L-12;t+=8)d+=` q2 -5 4 0 q2 5 4 0`;
+  return `<g transform="translate(${FX(x1)} ${FX(y1)}) rotate(${FX(a)})"><path d="${d} L${FX(L-2)} 0" stroke="${col}" stroke-width="1.6" fill="none" marker-end="url(#ahb)"/></g>`;}
+/* left-text / right-drawing steps; d(x,y,w) draws a ladder whose top strand is at y */
+function stepsLad(n,steps,o={}){
+  let s='',y=o.y0||24;
+  const tx=n?16:20;
+  steps.forEach((st,i)=>{const L=wrap(st.t,n?52:(o.wn||36)), th=22+L.length*16, top=st.top||24, dh=st.dh||44, dl=((o.d0||0)+i*.6).toFixed(1);
+    const head=badge(tx+8,y-4,i+1)+T(tx+22,y,st.h,'cname start f14')+L.map((l,j)=>T(tx,y+20+j*16,l,'note start f12')).join('');
+    if(n){const dy=y+th+top;s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(24,dy,312));y=dy+dh+28;}
+    else{const h=Math.max(th,top+dh-8);s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(o.dx0||284,y-14+top,o.dw||330));
+      y+=h+22;if(i<steps.length-1)s+=ln(tx,y-14,620,y-14,'#6A5B47',.5,'2 4');}});
+  return {s,y};
+}
+function cut(cx,y){return Tc(FX(cx),FX(y),'\u25be','#A4473A',15,'mono mid');}
+function oligo(x1,x2,y,dx,dim){let s=`<path d="M${FX(x1)} ${FX(y)} H${FX(x2)}" stroke="${BB}" stroke-width="2.6"/>`;
+  for(let xx=x1+dx/2;xx<x2;xx+=dx)s+=`<path d="M${FX(xx)} ${FX(y)} V${FX(y+10)}" stroke="${BB}" stroke-width="1.8" opacity=".7"/>`;
+  if(dim!==undefined)s+=`<path d="M${FX(x1+dim*dx+dx/2)} ${FX(y)} V${FX(y+10)} M${FX(x1+(dim+1)*dx+dx/2)} ${FX(y)} V${FX(y+10)}" stroke="${CPDC}" stroke-width="4.5"/><path d="M${FX(x1+dim*dx+dx/2)} ${FX(y+7)} h${FX(dx)}" stroke="${CPDC}" stroke-width="3"/>`;
+  return s;}
+function tbox(cx,cy,w,t,o={}){return box(cx-w/2,cy-14,w,28,o.fill||'#EFE6D2',4)+Tc(cx,cy+4,t,o.tc||'#3A2E22',o.fs||12,'mono mid','600');}
+/* ===================== history toolkit ===================== */
+let UID=0;
+const AXC='#6A5B47', GLASSE='#7E8F92', GLASSF='#DCE6E8', BROTH='#EAD9A0', TURB='#C4A86A', DUST='#5A4632', AGAR='#E9DAA8', COLC='#C99A2E',
+      MOUSEC='#D3C8B6', BLOOD='#A4473A', CAPS='#C9A9D6', LEAF='#7FA05A', LEAFD='#C9D58A';
+function rnd(seed){let s=seed;return ()=>{s=(s*9301+49297)%233280;return s/233280;};}
+function microbes(cx,cy,rx,ry,n,seed,col='#5A4632'){const r=rnd(seed);let s='';
+  for(let i=0;i<n;i++){const a=r()*Math.PI*2,d=Math.sqrt(r()),x=cx+Math.cos(a)*rx*d,y=cy+Math.sin(a)*ry*d,an=r()*180;
+    s+=`<rect x="${FX(x-3)}" y="${FX(y-1.2)}" width="6" height="2.4" rx="1.2" fill="${col}" opacity=".75" transform="rotate(${FX(an)} ${FX(x)} ${FX(y)})"/>`;}
+  return s;}
+/* round-bottomed flask; type: straight | swan | broken | sealed | plug */
+function flask(cx,by,type,o={}){
+  const r=o.r||30, t=by-2*r+4, id='fl'+(UID++), lvl=by-r*(o.full||1.05);
+  let s=`<defs><clipPath id="${id}"><circle cx="${cx}" cy="${by-r}" r="${r-1.5}"/></clipPath></defs>`;
+  s+=`<circle cx="${cx}" cy="${by-r}" r="${r}" fill="${GLASSF}" fill-opacity=".55" stroke="${GLASSE}" stroke-width="1.6"/>`;
+  s+=`<rect x="${cx-r}" y="${FX(lvl)}" width="${2*r}" height="${FX(by-lvl)}" fill="${o.turbid?TURB:BROTH}" clip-path="url(#${id})"/>`;
+  if(o.turbid)s+=microbes(cx,by-r*.45,r*.7,r*.32,14,o.seed||7);
+  const tube=(d,w=10)=>`<path d="${d}" stroke="${GLASSE}" stroke-width="${w+3}" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#EEF3F3" stroke-width="${w-1}" fill="none" stroke-linecap="round"/>`;
+  if(type==='straight'||type==='plug')s+=tube(`M${cx} ${t} V${t-34}`);
+  if(type==='plug')s+=`<rect x="${cx-6}" y="${t-44}" width="12" height="16" rx="3" fill="#F4F0E6" stroke="${INK}" stroke-width=".8"/>`;
+  if(type==='sealed')s+=tube(`M${cx} ${t} V${t-28}`)+`<circle cx="${cx}" cy="${t-30}" r="6.5" fill="${GLASSE}"/>`;
+  if(type==='broken')s+=tube(`M${cx} ${t} V${t-10}`)+`<path d="M${cx-6.5} ${t-11} l3 -4 l3 3 l3 -4 l3 4" stroke="${GLASSE}" stroke-width="1.6" fill="none"/>`;
+  if(type==='swan'){const d=`M${cx} ${t} V${t-18} C${cx} ${t-46} ${cx+34} ${t-50} ${cx+44} ${t-26} C${cx+50} ${t-12} ${cx+62} ${t-10} ${cx+68} ${t-24} L${cx+80} ${t-50}`;
+    s+=tube(d);
+    if(o.wet)s+=`<path d="M${cx+46} ${t-21} C${cx+50} ${t-12} ${cx+62} ${t-10} ${cx+66} ${t-19}" stroke="${o.turbid?TURB:BROTH}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+    s+=[[54,-14],[58,-13],[61,-15],[56,-16]].map(p=>`<circle cx="${cx+p[0]}" cy="${t+p[1]}" r="1.6" fill="${DUST}"/>`).join('');}
+  if(o.label)s+=T(cx,by+18,o.label,'note mid f12');
+  return s;
+}
+function colonySet(n,seed,R){const r=rnd(seed),a=[];let k=0;while(a.length<n&&k<500){k++;const ang=r()*Math.PI*2,d=Math.sqrt(r())*R*.82,x=Math.cos(ang)*d,y=Math.sin(ang)*d,rad=2.4+r()*2.6;
+  if(a.every(c=>Math.hypot(c[0]-x,c[1]-y)>c[2]+rad+2))a.push([x,y,rad]);}return a;}
+function dish(cx,cy,R,cols=[],o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${o.agar||AGAR}" stroke="${GLASSE}" stroke-width="1.8"/><circle cx="${cx}" cy="${cy}" r="${R-4}" fill="none" stroke="${GLASSE}" stroke-width=".6" opacity=".7"/>`;
+  cols.forEach(c=>s+=`<circle cx="${FX(cx+c[0])}" cy="${FX(cy+c[1])}" r="${FX(c[2])}" fill="${c[3]||o.col||COLC}" stroke="${INK}" stroke-width=".5"/>`);
+  if(o.mark)s+=`<path d="M${cx} ${cy-R-6} v8" stroke="${INK}" stroke-width="2"/>`;
+  if(o.label)s+=T(cx,cy+R+17,o.label,'note mid f12');
+  return s;}
+function tube(cx,by,o={}){const w=o.w||18,h=o.h||70,top=by-h,lvl=by-h*(o.full||.55);
+  let s=`<path d="M${cx-w/2} ${top} V${by-w/2} a${w/2} ${w/2} 0 0 0 ${w} 0 V${top}" fill="${GLASSF}" fill-opacity=".5" stroke="${GLASSE}" stroke-width="1.5"/>`;
+  s+=`<path d="M${cx-w/2+1.5} ${FX(lvl)} V${by-w/2} a${w/2-1.5} ${w/2-1.5} 0 0 0 ${w-3} 0 V${FX(lvl)} Z" fill="${o.fill||(o.turbid?TURB:BROTH)}"/>`;
+  if(o.turbid)s+=microbes(cx,(lvl+by)/2,w*.3,(by-lvl)*.38,6,o.seed||3);
+  if(o.label)s+=T(cx,by+16,o.label,'note mid f11');
+  return s;}
+function mouse(cx,cy,k=1,o={}){
+  const f=o.dead?'#B8B0A2':MOUSEC;
+  let g=`<path d="M${cx-19*k} ${cy+2*k} q${-14*k} ${-2*k} ${-22*k} ${-12*k}" stroke="${INK}" stroke-width="1.2" fill="none"/>`
+   +`<ellipse cx="${cx}" cy="${cy}" rx="${20*k}" ry="${11*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+19*k}" cy="${cy-3*k}" r="${8.5*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+15*k}" cy="${cy-11*k}" r="${4.2*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+27*k}" cy="${cy-2*k}" r="${1.6*k}" fill="${INK}"/>`;
+  if(o.dead)g+=`<path d="M${cx-10*k} ${cy+10*k} v${5*k} M${cx-3*k} ${cy+11*k} v${5*k} M${cx+5*k} ${cy+11*k} v${5*k} M${cx+12*k} ${cy+9*k} v${5*k}" stroke="${INK}" stroke-width="1.2"/>`
+    +`<path d="M${cx+20*k} ${cy-7*k} l${4*k} ${4*k} m0 ${-4*k} l${-4*k} ${4*k}" stroke="${INK}" stroke-width="1.1"/>`;
+  else g+=`<circle cx="${cx+21*k}" cy="${cy-5*k}" r="${1.4*k}" fill="${INK}"/>`;
+  let s=o.dead?`<g transform="rotate(180 ${cx} ${cy})">${g}</g>`:g;
+  if(o.label)s+=T(cx,cy+(o.ldy||26)*k,o.label,'note mid f12');
+  return s;}
+function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="${FX(cy-w/2)}" width="${l}" height="${w}" rx="${w/2}" fill="${col}" stroke="${INK}" stroke-width=".7" transform="rotate(${ang} ${FX(cx)} ${FX(cy)})"/>`;}
+function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
+  let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
+  return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
+function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
+  let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
+  s+=G('a-fade',0,medallion(mx,my,k,o.name,o.dates,o.glasses));
+  let x=n?16:270, y=n?my+112*k+76:44;
+  s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
+  const Q=wrap(o.q,n?40:40);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
+  s+=G('a-fade',1,T(x,y,'What was believed','mono acc start f12'));
+  const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;
+  if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
+  const H=n?y+12:Math.max(y+14,my+112*k+56);
+  return {vb:n?slim(H):wide(H),s};
+}
+/* hypothesis-testing plate: spec={hyps:[[name,short]],conds:[{n,d,draw(cx,y,n),pred:[...],obs,note}],dh} */
+function predictPlate(n,spec,sel){
+  const c=spec.conds[sel], H=spec.hyps, oc=x=>Array.isArray(x)?x[0]:x, tx=x=>Array.isArray(x)?(x[1]?x[0]+': '+x[1]:x[0]):x, hit=(cc,i)=>oc(cc.pred[i])===oc(cc.obs);
+  let s='', y=14;
+  const dh=n?(spec.dhn||spec.dh||150):(spec.dh||150);
+  s+=G('a-fade',0,c.draw(n?180:320,y,n));
+  y+=dh+8;
+  s+=G('a-fade',.2,T(n?16:24,y,`${sel+1}. ${c.n}`,'cname start f15'));
+  const D=wrap(c.d||'',n?52:92);s+=G('a-fade',.3,D.map((l,i)=>T(n?16:24,y+20+i*16,l,'note start f12')).join(''));y+=20+D.length*16+18;
+  const cx=n?[16,148,338]:[24,300,606];
+  s+=G('a-fade',.5,T(cx[0],y,n?'If it were…':'If the explanation were…','mono acc start f11')+T(cx[1],y,'we would expect','mono acc start f11')+ln(cx[0],y+6,n?346:616,y+6));
+  y+=24;
+  H.forEach((h,i)=>{const A=wrap(h[0],n?20:40),P=wrap(tx(c.pred[i]),n?28:42),L=Math.max(A.length,P.length),ok=hit(c,i);
+    s+=G('a-fade',(.6+i*.2).toFixed(1),A.map((l,j)=>T(cx[0],y+j*16,l,'lab start f13')).join('')+P.map((l,j)=>T(cx[1],y+j*16,l,'note start f13')).join('')+mark(cx[2],y-4,ok,8));
+    y+=L*16+10;});
+  const O=wrap(tx(c.obs),n?28:42);
+  s+=G('a-fade',(.7+H.length*.2).toFixed(1),`<rect x="${cx[0]-6}" y="${y-16}" width="${(n?352:620)-cx[0]}" height="${O.length*16+12}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+    +T(cx[0],y,'Observed','cname start f14')+O.map((l,j)=>T(cx[1],y+j*16,l,'lab start f13')).join(''));
+  y+=O.length*16+28;
+  // running tally
+  const mx=n?160:300, cw=n?32:36;
+  s+=G('a-fade',1.4,T(cx[0],y,'Across all tests','mono acc start f11')+spec.conds.map((cc,j)=>(j===sel?`<rect x="${mx+j*cw-cw/2+2}" y="${y-13}" width="${cw-4}" height="${18+H.length*22}" rx="3" fill="#E7DEC9"/>`:'')+Tc(mx+j*cw,y,j+1,'#2F5276',11,'mono mid','600')).join(''));
+  y+=20;
+  H.forEach((h,i)=>{s+=G('a-fade',(1.5+i*.1).toFixed(1),T(cx[0],y+4,h[1],'note start f12')+spec.conds.map((cc,j)=>mark(mx+j*cw,y,hit(cc,i),6.5)).join(''));y+=22;});
+  if(c.note){const p=para(n?16:24,y+12,c.note,n?50:92,'note start f13',17,1.8);s+=p.s;y=p.y;}
+  return {vb:n?slim(y+10):wide(y+12),s};
+}
+/* generic text-and-picture plate helpers */
+function sideText(n,x,y,items,wn,o={}){return bullets(n?24:x,y,items,n?44:wn,o);}
+/* ===================== Koch ===================== */
+function chainRods(x,y,n,ang=0,col='#7D4A98'){let s='';for(let i=0;i<n;i++)s+=rod(x+i*15*Math.cos(ang*Math.PI/180),y+i*15*Math.sin(ang*Math.PI/180),14,4.5,ang,col);return s;}
+function spore(cx,cy){return `<ellipse cx="${cx}" cy="${cy}" rx="5" ry="3.4" fill="#F3EDE0" stroke="${INK}" stroke-width="1.2"/><ellipse cx="${cx}" cy="${cy}" rx="2.4" ry="1.6" fill="#C99A2E"/>`;}
+function field(cx,cy,R,inner,o={}){return `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${o.bg||'#F4EFE2'}" stroke="${INK}" stroke-width="1.6"/>`+inner+(o.label?T(cx,cy+R+16,o.label,'note mid f11'):'');}
+function potato(cx,cy,w,cols){let s=`<path d="M${cx-w/2} ${cy} q${w*.08} ${-w*.26} ${w/2} ${-w*.28} q${w*.42} ${w*.02} ${w/2} ${w*.28} q${-w*.1} ${w*.22} ${-w/2} ${w*.2} q${-w*.42} ${-w*.02} ${-w/2} ${-w*.2}z" fill="#E7D49A" stroke="#8C6D46" stroke-width="1.6"/>`;
+  cols.forEach(c=>s+=`<circle cx="${FX(cx+c[0])}" cy="${FX(cy+c[1])}" r="${c[2]}" fill="${c[3]||COLC}" stroke="${INK}" stroke-width=".5"/>`);return s;}
+
+function scK1(n){return titlePlate(n,{name:'Robert Koch',dates:'1843–1910',glasses:true,q:'How do you prove that a particular microbe causes a particular disease?',
+  belief:'Microbes were seen in diseased tissue, but they could be a result of disease rather than its cause, and many physicians still blamed miasmas or the state of the body itself.',
+  items:['Anthrax and the logic of serial passage','Solid media and the pure culture','Tuberculosis','The postulates, and the diseases that break them','Molecular Koch’s postulates']});}
+
+function scK2(n){
+  const cx=n?180:200, R=n?92:100, cy=R+64;
+  const ang=[-90,30,150], P=a=>[cx+R*Math.cos(a*Math.PI/180),cy+R*Math.sin(a*Math.PI/180)];
+  const lab=[['in the blood of a dying animal','rods multiply, long chains'],['in soil, outside the body','rods form tough spores'],['in a grazing animal','spores germinate']];
+  let s=G('a-fade',0,`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${AXC}" stroke-width="1" stroke-dasharray="4 4"/>`);
+  ang.forEach((a,i)=>{const [x,y]=P(a);
+    let pic=i===0?field(x,y,32,chainRods(x-24,y-6,4,0)+chainRods(x-14,y+10,3,0)):i===1?field(x,y,32,[[-12,-8],[6,-10],[14,8],[-6,10],[-16,6]].map(q=>spore(x+q[0],y+q[1])).join(''),{bg:'#E3D6B4'}):`<circle cx="${x}" cy="${y}" r="32" fill="#F4EFE2" stroke="${INK}" stroke-width="1.6"/>`+mouse(x-8,y+4,.95);
+    const ly=i===0?y-50:y+62;
+    s+=G('a-fade',(.4+i*.6).toFixed(1),pic+T(x,ly,lab[i][0],'cname mid f12')+T(x,ly+16,lab[i][1],'note mid f11'));});
+  const arc=(a1,a2)=>{const [x1,y1]=P(a1),[x2,y2]=P(a2);return `<path d="M${FX(x1)} ${FX(y1)} A${R} ${R} 0 0 1 ${FX(x2)} ${FX(y2)}" stroke="#6A5B47" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`;};
+  s+=G('a-fade',2,arc(-90+24,30-24)+arc(30+24,150-24)+arc(150+24,270-24));
+  const y=n?cy+R+70:cy+R+60;
+  const b=n?bullets(24,y,[['A country doctor’s lab','In Wollstein in 1876 Koch grew anthrax bacilli in drops of aqueous humour from an ox’s eye, on a warmed slide, and watched them for days.'],['Spores explain the epidemiology','Fields where anthrax animals were buried stayed dangerous for years: the spores waited in the soil.']],44,{d0:2.4,gap:26})
+    :bullets(420,48,[['A country doctor’s lab','In Wollstein in 1876 Koch grew anthrax bacilli in drops of aqueous humour from an ox’s eye, on a warmed slide, and watched them for days.'],['Spores explain the epidemiology','Fields where anthrax animals were buried stayed dangerous for years: the spores waited in the soil.']],30,{d0:2.4,gap:26});
+  return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,cy+R+80)),s:s+b.s};
+}
+
+function scK3(n){
+  const N=n?5:8, x0=n?30:44, dx=n?62:74, y0=n?60:66;
+  let s=G('a-fade',0,mouse(x0,y0,0.9,{dead:true})+T(x0,y0+34,'anthrax blood','note mid f11'));
+  for(let i=0;i<N;i++){const x=x0+50+i*dx;s+=G('a-fade',(.3+i*.25).toFixed(2),arw(x-26,y0,x-14,y0,{w:1.2})+field(x+8,y0,18,chainRods(x-6,y0,2,0))+Tc(x+8,y0+32,i===N-1?(n?'5th':'8th'):String(i+1),'#2F5276',10,'mono mid','600'));}
+  const xe=x0+50+N*dx;
+  s+=G('a-fade',(.4+N*.25).toFixed(2),arw(xe-26,y0,xe-10,y0)+mouse(xe+18,y0,.9,{dead:true}));
+  const y=y0+70;
+  const rows=[['If the cause were a poison in the blood','Each transfer dilutes it. After eight, essentially none of the original blood is left, so the last drop should be harmless.','harmless'],
+   ['If the cause were a living organism','It multiplies in every drop, so the last culture is as strong as the first.','still lethal']];
+  let yy=y;
+  rows.forEach((r,i)=>{const L=wrap(r[1],n?50:80);s+=G('a-fade',(2.6+i*.4).toFixed(1),T(n?16:24,yy,r[0],'cname start f14')+L.map((l,j)=>T(n?16:24,yy+18+j*16,l,'note start f12')).join('')+mark(n?338:606,yy-4,i===1,8));yy+=24+L.length*16+12;});
+  s+=G('a-fade',3.6,`<rect x="${n?10:18}" y="${yy-14}" width="${n?340:604}" height="26" rx="3" fill="#E7DEC9" stroke="${INK}"/>`+T(n?16:24,yy+4,'Observed: the eighth culture killed mice just like the original blood.','lab start '+(n?'f12':'f13')));
+  const p=para(n?16:24,yy+40,'Serial passage turns dilution into an argument. The same logic was used again by Beijerinck for tobacco mosaic in 1898, and it is the reasoning behind every passage experiment since.',n?50:92,'note start f13',17,4);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+function scK4(n){
+  const C=[['Potato slices, 1881','A cut potato, steamed: the first solid surface. Colonies stay apart.',(cx,cy)=>potato(cx,cy+6,110,[[-26,-2,5],[0,-8,4],[22,0,6,'#B4766E'],[-8,10,4],[30,12,3,'#9DB4AE']])],
+   ['Gelatin plates','Nutrient gelatin on glass. But it melts at body temperature, and many bacteria digest it.',(cx,cy)=>`<rect x="${cx-56}" y="${cy-18}" width="112" height="44" rx="3" fill="${GLASSF}" stroke="${GLASSE}" stroke-width="1.4"/><path d="M${cx-48} ${cy+12} q20 -16 40 -4 q20 12 50 -6 v18 h-90z" fill="#E9DDB8" opacity=".9"/>`+T(cx,cy+40,'melts at 37 °C','note mid f11')],
+   ['Agar, 1881–82','Fanny Hesse suggested the jelly she used in her kitchen. Agar stays solid at 37 °C and few microbes eat it.',(cx,cy)=>dish(cx,cy+4,36,colonySet(10,4,36))],
+   ['Petri’s dish, 1887','Julius Petri’s shallow lidded dish. Streaked out, single cells give single colonies: a pure culture.',(cx,cy)=>dish(cx,cy+4,36,[[-18,-14,2.4],[-10,-8,2.6],[-2,-2,2.8],[6,4,3],[14,10,3.6],[22,16,3]].concat(colonySet(5,9,10).map(c=>[c[0]-20,c[1]-16,1.6])))]];
+  let s='',y;
+  if(!n){C.forEach((c,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),c[2](cx,86)+T(cx,152,c[0],'cname mid f13')+wrap(c[1],24).map((l,j)=>T(cx,172+j*16,l,'note mid f12')).join(''));});y=262;}
+  else{y=24;C.forEach((c,i)=>{const L=wrap(c[1],30);s+=G('a-fade',(i*.6).toFixed(1),T(16,y,c[0],'cname start f14')+L.map((l,j)=>T(16,y+20+j*15,l,'note start f12')).join('')+c[2](280,y+24));y+=Math.max(96,28+L.length*15)+14;});}
+  const p=para(n?16:24,y+6,'A colony grown from a single cell is a population of one genotype. Pure culture made it possible to ask what one kind of microbe does, which is the foundation of all the microbiology that followed.',n?50:92,'note start f13',17,2.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+function scK5(n){
+  const steps=[['Stain','Alkaline methylene blue for a day, then a brown counterstain: thin blue rods stand out in brown tissue.',(cx,cy)=>field(cx,cy,34,`<circle cx="${cx}" cy="${cy}" r="33" fill="#D9B98C" opacity=".5"/>`+[[-14,-6,30],[6,-12,-20],[10,8,50],[-6,12,10],[18,-2,80]].map(q=>rod(cx+q[0],cy+q[1],12,3,q[2],'#3E5F82')).join(''))],
+   ['Culture','On coagulated blood serum at body temperature. Nothing visible for about two weeks, then small dry scales.',(cx,cy)=>tube(cx-14,cy+34,{h:64,w:20,fill:'#D8B9A0',full:.6})+tube(cx+14,cy+34,{h:64,w:20,fill:'#D8B9A0',full:.6})+[[-14,4],[14,0],[14,10]].map(q=>`<circle cx="${cx+q[0]}" cy="${cy+q[1]}" r="2.2" fill="#EEE5CF" stroke="${INK}" stroke-width=".5"/>`).join('')],
+   ['Inoculate','Cultures injected into guinea pigs and rabbits produce tuberculosis.',(cx,cy)=>syringe(cx-56,cy,36)+mouse(cx+14,cy+4,1.15)],
+   ['Re-isolate','The same bacilli are seen in, and grown again from, the inoculated animals.',(cx,cy)=>field(cx,cy,34,[[-14,-6,30],[6,-12,-20],[10,8,50]].map(q=>rod(cx+q[0],cy+q[1],12,3,q[2],'#3E5F82')).join(''))]];
+  let s='',y;
+  if(!n){steps.forEach((st,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx-58,28,i+1)+T(cx-44,32,st[0],'cname start f14')+st[2](cx,96)+wrap(st[1],24).map((l,j)=>T(cx,160+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+50,96,cx+104,96));});y=246;}
+  else{y=24;steps.forEach((st,i)=>{const L=wrap(st[1],30);s+=G('a-fade',(i*.6).toFixed(1),badge(24,y-4,i+1)+T(40,y,st[0],'cname start f14')+L.map((l,j)=>T(16,y+20+j*15,l,'note start f12')).join('')+st[2](280,y+30));y+=Math.max(100,28+L.length*15)+12;});}
+  const p=para(n?16:24,y+6,'Announced in Berlin on 24 March 1882, now World Tuberculosis Day. The difficulties were real: the bacillus resists ordinary stains, which is why it is now called acid-fast, and it divides only about once a day.',n?50:92,'note start f13',17,2.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+const POST=[['Found in every case','The microbe is present in every case of the disease, and not in healthy hosts.'],
+ ['Grown in pure culture','It can be isolated from the diseased host and grown on its own.'],
+ ['Causes the disease','The pure culture causes the same disease when given to a healthy, susceptible host.'],
+ ['Recovered again','The same microbe is re-isolated from the newly diseased host.']];
+function postPic(i,cx,cy){
+  if(i===0)return mouse(cx-6,cy+6,1.1,{dead:true})+field(cx+44,cy-14,16,chainRods(cx+34,cy-14,2,0));
+  if(i===1)return dish(cx,cy+2,30,[[-12,-8,2.4],[-4,-2,2.6],[4,4,2.8],[12,10,3]]);
+  if(i===2)return syringe(cx-48,cy-6,30)+mouse(cx+12,cy+6,1.05,{dead:true});
+  return dish(cx,cy+2,30,[[-12,-8,2.4],[-4,-2,2.6],[4,4,2.8],[12,10,3]]);}
+function scK6(n){
+  let s='',y;
+  if(!n){POST.forEach((p,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx-58,28,i+1)+T(cx-44,32,p[0],'cname start f13')+postPic(i,cx,92)+wrap(p[1],24).map((l,j)=>T(cx,148+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+52,92,cx+102,92));});y=240;}
+  else{y=24;POST.forEach((p,i)=>{const L=wrap(p[1],30);s+=G('a-fade',(i*.6).toFixed(1),badge(24,y-4,i+1)+T(40,y,p[0],'cname start f14')+L.map((l,j)=>T(16,y+20+j*15,l,'note start f12')).join('')+postPic(i,280,y+26));y+=Math.max(90,28+L.length*15)+12;});}
+  const p=para(n?16:24,y+6,'The criteria are usually called Koch’s postulates, but Friedrich Loeffler set them out most explicitly in his 1884 paper on diphtheria, and Jakob Henle, Koch’s teacher, had argued along similar lines in 1840. Koch himself treated them as a standard of evidence, not a rigid rule.',n?50:92,'note start f13',17,2.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+const CASES=[
+ {n:'Anthrax',m:[1,1,1,1],t:'The model case: found in every animal that dies of it, easily grown, lethal in mice, and recovered again. Koch, 1876.'},
+ {n:'Tuberculosis',m:[1,1,1,1],t:'Satisfied in guinea pigs, with great effort (1882). Many people carry Mycobacterium tuberculosis in latent infection without disease, a point the first postulate cannot accommodate.'},
+ {n:'Cholera',m:[0,1,0,1],t:'Koch found the comma bacillus in every patient in Egypt and Calcutta (1883–84) and grew it, but could not make animals ill, and healthy carriers also harboured it. Max von Pettenkofer drank a culture in 1892 to prove Koch wrong and had only mild diarrhoea.'},
+ {n:'Leprosy',m:[1,0,0,0],t:'Gerhard Armauer Hansen saw the bacillus in 1873, before Koch’s anthrax work, but Mycobacterium leprae has never been grown in culture. It multiplies in mouse footpads and nine-banded armadillos.'},
+ {n:'Viral diseases',m:[1,0,0,0],t:'Viruses cannot be grown on media at all; they need living cells. Thomas Rivers proposed modified postulates for viruses in 1937.'},
+ {n:'Helicobacter pylori',m:[1,1,1,1],t:'Robin Warren and Barry Marshall grew it from gastric biopsies in 1982. In 1984 Marshall drank a culture, developed gastritis, and the organism was recovered from his stomach: all four, in a human volunteer.'},
+ {n:'Pneumococcus',m:[0,1,1,1],t:'Streptococcus pneumoniae is easily grown and kills mice, but it fails the first postulate: it colonises the nasopharynx of many healthy children without causing disease. Whether it does harm depends on host, serotype and circumstance.'}];
+let caseSel=0;
+function scK7(n){
+  const c=CASES[caseSel];
+  let s='',y=30;
+  s+=G('a-fade',0,T(n?16:24,y,c.n,'cname start')+ln(n?16:24,y+10,n?344:616,y+10));
+  y+=36;
+  POST.forEach((p,i)=>{s+=G('a-fade',(.2+i*.25).toFixed(2),mark(n?28:36,y-4,c.m[i]===1,9)+T(n?46:56,y,(i+1)+'. '+p[0],'lab start '+(n?'f13':'f14'))+T(n?46:56,y+17,c.m[i]?'satisfied':'not satisfied','note start f12'));y+=42;});
+  const p=para(n?16:24,y+6,c.t,n?50:92,'note start f13',17,1.3);
+  const q=para(n?16:24,p.y+16,'The postulates are sufficient, not necessary: a microbe that meets them is almost certainly a cause, but one that fails them may still be one.',n?50:92,'lab start f13',17,1.6);
+  return {vb:n?slim(q.y+6):wide(q.y+8),s:s+p.s+q.s};
+}
+
+function scK8(n){
+  const rows=[['Wild type','virulence gene intact',1,0],['Gene knocked out','virulence lost',0,1],['Gene put back','virulence restored',1,2]];
+  let s='',y=40;const gx=n?20:60, mx=n?300:460;
+  s+=G('a-fade',0,T(gx,y-14,'Molecular Koch’s postulates (Stanley Falkow, 1988)','cname start '+(n?'f13':'f14')));
+  y+=14;
+  rows.forEach((r,i)=>{const yy=y+i*62;
+    let gene=`<path d="M${gx} ${yy+8} H${gx+(n?150:240)}" stroke="${BB}" stroke-width="3"/>`;
+    if(i===1)gene+=`<path d="M${gx+40} ${yy} h60 l8 8 l-8 8 h-60z" fill="#E9C9C1" stroke="${INK}"/><path d="M${gx+52} ${yy+2} l36 12 m0 -12 l-36 12" stroke="${LESU}" stroke-width="2"/>`;
+    else gene+=`<path d="M${gx+40} ${yy} h60 l8 8 l-8 8 h-60z" fill="${i===2?'#D9E2D3':'#E3B26B'}" stroke="${INK}"/>`;
+    if(i===2)gene+=`<path d="M${gx+(n?120:170)} ${yy} h44 l8 8 l-8 8 h-44z" fill="#E3B26B" stroke="${INK}"/>`+T(gx+(n?146:196),yy+28,'copy supplied','note mid f11');
+    s+=G('a-fade',(.4+i*.6).toFixed(1),gene+T(gx,yy-8,r[0],'lab start f13')+mouse(mx,yy+10,.9,{dead:r[2]===1})+T(mx+(n?0:60),yy+(n?36:14),r[1],'note '+(n?'mid':'start')+' f12'));});
+  y+=3*62+20;
+  const b=bullets(n?24:30,y,[['The gene, not just the microbe','The trait is found in pathogenic strains and not in harmless relatives; inactivating the gene reduces virulence; restoring it restores virulence.'],
+   ['Genome-wide versions','Transposon screens such as Tn-seq apply the same logic to every gene at once, by counting which mutants are lost during infection.']],n?44:88,{d0:2,gap:26});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scK9(n){
+  const rows=[['1876','anthrax','Koch'],['1879','gonorrhoea','Neisser'],['1880','typhoid','Eberth; grown by Gaffky, 1884'],['1882','tuberculosis','Koch'],['1883','cholera','Koch'],['1884','diphtheria','Klebs; Loeffler'],['1884','tetanus','Nicolaier; grown by Kitasato, 1889'],['1886','pneumococcus','Fraenkel, after Pasteur and Sternberg, 1881'],['1894','plague','Yersin; Kitasato'],['1905','syphilis','Schaudinn and Hoffmann']];
+  const t=wtable(n,['Year','Disease','Agent described by'],rows.map(r=>[r[0],r[1],r[2]]),n?[[12,6],[60,14],[160,30]]:[[24,6],[100,22],[280,50]],{y0:30});
+  const p=para(n?16:24,t.y+14,'The golden age of bacteriology followed directly from pure culture. Koch’s own later claim, that tuberculin cured tuberculosis (1890), failed badly; tuberculin survived as a diagnostic skin test. He received the Nobel Prize in 1905.',n?50:92,'note start f13',17,1.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+}
+
+const NAR='Narrator';
+const S=[
+ {p:1,title:'Robert Koch',draw:scK1,text:"Koch was a country doctor in Wollstein, in what is now Poland, when he began working on anthrax in a corner of his house. Within a decade he had founded the methods of medical bacteriology: pure culture on solid media, staining, photomicrography, and a standard of evidence for blaming a disease on a microbe."},
+ {p:1,title:'Anthrax',draw:scK2,text:"Anthrax rods had been seen in the blood of dying sheep and cattle since the 1850s. Koch showed in 1876 that the rods multiply in the blood, form spores outside the body, and that the spores survive in soil and germinate again in a new host. The life cycle explained why some fields stayed dangerous for years."},
+ {p:1,title:'Poison or organism?',draw:scK3,text:"Could something else in the blood be the cause? Koch transferred a drop from one culture to the next, eight times. By the end, the original blood was diluted out of existence, yet the last culture killed mice as surely as the first. Only something that multiplies could do that."},
+ {p:2,title:'Solid media',draw:scK4,text:"Liquid cultures mix everything together. Koch's laboratory moved to solid surfaces where each cell grows into a separate colony: potato slices, then gelatin, then agar, suggested by Fanny Hesse, the wife of a colleague, who used it in her kitchen. Julius Petri's dish followed in 1887."},
+ {p:2,title:'Tuberculosis',draw:scK5,text:"Tuberculosis killed about one in seven people in nineteenth-century Europe. Its bacillus was hard to stain and slow to grow, which is why it took a new staining method, cultures on coagulated serum kept for weeks, and animal inoculation before Koch could announce, in March 1882, that he had found the cause."},
+ {p:3,title:'The postulates',draw:scK6,text:"The logic of the anthrax and tuberculosis work was set out as four criteria. The microbe must be found in every case; it must be grown in pure culture; the culture must cause the disease in a healthy host; and it must be recovered again. They remain the clearest statement of what it means to show causation in infectious disease."},
+ {p:3,title:'Testing the postulates',chips:'case',draw:scK7,text:"The postulates are a strong test, and many genuine pathogens fail parts of it. Pick a disease to see which postulates it satisfies, and why the exceptions matter."},
+ {p:3,title:'Molecular Koch’s postulates',draw:scK8,text:"A century later, Stanley Falkow restated the same logic for genes. A gene is a virulence gene if it is associated with disease-causing strains, if knocking it out reduces virulence, and if putting it back restores virulence. Complementation is the modern version of re-isolation."},
+ {p:3,title:'The golden age',draw:scK9,text:"Pure culture opened the floodgates. Within thirty years the causes of most of the great bacterial diseases had been identified, many of them by Koch's own students and visitors."}];
+const CHIPS={case:{list:CASES.map(c=>c.n),get:()=>caseSel,set:k=>caseSel=k}};
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+const NPARTS=Math.max(...S.map(s=>s.p));
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  for(let k=1;k<=NPARTS;k++)$('part'+k).setAttribute('aria-current',sc.p===k);
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+for(let k=1;k<=NPARTS;k++)$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>
