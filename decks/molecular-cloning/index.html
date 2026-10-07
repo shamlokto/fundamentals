@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools for Molecular Cloning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Molecular cloning · an animated primer</p>
+    <h1>Ways to join DNA</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · Foundations</button>
+    <button id="part2" type="button">II · Cut and paste</button>
+    <button id="part3" type="button">III · Assembly</button>
+    <button id="part4" type="button">IV · Into the chromosome</button>
+    <button id="part5" type="button">V · Plan a build</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Examples are from <i>E. coli</i> and <i>S. pneumoniae</i> unless named. Plasmid maps and enzymes are schematics, not to scale; check supplier protocols for conditions.</p>
+</div>
+<script>
+
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== cloning toolkit ===================== */
+const VEC='#5A4632', INS='#3E5F82', INS2='#4F7A3F', INS3='#7D4A98', ORI='#2E7D78', AMP='#C99A2E', PROM='#B4766E', TERM='#8C6D46',
+      ENZ='#9C7FB0', LIG='#4F7A3F', EXO='#C17A2C', POLY='#6F9A8E', RED2='#A4473A', GEL='#D9CDB2';
+const F=(v,d=1)=>v.toFixed(d);
+function arcP(cx,cy,r,a0,a1){const p=a=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];const[x0,y0]=p(a0),[x1,y1]=p(a1);const big=(a1-a0)>Math.PI?1:0;return `M${F(x0)} ${F(y0)} A${r} ${r} 0 ${big} 1 ${F(x1)} ${F(y1)}`;}
+function plasmid(cx,cy,r,feats,o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${o.col||VEC}" stroke-width="${o.w||3}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  (feats||[]).forEach(f=>{const a0=-Math.PI/2+f[0]*2*Math.PI,a1=-Math.PI/2+f[1]*2*Math.PI,rr=r;
+    s+=`<path d="${arcP(cx,cy,rr,a0,a1)}" stroke="${f[2]}" stroke-width="${o.fw||9}" fill="none" stroke-linecap="butt"/>`;
+    if(f[3]){const am=(a0+a1)/2,lr=r+(f[4]||20),x=cx+lr*Math.cos(am),y=cy+lr*Math.sin(am);
+      s+=Tc(x,y+4,f[3],'#3A2E22',o.fs||11,'mono '+(Math.cos(am)>.25?'start':Math.cos(am)<-.25?'end':'mid'),'600');}});
+  (o.marks||[]).forEach(m=>{const a=-Math.PI/2+m[0]*2*Math.PI,x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+    s+=`<path d="M${F(x-7*Math.sin(a))} ${F(y+7*Math.cos(a))} L${F(x+7*Math.sin(a))} ${F(y-7*Math.cos(a))}" stroke="${m[2]||RED2}" stroke-width="2.4"/>`
+      +Tc(cx+(r+(m[3]||16))*Math.cos(a),cy+(r+(m[3]||16))*Math.sin(a)+4,m[1],m[2]||RED2,10,'mono mid','600');});
+  if(o.name)s+=Tc(cx,cy+4,o.name,'#6A5B47',o.nfs||13,'mono mid','600');
+  if(o.sub)s+=Tc(cx,cy+20,o.sub,'#6A5B47',10,'mono mid');
+  return s;
+}
+/* linear duplex with optional overhangs: ov<0 = 5' overhang length on each side */
+function duplex(x1,x2,y,o={}){
+  const g=o.gap||9, col=o.col||VEC, ovl=o.ovl||0, ovr=o.ovr||0;
+  let s=`<path d="M${x1+(ovl>0?0:0)} ${y} H${x2-(0)}" stroke="${col}" stroke-width="2.6"/>`;
+  s=`<path d="M${x1+(ovl<0?0:ovl*8)} ${y} H${x2-(ovr<0?0:ovr*8)}" stroke="${col}" stroke-width="2.6"/>`
+   +`<path d="M${x1+(ovl>0?0:-ovl*8)} ${y+g} H${x2-(ovr>0?0:-ovr*8)}" stroke="${col}" stroke-width="2.6"/>`;
+  let r='';for(let x=Math.max(x1+Math.abs(ovl)*8,x1)+3;x<x2-Math.abs(ovr)*8;x+=7)r+=`M${x} ${y} v${g}`;
+  s+=`<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".35"/>`;
+  if(o.label)s+=T((x1+x2)/2,y+g+22,o.label,'note mid f11');
+  return s;
+}
+function seqPair(x,y,top,bot,dx,o={}){
+  let s='';for(let i=0;i<top.length;i++){const c=top[i],col=(o.hi&&o.hi.includes(i))?RED2:(o.hi2&&o.hi2.includes(i))?'#2F5276':'#3A2E22';
+    if(c!==' ')s+=Tc(x+i*dx+dx/2,y,c,col,o.fs||13,'mono mid','600');}
+  for(let i=0;i<bot.length;i++){const c=bot[i],col=(o.hib&&o.hib.includes(i))?RED2:(o.hi2&&o.hi2.includes(i))?'#2F5276':'#3A2E22';
+    if(c!==' ')s+=Tc(x+i*dx+dx/2,y+(o.dy||22),c,col,o.fs||13,'mono mid','600');}
+  return s;
+}
+function scissors(x,y,col=RED2,fs=16){return `<text x="${x}" y="${y}" class="mid" style="fill:${col};font-size:${fs}px">✂</text>`;}
+function cutMark(x,y1,y2,col=RED2){return `<path d="M${x} ${y1} v${y2-y1}" stroke="${col}" stroke-width="2" stroke-dasharray="3 2"/>`;}
+function tube(cx,cy,w,h,fill='#BFD4E0'){return `<path d="M${cx-w/2} ${cy-h/2} v${h*.62} a${w/2} ${w/2} 0 0 0 ${w} 0 v${-h*.62} z" fill="#F3EEE2" stroke="${INK}" stroke-width="1.4"/>`
+  +`<path d="M${cx-w/2} ${cy+h*.02} v${h*.1} a${w/2} ${w/2} 0 0 0 ${w} 0 v${-h*.1} z" fill="${fill}" opacity=".75"/>`;}
+function dish(cx,cy,r,cols){let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#EDE3C8" stroke="${INK}" stroke-width="1.4"/><circle cx="${cx}" cy="${cy}" r="${r-5}" fill="none" stroke="${INK}" stroke-width=".6"/>`;
+  let seed=7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+  (cols||[]).forEach(c=>{for(let i=0;i<c[1];i++){const a=rnd()*2*Math.PI,rr=Math.sqrt(rnd())*(r-14);s+=`<circle cx="${F(cx+rr*Math.cos(a))}" cy="${F(cy+rr*Math.sin(a))}" r="3.6" fill="${c[0]}" stroke="${INK}" stroke-width=".5"/>`;}});
+  return s;}
+function gel(x,y,w,h,lanes){
+  let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${GEL}" stroke="${INK}" stroke-width="1"/>`;
+  const lw=w/lanes.length;
+  lanes.forEach((ln,i)=>{const lx=x+i*lw+lw*.5;s+=`<rect x="${lx-lw*.32}" y="${y+4}" width="${lw*.64}" height="5" rx="2" fill="#9C8B6A"/>`;
+    (ln.b||[]).forEach(b=>s+=`<rect x="${lx-lw*.3}" y="${y+h*b[0]}" width="${lw*.6}" height="${b[1]||5}" rx="2" fill="#2C2318" opacity="${b[2]||.85}"/>`);
+    if(ln.t)s+=Tc(lx,y+h+14,ln.t,'#6A5B47',10,'mono mid');});
+  return s;}
+function stepBoxes(n,items,x,y,W,H,gap,dl){
+  let s='';items.forEach((it,i)=>{const bx=x+i*(W+gap);
+    s+=G('a-fade',(dl+i*.5).toFixed(1),box(bx,y,W,H,'#E7DEC9',4)+badge(bx+14,y+14,i+1)+T(bx+28,y+19,it[0],'lab start f14')
+      +wrap(it[1],Math.floor(W/6.2)).map((l,j)=>T(bx+14,y+40+j*16,l,'note start f12')).join('')+(it[2]?it[2](bx,y,W,H):''));
+    if(i<items.length-1)s+=G('a-fade',(dl+i*.5+.3).toFixed(1),`<path d="M${bx+W+2} ${y+H/2} h${gap-6}" class="arrow"/>`);});
+  return s;}
+function stepRows(n,items,x,y,W,H,gap,dl){
+  let s='';items.forEach((it,i)=>{const by=y+i*(H+gap);
+    s+=G('a-fade',(dl+i*.5).toFixed(1),box(x,by,W,H,'#E7DEC9',4)+badge(x+14,by+14,i+1)+T(x+28,by+19,it[0],'lab start f14')
+      +wrap(it[1],Math.floor(W/5.6)).map((l,j)=>T(x+14,by+40+j*16,l,'note start f12')).join('')+(it[2]?it[2](x,by,W,H):''));});
+  return s;}
+function cmpRows(n,head,rows,o={}){
+  const c=n?(o.nc||[10,120,240]):(o.wc||[24,180,360,520]), y0=n?40:44, dy=n?28:28;
+  let s=G('a-fade',0,head.map((h,i)=>T(c[i],y0-14,h,'cname start '+(n?'f13':'f14'))).join('')+ln(c[0],y0-5,n?350:616,y0-5));
+  rows.forEach((r,i)=>{const y=y0+18+i*dy;
+    s+=G('a-fade',(.15*i).toFixed(2),(i%2?'':`<rect x="${c[0]-4}" y="${y-17}" width="${(n?350:616)-c[0]+6}" height="${dy}" fill="#E7DEC9" opacity=".55"/>`)
+      +r.map((v,j)=>j<c.length?T(c[j],y,v,(j?'note':'lab')+' start '+(n?'f12':'f13')):'').join(''));});
+  return {s,y:y0+18+rows.length*dy};
+}
+/* ===================== Part I · foundations ===================== */
+function scProblem(n){
+  const r=n?54:66;
+  const P=n?{vx:180,vy:72,gx:180,gy:188,cx:180,cy:300}:{vx:106,vy:120,gx:320,gy:120,cx:540,cy:120};
+  let s=G('a-fade',0,plasmid(P.vx,P.vy,r,[[0,.18,AMP,'marker'],[.28,.4,ORI,'ori']],{name:'vector',fs:n?10:11})
+    +T(P.vx,P.vy+r+(n?26:30),'a plasmid that replicates','note mid f12'));
+  s+=G('a-fade',.5,duplex(P.gx-(n?70:78),P.gx+(n?70:78),P.gy-6,{col:INS})+T(P.gx,P.gy+(n?34:36),'your gene','note mid f12'));
+  if(n)s+=G('a-fade',1,`<path d="M${P.vx} ${P.vy+r+40} v16" class="arrow"/><path d="M${P.gx} ${P.gy+48} v16" class="arrow"/>`);
+  else s+=G('a-fade',1,`<path d="M${P.vx+r+14} ${P.vy} h40" class="arrow"/><path d="M${P.gx+96} ${P.gy} h40" class="arrow"/>`);
+  s+=G('a-pop',1.6,plasmid(P.cx,P.cy,r,[[0,.18,AMP,'marker'],[.28,.4,ORI,'ori'],[.52,.84,INS,'gene',28]],{name:'construct',fs:n?10:11}));
+  const ty=(n?P.cy+r+36:P.cy+r+56);
+  const L=wrap('Then put it into a cell that will copy it, keep it, and express what it encodes. Everything that follows is a different way of doing the joining.',n?46:88);
+  s+=G('a-fade',2.2,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20+12):wide(ty+L.length*20+14),s};
+}
+
+function scRE(n){
+  const x=n?14:60, dx=n?24:30, y=n?110:120;
+  const top='G A A T T C', bot='C T T A A G';
+  let s=G('a-fade',0,T(n?180:320,n?34:40,'EcoRI recognises a palindrome and cuts both strands','lab mid '+(n?'f14':'')));
+  const tx=n?60:200;
+  s+=G('a-fade',.4,seqPair(tx,y,top.replace(/ /g,''),bot.replace(/ /g,''),dx,{fs:n?15:17})
+    +Tc(tx-16,y,"5′",'#6A5B47',11,'mono end')+Tc(tx-16,y+22,"3′",'#6A5B47',11,'mono end')
+    +Tc(tx+6*dx+16,y,"3′",'#6A5B47',11,'mono start')+Tc(tx+6*dx+16,y+22,"5′",'#6A5B47',11,'mono start'));
+  s+=G('a-pop',1.0,cutMark(tx+dx,y-16,y+4)+cutMark(tx+5*dx,y+16,y+36)+scissors(tx+dx,y-20)+scissors(tx+5*dx,y+48));
+  s+=G('a-fade',1.6,T(tx+3*dx,y+(n?62:66),'leaves a 4-base 5′ overhang: AATT','note mid f12'));
+  const ty=y+(n?96:100);
+  const ev=[['1962–68','Werner Arber and Stuart Linn explain host restriction; Meselson and Yuan purify the first enzyme'],['1970','Hamilton Smith finds HindII, which cuts at a fixed sequence'],['1971','Daniel Nathans maps SV40 with it: the first restriction map'],['1978','Nobel Prize to Arber, Nathans and Smith']];
+  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:72);s+=G('a-fade',(2+i*.4).toFixed(1),T(n?14:30,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(n?78:118,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+10;});
+  return {vb:n?slim(yy+8):wide(yy+10),s};
+}
+
+function scFirst(n){
+  const r=n?44:52, y=n?80:96;
+  const ax=n?74:130, bx=n?244:300, hx=n?159:520;
+  let s=G('a-pop',0,plasmid(ax,y,r,[[0,.2,AMP,'tet']],{name:'pSC101',fs:10,nfs:12},{})
+    +plasmid(bx,y,r,[[0,.2,'#9C7FB0','kan']],{name:'pSC102',fs:10,nfs:12}));
+  s+=G('a-pop',.5,scissors(ax,y-r-6)+scissors(bx,y-r-6));
+  if(n){s+=G('a-fade',1,`<path d="M180 ${y+r+18} v18" class="arrow"/>`+T(180,y+r+14,'cut both with EcoRI, then ligate','note mid f12'));
+    s+=G('a-pop',1.6,plasmid(hx,y+r+90,r+8,[[0,.18,AMP,'tet'],[.42,.6,'#9C7FB0','kan']],{name:'hybrid',fs:10,nfs:12}));
+    s+=G('a-fade',2,T(180,y+r+90+r+62,'resistant to both','note mid f12'));}
+  else{s+=G('a-fade',1,`<path d="M${bx+r+16} ${y} h${hx-r-16-(bx+r+16)}" class="arrow"/>`
+      +T((bx+r+hx-r)/2,y-16,'cut both with EcoRI','note mid f12')+T((bx+r+hx-r)/2,y+22,'then ligate','note mid f12'));
+    s+=G('a-pop',1.6,plasmid(hx,y,r+8,[[0,.18,AMP,'tet'],[.42,.6,'#9C7FB0','kan']],{name:'hybrid',fs:10,nfs:12}));
+    s+=G('a-fade',2,T(hx,y+r+42,'resistant to both','note mid f12'));}
+  const ty=n?y+r+90+r+92:y+r+74;
+  const ev=[['1972','Paul Berg joins SV40 and λ DNA in a tube: the first recombinant DNA molecule'],['1973','Stanley Cohen and Herbert Boyer put a recombinant plasmid into E. coli, where it replicated and worked'],['1975','The Asilomar conference sets the first safety guidelines for the new methods'],['1980','Nobel Prize to Berg']];
+  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:76);s+=G('a-fade',(2.2+i*.4).toFixed(1),T(n?14:30,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(n?70:110,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+10;});
+  return {vb:n?slim(yy+8):wide(yy+10),s};
+}
+
+function scVector(n){
+  const cx=n?134:200, cy=n?150:170, r=n?80:112;
+  const feats=[[.02,.2,ORI,'ori'],[.24,.44,AMP,'bla (AmpR)'],[.5,.56,PROM,'promoter'],[.57,.72,'#D9CDB2','MCS'],[.73,.78,TERM,'term']];
+  let s=G('a-fade',0,plasmid(cx,cy,r,feats,{name:'pUC-type',sub:'~2.7 kb',fs:n?10:12}));
+  const items=[['ori','how many copies per cell; which hosts'],['selection','antibiotic resistance, or a nutrient'],['promoter','how strongly, and when, the gene is read'],['MCS','a cluster of unique restriction sites'],['tags','His₆, FLAG, GFP — added in frame'],['terminator','stops transcription running on']];
+  const tx=n?14:350, ty=n?cy+r+40:40;
+  items.forEach((it,i)=>{const yy=ty+i*(n?34:36);s+=G('a-fade',(.4+i*.2).toFixed(1),Tc(tx,yy,it[0],'#2F5276',13,'mono start','600')+wrap(it[1],n?40:30).map((l,j)=>T(tx+(n?92:100),yy+j*16,l,'lab start '+(n?'f13':'f14'))).join(''));});
+  const yb=ty+6*(n?34:36)+(n?0:16);
+  const SL=wrap(n?'Shuttle vectors carry two oris, for E. coli and the host':'A shuttle vector carries two oris: one for E. coli, one for the organism you study',n?44:32);
+  s+=G('a-fade',1.8,SL.map((l,i)=>T(n?14:350,yb+i*18,l,'note start '+(n?'f12':''))).join(''));
+  return {vb:n?slim(yb+SL.length*18+10):wide(Math.max(cy+r+30,yb+SL.length*18+10)),s};
+}
+
+/* ===================== Part II · classical cloning ===================== */
+function scCutPaste(n){
+  const dx=n?20:26, y=n?94:100, x=n?26:150;
+  const gx2=x+(n?172:230);
+  let s=G('a-fade',0,T(n?180:320,n?32:38,'Sticky ends find each other','lab mid '+(n?'f14':'')));
+  s+=G('a-fade',.4,seqPair(x,y,'G','CTTAA',dx,{fs:n?13:15,hib:[1,2,3,4]})+seqPair(gx2,y,'AATTC','    G',dx,{fs:n?13:15,hi:[0,1,2,3]}));
+  s+=G('a-fade',1.0,T(x+2.5*dx,y+(n?46:48),'5′ overhang','note mid f11')+T(gx2+2*dx,y-(n?18:20),'its partner','note mid f11'));
+  const y2=y+(n?108:116);
+  s+=G('a-fade',1.6,T(n?180:320,y2-30,'they anneal, and ligase seals both strands','note mid f12'));
+  s+=G('a-fade',1.9,seqPair(x+(n?66:92),y2+(n?18:20),'GAATTC','CTTAAG',dx,{fs:n?13:15,hi2:[0,1,2,3,4,5]})
+    +Tc(x+(n?66:92)+3*dx,y2-8,'ligase + ATP','#4F7A3F',11,'mono mid','600'));
+  const y3=y2+(n?98:102);
+  const rows=[['Sticky ends','4-nt overhangs anneal; efficient, and directional if you use two different enzymes'],['Blunt ends','any end joins any end; inefficient, and gives no control over orientation'],['Scar','the recognition sequence stays in the product, between vector and insert']];
+  let yy=y3;rows.forEach((r,i)=>{const L=wrap(r[1],n?44:66);
+    s+=G('a-fade',(2.4+i*.3).toFixed(1),T(n?14:150,yy,r[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T(n?14:300,yy+(n?18:0)+j*17,l,'note start f12')).join(''));
+    yy+=(n?18:0)+L.length*17+(n?14:12);});
+  return {vb:n?slim(yy+10):wide(yy+12),s};
+}
+
+function scProblems(n){
+  const items=[['Vector self-ligates','Cut once, or with two enzymes; strip the 5′ phosphates with phosphatase so the vector cannot close on itself.'],
+   ['Wrong orientation','Use two different enzymes, one at each end, so the insert can only go in one way.'],
+   ['Nothing cuts','The site is methylated by Dam or Dcm, or the enzyme needs more flanking bases at the end of a PCR product.'],
+   ['No site where you need one','The classic limit: you can only cut where sites happen to be, and your insert may contain them.']];
+  const W=n?340:300, H=n?108:104;
+  let s='';
+  items.forEach((it,i)=>{const x=n?10:10+(i%2)*312, y=n?10+i*(H+10):20+Math.floor(i/2)*(H+14);
+    s+=G('a-fade',(i*.5).toFixed(1),box(x,y,W,H,'#E7DEC9',4)+mark(x+W-22,y+22,false,10)+T(x+16,y+26,it[0],'cname start '+(n?'f15':''))
+      +wrap(it[1],n?44:44).map((l,j)=>T(x+16,y+50+j*17,l,'note start f13')).join(''));});
+  const yb=n?10+4*(H+10):20+2*(H+14)+8;
+  s+=G('a-fade',2.4,T(n?180:320,yb,n?'Every later method dodges one of these':'These four annoyances are exactly what the newer methods were invented to avoid','lab mid'));
+  return {vb:n?slim(yb+14):wide(yb+16),s};
+}
+
+function scTransform(n){
+  const items=[['Transform','Chemically competent cells with a heat shock, or electroporation. Only a few cells in a million take up a plasmid.',null],
+   ['Select','Plate on the antibiotic. Only cells carrying the plasmid grow.',null],
+   ['Screen','Blue–white: the MCS sits inside lacZα. An insert breaks it, so no β-galactosidase and no blue X-gal product.',null]];
+  const W=n?340:200, H=n?128:150;
+  let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,12,0);
+  const py=n?10+3*(H+10)+60:H+80, px=n?110:190;
+  s+=G('a-pop',1.8,dish(px,py,n?54:62,[['#3E5F82',10],['#F3EEE2',14]])+T(px,py+(n?70:80),'white colonies carry an insert','note mid f12'));
+  const tx=n?14:300, ty=n?py+96+30:py-28;
+  s+=G('a-fade',2.4,wrap(n?'Blue–white needs X-gal and IPTG, and only works with lacZα vectors in a lacZΔM15 host such as DH5α.':'Blue–white screening needs X-gal and IPTG in the plate, a lacZα vector such as pUC19, and a host like DH5α carrying lacZΔM15. Many modern vectors use a toxic gene instead: only a clone that interrupts it survives.',n?46:48).map((l,i)=>T(tx,ty+i*19,l,'lab start '+(n?'f13':'f14'))).join(''));
+  return {vb:n?slim(py+170):wide(py+70),s};
+}
+
+function scCheck(n){
+  const gx=n?20:60, gy=n?44:50, gw=n?120:150, gh=n?120:140;
+  let s=G('a-fade',0,gel(gx,gy,gw,gh,[{t:'L',b:[[.12,5],[.26,5],[.42,5],[.62,5],[.82,5]]},{t:'1',b:[[.3,6]]},{t:'2',b:[[.72,6]]},{t:'3',b:[[.3,6]]}])+T(gx+gw/2,gy-14,'colony PCR','lab mid f14'));
+  s+=G('a-fade',.6,T(gx+gw/2,gy+gh+30,'lanes 1 and 3: insert present','note mid f11')+T(gx+gw/2,gy+gh+46,'lane 2: empty vector','note mid f11'));
+  const items=[['Colony PCR','One primer in the vector, one in the insert: it tests size and orientation at once.'],
+   ['Diagnostic digest','Cut the miniprep with enzymes chosen to give a pattern unique to the right clone.'],
+   ['Sequencing','Sanger across the junctions, or nanopore over the whole plasmid: the only check that finds a point mutation from PCR.']];
+  const tx=n?14:260, ty=n?gy+gh+76:46;
+  let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:50);s+=G('a-fade',(.8+i*.4).toFixed(1),T(tx,yy,it[0],'cname start '+(n?'f15':''))+L.map((l,j)=>T(tx,yy+20+j*17,l,'note start f13')).join(''));yy+=L.length*17+36;});
+  const FL=wrap(n?'Always sequence anything made by PCR.':'Always sequence anything that passed through a polymerase.',n?44:48);
+  s+=G('a-fade',2.2,FL.map((l,i)=>T(tx,yy-8+i*19,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yy+FL.length*19+6):wide(Math.max(gy+gh+60,yy+FL.length*19+6)),s};
+}
+
+/* ===================== Part III · PCR-based assembly ===================== */
+function scPCRends(n){
+  const y=n?80:90, x1=n?40:120, x2=n?320:540;
+  let s=G('a-fade',0,duplex(x1,x2,y,{col:INS,label:'template'}));
+  s+=G('a-pop',.6,`<path d="M${x1-18} ${y-16} h58" stroke="${RED2}" stroke-width="3.4" marker-end="url(#ahp)"/>`+`<path d="M${x2+18} ${y+26} h-58" stroke="${RED2}" stroke-width="3.4" marker-end="url(#ahp)"/>`
+    +`<rect x="${x1-44}" y="${y-22}" width="28" height="12" rx="3" fill="${VEC}"/><rect x="${x2+16}" y="${y+20}" width="28" height="12" rx="3" fill="${VEC}"/>`
+    +T(x1-30,y-30,'tail','note mid f11')+T(x2+30,y+48,'tail','note mid f11'));
+  const y2=y+(n?80:86);
+  s+=G('a-fade',1.4,duplex(x1-44,x2+44,y2,{col:INS})+`<rect x="${x1-44}" y="${y2-5}" width="28" height="19" rx="3" fill="${VEC}" opacity=".85"/><rect x="${x2+16}" y="${y2-5}" width="28" height="19" rx="3" fill="${VEC}" opacity=".85"/>`
+    +T((x1+x2)/2,y2+32,'product now carries whatever ends you designed','note mid f12'));
+  const rows=[['homology to the vector','Gibson, In-Fusion, SLIC, CPEC'],['a Type IIS site','Golden Gate, MoClo'],['a restriction site plus spacer','classical cloning'],['a 3′-A, added by Taq','TA cloning']];
+  const ty=y2+(n?62:66);
+  s+=G('a-fade',2,T(n?14:60,ty,'Put in the tail…','cname start '+(n?'f14':''))+T(n?170:330,ty,'…and you get','cname start '+(n?'f14':''))+ln(n?12:58,ty+8,n?350:616,ty+8));
+  rows.forEach((r,i)=>{const yy=ty+28+i*(n?26:26);s+=G('a-fade',(2.2+i*.2).toFixed(1),T(n?14:60,yy,r[0],'lab start '+(n?'f12':'f14'))+T(n?170:330,yy,r[1],'note start '+(n?'f12':'f13')));});
+  return {vb:n?slim(ty+28+4*26+16):wide(ty+28+4*26+16),s};
+}
+
+function scGibson(n){
+  const W=n?340:148, H=n?118:168;
+  const draw=(i)=>(bx,by,w,h)=>{const cy=by+h-(n?34:40), x1=bx+14, x2=bx+w-14, m=(x1+x2)/2;
+    if(i===0)return duplex(x1,m-4,cy,{col:VEC})+duplex(m+4,x2,cy,{col:INS})+T(m,cy+26,'shared ends','note mid f10');
+    if(i===1)return `<path d="M${x1} ${cy} H${m+10}" stroke="${VEC}" stroke-width="2.6"/><path d="M${x1+8} ${cy+9} H${m-14}" stroke="${VEC}" stroke-width="2.6"/>`
+      +`<path d="M${m-10} ${cy+9} H${x2}" stroke="${INS}" stroke-width="2.6"/><path d="M${m+14} ${cy} H${x2-8}" stroke="${INS}" stroke-width="2.6"/>`+blob(m,cy-22,14,9,EXO)+Tc(m,cy-19,'T5','#3A2E22',9,'mono mid','600');
+    if(i===2)return `<path d="M${x1} ${cy} H${x2}" stroke="${VEC}" stroke-width="2.6"/><path d="M${x1} ${cy+9} H${x2}" stroke="${INS}" stroke-width="2.6"/>`+rungs(m-26,m+26,cy,cy+9)+T(m,cy+28,'anneal','note mid f10');
+    if(i===3)return `<path d="M${x1} ${cy} H${x2}" stroke="${VEC}" stroke-width="2.6"/><path d="M${x1} ${cy+9} H${x2}" stroke="${INS}" stroke-width="2.6"/>`+blob(m-16,cy-22,13,9,POLY)+Tc(m-16,cy-19,'pol','#3A2E22',8,'mono mid','600')+blob(m+16,cy-22,13,9,LIG)+Tc(m+16,cy-19,'lig','#F3EDE0',8,'mono mid','600');
+    return '';};
+  const items=[['Overlaps','Each fragment shares 20–40 bp with its neighbour, added by PCR or synthesis.',draw(0)],
+   ['Chew back','T5 exonuclease eats the 5′ ends, exposing long single-stranded tails.',draw(1)],
+   ['Anneal','The matching tails find each other. Long overlaps make this specific.',draw(2)],
+   ['Fill and seal','Phusion fills the gaps, Taq ligase seals the nicks. One tube, 50 °C, 15–60 min.',draw(3)]];
+  let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,10,0);
+  const yb=n?10+4*(H+10)+10:20+H+28;
+  const BL=wrap(n?'Daniel Gibson and colleagues, 2009. Scarless, and it joins several fragments at once, but it needs long matching ends and dislikes repeats.':'Daniel Gibson and colleagues at the J. Craig Venter Institute, 2009. The join is scarless and several fragments go together at once; the costs are long overlapping primers and trouble with repeated sequences.',n?46:88);
+  s+=G('a-fade',2.4,BL.map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yb+BL.length*20+14):wide(yb+BL.length*20+14),s};
+}
+
+function scGolden(n){
+  const dx=n?16:21, x=n?34:110, y=n?92:100;
+  let s=G('a-fade',0,T(n?180:320,n?32:38,'A Type IIS enzyme cuts away from its own site','lab mid '+(n?'f14':'')));
+  s+=G('a-fade',.4,seqPair(x,y,'GGTCTCNNNNN','CCAGAGNNNNN',dx,{fs:n?13:15,hi2:[0,1,2,3,4,5]})
+    +Tc(x-14,y,"5′",'#6A5B47',10,'mono end')+Tc(x-14,y+22,"3′",'#6A5B47',10,'mono end'));
+  s+=G('a-pop',1.0,cutMark(x+7*dx,y-14,y+4)+cutMark(x+11*dx,y+16,y+36)
+    +T(x+3*dx,y-22,'recognition site','mono mid f11')
+    +`<path d="M${x+6.2*dx} ${y-28} h${4.4*dx}" stroke="${RED2}" stroke-width="1.4" marker-end="url(#ahp)"/>`+T(x+9*dx,y-34,'cuts 1 nt away','note mid f11'));
+  s+=G('a-fade',1.6,T(x+9*dx,y+(n?56:60),'leaving a 4-nt overhang whose sequence is yours to choose','note mid f12'));
+  const y2=y+(n?92:98);
+  s+=G('a-fade',2,T(n?14:110,y2,'So put the sites at the ends of each part, facing inwards:','note start '+(n?'f12':'f13')));
+  const fy=y2+(n?28:32), fw=n?300:420, fx=n?30:160;
+  s+=G('a-fade',2.3,`<rect x="${fx}" y="${fy}" width="${fw}" height="22" rx="3" fill="${INS}" stroke="${INK}"/>`+Tc(fx+fw/2,fy+16,'your part','#F3EDE0',12,'mono mid','600')
+    +`<rect x="${fx-(n?26:34)}" y="${fy}" width="${n?26:34}" height="22" rx="3" fill="${ENZ}" stroke="${INK}"/><rect x="${fx+fw}" y="${fy}" width="${n?26:34}" height="22" rx="3" fill="${ENZ}" stroke="${INK}"/>`
+    +`<path d="M${fx-(n?13:17)} ${fy-8} h${n?16:22}" stroke="${RED2}" stroke-width="1.4" marker-end="url(#ahp)"/><path d="M${fx+fw+(n?13:17)} ${fy-8} h${n?-16:-22}" stroke="${RED2}" stroke-width="1.4" marker-end="url(#ahp)"/>`
+    +Tc(fx+6,fy+36,'AATG','#2F5276',10,'mono mid','600')+Tc(fx+fw-6,fy+36,'GCTT','#2F5276',10,'mono mid','600'));
+  const y3=fy+(n?58:62);
+  const L=wrap(n?'The enzyme reaches inwards and cuts the part free, leaving your chosen overhangs. The recognition sites stay behind on the flanking DNA, so the released part no longer carries them.':'The enzyme reaches inwards and cuts the part free with your chosen overhangs. The recognition sites are left behind on the flanking DNA, so the released part no longer carries them.',n?46:80);
+  s+=G('a-fade',2.8,L.map((l,i)=>T(n?14:30,y3+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(y3+L.length*20+14):wide(y3+L.length*20+16),s};
+}
+
+function scGoldenPot(n){
+  const x=n?14:30, y0=n?36:42;
+  let s=G('a-fade',0,T(x,y0,'One tube: enzyme, ligase, all the parts and the vector','cname start '+(n?'f14':'')));
+  const cy=y0+(n?62:62), cx=n?92:140, r=n?38:44;
+  s+=G('a-fade',.4,`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#B9A889" stroke-width="2" stroke-dasharray="5 4"/>`
+    +Tc(cx,cy-6,'37 °C','#A4473A',n?12:13,'mono mid','600')+Tc(cx,cy+12,'16 °C','#2F5276',n?12:13,'mono mid','600')
+    +`<path d="${arcP(cx,cy,r,-Math.PI*.9,-Math.PI*.1)}" stroke="${RED2}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`
+    +`<path d="${arcP(cx,cy,r,Math.PI*.1,Math.PI*.9)}" stroke="${BLUE}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`
+    +T(cx,cy-r-12,'cut','note mid f11')+T(cx,cy+r+18,'ligate','note mid f11'));
+  const tx=n?14:230, ty=n?cy+r+46:y0+30;
+  const items=[['Wrong join','two overhangs that do not match cannot be ligated at all'],
+   ['Re-cut','a part that religates to its own flanking DNA still carries the site, so the enzyme cuts it again'],
+   ['Correct join','the junction holds only the 4-nt overhang — no site is left, so it can never be cut again']];
+  let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:56);
+    s+=G('a-fade',(1+i*.4).toFixed(1),(i===2?mark(tx+8,yy-4,true,9):mark(tx+8,yy-4,false,9))+T(tx+24,yy,it[0],'cname start '+(n?'f14':''))
+      +L.map((l,j)=>T(tx+24,yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+34;});
+  const L2=wrap(n?'Every cycle removes more of the wrong products and locks in the right one, so a whole assembly builds up in an hour. Order comes from the overhangs: give every junction a different 4-nt sequence and the parts can only line up one way.':'Each cycle destroys more of the wrong products and locks in the right ones, so a complete assembly accumulates in about an hour. Order comes from the overhangs alone: give every junction a different four-base sequence and the parts can only line up one way. Engler and Marillonnet, 2008.',n?46:88);
+  s+=G('a-fade',2.4,L2.map((l,i)=>T(n?14:30,yy+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  const yb=yy+L2.length*20+(n?10:12);
+  const L3=wrap(n?'Enzymes: BsaI, BsmBI (Esp3I), BbsI, SapI, PaqCI':'Common enzymes: BsaI, BsmBI (Esp3I), BbsI, SapI, PaqCI. Remove any internal sites from your parts first — “domestication”.',n?46:80);
+  s+=G('a-fade',3,L3.map((l,i)=>T(n?14:30,yb+i*18,l,'note start '+(n?'f12':''))).join(''));
+  return {vb:n?slim(yb+L3.length*18+14):wide(yb+L3.length*18+16),s};
+}
+
+function scMoClo(n){
+  const x=n?14:30;
+  let s=G('a-fade',0,T(x,n?30:36,'The trouble with one round of assembly','cname start '+(n?'f14':''))
+    +wrap('If every junction needs its own overhang, a big construct needs a long list of them, and each part must be free of the enzyme’s sites. MoClo solves both by building in levels.',n?46:88).map((l,i)=>T(x,(n?52:58)+i*19,l,'note start '+(n?'f12':'f13'))).join(''));
+  const y0=n?118:122, W=n?340:188, H=n?106:118;
+  const lv=[['Level 0','a single part: promoter, RBS, coding sequence or terminator','BsmBI','into a part vector'],
+   ['Level 1','one transcription unit, built from four Level 0 parts','BsaI','position tags set the order'],
+   ['Level 2','several units in one plasmid','BsmBI','end-linkers close the set']];
+  lv.forEach((l,i)=>{const bx=n?10:10+i*206, by=n?y0+i*(H+12):y0;
+    let g=box(bx,by,W,H,'#E7DEC9',4)+T(bx+16,by+24,l[0],'cname start '+(n?'f15':''))+Tc(bx+W-16,by+24,l[2],'#2F5276',12,'mono end','600')
+      +wrap(l[1],n?42:26).map((t,j)=>T(bx+16,by+44+j*15,t,'note start f12')).join('');
+    const yy=by+H-(n?24:26), bw=(W-32)/(i===0?1:4);
+    for(let k=0;k<(i===0?1:4);k++)g+=`<rect x="${bx+16+k*bw+1}" y="${yy}" width="${bw-2}" height="13" rx="2" fill="${[PROM,'#2E7D78',INS,TERM][i===0?2:k]}" stroke="${INK}" stroke-width=".6"/>`;
+    s+=G('a-fade',(.6+i*.5).toFixed(1),g);
+    if(i<2)s+=G('a-fade',(.8+i*.5).toFixed(1),n?`<path d="M180 ${by+H+1} v9" class="arrow"/>`:`<path d="M${bx+W+2} ${by+H/2} h7" class="arrow"/>`);});
+  const yb=n?y0+3*(H+12)+12:y0+H+30;
+  const L=wrap(n?'The two enzymes alternate, so each round cuts out the sites the round before left behind. Standard overhangs mean a promoter from one lab drops into another lab’s build: MoClo, GoldenBraid, and bacterial kits such as CIDAR.':'The two enzymes alternate, so each round removes the sites that the previous round left behind, and the product of one level is a clean substrate for the next. Because the overhangs are agreed in advance, a promoter made in one lab drops straight into another lab’s build: MoClo, GoldenBraid, and bacterial kits such as CIDAR.',n?46:88);
+  s+=G('a-fade',2.4,L.map((l,i)=>T(x,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yb+L.length*20+14):wide(yb+L.length*20+16),s};
+}
+
+function scTopo(n){
+  const y=n?90:100, dx=n?20:24, x=n?40:150;
+  let s=G('a-fade',0,T(n?180:320,n?32:38,'The enzyme arrives already loaded','lab mid '+(n?'f14':'')));
+  s+=G('a-fade',.4,duplex(x,x+(n?130:180),y,{col:VEC})+T(x+(n?65:90),y+32,'linearised vector','note mid f11')
+    +Tc(x+(n?138:188),y+4,'CCCTT','#A4473A',n?11:13,'mono start','600'));
+  s+=G('a-pop',1.0,blob(x+(n?150:210),y-20,n?20:24,n?14:16,ENZ)+Tc(x+(n?150:210),y-16,'Topo','#3A2E22',10,'mono mid','600')
+    +`<path d="M${x+(n?150:210)} ${y-6} v${n?8:10}" stroke="${ENZ}" stroke-width="3"/>`+(n?T(180,y-44,'covalent bond to the 3′ phosphate','note mid f11'):T(x+250,y-18,'covalent bond to the 3′ phosphate','note start f11')));
+  const y2=y+(n?80:86);
+  s+=G('a-fade',1.8,duplex(x,x+(n?120:160),y2,{col:INS})+T(x+(n?60:80),y2+30,'your PCR product','note mid f11')
+    +`<path d="M${x+(n?130:176)} ${y2+4} h${n?40:60}" class="arrow"/>`+T(x+(n?190:260),y2+8,'5 min, room temperature','lab start '+(n?'f13':'')));
+  const ty=y2+(n?62:66);
+  const TL0=wrap(n?'Vaccinia topoisomerase I cuts at CCCTT and stays attached to the DNA, storing the bond’s energy. When your insert’s end base-pairs, the enzyme reverses the reaction and seals the join, then lets go. No ligase, no ATP.':'Vaccinia virus topoisomerase I cuts at CCCTT and stays joined to the DNA through a phosphotyrosine bond, holding the energy of the broken bond. When your insert anneals, the enzyme simply runs the reaction backwards, seals the join and releases. No ligase and no ATP are needed, which is why it takes five minutes.',n?46:88);
+  s+=G('a-fade',2.4,TL0.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  const yb=ty+TL0.length*20+(n?6:10);
+  const rows=[['TOPO-TA','Taq leaves a 3′-A; the vector offers a 3′-T'],['Blunt TOPO','for proofreading polymerases, which leave blunt ends'],['Directional','add CACC to one primer; it pairs with the vector’s GTGG']];
+  rows.forEach((r,i)=>{const yy=yb+i*(n?34:24);s+=G('a-fade',(3+i*.2).toFixed(1),Tc(n?14:30,yy,r[0],'#2F5276',12,'mono start','600')+T(n?14:170,yy+(n?16:0),r[1],'note start '+(n?'f12':'f13')));});
+  return {vb:n?slim(yb+3*34+14):wide(yb+3*24+16),s};
+}
+
+function scMutagenesis(n){
+  const W=n?340:190, H=n?110:132;
+  const items=[['Whole-plasmid PCR','Two back-to-back primers carrying the change amplify the entire plasmid as a line.'],
+   ['Remove the template','DpnI cuts only methylated DNA, so it destroys the plasmid you grew in E. coli and spares the PCR product.'],
+   ['Close the circle','Kinase and ligase, or a short overlap, join the ends. Transform and sequence.']];
+  let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,12,0);
+  const yb=n?10+3*(H+10)+10:20+H+28;
+  const QL=wrap(n?'The same trick inserts, deletes or swaps a promoter: change what the primer tails carry. Round-the-horn, KLD and QuikChange are versions of this.':'The same layout inserts, deletes or swaps a promoter: it depends only on what the primer tails carry. QuikChange, round-the-horn and the KLD kits are variations. DpnI selection is what makes it work.',n?46:88);
+  s+=G('a-fade',1.8,QL.map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yb+QL.length*20+14):wide(yb+QL.length*20+14),s};
+}
+
+const PICK=[
+ {k:'One insert, one vector',best:'Restriction + ligation',alt:'or Gibson, if the sites are awkward',why:'With convenient sites this is the cheapest route and needs no special reagents. Use two different enzymes so the insert can only go in one way.'},
+ {k:'Scarless fusion (a tag)',best:'Gibson or In-Fusion',alt:'or Golden Gate with chosen overhangs',why:'Nothing extra is left between the tag and the gene, so the reading frame and any linker are exactly what you designed.'},
+ {k:'4–8 fragments at once',best:'Golden Gate',alt:'or Gibson for longer overlaps',why:'One tube, one enzyme, cycling between digestion and ligation. Standard overhangs let you reuse parts; just remove internal sites from your parts first.'},
+ {k:'Reuse parts across many builds',best:'MoClo / Golden Gate kit',alt:'',why:'Hierarchical levels and agreed overhangs turn promoters, RBSs and genes into interchangeable bricks, which pays off from the second construct onwards.'},
+ {k:'Just capture a PCR product',best:'TOPO or TA cloning',alt:'or blunt ligation',why:'Fastest route to a sequencing-ready clone when you do not care about the junctions. Convenient but proprietary, and it leaves vector-specific scars.'},
+ {k:'Change one base',best:'Whole-plasmid PCR + DpnI',alt:'',why:'No assembly at all: amplify the plasmid with primers carrying the change, destroy the template, re-circularise.'},
+ {k:'A library of variants',best:'Golden Gate or Gibson with degenerate primers',alt:'',why:'Put the randomised bases in the primer tails. Golden Gate gives cleaner libraries because the join is defined by fixed overhangs.'},
+ {k:'Large construct, >15 kb',best:'Gibson, or yeast assembly',alt:'',why:'Long overlaps tolerate big pieces; for very large constructs, homologous recombination in yeast still beats anything done in a tube.'}];
+let pickSel=0;
+function scPick(n){
+  const m=PICK[pickSel];
+  let s=G('a-fade',0,T(n?14:30,n?30:36,'You want to…','note start f12')+T(n?14:30,n?54:62,m.k,'cname start '+(n?'':'')));
+  const by=n?76:86;
+  s+=G('a-pop',.3,box(n?10:24,by,n?340:400,n?62:64,'#E7DEC9',4)+T(n?24:40,by+26,'Use','note start f12')+T(n?60:84,by+27,m.best,'cname start acc '+(n?'f15':''))
+    +(m.alt?T(n?24:40,by+48,m.alt,'note start f12'):''));
+  const ty=by+(n?80:84);
+  s+=G('a-fade',.6,wrap(m.why,n?46:84).map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f14':''))).join(''));
+  const L=wrap(m.why,n?46:84);
+  return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
+}
+
+/* ===================== Part IV · into the chromosome ===================== */
+function scAllelic(n){
+  const y=n?80:88, x1=n?20:60, x2=n?340:600, w=x2-x1;
+  const chrom=(yy)=>`<path d="M${x1} ${yy} H${x2}" stroke="${VEC}" stroke-width="3"/>`;
+  let s=G('a-fade',0,chrom(y)+`<rect x="${x1+w*.38}" y="${y-8}" width="${w*.24}" height="16" rx="3" fill="${INS}" stroke="${INK}"/>`+Tc(x1+w*.5,y+4,'target gene','#F3EDE0',11,'mono mid','600')
+    +`<rect x="${x1+w*.2}" y="${y-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/><rect x="${x1+w*.62}" y="${y-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/>`
+    +T(x1+w*.29,y+30,'left flank','note mid f11')+T(x1+w*.71,y+30,'right flank','note mid f11'));
+  const py=y+(n?96:104);
+  s+=G('a-pop',.8,plasmid(n?180:320,py+(n?48:54),n?40:46,[[.08,.3,'#D9CDB2','L'],[.32,.56,AMP,'marker'],[.58,.8,'#D9CDB2','R']],{name:'suicide',sub:'no ori here',fw:8,fs:10}));
+  s+=G('a-fade',1.4,`<path d="M${(n?180:320)} ${py-6} v${-18}" class="arrow"/>`);
+  const y3=py+(n?118:130);
+  s+=G('a-fade',2,chrom(y3)+`<rect x="${x1+w*.38}" y="${y3-8}" width="${w*.24}" height="16" rx="3" fill="${AMP}" stroke="${INK}"/>`+Tc(x1+w*.5,y3+4,'marker','#3A2E22',11,'mono mid','600')
+    +`<rect x="${x1+w*.2}" y="${y3-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/><rect x="${x1+w*.62}" y="${y3-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/>`
+    +`<path d="M${x1+w*.29} ${py+(n?92:100)} L${x1+w*.33} ${y3-14} M${x1+w*.71} ${py+(n?92:100)} L${x1+w*.67} ${y3-14}" stroke="${RED2}" stroke-width="1.6" stroke-dasharray="4 3"/>`
+    +T(x1+w*.5,y3+30,'double crossover: the gene is replaced','lab mid '+(n?'f13':'')));
+  const ty=y3+(n?54:58);
+  const AL=wrap(n?'A single crossover inserts the whole plasmid; a counterselection marker such as sacB (sucrose-sensitive) or pheS* then forces the second crossover, which leaves a clean, markerless deletion.':'A single crossover integrates the whole plasmid. A counterselection marker — sacB, which makes cells sucrose-sensitive, or a mutant pheS — then forces the second crossover, giving a clean markerless deletion. This two-step logic underlies most bacterial gene replacement.',n?46:88);
+  s+=G('a-fade',2.6,AL.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+AL.length*20+14):wide(ty+AL.length*20+14),s};
+}
+
+function scRecomb(n){
+  const x=n?14:30;
+  let s=G('a-fade',0,T(x,n?30:36,'Three phage proteins do the work','cname start '+(n?'f14':'')));
+  const y0=n?52:58;
+  const prot=[['Exo','chews back one strand from each end, 5′ → 3′, leaving long 3′ single-stranded tails','#C17A2C'],
+   ['Beta','coats those tails and anneals them to matching sequence at the replication fork','#3E5F82'],
+   ['Gam','blocks RecBCD and SbcCD, the nucleases that would otherwise destroy linear DNA','#7D4A98']];
+  let yy=y0;prot.forEach((p,i)=>{const L=wrap(p[1],n?42:72);
+    s+=G('a-fade',(.3+i*.4).toFixed(1),`<rect x="${x}" y="${yy-12}" width="${n?46:54}" height="20" rx="4" fill="${p[2]}" stroke="${INK}"/>`+Tc(x+(n?23:27),yy+3,p[0],'#F3EDE0',12,'mono mid','600')
+      +L.map((l,j)=>T(x+(n?58:68),yy+j*17,l,'note start f13')).join(''));yy+=L.length*17+(n?16:14);});
+  const dy=yy+(n?14:16);
+  s+=G('a-fade',1.6,T(x,dy,'Why it beats classical recombination','cname start '+(n?'f14':'')));
+  const L2=wrap(n?'RecA needs hundreds of base pairs of homology. Beta needs only 40–50, which fits on the tail of an ordinary PCR primer — so the targeting DNA costs nothing more than two oligos.':'Homologous recombination through RecA needs hundreds of base pairs of homology. Beta needs only 40–50 nucleotides, which fits comfortably on the tail of an ordinary PCR primer. That is the whole trick: the targeting homology costs nothing more than two oligos.',n?46:88);
+  s+=G('a-fade',1.9,L2.map((l,i)=>T(x,dy+(n?24:26)+i*20,l,'note start '+(n?'f12':'f13'))).join(''));
+  const py=dy+(n?24:26)+L2.length*20+(n?16:18);
+  const W=n?340:148, H=n?104:140;
+  const items=[['Arm the cell','pKD46 carries the three genes under an arabinose promoter, so you induce them only when needed.'],
+   ['Make the cassette','PCR a resistance gene flanked by FRT sites, with 40–50 nt of chromosomal homology added as primer tails.'],
+   ['Electroporate','Red recombines the linear product into the chromosome; select for the resistance.'],
+   ['Remove the marker','pCP20 supplies FLP, which recombines the two FRT sites and excises the marker, leaving an 80 bp scar.']];
+  s+=n?stepRows(n,items,10,py,W,H,10,2.2):stepBoxes(n,items,10,py,W,H,10,2.2);
+  const yb=n?py+4*(H+10)+10:py+H+26;
+  const L3=wrap(n?'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way.':'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way. Supplying Beta alone with a single-stranded oligo can change one base, with no marker and no scar at all.',n?46:88);
+  s+=G('a-fade',4,L3.map((l,i)=>T(x,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yb+L3.length*20+14):wide(yb+L3.length*20+16),s};
+}
+
+function scNatural(n){
+  const cx=n?90:150, cy=n?100:110;
+  let s=G('a-fade',0,`<ellipse cx="${cx}" cy="${cy}" rx="${n?54:62}" ry="${n?40:46}" fill="#DCE2C9" stroke="${INK}" stroke-width="1.4" class="tint"/>`
+    +[0,1,2].map(i=>blob(cx-30+i*30,cy-(n?44:50),8,6,'#C99A2E')).join('')+T(cx,cy-(n?62:70),'CSP','mono mid f11')
+    +`<rect x="${cx-8}" y="${cy-(n?40:46)-4}" width="16" height="12" rx="3" fill="${ENZ}" stroke="${INK}"/>`
+    +`<path d="M${cx} ${cy-(n?30:36)} v${n?26:30}" stroke="${INS}" stroke-width="2.6"/>`+T(cx,cy+(n?16:20),'ssDNA','mono mid f11')+T(cx,cy+(n?54:62),'competent pneumococcus','note mid f12'));
+  const bx=n?14:300, by=n?190:46;
+  const items=[['Add CSP','competence-stimulating peptide switches on ComX and the uptake machinery'],['Add DNA','a PCR product with ~1 kb flanks is enough; one strand enters and RecA pairs it'],['Select','the Janus cassette carries kan and a wild-type rpsL; in a streptomycin-resistant strain it makes cells sensitive again'],['Swap it out','replace Janus with your edit and select on streptomycin: markerless, scarless']];
+  let yy=by;items.forEach((it,i)=>{const L=wrap(it[1],n?44:44);s+=G('a-fade',(.6+i*.4).toFixed(1),badge((n?20:bx+8),yy-4,i+1)+T((n?36:bx+24),yy,it[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T((n?36:bx+24),yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+34;});
+  const NL=wrap(n?'Sung and Morrison, 2001. Griffith’s transformation, turned into a cloning tool.':'Sung, Morrison and colleagues, 2001. Griffith’s 1928 transforming principle, turned into a routine editing tool. Bacillus subtilis, Haemophilus, Neisseria and Acinetobacter are also naturally competent.',n?46:44);
+  s+=G('a-fade',2.4,NL.map((l,i)=>T(n?14:bx,yy+i*19,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yy+NL.length*19+14):wide(Math.max(cy+90,yy+NL.length*19+14)),s};
+}
+
+function scCRISPRedit(n){
+  const W=n?340:190, H=n?108:140;
+  const items=[['Edit by recombineering','A template oligo or PCR product carries the change, but most cells keep the wild-type sequence.'],
+   ['Cut the survivors','Cas9 with a guide against the wild-type sequence kills every cell that was not edited.'],
+   ['Escape the cut','The edited allele has lost the guide match or its PAM, so it survives: selection without a marker.']];
+  let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,12,0);
+  const yb=n?10+3*(H+10)+8:20+H+26;
+  const EL=wrap(n?'Jiang and Marraffini, 2013. Many bacteria repair breaks poorly, which is exactly why an unrepaired cut is lethal and makes such a clean counterselection. Base editors (dCas9–deaminase) change C·G to T·A with no break at all.':'Jiang, Marraffini and colleagues, 2013. Most bacteria lack efficient non-homologous end joining, so an unrepaired double-strand break is lethal — which is precisely what makes Cas9 such a clean counterselection. Base editors, a nicking Cas9 fused to a cytidine deaminase, change C·G to T·A with no break at all.',n?46:88);
+  s+=G('a-fade',1.8,EL.map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yb+EL.length*20+14):wide(yb+EL.length*20+14),s};
+}
+
+/* ===================== Part V · libraries ===================== */
+
+/* ===================== Part VI · plan a build ===================== */
+const PLANS=[
+ {k:'Overexpress a gene',steps:[['PCR the CDS','primers add homology to the vector'],['Assemble','Gibson into an expression vector with a T7 or inducible promoter'],['Verify','colony PCR, then sequence the whole insert'],['Express','induce, check on a gel']],note:'For a pneumococcal gene in E. coli, watch for rare codons and toxicity; a tightly repressed promoter helps.'},
+ {k:'Delete a gene',steps:[['Build the flanks','PCR ~1 kb each side'],['Join to a marker','Golden Gate or overlap PCR gives flank–marker–flank'],['Deliver','natural transformation, recombineering, or a suicide plasmid'],['Confirm','PCR across both junctions and sequence']],note:'Use a markerless route (Janus, sacB, Cas9 counterselection) if you plan several deletions in one strain.'},
+ {k:'Knock down an essential gene',steps:[['Pick guides','20 nt next to a PAM on the non-template strand, near the promoter'],['Clone the guide','anneal two oligos into a BsaI-cut sgRNA vector'],['Deliver dCas9','Mobile-CRISPRi at attTn7, or a replicating plasmid'],['Titrate','induce at several levels and measure growth']],note:'Remember the knockdown is polar: everything downstream in the operon goes down too.'},
+ {k:'Tag a protein at its own locus',steps:[['Design the junction','keep the reading frame; add a flexible linker such as GSGS'],['Build','Gibson or Golden Gate, tag between the last codon and the stop'],['Integrate','transform with flanks, select, then remove the marker'],['Check','western blot and a function test — tags can break things']],note:'For a membrane or secreted protein, put the tag where it will not block the signal peptide or the sortase motif.'},
+ {k:'Build a synthetic operon',steps:[['Collect parts','promoter, RBS, CDSs, terminator as Level 0 parts'],['Domesticate','remove internal BsaI and BsmBI sites by silent mutation'],['Assemble','Golden Gate, Level 1 then Level 2'],['Tune','swap RBS parts to balance expression']],note:'Standard overhangs mean the second and third build take an afternoon rather than a month.'},
+ {k:'Make a mutant library',steps:[['Randomise','degenerate bases, such as NNK, in the primer tail'],['Assemble','Golden Gate for defined junctions'],['Transform at scale','electroporation; count colonies to estimate coverage'],['Screen or select','or sequence the pool before and after']],note:'Library size is usually limited by transformation, not by the assembly.'}];
+let planSel=0;
+function scPlan(n){
+  const m=PLANS[planSel];
+  let s=G('a-fade',0,T(n?14:30,n?30:36,'Goal','note start f12')+T(n?14:30,n?54:62,m.k,'cname start'));
+  const y0=n?78:86, W=n?340:146, H=n?86:118;
+  m.steps.forEach((st,i)=>{const x=n?10:10+i*155, y=n?y0+i*(H+8):y0;
+    s+=G('a-fade',(.3+i*.3).toFixed(1),box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,st[0],'lab start f14')
+      +wrap(st[1],n?42:24).map((l,j)=>T(x+14,y+40+j*16,l,'note start f12')).join(''));
+    if(!n&&i<m.steps.length-1)s+=G('a-fade',(.4+i*.3).toFixed(1),`<path d="M${x+W+2} ${y+H/2} h5" class="arrow"/>`);});
+  const ty=n?y0+4*(H+8)+12:y0+H+28;
+  const L=wrap(m.note,n?46:88);
+  s+=G('a-fade',1.6,`<rect x="${n?10:24}" y="${ty-18}" width="${n?340:600}" height="${L.length*20+14}" rx="4" fill="#E7DEC9" opacity=".7"/>`
+    +L.map((l,i)=>T(n?22:38,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
+}
+
+/* ===================== scenes ===================== */
+const NAR='Narrator';
+const S=[
+ {p:1,title:'The problem',draw:scProblem,
+  text:"Molecular cloning is simple to state and fiddly to do: take a piece of DNA, join it to a plasmid that a cell will copy, and get that cell to keep it. Every method in this primer is a different answer to the joining step, and each was invented to escape a limitation of the one before."},
+ {p:1,title:'Enzymes that cut DNA',draw:scRE,
+  text:"Bacteria defend themselves against phage by cutting foreign DNA at specific sequences. Werner Arber and Stuart Linn worked out the logic in the 1960s; in 1970 Hamilton Smith purified an enzyme that cut at a fixed sequence, and Daniel Nathans used it to map the SV40 genome. Because many of these enzymes cut the two strands at different points, they leave short single-stranded overhangs, and two fragments cut by the same enzyme can pair with each other."},
+ {p:1,title:'The first recombinant plasmids',draw:scFirst,
+  text:"In 1972 Paul Berg joined DNA from SV40 and phage λ in a tube. The following year Stanley Cohen and Herbert Boyer cut two plasmids with EcoRI, ligated them, and put the hybrid into E. coli, where it replicated and conferred both resistances. That experiment is the beginning of genetic engineering, and it prompted the 1975 Asilomar meeting on how to do it safely."},
+ {p:1,title:'What a vector carries',draw:scVector,
+  text:"A plasmid vector is a toolkit. The origin of replication sets the copy number and which species will keep it. A selectable marker keeps the cell honest. A multiple cloning site offers unique restriction sites, often inside a promoter–terminator cassette, and may add a purification or fluorescent tag in frame. For work outside E. coli you need a shuttle vector, with an origin for each host."},
+ {p:2,title:'Cut and paste',draw:scCutPaste,
+  text:"Classical cloning has two steps. Cut vector and insert with the same enzymes, then join them with T4 DNA ligase, which seals a nick between a 5′ phosphate and a 3′ hydroxyl using ATP. Matching sticky ends anneal first, which makes the reaction efficient; blunt ends work but far less well, and give no control over orientation. Either way, the recognition sequence remains in the product as a scar."},
+ {p:2,title:'Four things that go wrong',draw:scProblems,
+  text:"Anyone who has done this knows the failure modes. The vector closes on itself, so you treat it with phosphatase. The insert goes in backwards, so you use two different enzymes. An enzyme refuses to cut because the site is methylated or too close to the end of a PCR product. And in the end you can only cut where sites happen to lie. Every method after this was designed to get around that last limitation."},
+ {p:2,title:'Transform, select, screen',draw:scTransform,
+  text:"The ligation goes into competent cells, by heat shock or electroporation, and onto a plate containing the antibiotic. Selection tells you a plasmid is present, not that it is the right one. Blue–white screening adds a second layer: in pUC-type vectors the cloning site sits inside lacZα, so an insert interrupts it and the colony stays white instead of turning blue on X-gal."},
+ {p:2,title:'Checking the clone',draw:scCheck,
+  text:"Three checks, in increasing order of confidence. Colony PCR with one vector primer and one insert primer tests size and orientation in an afternoon. A diagnostic digest of the miniprep confirms the overall structure. Only sequencing finds the single base that a polymerase got wrong, and whole-plasmid nanopore sequencing has made that cheap enough to do routinely."},
+ {p:3,title:'PCR gives you the ends you want',draw:scPCRends,
+  text:"The idea that unlocked everything else is simple: a PCR primer does not have to match the template over its whole length. Add a tail, and the product carries whatever ends you designed — homology to a vector, a Type IIS site, a restriction site, or a single 3′-A. The sequence you need is no longer something you hunt for; it is something you order."},
+ {p:3,title:'Gibson assembly',draw:scGibson,
+  text:"Give neighbouring fragments 20–40 bp of shared sequence and put them in one tube with three enzymes. T5 exonuclease chews back the 5′ ends, exposing single-stranded tails that find their partners; the exonuclease is heat-labile and stops. Phusion polymerase fills the gaps and Taq ligase seals the nicks, all at 50 °C. Daniel Gibson and colleagues published it in 2009 while assembling whole bacterial genomes. It is scarless and takes several fragments at once, but it needs long primers and dislikes repeats."},
+ {p:3,title:'Golden Gate: cutting away from the site',draw:scGolden,
+  text:"An ordinary restriction enzyme cuts inside the sequence it recognises, so the product always carries that sequence. A Type IIS enzyme such as BsaI binds GGTCTC but cuts one base beyond it, which means the four-base overhang it leaves is made of whatever you put there. Flank a part with two sites pointing inwards and the enzyme cuts the part free with exactly the overhangs you designed, while the recognition sites stay behind on the DNA you throw away."},
+ {p:3,title:'Golden Gate: one pot, one direction',draw:scGoldenPot,
+  text:"Because the released part has lost its recognition sites, the reaction becomes a ratchet. Everything goes into a single tube and cycles between 37 °C, where BsaI cuts, and 16 °C, where ligase joins. Overhangs that do not match cannot be ligated at all; a part that religates to its old flanking DNA still carries a site and is simply cut again; but a correct junction contains nothing but the overhang, so it is safe for good. The order of the parts is set by giving every junction a different four-base sequence. Engler and Marillonnet, 2008."},
+ {p:3,title:'MoClo: building in levels',draw:scMoClo,
+  text:"One round of Golden Gate handles a handful of parts well, but a large construct would need a different overhang at every junction and every part would have to be free of the enzyme sites throughout. MoClo splits the job into levels and alternates two enzymes. Level 0 stores single parts, released with BsmBI. Level 1 joins four of them into one transcription unit using BsaI. Level 2 combines units with BsmBI again. Each round removes the sites the round before left behind, so the product of one level is a clean substrate for the next, and because the overhangs are agreed in advance a promoter made in one lab drops into another lab’s build."},
+ {p:3,title:'TOPO and TA cloning',draw:scTopo,
+  text:"TOPO cloning looks like magic because the enzyme is already attached. Vaccinia virus topoisomerase I cuts the vector at CCCTT and stays bound through a phosphotyrosine bond that stores the energy of the broken bond. When your insert anneals, the enzyme runs the reaction backwards and seals the join, then releases. No ligase, no ATP, five minutes. TA cloning uses the 3′-A that Taq leaves; directional TOPO adds CACC to one primer so the product can only go in one way."},
+ {p:3,title:'Changing one base',draw:scMutagenesis,
+  text:"Site-directed mutagenesis needs no assembly at all. Amplify the whole plasmid with back-to-back primers that carry the change, then digest with DpnI, which cuts only methylated DNA and so destroys the template grown in E. coli while sparing the PCR product. Re-circularise and transform. The same layout inserts, deletes or swaps a promoter: only the primer tails change."},
+ {p:3,title:'Which method?',chips:'pick',draw:scPick,
+  text:"There is no best method, only a best fit. Pick a task to see which route most labs would take, and why."},
+ {p:4,title:'Replacing a chromosomal gene',draw:scAllelic,
+  text:"A plasmid is not the goal if you want to study the gene in its own context. Allelic exchange delivers a construct, flanked by about a kilobase of homology on each side, on a suicide vector that cannot replicate in your organism. A single crossover integrates the whole plasmid; counterselection with sacB, which makes cells sucrose-sensitive, or a mutant pheS forces a second crossover that resolves it, leaving a clean replacement."},
+ {p:4,title:'Recombineering',draw:scRecomb,
+  text:"Recombineering swaps the cell’s own recombination machinery for three proteins from phage λ. Exo degrades one strand inwards from each end of a linear fragment, leaving long single-stranded tails. Beta coats those tails and anneals them to matching sequence at the replication fork. Gam blocks RecBCD and SbcCD, the nucleases that would otherwise destroy linear DNA before anything else could happen. The reason this changed bacterial genetics is the homology requirement: RecA needs hundreds of base pairs, Beta needs only forty or fifty, which fits on the tail of an ordinary PCR primer."},
+ {p:4,title:'Natural transformation',draw:scNatural,
+  text:"Some bacteria take up DNA themselves. The pneumococcus becomes competent when competence-stimulating peptide accumulates, and will integrate a PCR product carrying about a kilobase of flanking homology. The Janus cassette makes this markerless: it carries a kanamycin marker and a wild-type rpsL, which in a streptomycin-resistant background makes cells sensitive again, so the second step can select for its removal. Griffith's transforming principle, now a cloning method."},
+ {p:4,title:'Cas9 as counterselection',draw:scCRISPRedit,
+  text:"Most bacteria repair double-strand breaks poorly, which makes Cas9 a superb selection rather than an editor. Supply the edit as a template, then target Cas9 at the original sequence: every unedited cell is killed, and only cells whose sequence has changed enough to lose the guide match or its PAM survive. Jiang and Marraffini showed this in 2013. Base editors go further, changing C·G to T·A with a nicking Cas9 fused to a deaminase, with no break at all."},
+ {p:5,title:'Plan a build',chips:'plan',draw:scPlan,
+  text:"Pick a goal to see one sensible route from start to finish, with the step that most often goes wrong."}
+];
+const CHIPS={pick:{list:PICK.map(p=>p.k),get:()=>pickSel,set:k=>pickSel=k},plan:{list:PLANS.map(p=>p.k),get:()=>planSel,set:k=>planSel=k}};
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  [1,2,3,4,5].forEach(k=>$('part'+k).setAttribute('aria-current',sc.p===k));
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+[1,2,3,4,5].forEach(k=>$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>

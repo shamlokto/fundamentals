@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bateson's Epistasis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage with the narrator's caption beneath, a 1999 Flash primer rebuilt for phones */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4; --sil:#9CA4AE;
+  --icon-stroke:rgba(30,38,50,.38);
+  --g1:#2D5A88; --g2:#B8762A; --g3:#4F7D33; --g4:#7E4A8A; --ok:#3C7D4A; --bad:#B2423A;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; --sil:#5B6573;
+  --icon-stroke:rgba(230,235,240,.5);
+  --g1:#6E9BCB; --g2:#D9A055; --g3:#86B064; --g4:#B784BA; --ok:#6DBB7C; --bad:#E07A70; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; --sil:#5B6573;
+  --icon-stroke:rgba(230,235,240,.5);
+  --g1:#6E9BCB; --g2:#D9A055; --g3:#86B064; --g4:#B784BA; --ok:#6DBB7C; --bad:#E07A70; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0; --sil:#3A2E22; --icon-stroke:#3A2E22;
+  --g1:#3E5F82; --g2:#A8722F; --g3:#5B7B40; --g4:#76507F; --ok:#4F7A3F; --bad:#A4473A;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{font:inherit;font-size:13px;padding:6px 11px;border-radius:8px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text and shapes */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .disp{font-family:var(--plate)} #stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .mono.note{font-family:var(--mono);font-style:normal;font-size:13px}
+#stage .lab{font-family:var(--plate);font-size:16px} #stage .strong{font-weight:600}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:42px}
+#stage use, #stage .tint{filter:url(#plate)}
+#stage .name{font-size:22px} #stage .nbt{font-size:19px}
+#stage .gam{font-family:var(--mono);font-size:12px;fill:var(--accent);font-weight:600}
+#stage .geno{font-family:var(--mono);font-size:9.5px;fill:var(--muted)}
+#stage .count{font-family:var(--mono);font-size:28px;font-weight:600}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .mono.cname{font-family:var(--mono);font-size:15px;font-weight:600}
+#stage .rule{font-family:var(--mono);font-size:11.5px;fill:var(--muted)}
+#stage .key{font-family:var(--mono);font-size:17px;font-weight:600;fill:var(--accent)}
+#stage .ratio{font-family:var(--display);font-size:26px;fill:var(--accent)}
+#stage .cross{font-family:var(--mono);font-size:14px;fill:var(--muted)}
+#stage .stampt{font-family:var(--mono);font-size:13px;letter-spacing:.16em;font-weight:600;fill:var(--accent)}
+#stage .onaccent{fill:var(--on-accent)}
+#stage .white{fill:#fff}
+#stage .cell{fill:var(--cell);stroke:var(--line)}
+#stage .cellf{fill:var(--cell)}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .sil{fill:var(--sil)}
+#stage .stache{stroke:var(--surface);stroke-width:4;fill:none;stroke-linecap:round}
+#stage .stamp{fill:none;stroke:var(--accent);stroke-width:2}
+#stage .accentfill{fill:var(--accent)}
+#stage .bar{stroke:var(--icon-stroke);stroke-width:.8}
+#stage .track{fill:var(--cell)}
+#stage .prog{fill:var(--g4)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:var(--ok)} #stage .badc{fill:var(--bad)}
+#stage .tick{stroke:var(--on-accent);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .sep{stroke:var(--surface);stroke-width:1.5;stroke-dasharray:3 3}
+#stage .g1{fill:var(--g1)} #stage .g2{fill:var(--g2)} #stage .g3{fill:var(--g3)} #stage .g4{fill:var(--g4)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .7s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-40px)}}
+@keyframes grow{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow{animation:none} }
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <!-- Hand-tinted plate: a slight wobble in the ink line plus watercolour grain inside each shape -->
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.8" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.4"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <symbol id="head" viewBox="0 0 60 60">
+    <ellipse cx="42" cy="50" rx="3.6" ry="6" fill="#B4473A"/>
+    <circle cx="30" cy="38" r="15" fill="#F3ECDF" stroke="var(--icon-stroke)" stroke-width="1.2"/>
+    <path d="M44 34 L55 38 L44 42 Z" fill="#E1A53A"/>
+    <circle cx="36" cy="34" r="2.2" fill="#222"/>
+  </symbol>
+  <symbol id="chick-single" viewBox="0 0 60 60">
+    <path d="M16 28 L18 13 L22 22 L25 8 L29 20 L32 7 L35 20 L38 11 L40 22 L43 18 L42 28 Z" fill="#B4473A" stroke="var(--icon-stroke)" stroke-width=".8"/>
+    <use href="#head" width="60" height="60"/>
+  </symbol>
+  <symbol id="chick-rose" viewBox="0 0 60 60">
+    <path d="M7 16 L19 23 Q18 18 23 18 Q24 14 28 17 Q30 13 33 17 Q37 15 38 19 Q42 19 42 24 L42 28 L17 28 Z" fill="#B4473A" stroke="var(--icon-stroke)" stroke-width=".8"/>
+    <use href="#head" width="60" height="60"/>
+  </symbol>
+  <symbol id="chick-pea" viewBox="0 0 60 60">
+    <path d="M19 28 Q19 22 23 22 Q25 16 30 18 Q35 16 36 22 Q40 22 40 28 Z" fill="#B4473A" stroke="var(--icon-stroke)" stroke-width=".8"/>
+    <path d="M24 25 L24 21 M30 25 L30 19 M35 25 L35 21" stroke="#7A2A20" stroke-width="1.2" fill="none"/>
+    <use href="#head" width="60" height="60"/>
+  </symbol>
+  <symbol id="chick-walnut" viewBox="0 0 60 60">
+    <path d="M17 28 Q15 19 24 17 Q30 14 36 17 Q44 19 43 28 Z" fill="#B4473A" stroke="var(--icon-stroke)" stroke-width=".8"/>
+    <path d="M21 24 q3 -3 6 0 q3 3 6 0 q3 -3 6 0 M24 20 q3 2 6 0 q3 -2 6 0" stroke="#7A2A20" stroke-width="1.1" fill="none"/>
+    <use href="#head" width="60" height="60"/>
+  </symbol>
+  <symbol id="flower" viewBox="0 0 60 60">
+    <path d="M30 36 Q32 48 30 58" stroke="#5E8A3E" stroke-width="2.5" fill="none"/>
+    <path d="M30 48 Q38 44 42 47 Q36 52 30 50" fill="#6E9A4A"/>
+    <g fill="var(--f)" stroke="var(--icon-stroke)" stroke-width="1">
+      <circle cx="30" cy="16" r="9.5"/><circle cx="40.5" cy="23.6" r="9.5"/><circle cx="36.5" cy="35.9" r="9.5"/><circle cx="23.5" cy="35.9" r="9.5"/><circle cx="19.5" cy="23.6" r="9.5"/>
+    </g>
+    <circle cx="30" cy="27" r="5" fill="#EAC94A"/>
+  </symbol>
+  <symbol id="dog" viewBox="0 0 60 60">
+    <g fill="var(--f)" stroke="var(--icon-stroke)" stroke-width="1">
+      <ellipse cx="15" cy="28" rx="7" ry="13" transform="rotate(15 15 28)"/>
+      <ellipse cx="45" cy="28" rx="7" ry="13" transform="rotate(-15 45 28)"/>
+      <ellipse cx="30" cy="29" rx="15" ry="17"/>
+    </g>
+    <ellipse cx="30" cy="40" rx="8" ry="6" fill="#fff" opacity=".2"/>
+    <ellipse cx="30" cy="37" rx="3.6" ry="2.6" fill="#1b1714"/>
+    <circle cx="24" cy="27" r="2" fill="#1b1714"/><circle cx="36" cy="27" r="2" fill="#1b1714"/>
+    <circle cx="24.6" cy="26.4" r=".7" fill="#fff"/><circle cx="36.6" cy="26.4" r=".7" fill="#fff"/>
+  </symbol>
+  <symbol id="squash" viewBox="0 0 60 60">
+    <rect x="27" y="9" width="6" height="12" rx="2" fill="#4A6B2F"/>
+    <path d="M9 36 Q9 22 21 21 Q30 17 39 21 Q51 22 51 36 Q50 50 30 51 Q10 50 9 36 Z" fill="var(--f)" stroke="var(--icon-stroke)" stroke-width="1"/>
+    <path d="M14 36 Q30 30 46 36 M20 26 Q30 40 40 26" stroke="var(--icon-stroke)" fill="none" opacity=".6"/>
+  </symbol>
+  <symbol id="pod-tri" viewBox="0 0 60 60">
+    <path d="M30 51 L30 59" stroke="#4A6B2F" stroke-width="2"/>
+    <path d="M30 52 L9 14 Q20 21 30 15 Q40 21 51 14 Z" fill="var(--f)" stroke="var(--icon-stroke)" stroke-width="1"/>
+    <path d="M30 18 L30 49" stroke="var(--icon-stroke)"/>
+  </symbol>
+  <symbol id="pod-oval" viewBox="0 0 60 60">
+    <path d="M30 49 L30 59" stroke="#4A6B2F" stroke-width="2"/>
+    <ellipse cx="30" cy="30" rx="13" ry="20" fill="var(--f)" stroke="var(--icon-stroke)" stroke-width="1"/>
+    <path d="M30 12 L30 48" stroke="var(--icon-stroke)"/>
+  </symbol>
+  <symbol id="seed-round" viewBox="0 0 60 60">
+    <circle cx="30" cy="30" r="19" fill="var(--f)" stroke="var(--icon-stroke)" stroke-width="1"/>
+    <ellipse cx="37" cy="23" rx="3.5" ry="1.8" fill="#000" opacity=".2"/>
+  </symbol>
+  <symbol id="seed-wrinkled" viewBox="0 0 60 60">
+    <path d="M30 11 Q38 12 41 17 Q49 18 48 27 Q52 34 46 40 Q45 48 37 48 Q31 52 24 48 Q16 48 14 41 Q9 34 13 27 Q12 18 20 16 Q23 11 30 11Z" fill="var(--f)" stroke="var(--icon-stroke)" stroke-width="1"/>
+    <path d="M20 26 Q25 30 22 36 M30 18 Q34 26 30 32 M38 28 Q35 36 40 40 M27 40 Q31 42 33 38" stroke="var(--icon-stroke)" fill="none"/>
+  </symbol>
+</defs>
+</svg>
+
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Genetic interactions · an animated primer</p>
+    <h1>Two genes, one trait</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">1 · Bateson's discovery</button>
+    <button id="part2" type="button">2 · Effects of epistasis</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Use the arrow keys or the buttons to move between scenes. Built in the spirit of <a href="https://dnaftb.org" style="color:inherit">DNA from the Beginning</a>.</p>
+</div>
+
+<script>
+const WHITE='#F7F3EE', PURPLE='#7D4A98', RED='#B4473A';
+const roman=n=>[['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const MODES={
+  seeds:{letters:['R','Y'],pheno:(a,b)=>a&&b?0:a?1:b?2:3,classes:[
+    {sym:'seed-round',fill:'#E2C13B',name:'Round, yellow',rule:'R_ Y_'},
+    {sym:'seed-round',fill:'#86A84E',name:'Round, green',rule:'R_ yy'},
+    {sym:'seed-wrinkled',fill:'#E2C13B',name:'Wrinkled, yellow',rule:'rr Y_'},
+    {sym:'seed-wrinkled',fill:'#86A84E',name:'Wrinkled, green',rule:'rr yy'}]},
+  comb:{letters:['R','P'],pheno:(a,b)=>a&&b?0:a?1:b?2:3,chip:'Chicken comb · 9:3:3:1',
+    desc:'Chicken comb: no class is hidden, so all four show. 9:3:3:1.',classes:[
+    {sym:'chick-walnut',fill:RED,name:'Walnut',rule:'R_ P_'},
+    {sym:'chick-rose',fill:RED,name:'Rose',rule:'R_ pp'},
+    {sym:'chick-pea',fill:RED,name:'Pea',rule:'rr P_'},
+    {sym:'chick-single',fill:RED,name:'Single',rule:'rr pp'}]},
+  sweetpea:{letters:['C','P'],pheno:(a,b)=>a&&b?0:1,chip:'Sweet pea · 9:7',
+    desc:'Sweet pea: both genes are needed for colour, so three classes look white. 9:7.',classes:[
+    {sym:'flower',fill:PURPLE,name:'Purple',rule:'C_ P_'},
+    {sym:'flower',fill:WHITE,name:'White',rule:'cc or pp'}]},
+  lab:{letters:['B','E'],pheno:(a,b)=>!b?2:a?0:1,chip:'Labrador · 9:3:4',
+    desc:'Labrador: ee hides whatever B says. 9:3:4.',classes:[
+    {sym:'dog',fill:'#2B2724',name:'Black',rule:'B_ E_'},
+    {sym:'dog',fill:'#7B4B2A',name:'Chocolate',rule:'bb E_'},
+    {sym:'dog',fill:'#E0BE7E',name:'Yellow',rule:'__ ee'}]},
+  squash:{letters:['W','Y'],pheno:(a,b)=>a?0:b?1:2,chip:'Squash · 12:3:1',
+    desc:'Summer squash: one W allele hides the colour gene. 12:3:1.',classes:[
+    {sym:'squash',fill:'#EFEDE2',name:'White',rule:'W_ __'},
+    {sym:'squash',fill:'#E9B52F',name:'Yellow',rule:'ww Y_'},
+    {sym:'squash',fill:'#5E8A3E',name:'Green',rule:'ww yy'}]},
+  purse:{letters:['A','B'],pheno:(a,b)=>a||b?0:1,chip:"Shepherd's purse · 15:1",
+    desc:"Shepherd's purse: either gene alone is enough. 15:1.",classes:[
+    {sym:'pod-tri',fill:'#7FA35A',name:'Triangular',rule:'A_ or B_'},
+    {sym:'pod-oval',fill:'#7FA35A',name:'Oval',rule:'aa bb'}]}
+};
+
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const G=(c,d,inner)=>`<g class="${c}" style="--d:${d}s">${inner}</g>`;
+const U=(id,x,y,s,f)=>`<use href="#${id}" x="${x}" y="${y}" width="${s}" height="${s}" style="--f:${f||'#888'}"/>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+
+function portrait(cx,cy,k){
+  const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" class="cellf"/>`
+    +`<rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/>`
+    +`<path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/>`
+    +`<circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-15 -14 Q0 -6 15 -14" class="stache"/>`
+    +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;
+}
+
+function scIntro(n){
+  const P=n?{px:180,py:105,k:.85,ny:222,bx:30,by:262,bw:300,bh:236,ig:150,h:510}
+           :{px:150,py:160,k:1,ny:298,bx:300,by:60,bw:300,bh:270,ig:176,h:400};
+  const cx=P.bx+P.bw/2, sy=P.bh-46;
+  let nb=R(P.bx,P.by,P.bw,P.bh,'card',10)+T(cx,P.by+40,'Gregor Mendel, 1866','disp nbt mid')+T(cx,P.by+63,'Experiments on Plant Hybrids','note mid');
+  MODES.seeds.classes.forEach((c,i)=>nb+=U(c.sym,cx-116+i*62,P.by+82,46,c.fill));
+  nb+=T(cx,P.by+P.ig,'Ignored for 34 years','lab mid');
+  const stamp=`<g transform="rotate(-6 ${cx} ${P.by+sy+18})">${R(cx-96,P.by+sy,192,36,'stamp',4)}${T(cx,P.by+sy+23,'REDISCOVERED 1900','stampt mid')}</g>`;
+  return {vb:n?slim(P.h):wide(),s:G('a-pop',0,portrait(P.px,P.py,P.k))
+    +G('a-fade',.4,T(P.px,P.ny,'William Bateson','disp name mid')+T(P.px,P.ny+24,'1861–1926 · Cambridge','note mid'))
+    +G('a-fade',.8,nb)+G('a-pop',1.6,stamp)};
+}
+
+function scMendel(n){
+  const cl=MODES.seeds.classes, ct=[9,3,3,1];
+  const pos=n?[[95,24],[265,24],[95,224],[265,224]]:[[110,84],[250,84],[390,84],[530,84]];
+  const sz=n?80:84;
+  let s=n?'':T(320,48,'Seed shape (R or r) and seed colour (Y or y)','note mid');
+  cl.forEach((c,i)=>{const [x,y]=pos[i];
+    s+=G('a-pop',.3+i*.3,U(c.sym,x-sz/2,y,sz,c.fill)+T(x,y+sz+38,ct[i],'count mid')+T(x,y+sz+64,c.name,'lab mid')+T(x,y+sz+86,c.rule,'mono note mid'));});
+  s+=G('a-fade',1.8,T(n?180:320,n?426:350,'RrYy × RrYy  →  9 : 3 : 3 : 1','cross mid'));
+  return {vb:n?slim(440):wide(),s};
+}
+
+function scCombs(n){
+  const L=[['chick-single','Single comb','Leghorn'],['chick-rose','Rose comb','Wyandotte'],['chick-pea','Pea comb','Brahma']];
+  const xs=n?[60,180,300]:[130,320,510], sz=n?110:150, y=n?20:50, ly=n?160:236;
+  let s='';
+  L.forEach((c,i)=>s+=G('a-pop',.2+i*.4,U(c[0],xs[i]-sz/2,y,sz)+T(xs[i],ly,c[1],'lab strong mid')+T(xs[i],ly+22,c[2],'note mid')));
+  return {vb:n?slim(200):wide(320),s};
+}
+
+function cross(n,A,B,C,labA,labB,labC,sub){
+  const P=n?{ax:30,bx:210,py:16,ps:120,lx:[90,270],ly:158,xx:180,xy:86,ar:[178,222],cx:[20,130,240],cy:232,cs:100,ty:368,h:410}
+           :{ax:170,bx:360,py:24,ps:110,lx:[225,415],ly:156,xx:320,xy:92,ar:[172,222],cx:[185,275,365],cy:228,cs:90,ty:344,h:400};
+  const mid=n?180:320;
+  let s=G('a-fade',0,U(A[0],P.ax,P.py,P.ps,A[1])+T(P.lx[0],P.ly,labA,'lab mid'))
+    +G('a-fade',.35,T(P.xx,P.xy,'×','big mid'))
+    +G('a-fade',.6,U(B[0],P.bx,P.py,P.ps,B[1])+T(P.lx[1],P.ly,labB,'lab mid'))
+    +G('a-fade',1.1,`<path d="M${mid} ${P.ar[0]} V${P.ar[1]}" class="arrow"/>`);
+  P.cx.forEach((x,i)=>s+=G('a-pop',1.6+i*.25,U(C[0],x,P.cy,P.cs,C[1])));
+  s+=G('a-fade',2.5,T(mid,P.ty,labC,'lab strong mid')+T(mid,P.ty+22,sub,'note mid'));
+  return {vb:n?slim(P.h):wide(),s};
+}
+
+function gt(L,a,b){const c=(a===L)+(b===L), l=L.toLowerCase();return c===2?L+L:c===1?L+l:l+l;}
+
+function gridScene(n,key){
+  const m=MODES[key], [X,Y]=m.letters, x=X.toLowerCase(), y=Y.toLowerCase();
+  const gam=[X+Y,X+y,x+Y,x+y];
+  const L=n?{x0:72,y0:46,cs:64,is:40}:{x0:64,y0:52,cs:56,is:36};
+  const counts=m.classes.map(()=>0);
+  let s='';
+  gam.forEach((g,i)=>{s+=T(L.x0+i*L.cs+L.cs/2,L.y0-12,g,'gam mid')+T(L.x0-12,L.y0+i*L.cs+L.cs/2+4,g,'gam end');});
+  let k=0;
+  for(let r=0;r<4;r++)for(let c=0;c<4;c++){
+    const g1=gam[r], g2=gam[c];
+    const idx=m.pheno(g1[0]===X||g2[0]===X, g1[1]===Y||g2[1]===Y); counts[idx]++;
+    const cl=m.classes[idx], px=L.x0+c*L.cs, py=L.y0+r*L.cs;
+    s+=G('a-pop',(.15+k*.07).toFixed(2),R(px+2,py+2,L.cs-4,L.cs-4,'cell',6)+U(cl.sym,px+(L.cs-L.is)/2,py+4,L.is,cl.fill)+T(px+L.cs/2,py+L.cs-6,gt(X,g1[0],g2[0])+gt(Y,g1[1],g2[1]),'geno mid'));
+    k++;
+  }
+  const het=X+x+Y+y, t0=.15+16*.07+.25, ratio=counts.join(' : '), gx=L.x0+2*L.cs;
+  if(!n){
+    s+=G('a-fade',t0,T(gx,L.y0+4*L.cs+34,`${het} × ${het}`,'cross mid'));
+    m.classes.forEach((cl,i)=>{const yy=44+i*74;
+      s+=G('a-fade',(t0+i*.25).toFixed(2),U(cl.sym,326,yy,50,cl.fill)+T(412,yy+36,counts[i],'count end')+T(426,yy+18,cl.name,'cname start')+T(426,yy+56,cl.rule,'rule start'));
+      s+=`<rect x="426" y="${yy+27}" width="${(counts[i]/16*190).toFixed(1)}" height="11" rx="5" class="bar tint a-grow" style="fill:${cl.fill};--d:${(t0+i*.25+.2).toFixed(2)}s"/>`;});
+    s+=G('a-fade',(t0+1.1).toFixed(2),T(476,370,ratio,'ratio mid'));
+    return {vb:wide(),s};
+  }
+  s+=G('a-fade',t0,T(180,L.y0+4*L.cs+28,`${het} × ${het}   →   ${ratio}`,'cross mid'));
+  const base=L.y0+4*L.cs+48;
+  m.classes.forEach((cl,i)=>{const yy=base+i*48;
+    s+=G('a-fade',(t0+i*.25).toFixed(2),U(cl.sym,14,yy,38,cl.fill)+T(86,yy+28,counts[i],'count end')+T(98,yy+16,cl.name,'cname start')+T(346,yy+16,cl.rule,'rule end'));
+    s+=`<rect x="98" y="${yy+24}" width="${(counts[i]/16*248).toFixed(1)}" height="9" rx="4.5" class="bar tint a-grow" style="fill:${cl.fill};--d:${(t0+i*.25+.2).toFixed(2)}s"/>`;});
+  return {vb:slim(base+m.classes.length*48+8),s};
+}
+
+function scKey(n){
+  const m=MODES.comb, ex=['R and P together','R alone','P alone','Neither: the wild type'];
+  let s='';
+  m.classes.forEach((c,i)=>{
+    if(!n){const y=26+i*88;
+      s+=G('a-fade',.2+i*.5,U(c.sym,70,y,70)+T(176,y+44,c.rule,'key start')+T(292,y+44,c.name,'cname start')+T(392,y+44,ex[i],'lab start'));}
+    else{const y=12+i*96;
+      s+=G('a-fade',.2+i*.5,U(c.sym,10,y,72)+T(96,y+32,c.rule,'key start')+T(200,y+32,c.name,'cname start')+T(96,y+58,ex[i],'note start'));}
+  });
+  return {vb:n?slim(396):wide(),s};
+}
+
+function mark(x,y,ok){
+  return ok?`<circle cx="${x}" cy="${y}" r="11" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`
+           :`<circle cx="${x}" cy="${y}" r="11" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;
+}
+
+function scPath(n){
+  const P=n?{bx:[8,134,260],bw:92,by:16,bh:56,lab:[['Precursor'],['Intermediate'],['Pigment']],sx:[117,243],l0:72,l1:290,fx:302,fs:48,ry:[130,210,290],lx:8,h:330,names:['White 1','White 2','F1'],fsz:'note'}
+           :{bx:[20,240,460],bw:160,by:24,bh:68,lab:[['Colourless','precursor'],['Colourless','intermediate'],['Purple','pigment']],sx:[210,430],l0:160,l1:540,fx:560,fs:58,ry:[164,244,324],lx:20,h:400,names:['White strain 1','White strain 2','F1 hybrid'],fsz:'lab'};
+  let s='';
+  P.bx.forEach((x,i)=>{
+    const cx=x+P.bw/2, cy=P.by+P.bh/2, two=P.lab[i].length===2;
+    const box=i===2?`<rect x="${x}" y="${P.by}" width="${P.bw}" height="${P.bh}" rx="8" class="tint" style="fill:${PURPLE}"/>`:R(x,P.by,P.bw,P.bh,'card');
+    const tc=(i===2?'white ':'')+P.fsz+' mid'+(i===2?'':'');
+    const txt=two?T(cx,cy-4,P.lab[i][0],tc)+T(cx,cy+16,P.lab[i][1],tc):T(cx,cy+5,P.lab[i][0],tc);
+    s+=G('a-fade',i*.4,box+txt);
+    if(i<2){const a=x+P.bw+4,b=P.bx[i+1]-4;
+      s+=G('a-fade',i*.4+.2,`<path d="M${a} ${cy+6} H${b}" class="arrow"/>`+T((a+b)/2,cy-8,i?'P':'C','key mid'));}
+  });
+  const rows=[{g:'cc PP',ok:[0,1]},{g:'CC pp',ok:[1,0]},{g:'Cc Pp',ok:[1,1]}];
+  rows.forEach((r,i)=>{
+    const y=P.ry[i], d=1.4+i*.9, full=r.ok[0]&&r.ok[1];
+    const stop=!r.ok[0]?P.sx[0]-14:!r.ok[1]?P.sx[1]-14:P.l1;
+    s+=G('a-fade',d,T(P.lx,y-4,P.names[i],'cname start')+T(P.lx,y+16,r.g,'mono note start')+R(P.l0,y-3,P.l1-P.l0,6,'track',3));
+    s+=`<rect x="${P.l0}" y="${y-3}" width="${stop-P.l0}" height="6" rx="3" class="prog tint a-grow" style="--d:${d+.2}s"/>`;
+    s+=G('a-pop',d+.5,mark(P.sx[0],y,r.ok[0]))+G('a-pop',d+.6,mark(P.sx[1],y,r.ok[1]));
+    s+=G('a-pop',d+.8,U('flower',P.fx,y-P.fs/2,P.fs,full?PURPLE:WHITE));
+  });
+  return {vb:n?slim(P.h):wide(),s};
+}
+
+function scName(n){
+  const card=(x,y,w,h,t,l1,l2)=>R(x,y,w,h,'card',10)+T(x+18,y+34,t,'disp nbt start')+T(x+18,y+62,l1,'lab start')+T(x+18,y+88,l2,'mono note start');
+  if(!n){
+    return {vb:wide(),s:G('a-fade',0,T(150,62,'epi + stasis','big mid')+T(150,88,'Greek for “standing upon”','note mid'))
+      +G('a-fade',.4,R(60,192,180,64,'cellf')+T(150,220,'Hypostatic gene','cname mid')+T(150,240,'is masked','note mid'))
+      +G('a-drop',.9,R(60,122,180,64,'accentfill tint')+T(150,150,'Epistatic gene','cname onaccent mid')+T(150,170,'does the masking','note onaccent mid'))
+      +G('a-fade',1.5,T(150,292,'ee masks both B and b','mono note mid')+T(150,330,'Bateson, 1909','note mid'))
+      +G('a-fade',2.0,card(300,56,320,120,'Dominance','Between versions of one gene','B masks b → black, not brown'))
+      +G('a-fade',2.6,card(300,196,320,120,'Epistasis','Between different genes','ee masks B → yellow, not black'))};
+  }
+  return {vb:slim(500),s:G('a-fade',0,T(180,42,'epi + stasis','big mid')+T(180,66,'Greek for “standing upon”','note mid'))
+    +G('a-fade',.4,R(90,146,180,58,'cellf')+T(180,172,'Hypostatic gene','cname mid')+T(180,190,'is masked','note mid'))
+    +G('a-drop',.9,R(90,82,180,58,'accentfill tint')+T(180,108,'Epistatic gene','cname onaccent mid')+T(180,126,'does the masking','note onaccent mid'))
+    +G('a-fade',1.5,T(180,230,'ee masks both B and b · Bateson, 1909','mono note mid'))
+    +G('a-fade',2.0,card(16,248,328,112,'Dominance','Between versions of one gene','B masks b → black'))
+    +G('a-fade',2.6,card(16,374,328,112,'Epistasis','Between different genes','ee masks B → yellow'))};
+}
+
+function scPrint(n){
+  const rows=[['9 : 3 : 3 : 1','No interaction',[[0],[1],[2],[3]]],['9 : 7','Complementary genes',[[0],[1,2,3]]],
+    ['9 : 3 : 4','Recessive epistasis',[[0],[1],[2,3]]],['12 : 3 : 1','Dominant epistasis',[[0,1],[2],[3]]],['15 : 1','Duplicate genes',[[0,1,2],[3]]]];
+  const bins=[9,3,3,1], start=[0,9,12,15], heads=['A_ B_','A_ bb','aa B_','aa bb'];
+  const P=n?{x0:16,u:328/16,hy:30,ry:i=>52+i*90,bo:30,bh:34,lx:16,h:510}:{x0:200,u:420/16,hy:44,ry:i=>62+i*66,bo:0,bh:40,lx:20,h:400};
+  let s='';
+  heads.forEach((h,i)=>s+=G('a-fade',0,T((P.x0+(start[i]+bins[i]/2)*P.u).toFixed(1),P.hy,h,'gam mid')));
+  rows.forEach((r,i)=>{
+    const y=P.ry(i), by=y+P.bo, d=.3+i*.6;
+    let g=n?T(P.lx,y+20,r[0],'mono cname start')+T(P.lx+(r[0].length*9.5+10),y+20,r[1],'note start')
+           :T(P.lx,y+17,r[0],'mono cname start')+T(P.lx,y+35,r[1],'note start');
+    r[2].forEach(grp=>{
+      const a=start[grp[0]], sum=grp.reduce((t,b)=>t+bins[b],0), x=P.x0+a*P.u;
+      g+=`<rect x="${(x+1).toFixed(1)}" y="${by}" width="${(sum*P.u-2).toFixed(1)}" height="${P.bh}" rx="6" class="g${grp[0]+1} tint"/>`;
+      grp.slice(1).forEach(b=>{const sx=(P.x0+start[b]*P.u).toFixed(1);g+=`<line x1="${sx}" y1="${by+5}" x2="${sx}" y2="${by+P.bh-5}" class="sep"/>`;});
+      g+=T((x+sum*P.u/2).toFixed(1),by+P.bh/2+6,sum,'mono cname onaccent mid');
+    });
+    s+=G('a-fade',d,g);
+  });
+  return {vb:n?slim(P.h):wide(),s};
+}
+
+let exploreKey='comb';
+const S=[
+ {p:1,title:"Hello, I'm William Bateson",who:'William Bateson',draw:scIntro,
+  text:"In 1900 I read a paper by an Austrian monk, Gregor Mendel. Biologists had ignored it for 34 years. I became its loudest champion, and I later gave the new science its name: genetics. But I soon found that Mendel's simple rules were only the start."},
+ {p:1,title:"Mendel's two-gene ratio",who:'William Bateson',draw:scMendel,
+  text:"Mendel crossed peas that differed in two traits, seed shape and seed colour. In the second generation he counted four kinds of seed in a 9:3:3:1 ratio. Two genes, two traits. Each gene acted on its own."},
+ {p:1,title:'Three kinds of comb',who:'William Bateson',draw:scCombs,
+  text:"With Reginald Punnett I turned to chickens. Breeds differ in the fleshy comb on their heads. Leghorns have a single comb, Wyandottes a rose comb, and Brahmas a pea comb."},
+ {p:1,title:'Rose × pea',who:'William Bateson',draw:n=>cross(n,['chick-rose'],['chick-pea'],['chick-walnut'],'Rose','Pea','F1: all walnut comb','a shape neither parent had'),
+  text:"We crossed a rose-comb bird with a pea-comb bird. Every chick had a walnut comb, a shape neither parent had. If comb shape were controlled by one gene, how could two parents produce a third type?"},
+ {p:1,title:'The second generation',who:'William Bateson',draw:n=>gridScene(n,'comb'),
+  text:"Then we bred the walnut birds together. Four comb types appeared, in a 9:3:3:1 ratio. That is Mendel's two-gene ratio, but for a single trait. One bird in sixteen had a single comb, which neither grandparent had shown."},
+ {p:1,title:'Two genes, one comb',who:'William Bateson',draw:scKey,
+  text:"The answer is that two genes shape the same comb. Gene R alone gives a rose comb. Gene P alone gives a pea comb. R and P together give walnut. With neither, the bird has the single comb of its wild ancestors. The genes were interacting."},
+ {p:1,title:'Two whites make purple',who:'William Bateson',draw:n=>cross(n,['flower',WHITE],['flower',WHITE],['flower',PURPLE],'White strain 1','White strain 2','F1: all purple','two white parents'),
+  text:"Edith Saunders, Punnett and I found something stranger in sweet peas. We crossed two pure-breeding strains, both with white flowers. Every plant in the first generation had purple flowers."},
+ {p:1,title:'The 9:7 ratio',who:'William Bateson',draw:n=>gridScene(n,'sweetpea'),
+  text:"In the next generation, purple and white came back in a 9:7 ratio. A plant was purple only if it had at least one dominant copy of both genes, C and P. Missing either one was enough to make the flower white."},
+ {p:1,title:'A two-step pathway',who:'Narrator',draw:scPath,
+  text:"Today we explain this as a pathway. The pigment is made in two steps, and each gene supplies the enzyme for one step. Each white parent was blocked at a different step. Their offspring inherited a working copy of both genes, so the pathway ran to the end."},
+ {p:1,title:'Naming it: epistasis',who:'William Bateson',draw:scName,
+  text:"By 1909 I needed a word for one gene masking another. I chose epistasis, from the Greek for standing upon. The masking gene is epistatic; the gene it hides is hypostatic. This is not dominance. Dominance acts between versions of one gene. Epistasis acts between different genes."},
+ {p:2,title:'The ratio is a fingerprint',who:'Narrator',draw:scPrint,
+  text:"In a two-gene cross, the 16 boxes of the Punnett square always fall into the same four groups: 9, 3, 3 and 1. Epistasis makes some of those groups look alike. Merge them and you get a new ratio. Reading the ratio tells you how the genes interact."},
+ {p:2,title:'Recessive epistasis · 9:3:4',who:'Narrator',draw:n=>gridScene(n,'lab'),
+  text:"In Labrador retrievers, gene B makes black pigment and its recessive form b makes chocolate. Gene E lets that pigment into the hair. A dog with two copies of e is yellow, whatever it carries at B. Two recessive alleles of one gene mask the other gene."},
+ {p:2,title:'Dominant epistasis · 12:3:1',who:'Narrator',draw:n=>gridScene(n,'squash'),
+  text:"In summer squash, a single dominant W allele blocks pigment and makes the fruit white. Only ww plants show the colour set by the second gene: yellow with Y, green when yy. One dominant allele is enough to mask the other gene."},
+ {p:2,title:'Duplicate genes · 15:1',who:'Narrator',draw:n=>gridScene(n,'purse'),
+  text:"In shepherd's purse, either of two genes can make the seed capsule triangular, and one working copy of either is enough. Only aabb plants, 1 in 16, have an oval capsule. George Shull described this cross in 1914."},
+ {p:2,title:'Try it yourself',who:'William Bateson',explore:true,draw:n=>gridScene(n,exploreKey),
+  text:"Pick a cross. The Punnett square stays the same; only the way the genes read it changes. Exceptions to Mendel's ratios led us here. As I told my students: treasure your exceptions."}
+];
+
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+try{const h=location.hash.replace('#','');const k=parseInt(h.replace('scene',''),10);if(k>=1&&k<=S.length)cur=k-1;}catch(e){}
+
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className=s.p===2?'p2':'';b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+['comb','sweetpea','lab','squash','purse'].forEach(k=>{const b=document.createElement('button');b.type='button';b.textContent=MODES[k].chip;b.dataset.k=k;b.onclick=()=>{exploreKey=k;render();};chips.appendChild(b);});
+
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb);
+  stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title;
+  $('speaker').textContent=sc.who;
+  const txt=sc.explore?sc.text+' '+MODES[exploreKey].desc:sc.text;
+  $('narr').textContent=txt;
+  stage.setAttribute('aria-label',sc.title+'. '+txt);
+  chips.hidden=!sc.explore;
+  [...chips.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===exploreKey));
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  $('part1').setAttribute('aria-current',sc.p===1);$('part2').setAttribute('aria-current',sc.p===2);
+  $('prev').disabled=cur===0;$('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1);$('next').onclick=()=>go(cur+1);$('replay').onclick=render;
+$('part1').onclick=()=>go(0);$('part2').onclick=()=>go(S.findIndex(s=>s.p===2));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enzyme Kinetics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Enzymes · an animated primer</p>
+    <h1>How enzymes work, and how fast</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · Catalysis</button>
+    <button id="part2" type="button">II · Michaelis–Menten</button>
+    <button id="part3" type="button">III · Inhibition</button>
+    <button id="part4" type="button">IV · Allostery</button>
+    <button id="part5" type="button">V · In practice</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Curves are calculated from the equations shown, with K<sub>M</sub> and V<sub>max</sub> set to 1. Rate constants, half-lives and other figures are representative literature values rounded for teaching; they vary with substrate and conditions.</p>
+</div>
+<script>
+
+
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== shared translation glyphs ===================== */
+const SSU='#D9C89B', LSU='#BBA27A', TRNA_C='#8FB1CF', AA_C='#4F7A3F', CHAIN=['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#B4766E','#5E7F7A'];
+const GRP={np:['nonpolar','#D6C79F'],po:['polar','#A9C4DC'],ac:['acidic','#E7A99B'],ba:['basic','#B9A0C8']};
+const AAS=[['G','Gly','np'],['A','Ala','np'],['V','Val','np'],['L','Leu','np'],['I','Ile','np'],['P','Pro','np'],['F','Phe','np'],['M','Met','np'],['W','Trp','np'],
+ ['S','Ser','po'],['T','Thr','po'],['C','Cys','po'],['N','Asn','po'],['Q','Gln','po'],['Y','Tyr','po'],['D','Asp','ac'],['E','Glu','ac'],['K','Lys','ba'],['R','Arg','ba'],['H','His','ba']];
+const THREE=Object.fromEntries(AAS.map(a=>[a[0],a[1]]));THREE['*']='Stop';
+const CODE='FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+function tr(c){const o='UCAG';const i=16*o.indexOf(c[0])+4*o.indexOf(c[1])+o.indexOf(c[2]);return CODE[i];}
+function sub(x,y,k){return k;} // placeholder
+
+function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
+  const S=v=>v*k;
+  let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
+  return s+'</g>';
+}
+function chain(x,y,k,n,dir=-1){let s='';for(let i=0;i<n;i++){const xx=x-i*k*6,yy=y-i*k*13;s+=`<circle cx="${xx}" cy="${yy}" r="${k*7}" fill="${CHAIN[i%CHAIN.length]}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}return s;}
+function ribosome(cx,my,k,o={}){
+  const S=v=>v*k, sx={E:cx-S(50),P:cx,A:cx+S(50)};
+  let s='';
+  if(o.large!==false)s+=`<path d="M${cx-S(130)} ${my-S(22)} C ${cx-S(156)} ${my-S(160)}, ${cx+S(156)} ${my-S(160)}, ${cx+S(130)} ${my-S(22)} C ${cx+S(80)} ${my-S(36)}, ${cx-S(80)} ${my-S(36)}, ${cx-S(130)} ${my-S(22)} Z" fill="${LSU}" opacity=".55" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
+  if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
+  if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
+  return s;
+}
+
+function timeline(x,y,ev,wrapN,fs,indent,gap,d0){let s='',yy=y;ev.forEach((e,i)=>{const L=wrap(e[1],wrapN);s+=G('a-fade',(d0+i*.4).toFixed(1),T(x,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(x+indent,yy+j*18,l,'lab start '+fs)).join(''));yy+=L.length*18+gap;});return {s,y:yy};}
+/* ===================== enzyme-kinetics toolkit ===================== */
+const ENZC='#9DB4AE', ENZD='#6F9A8E', SUBC='#C17A2C', PRODC='#4F7A3F', INHC='#A4473A', TSC='#7D4A98',
+      ALLOC='#B4766E', CURVE='#2F5276', CURVE2='#A4473A', CURVE3='#4F7A3F', CURVE4='#C17A2C',
+      AXC='#6A5B47', RSTATE='#A9C4DC', TSTATE='#D6C79F', COFC='#D9B85A';
+const FX=(v,d=1)=>Number(v).toFixed(d);
+const SP=t=>`<tspan baseline-shift="super" style="font-size:.72em">${t}</tspan>`;
+const SB=t=>`<tspan baseline-shift="-24%" style="font-size:.72em">${t}</tspan>`;
+const KM='K'+SB('M'), VMX='V'+SB('max'), KCAT='k'+SB('cat'), KI='K'+SB('i'), KIP='K'+SB('i')+'′',
+      KD='K'+SB('d'), KHALF='K'+SB('0.5'), VAPP='V'+SB('max')+'app', KAPP='K'+SB('M')+'app';
+
+/* ---- plot frame: returns data->svg mappers ---- */
+function plot(x,y,w,h,xr,yr,o={}){
+  const px=v=>x+(v-xr[0])/(xr[1]-xr[0])*w, py=v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h;
+  let s='';
+  if(o.grid){const gx=o.grid[0]||4, gy=o.grid[1]||4; let g='';
+    for(let i=1;i<gx;i++)g+=`M${FX(x+w*i/gx)} ${y} V${y+h} `;
+    for(let i=1;i<gy;i++)g+=`M${x} ${FX(y+h*i/gy)} H${x+w} `;
+    s+=`<path d="${g}" stroke="${AXC}" stroke-width=".5" opacity=".28"/>`;}
+  const ox=o.ox!==undefined?px(o.ox):x, oy=o.oy!==undefined?py(o.oy):y+h;
+  s+=`<path d="M${FX(ox)} ${y-5} V${y+h} M${x} ${FX(oy)} H${x+w+7}" stroke="${AXC}" stroke-width="1.4" fill="none"/>`;
+  if(o.xlab)s+=`<text x="${x+w/2}" y="${y+h+(o.xdy||25)}" class="note mid ${o.fs||'f12'}">${o.xlab}</text>`;
+  if(o.ylab)s+=`<text transform="translate(${x-(o.ydx||20)} ${y+h/2}) rotate(-90)" text-anchor="middle" class="note ${o.fs||'f12'}">${o.ylab}</text>`;
+  return {px,py,s,x,y,w,h,xr,yr};
+}
+function curve(P,f,o={}){
+  const xr=o.xr||P.xr, n=o.n||80; let d='',on=false;
+  for(let i=0;i<=n;i++){const t=xr[0]+(xr[1]-xr[0])*i/n, v=f(t);
+    if(!isFinite(v)||v>P.yr[1]||v<P.yr[0]){on=false;continue;}
+    d+=(on?' L':' M')+FX(P.px(t))+' '+FX(P.py(v)); on=true;}
+  return `<path d="${d.trim()}" fill="none" stroke="${o.col||CURVE}" stroke-width="${o.w||2.4}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;
+}
+function gline(P,x1,y1,x2,y2,o={}){
+  return `<path d="M${FX(P.px(x1))} ${FX(P.py(y1))} L${FX(P.px(x2))} ${FX(P.py(y2))}" stroke="${o.col||AXC}" stroke-width="${o.w||1.2}" stroke-dasharray="${o.dash===null?'':o.dash||'4 4'}" fill="none"/>`;}
+function dot(P,xv,yv,o={}){
+  return `<circle cx="${FX(P.px(xv))}" cy="${FX(P.py(yv))}" r="${o.r||3.6}" fill="${o.col||CURVE}" stroke="${INK}" stroke-width=".7"/>`;}
+function plab(P,xv,yv,t,o={}){
+  return Tc(P.px(xv)+(o.dx||0),P.py(yv)+(o.dy||0),t,o.col||'#3A2E22',o.fs||11,'mono '+(o.a||'start'),'600');}
+function legend(x,y,items,o={}){
+  let s='';items.forEach((it,i)=>{const yy=y+i*(o.gap||17);
+    s+=`<path d="M${x} ${yy} h18" stroke="${it[1]}" stroke-width="2.6"${it[2]?` stroke-dasharray="${it[2]}"`:''} stroke-linecap="round"/>`
+      +T(x+24,yy+4,it[0],'note start '+(o.fs||'f11'));});
+  return s;}
+
+/* ---- enzyme with an active-site cleft ---- */
+function enzyme(cx,cy,R,o={}){
+  const fill=o.fill||ENZC, gw=o.gw===undefined?R*.34:o.gw, gd=o.gd===undefined?R*.52:o.gd;
+  const a=Math.asin(Math.min(.99,gw/R)), x1=cx-R*Math.sin(a), x2=cx+R*Math.sin(a), yt=cy-R*Math.cos(a);
+  const by=cy-R+gd;
+  const d=`M${FX(x1)} ${FX(yt)} L${FX(cx-gw*.80)} ${FX(by)} Q${FX(cx)} ${FX(by+R*.12)} ${FX(cx+gw*.80)} ${FX(by)}`
+    +` L${FX(x2)} ${FX(yt)} A${FX(R)} ${FX(R)} 0 1 1 ${FX(x1)} ${FX(yt)} Z`;
+  let s=`<path d="${d}" fill="${fill}" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.label)s+=Tc(cx,cy+R*(o.ly||.5),o.label,o.tc||'#3A2E22',o.fs||11,'mono mid','600');
+  return s;
+}
+function subst(cx,cy,w,h,o={}){
+  const fill=o.fill||SUBC;
+  const d=`M${FX(cx-w/2)} ${FX(cy-h/2)} L${FX(cx+w/2)} ${FX(cy-h/2)} L${FX(cx+w*.40)} ${FX(cy+h*.34)}`
+    +` Q${FX(cx)} ${FX(cy+h*.70)} ${FX(cx-w*.40)} ${FX(cy+h*.34)} Z`;
+  let s=`<path d="${d}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(o.label)s+=Tc(cx,cy+(o.dy||3),o.label,o.tc||'#3A2E22',o.fs||10,'mono mid','600');
+  return s;
+}
+/* a cleft-shaped hole drawn on a second site (for allosteric / uncompetitive sites) */
+function site(cx,cy,r,o={}){
+  return `<path d="M${FX(cx-r)} ${FX(cy)} a${FX(r)} ${FX(r)} 0 0 0 ${FX(2*r)} 0 Z" fill="${o.fill||'#EFE8D8'}" stroke="${INK}" stroke-width="1" opacity="${o.op||1}"/>`;}
+function ligand(cx,cy,r,o={}){
+  return `<circle cx="${FX(cx)}" cy="${FX(cy)}" r="${FX(r)}" fill="${o.fill||ALLOC}" stroke="${INK}" stroke-width=".9" class="tint"/>`
+    +(o.label?Tc(cx,cy+3.4,o.label,o.tc||'#F3EDE0',o.fs||9,'mono mid','600'):'');}
+
+/* ---- oligomer for allostery: st = [{R,lig},...] ---- */
+function oligomer(cx,cy,r,st,o={}){
+  const g=o.gap||r*1.16, k=o.spread||1, pos=[[-g,-g],[g,-g],[-g,g],[g,g]];
+  let s='';
+  st.forEach((u,i)=>{const sp=u.R?k*1.09:k, x=cx+pos[i][0]*sp, y=cy+pos[i][1]*sp;
+    s+=u.R?`<circle cx="${FX(x)}" cy="${FX(y)}" r="${FX(r)}" fill="${o.rf||RSTATE}" stroke="${INK}" stroke-width="1.1" class="tint"/>`
+          :`<rect x="${FX(x-r*.86)}" y="${FX(y-r*.86)}" width="${FX(r*1.72)}" height="${FX(r*1.72)}" rx="${FX(r*.2)}" fill="${o.tf||TSTATE}" stroke="${INK}" stroke-width="1.1" class="tint"/>`;
+    if(u.lig)s+=`<circle cx="${FX(x)}" cy="${FX(y)}" r="${FX(r*.34)}" fill="${SUBC}" stroke="${INK}" stroke-width=".7"/>`;});
+  if(o.label)s+=T(cx,cy+g+r*1.5+(o.ldy||16),o.label,'note mid f12');
+  return s;
+}
+/* ---- smooth reaction-coordinate curve through level points ---- */
+function ecurve(pts,o={}){
+  let d=`M${FX(pts[0][0])} ${FX(pts[0][1])}`;
+  for(let i=1;i<pts.length;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i],mx=(x0+x1)/2;
+    d+=` C${FX(mx)} ${FX(y0)} ${FX(mx)} ${FX(y1)} ${FX(x1)} ${FX(y1)}`;}
+  return `<path d="${d}" fill="none" stroke="${o.col||CURVE}" stroke-width="${o.w||2.4}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linecap="round"/>`;
+}
+/* vertical measured gap with end caps */
+function span(x,y1,y2,t,o={}){
+  const c=o.col||'#6A5B47';
+  return `<path d="M${x} ${y1} V${y2} M${x-4} ${y1} h8 M${x-4} ${y2} h8" stroke="${c}" stroke-width="1.1" fill="none"/>`
+    +(t?Tc(x+(o.dx||7),(y1+y2)/2+3.5,t,o.tc||'#3A2E22',o.fs||11,'mono '+(o.a||'start'),'600'):'');}
+function hspan(y,x1,x2,t,o={}){
+  const c=o.col||'#6A5B47';
+  return `<path d="M${x1} ${y} H${x2} M${x1} ${y-4} v8 M${x2} ${y-4} v8" stroke="${c}" stroke-width="1.1" fill="none"/>`
+    +(t?Tc((x1+x2)/2,y+(o.dy||-7),t,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+
+/* ---- reaction scheme laid out left to right ---- */
+function scheme(x,y,parts,o={}){
+  let s='',cx=x,fs=o.fs||14;
+  parts.forEach(p=>{
+    if(p==='rev'||p==='fwd'){const w=o.aw||36;
+      s+=`<path d="M${cx+5} ${FX(y-(p==='rev'?4:0))} h${w-10}" stroke="${INK}" stroke-width="1.3" marker-end="url(#ahp)" fill="none"/>`;
+      if(p==='rev')s+=`<path d="M${cx+w-5} ${FX(y+5)} h${-(w-10)}" stroke="${INK}" stroke-width="1.3" marker-end="url(#ahp)" fill="none"/>`;
+      cx+=w;}
+    else{const w=Math.max(fs*1.1,p.replace(/<[^>]*>/g,'').length*fs*.60);
+      s+=Tc(cx+w/2,y+fs*.36,p,o.tc||'#3A2E22',fs,'mono mid','600');cx+=w+7;}});
+  return {s,w:cx-x};
+}
+/* ---- shared layout helpers ---- */
+function stepRows2(n,items,x,y,W,H,gap,dl,extra){
+  let s='';items.forEach((it,i)=>{const by=y+i*(H+gap);
+    s+=G('a-fade',(dl+i*.4).toFixed(1),box(x,by,W,H,'#E7DEC9',4)+badge(x+14,by+14,i+1)+T(x+28,by+19,it[0],'lab start f14')
+      +wrap(it[1],Math.floor(W/5.6)).map((l,j)=>T(x+14,by+40+j*16,l,'note start f12')).join('')+(extra&&extra[i]?extra[i](x,by,W,H):''));});
+  return s;}
+function stepCols2(n,items,x,y,W,H,gap,dl,extra){
+  let s='';items.forEach((it,i)=>{const bx=x+i*(W+gap);
+    s+=G('a-fade',(dl+i*.4).toFixed(1),box(bx,y,W,H,'#E7DEC9',4)+badge(bx+14,y+14,i+1)+T(bx+28,y+19,it[0],'lab start f14')
+      +wrap(it[1],Math.floor(W/6.2)).map((l,j)=>T(bx+14,y+40+j*16,l,'note start f12')).join('')+(extra&&extra[i]?extra[i](bx,y,W,H):''));
+    if(i<items.length-1)s+=G('a-fade',(dl+i*.4+.25).toFixed(1),`<path d="M${bx+W+2} ${y+H/2} h${gap-6}" class="arrow"/>`);});
+  return s;}
+function cmpTable2(n,head,rows,o={}){
+  const c=n?(o.nc||[10,120,240]):(o.wc||[24,200,400]), y0=o.y0||(n?40:44), dy=o.dy||28, R=n?350:616;
+  let s=G('a-fade',0,head.map((h,i)=>T(c[i],y0-14,h,'cname start '+(n?'f13':'f14'))).join('')+ln(c[0],y0-5,R,y0-5));
+  rows.forEach((r,i)=>{const y=y0+18+i*dy;
+    s+=G('a-fade',(.12*i).toFixed(2),(i%2?'':`<rect x="${c[0]-4}" y="${y-17}" width="${R-c[0]+6}" height="${dy}" fill="#E7DEC9" opacity=".55"/>`)
+      +r.map((v,j)=>j<c.length?T(c[j],y,v,(j?'note':'lab')+' start '+(n?'f12':'f13')):'').join(''));});
+  return {s,y:y0+18+rows.length*dy};
+}
+/* numbered list of label + wrapped body, auto height; returns {s,y} */
+function bullets(x,y,items,wrapN,o={}){
+  let s='',yy=y;
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),badge(x,yy-4,i+1)+T(x+16,yy,it[0],'cname start '+(o.hfs||'f14'))
+      +L.map((l,j)=>T(x+16,yy+18+j*17,l,'note start '+(o.fs||'f13')).replace('>','>')).join(''));
+    yy+=L.length*17+(o.gap||30);});
+  return {s,y:yy};
+}
+/* ===================== shared bits ===================== */
+function para(x,y,text,wn,cls='note start f13',lh=17,d=0){const L=wrap(text,wn);return {s:G('a-fade',d,L.map((l,j)=>T(x,y+j*lh,l,cls)).join('')),y:y+L.length*lh};}
+function boxItem(x,y,W,head,body,o={}){
+  const L=wrap(body,Math.floor(W/(o.cw||6.3))), H=34+L.length*16+8;
+  return {s:box(x,y,W,H,o.fill||'#E7DEC9',4)+(o.num?badge(x+14,y+16,o.num):'')+T(x+(o.num?28:12),y+21,head,'lab start f14')
+    +L.map((l,j)=>T(x+12,y+42+j*16,l,'note start f12')).join(''),h:H};
+}
+function polyl(P,pts,o={}){
+  let d='';pts.forEach((p,i)=>{d+=(i?' L':'M')+FX(P.px(p[0]))+' '+FX(P.py(p[1]));});
+  return `<path d="${d}" fill="none" stroke="${o.col||CURVE}" stroke-width="${o.w||2.4}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;}
+function ebar(P,xv,lo,hi,col=INK){const x=FX(P.px(xv)),a=FX(P.py(lo)),b=FX(P.py(hi));
+  return `<path d="M${x} ${a} V${b} M${+x-3} ${a} h6 M${+x-3} ${b} h6" stroke="${col}" stroke-width="1" fill="none"/>`;}
+
+/* ===================== Part I · catalysis ===================== */
+const RATES=[['CO₂ hydration','carbonic anhydrase',20,1e-6,'10⁷×'],
+ ['Peptide-bond hydrolysis','serine proteases',2.2e8,1e-2,'10¹⁰×'],
+ ['Glycoside hydrolysis','lysozyme',1.5e14,2,'10¹⁴×'],
+ ['OMP decarboxylation','OMP decarboxylase',2.5e15,2.5e-2,'10¹⁷×']];
+function scRate(n){
+  const x0=n?22:214, x1=n?340:620, lo=-7, hi=17.5, X=v=>x0+(Math.log10(v)-lo)/(hi-lo)*(x1-x0);
+  const ty=n?30:32, rh=n?64:56, y0=ty+(n?52:40);
+  const ticks=n?[[1e-6,'1 µs'],[1,'1 s'],[3.15e7,'1 yr'],[3.15e13,'1 Myr']]
+              :[[1e-6,'1 µs'],[1,'1 s'],[86400,'1 day'],[3.15e7,'1 yr'],[3.15e10,'1000 yr'],[3.15e13,'1 Myr'],[3.15e16,'1 Gyr']];
+  const yb=y0+(RATES.length-1)*rh+20;
+  let s=G('a-fade',0,ticks.map(t=>ln(FX(X(t[0])),ty+8,FX(X(t[0])),yb,'#6A5B47',.7,'2 4')+T(FX(X(t[0])),ty,t[1],'note mid f11')).join(''));
+  RATES.forEach((r,i)=>{const yy=y0+i*rh, xa=X(r[3]), xb=X(r[2]);
+    const lab=n?T(x0,yy-16,r[0],'cname start f13')+T(x1,yy-16,r[1],'note end f11')
+               :T(20,yy-2,r[0],'cname start f13')+T(20,yy+14,r[1],'note start f11');
+    s+=G('a-fade',(.4+i*.35).toFixed(2),lab
+      +`<path d="M${FX(xb-7)} ${yy} H${FX(xa+9)}" stroke="${CURVE}" stroke-width="2" marker-end="url(#ahp)" fill="none"/>`
+      +`<circle cx="${FX(xb)}" cy="${yy}" r="5" fill="#F3EDE0" stroke="${INK}" stroke-width="1.4"/>`
+      +`<circle cx="${FX(xa)}" cy="${yy}" r="5" fill="${CURVE}" stroke="${INK}"/>`
+      +Tc(FX((xa+xb)/2),yy+(n?17:-8),r[4],'#A4473A',12,'mono mid','600'));});
+  let y=yb+24;
+  s+=G('a-fade',1.9,`<circle cx="${n?28:30}" cy="${y-4}" r="5" fill="#F3EDE0" stroke="${INK}" stroke-width="1.4"/>`+T(n?40:42,y,'half-life with no enzyme','note start f12')
+     +`<circle cx="${n?28:250}" cy="${n?y+16:y-4}" r="5" fill="${CURVE}" stroke="${INK}"/>`+T(n?40:262,n?y+20:y,'time for one turnover on the enzyme','note start f12'));
+  y+=n?50:34;
+  const p=para(n?20:30,y,'Enzymes do not make impossible reactions possible; they make slow ones fast, by factors as large as 10¹⁷. Uncatalysed half-lives are approximate, from Wolfenden and colleagues.',n?48:88,'note start f13',17,2.3);
+  return {vb:n?slim(p.y+8):wide(p.y+10),s:s+p.s};
+}
+
+function scEnergy(n){
+  const x0=n?40:56, x1=n?330:380, top=40, H=n?200:220, w=x1-x0, mid=x0+w/2;
+  const yS=top+H*.62, yP=top+H*.80, yU=top+H*.08, yES=top+H*.70, yC=top+H*.40, yEP=top+H*.90;
+  let s=G('a-fade',0,`<path d="M${x0} ${top-6} V${top+H} H${x1+20}" stroke="${AXC}" stroke-width="1.4" fill="none"/>`
+    +`<text transform="translate(${x0-14} ${top+H/2}) rotate(-90)" text-anchor="middle" class="note f12">free energy, G</text>`
+    +T(x0+w/2,top+H+20,'reaction coordinate','note mid f12'));
+  s+=G('a-fade',.2,ln(x0,FX(yS),x1+12,FX(yS),'#6A5B47',.8,'2 3')+ln(x0+16,FX(yU),mid,FX(yU),'#6A5B47',.8,'2 3')+ln(x0+w*.25,FX(yC),mid,FX(yC),'#6A5B47',.8,'2 3')+ln(x1-6,FX(yP),x1+12,FX(yP),'#6A5B47',.8,'2 3'));
+  s+=G('a-fade',.4,ecurve([[x0+6,yS],[mid,yU],[x1-6,yP]],{col:'#8C7A52',dash:'6 5'})+Tc(mid,yU-7,'S‡','#6A5B47',12,'mono mid','600'));
+  s+=G('a-fade',1,ecurve([[x0+6,yS],[x0+w*.25,yES],[mid,yC],[x0+w*.75,yEP],[x1-6,yP]],{col:CURVE})
+    +Tc(mid,yC-7,'ES‡','#2F5276',12,'mono mid','600')+Tc(x0+w*.25,yES+16,'ES','#2F5276',12,'mono mid','600')+Tc(x0+w*.75,yEP+15,'EP','#2F5276',12,'mono mid','600'));
+  s+=G('a-fade',.1,Tc(x0+10,yS-7,'S','#3A2E22',13,'mono start','600')+Tc(x1-10,yP-7,'P','#3A2E22',13,'mono end','600'));
+  s+=G('a-fade',1.6,span(x0+16,yS,yU,'a',{dx:6})+span(x0+w*.25,yES,yC,'b',{dx:6})+span(x1+12,yS,yP,'c',{dx:6}));
+  s+=G('a-fade',.6,legend(x1-104,top+4,[['no enzyme','#8C7A52','6 5'],['with enzyme',CURVE]]));
+  let ky=top+H+46;
+  const key=[['a','ΔG‡ without enzyme'],['b','ΔG‡ with enzyme, from ES'],['c','ΔG of reaction: unchanged']];
+  s+=G('a-fade',1.9,key.map((k,i)=>Tc(n?24:x0,ky+i*18,k[0],'#2F5276',12,'mono start','600')+T((n?24:x0)+16,ky+i*18,k[1],'note start f12')).join(''));
+  ky+=3*18;
+  const items=[['Lowers the barrier','An enzyme lowers ΔG‡. At 25 °C, each 5.7 kJ/mol taken off the barrier speeds the reaction 10-fold.'],
+   ['Leaves equilibrium alone','ΔG and the equilibrium constant depend only on S and P. The enzyme speeds forward and reverse reactions by the same factor.'],
+   ['Is not used up','It leaves each cycle unchanged, so one molecule can process many thousands of substrates.']];
+  let b;
+  if(n)b=bullets(24,ky+20,items,44,{d0:2.2,gap:28});else b=bullets(430,52,items,30,{d0:2.2,gap:30});
+  return {vb:n?slim(b.y-6):wide(Math.max(ky+8,b.y-8)),s:s+b.s};
+}
+
+function tsPic(k,cx,cy,R){
+  const seat=cy-.70*R, sw=.64*R, sh=.48*R;
+  if(k===0)return enzyme(cx,cy,R,{label:'E'})+G('a-drop',.5,subst(cx,seat-R*.62,sw,sh,{label:'S'}))
+    +`<path d="M${cx+R*.55} ${FX(seat-R*.72)} q${FX(R*.22)} ${FX(R*.3)} 0 ${FX(R*.55)}" stroke="${INK}" stroke-width="1.2" fill="none" marker-end="url(#ahp)"/>`;
+  if(k===1){const r=R*.78, a=cx-R*.95, b=cx+R*.95, ss=cy-.70*r;
+    return enzyme(a,cy,r,{gw:r*.56,gd:r*.50,label:'E'})+subst(a,ss-r*.62,.64*r,.48*r,{label:'S',fs:9})
+      +`<path d="M${FX(a+r*1.1)} ${cy} h${FX(b-a-r*2.2)}" class="arrow"/>`
+      +G('a-fade',.8,enzyme(b,cy,r,{gw:r*.30,gd:r*.50,label:'ES',fill:ENZD})+subst(b,ss-r*.02,.62*r,.48*r,{label:'S',fs:9}));}
+  const tsd=`M${FX(cx-sw*.52)} ${FX(seat-sh*.42)} L${FX(cx+sw*.52)} ${FX(seat-sh*.42)} L${FX(cx+sw*.40)} ${FX(seat+sh*.36)} Q${FX(cx)} ${FX(seat+sh*.72)} ${FX(cx-sw*.40)} ${FX(seat+sh*.36)} Z`;
+  return enzyme(cx,cy,R,{label:'E'})+G('a-fade',.4,subst(cx,seat-R*.26,sw*.86,sh*1.05,{label:'S',fs:9}))
+    +G('a-fade',1.1,`<path d="${tsd}" fill="${TSC}" fill-opacity=".18" stroke="${TSC}" stroke-width="1.6" stroke-dasharray="4 3"/>`
+      +Tc(cx+R*.62,FX(seat-R*.36),'S‡','#7D4A98',12,'mono start','600'));
+}
+const TSP=[['Lock and key','Emil Fischer, 1894','The site is a rigid, pre-formed fit for the substrate. It explains specificity, but not catalysis.'],
+ ['Induced fit','Daniel Koshland, 1958','The right substrate makes the enzyme close around it, bringing catalytic groups into position.'],
+ ['Fit the transition state','Haldane 1930; Pauling 1946–48','The site is most complementary to the transition state, not the substrate, so binding energy is spent where it lowers the barrier.']];
+function scTS(n){
+  let s='',y;
+  if(!n){const cxs=[107,320,533];
+    TSP.forEach((p,i)=>{const cx=cxs[i];
+      s+=G('a-fade',(i*.5).toFixed(1),T(cx,30,p[0],'cname mid')+tsPic(i,cx,i===1?118:122,i===1?40:44)
+        +T(cx,198,p[1],'mono acc mid f12')+wrap(p[2],30).map((l,j)=>T(cx,220+j*17,l,'note mid f12')).join(''));
+      if(i<2)s+=G('a-fade',(i*.5+.3).toFixed(1),ln(cx+106,40,cx+106,290,'#6A5B47',.6,'2 4'));});
+    y=318;
+  }else{y=20;
+    TSP.forEach((p,i)=>{const L=wrap(p[2],30), rh=Math.max(132,52+L.length*16+10);
+      s+=G('a-fade',(i*.5).toFixed(1),tsPic(i,i===1?70:72,y+(i===1?76:84),i===1?30:36)
+        +T(150,y+20,p[0],'cname start f14')+T(150,y+38,p[1],'mono acc start f11')+L.map((l,j)=>T(150,y+58+j*16,l,'note start f12')).join(''));
+      y+=rh;if(i<2)s+=ln(14,y-8,346,y-8,'#6A5B47',.6,'2 4');});
+    y+=10;}
+  const p=para(n?16:30,y,'Corollary: a stable molecule shaped like the transition state can bind far more tightly than the substrate does. Transition-state analogues are one route to potent inhibitors.',n?50:88,'note start f13',17,1.8);
+  return {vb:n?slim(p.y+8):wide(p.y+10),s:s+p.s};
+}
+
+const TRICKS=[['Proximity and orientation','Holds the reacting groups together in the right geometry, turning a chance collision into an effectively intramolecular reaction.'],
+ ['General acid–base','Side chains such as His, Asp, Glu and Lys donate or accept a proton at the right moment, so no strong acid or base is needed.'],
+ ['Covalent catalysis','A nucleophile (Ser, Cys, Lys) forms a transient bond with the substrate, splitting one hard step into two easier ones.'],
+ ['Metal ions','Zn²⁺, Mg²⁺ or Fe²⁺ orient substrates, shield negative charge, or turn a bound water into a strong nucleophile, as in carbonic anhydrase.'],
+ ['Electrostatic stabilisation','Charges and H-bond donors are pre-positioned to stabilise the charge that appears in the transition state, as in the oxyanion hole.'],
+ ['All at once','Real active sites combine several. Serine proteases use four of the five; the next plate shows how.']];
+function scTricks(n){
+  let s='',y=n?16:18;
+  if(n){TRICKS.forEach((t,i)=>{const b=boxItem(14,y,332,t[0],t[1],{num:i<5?i+1:0,fill:i===5?'#D9E2D3':'#E7DEC9',cw:6.1});s+=G('a-fade',(i*.3).toFixed(1),b.s);y+=b.h+10;});}
+  else{for(let r=0;r<3;r++){const a=boxItem(20,y,292,TRICKS[2*r][0],TRICKS[2*r][1],{num:2*r+1}), bb=boxItem(328,y,292,TRICKS[2*r+1][0],TRICKS[2*r+1][1],{num:2*r+2<6?2*r+2:0,fill:2*r+1===5?'#D9E2D3':'#E7DEC9'});
+      const h=Math.max(a.h,bb.h);
+      s+=G('a-fade',(r*.6).toFixed(1),a.s.replace(/height="\d+(\.\d+)?"/,`height="${h}"`))+G('a-fade',(r*.6+.3).toFixed(1),bb.s.replace(/height="\d+(\.\d+)?"/,`height="${h}"`));
+      y+=h+12;}}
+  return {vb:n?slim(y+4):wide(y+6),s};
+}
+
+function triad(ox,oy){
+  const at=(x,y,t,c='#3A2E22',fs=13)=>Tc(ox+x,oy+y,t,c,fs,'mono mid','600');
+  const L=(x1,y1,x2,y2,c=INK,w=1.4,d='')=>`<path d="M${ox+x1} ${oy+y1} L${ox+x2} ${oy+y2}" stroke="${c}" stroke-width="${w}" ${d?`stroke-dasharray="${d}"`:''} fill="none"/>`;
+  let s='';
+  // substrate
+  s+=G('a-fade',.2,L(150,56,192,70)+L(208,62,238,50)+L(206,68,236,56)+`<path d="M${ox+208} ${oy+80} L${ox+232} ${oy+100}" stroke="${INHC}" stroke-width="2.4"/>`
+    +at(140,58,'R')+at(200,76,'C')+at(246,54,'O')+at(246,110,'N–R′')
+    +L(246,40,248,24,'#6A5B47',1,'2 2')+at(248,16,'oxyanion hole',CURVE,11));
+  // Ser
+  s+=G('a-fade',.5,at(200,154,'O')+L(200,160,200,184)+at(200,198,'CH₂',INK,12)+at(176,156,'H')+L(182,152,194,152)
+    +Tc(ox+200,oy+228,'Ser195','#2F5276',12,'mono mid','600')+T(ox+200,oy+244,'nucleophile','note mid f12'));
+  // His ring
+  const hx=118,hy=166,r=20,pts=[-90,-18,54,126,198].map(a=>[hx+r*Math.cos(a*Math.PI/180),hy+r*Math.sin(a*Math.PI/180)]);
+  s+=G('a-fade',.7,`<path d="M${pts.map(p=>FX(ox+p[0])+' '+FX(oy+p[1])).join(' L')} Z" fill="${RSTATE}" fill-opacity=".45" stroke="${INK}" stroke-width="1.3"/>`
+    +at(pts[1][0]+6,pts[1][1]+5,'N',INK,12)+at(pts[4][0]-6,pts[4][1]+5,'N',INK,12)+at(pts[4][0]-20,pts[4][1]+5,'H',INK,12)
+    +L(hx,hy+r*.82,hx,hy+38)+Tc(ox+hx,oy+228,'His57','#2F5276',12,'mono mid','600')+T(ox+hx,oy+244,'general base','note mid f12'));
+  s+=G('a-fade',.9,L(170,156,146,162,'#6A5B47',1.2,'3 3'));
+  // Asp
+  s+=G('a-fade',.9,at(40,166,'O⁻')+L(40,172,40,200)+at(40,212,'C',INK,12)+L(52,163,68,162,'#6A5B47',1.2,'3 3')
+    +Tc(ox+40,oy+228,'Asp102','#2F5276',12,'mono mid','600')+T(ox+40,oy+244,'orients His','note mid f12'));
+  // arrows
+  s+=G('a-fade',1.5,`<path d="M${ox+208} ${oy+142} Q${ox+232} ${oy+116} ${ox+208} ${oy+86}" stroke="${INHC}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`
+    +`<path d="M${ox+188} ${oy+144} Q${ox+170} ${oy+130} ${ox+150} ${oy+152}" stroke="${INHC}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`);
+  return s;
+}
+const TRIAD=[['Attack','His57 takes the proton from Ser195, and the Ser oxygen attacks the carbonyl carbon of the bond to be cut.'],
+ ['Tetrahedral intermediate','The carbonyl oxygen becomes an oxyanion, held by two backbone NH groups: the oxyanion hole stabilises the transition state.'],
+ ['Acyl-enzyme','Protonated His57 passes its proton to the leaving amine, which departs. The rest of the substrate is now ester-linked to Ser195.'],
+ ['Deacylation','Water, activated by His57, attacks the ester. A second tetrahedral intermediate collapses, releasing the acid and restoring Ser195.']];
+function scTriad(n){
+  let s='';
+  const tx=n?14:10, ty=n?6:20;
+  s+=triad(tx,ty);
+  const x=n?14:338, W=n?332:284, cw=n?6.0:5.8;
+  let y=n?ty+262:20;
+  TRIAD.forEach((t,i)=>{const b=boxItem(x,y,W,t[0],t[1],{num:i+1,cw});s+=G('a-fade',(1.8+i*.4).toFixed(1),b.s);y+=b.h+8;});
+  const p=para(n?16:20,n?y+14:ty+278,'The same serine acyl-enzyme chemistry is used by penicillin-binding proteins and class A β-lactamases. Penicillin exploits it (Part III).',n?50:50,'note start f13',17,3.4);
+  return {vb:n?slim(p.y+8):wide(Math.max(y,p.y)+8),s:s+p.s};
+}
+
+/* ===================== Part II · Michaelis–Menten ===================== */
+function scSaturation(n){
+  const P=n?plot(54,30,280,160,[0,20],[0,1.1],{xlab:'[sucrose]',ylab:'initial rate',grid:[4,4]})
+           :plot(70,40,230,190,[0,20],[0,1.1],{xlab:'[sucrose]',ylab:'initial rate',grid:[4,4]});
+  const SS=[.5,1,2,3,5,8,12,18], NZ=[.04,-.03,.02,-.02,.03,-.01,.02,-.015];
+  let s=G('a-fade',0,P.s)+G('a-fade',.4,gline(P,0,1,20,1,{})+plab(P,20,1,VMX,{dy:-6,a:'end'}));
+  s+=G('a-fade',.8,curve(P,x=>x/(2+x),{dash:'1 0',w:2}));
+  SS.forEach((x,i)=>s+=G('a-pop',(.3+i*.12).toFixed(2),dot(P,x,x/(2+x)*(1+NZ[i]),{col:SUBC})));
+  const ev=[['1902','Adrian Brown, studying invertase, finds that the rate stops rising with more sucrose, and proposes an enzyme–substrate complex'],
+   ['1903','Victor Henri writes a rate equation for such a complex'],
+   ['1913','Leonor Michaelis and Maud Menten measure initial rates at controlled pH, correct for the product’s mutarotation, and fit the equation'],
+   ['1925','George Briggs and J. B. S. Haldane show it holds under a steady state, without assuming the complex is at equilibrium']];
+  const t=n?timeline(16,P.y+P.h+60,ev,40,'f13',48,12,1.4):timeline(330,48,ev,34,'f13',48,14,1.4);
+  return {vb:n?slim(t.y):wide(Math.max(t.y,280)),s:s+t.s};
+}
+
+function mmScheme(cx,y){
+  const a=(x1,y1,dx)=>`<path d="M${x1} ${y1} h${dx}" stroke="${INK}" stroke-width="1.3" marker-end="url(#ahp)" fill="none"/>`;
+  return Tc(cx-110,y+5,'E + S','#3A2E22',15,'mono mid','600')+a(cx-80,y-3,44)+a(cx-36,y+5,-44)
+   +Tc(cx-58,y-10,'k'+SB('1'),'#2F5276',12,'mono mid','600')+Tc(cx-58,y+22,'k'+SB('−1'),'#2F5276',12,'mono mid','600')
+   +Tc(cx-10,y+5,'ES','#3A2E22',15,'mono mid','600')+a(cx+16,y,44)+Tc(cx+38,y-10,'k'+SB('2'),'#2F5276',12,'mono mid','600')
+   +Tc(cx+100,y+5,'E + P','#3A2E22',15,'mono mid','600');
+}
+function mmSim(){const k1=5,km1=2,k2=1;let S=10,E=1,ES=0,P=0,t=0;const dt=.002,out=[];
+  for(let i=0;i<=7000;i++){if(i%40===0)out.push([t,S,ES,P]);const f=k1*E*S,b=km1*ES,c=k2*ES;S+=(-f+b)*dt;ES+=(f-b-c)*dt;E+=(-f+b+c)*dt;P+=c*dt;t+=dt;}return out;}
+const ET='[E]'+SB('T');
+const EQS=[['Steady state','k'+SB('1')+'[E][S] = (k'+SB('−1')+' + k'+SB('2')+')[ES]'],
+ ['Conservation',ET+' = [E] + [ES]'],
+ ['Define '+KM,KM+' = (k'+SB('−1')+' + k'+SB('2')+') / k'+SB('1')],
+ ['Solve','[ES] = '+ET+'[S] / ('+KM+' + [S])'],
+ ['Rate = k'+SB('2')+'[ES]','v = '+VMX+'[S] / ('+KM+' + [S])',1],
+ ['where',VMX+' = k'+SB('2')+ET+' = '+KCAT+ET]];
+function scDerive(n){
+  let s=G('a-fade',0,mmScheme(n?180:200,40));
+  let y=n?92:96;
+  EQS.forEach((e,i)=>{const d=(.5+i*.35).toFixed(2);
+    if(n){s+=G('a-fade',d,T(16,y,e[0],'note start f12')+(e[2]?`<rect x="12" y="${y+7}" width="300" height="26" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width=".8"/>`:'')+Tc(22,y+25,e[1],e[2]?'#2F5276':'#3A2E22',e[2]?15:14,'mono start','600'));y+=50;}
+    else{s+=G('a-fade',d,T(24,y,e[0],'note start f12')+(e[2]?`<rect x="146" y="${y-18}" width="250" height="27" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width=".8"/>`:'')+Tc(156,y,e[1],e[2]?'#2F5276':'#3A2E22',e[2]?15:14,'mono start','600'));y+=36;}});
+  const D=mmSim();
+  const P=n?plot(46,y+16,286,150,[0,14],[0,10.5],{xlab:'time',ylab:'concentration',xdy:22,ydx:14})
+           :plot(440,70,180,170,[0,14],[0,10.5],{xlab:'time',ylab:'concentration',xdy:22,ydx:14});
+  s+=G('a-fade',2.4,P.s+`<rect x="${FX(P.px(.4))}" y="${P.y}" width="${FX(P.px(8)-P.px(.4))}" height="${P.h}" fill="${CURVE}" opacity=".08"/>`
+    +polyl(P,D.map(d=>[d[0],d[1]]),{col:SUBC})+polyl(P,D.map(d=>[d[0],d[3]]),{col:PRODC})+polyl(P,D.map(d=>[d[0],d[2]*8]),{col:CURVE,dash:'5 3'})
+    +plab(P,1.2,9.3,'[S]',{col:'#8C5A1E'})+plab(P,11.6,9.2,'[P]',{col:'#3E6131'})+plab(P,8.6,6.4,'[ES] ×8',{col:'#2F5276',fs:10})
+    +T(P.px(4.2),P.y-6,'steady state','note mid f11'));
+  const ay=n?P.y+P.h+50:Math.max(y+14,P.y+P.h+50);
+  const p=para(n?16:24,ay,'Assumes [S] far exceeds [E]T, a single substrate, and initial rates, measured before product builds up and the reverse reaction matters.',n?50:92,'note start f13',17,2.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+function scHyper(n){
+  const P=n?plot(50,30,280,190,[0,10],[0,1.12],{xlab:'[S]  (units of '+KM+')',ylab:'v',grid:[5,4]})
+           :plot(66,36,330,220,[0,10],[0,1.12],{xlab:'[S]  (units of '+KM+')',ylab:'v',grid:[5,4]});
+  let s=G('a-fade',0,P.s);
+  s+=G('a-fade',.3,gline(P,0,1,10,1)+plab(P,10,1,VMX,{dy:-6,a:'end'}));
+  s+=G('a-fade',.6,curve(P,x=>x/(1+x)));
+  s+=G('a-fade',1.2,gline(P,0,.5,1,.5,{col:'#2F5276'})+gline(P,1,.5,1,0,{col:'#2F5276'})+dot(P,1,.5)
+    +plab(P,1.1,.5,VMX+'/2',{dy:16,col:'#2F5276'})+Tc(P.px(1),P.py(0)+14,KM,'#2F5276',12,'mono mid','600'));
+  s+=G('a-fade',1.8,gline(P,0,0,.9,.9,{col:SUBC,dash:'5 4'})+plab(P,.95,.9,'slope = '+VMX+'/'+KM,{col:'#8C5A1E',fs:11,dy:-2}));
+  s+=G('a-fade',2.2,plab(P,2.7,.2,'first order in [S]',{fs:11,col:'#6A5B47'})+plab(P,9.8,.78,'zero order',{fs:11,col:'#6A5B47',a:'end'}));
+  const rows=[['0.1 '+KM,'9%'],[KM,'50%'],['4 '+KM,'80%'],['9 '+KM,'90%'],['99 '+KM,'99%']];
+  let y;
+  if(n){const t0=P.y+P.h+60;s+=G('a-fade',2.6,T(24,t0,'[S]','cname start f13')+T(130,t0,'v / '+VMX,'cname start f13')+ln(20,t0+6,240,t0+6)
+      +rows.map((r,i)=>T(24,t0+26+i*22,r[0],'lab start f13')+T(130,t0+26+i*22,r[1],'note start f13')).join(''));y=t0+26+rows.length*22+14;}
+  else{s+=G('a-fade',2.6,T(440,56,'[S]','cname start f14')+T(540,56,'v / '+VMX,'cname start f14')+ln(436,62,620,62)
+      +rows.map((r,i)=>T(440,86+i*26,r[0],'lab start f14')+T(540,86+i*26,r[1],'note start f14')).join(''));y=P.y+P.h+52;}
+  const p=para(n?16:24,y,'Km is the substrate concentration that gives half the maximal rate. It equals the dissociation constant of ES only when k2 is much smaller than k−1; in general Km = (k−1 + k2)/k1.',n?50:92,'note start f13',17,3);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+const KBARS=[['Median enzyme','Bar-Even et al., 2011',1e5],['RuBisCO, CO₂','',2e5],['TEM-1 β-lactamase, benzylpenicillin','',3e7],
+ ['Carbonic anhydrase II','',1.5e8],['Fumarase','',1.6e8],['Triose phosphate isomerase','',2.4e8]];
+const SUPN={3:'³',4:'⁴',5:'⁵',6:'⁶',7:'⁷',8:'⁸',9:'⁹',10:'¹⁰'};
+function scKcat(n){
+  let s='',y=n?16:18;
+  const d1=['Turnover number, '+KCAT,'Substrate molecules converted per active site per second at saturation: kcat = Vmax / [E]T. A typical enzyme manages about 10 per second.'];
+  const d2=['Specificity constant, '+KCAT+'/'+KM,'The rate constant for E + S going to product when [S] is low. It compares substrates for one enzyme, and enzymes with each other.'];
+  if(n){const a=boxItem(14,y,332,d1[0],d1[1],{cw:6.1});s+=G('a-fade',0,a.s);y+=a.h+10;const b=boxItem(14,y,332,d2[0],d2[1],{cw:6.1});s+=G('a-fade',.4,b.s);y+=b.h+26;}
+  else{const a=boxItem(20,y,292,d1[0],d1[1]),b=boxItem(328,y,292,d2[0],d2[1]),h=Math.max(a.h,b.h);
+    s+=G('a-fade',0,a.s.replace(/height="\d+"/,`height="${h}"`))+G('a-fade',.4,b.s.replace(/height="\d+"/,`height="${h}"`));y+=h+30;}
+  const x0=n?20:262, x1=n?336:618, X=v=>x0+(Math.log10(v)-3)/7*(x1-x0), rh=n?40:30;
+  const yb=y+KBARS.length*rh+(n?4:6);
+  s+=G('a-fade',.8,`<rect x="${FX(X(1e8))}" y="${y-14}" width="${FX(X(1e9)-X(1e8))}" height="${yb-y+14}" fill="${PRODC}" opacity=".16"/>`
+    +T(FX((X(1e8)+X(1e9))/2),y-18,'diffusion limit','note mid f11')
+    +[3,4,5,6,7,8,9,10].map(e=>ln(FX(X(Math.pow(10,e))),yb,FX(X(Math.pow(10,e))),yb+5)+T(FX(X(Math.pow(10,e))),yb+18,'10'+SP(e),'note mid f11')).join('')
+    +ln(x0,yb,x1,yb));
+  KBARS.forEach((b,i)=>{const yy=y+i*rh, bw=X(b[2])-x0;
+    s+=G('a-fade',(1+i*.25).toFixed(2),(n?T(x0,yy-4,b[0],'lab start f12'):T(20,yy+10,b[0],'lab start f12'))
+      +`<rect x="${x0}" y="${n?yy:yy}" width="${FX(bw)}" height="${n?14:16}" rx="2" fill="${i<2?'#C9BFAB':CURVE}" stroke="${INK}" stroke-width=".8"/>`);});
+  let yy=yb+(n?40:42);
+  s+=G('a-fade',2.6,T(n?178:(x0+x1)/2,yy,KCAT+'/'+KM+'  (M'+SP('−1')+' s'+SP('−1')+'), log scale','note mid f12'));
+  const p=para(n?16:24,yy+28,'An enzyme cannot convert substrate faster than diffusion delivers it, so kcat/Km tops out near 10⁸–10⁹ per molar per second; enzymes that reach this are called catalytically perfect. Most enzymes sit far below. Values are approximate.',n?50:92,'note start f13',17,2.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+function scLinear(n){
+  const SS=[.2,.3,.5,1,2,4,8], NZ=[1.06,.95,1.03,.97,1.02,.99,1.01], E=.03;
+  const P1=n?plot(50,30,280,150,[0,8.5],[0,1.1],{xlab:'[S]',ylab:'v',xdy:22})
+            :plot(56,40,234,180,[0,8.5],[0,1.1],{xlab:'[S]',ylab:'v',xdy:22});
+  const P2=n?plot(30,250,300,170,[-1.6,5.5],[0,7.5],{ox:0,xlab:'1 / [S]',xdy:22})
+            :plot(350,40,264,180,[-1.6,5.5],[0,7.5],{ox:0,xlab:'1 / [S]',xdy:22});
+  let s=G('a-fade',0,P1.s+T(P1.x+P1.w/2,P1.y-14,'Michaelis–Menten','cname mid f13'))
+    +G('a-fade',.8,P2.s+T(P2.x+P2.w/2,P2.y-14,'Lineweaver–Burk, 1934','cname mid f13')+T(P2.px(0)+6,P2.y+4,'1 / v','note start f12'));
+  s+=G('a-fade',.4,curve(P1,x=>x/(1+x),{w:1.8,col:'#6A5B47'}));
+  SS.forEach((x,i)=>{const v=x/(1+x)*NZ[i];s+=G('a-pop',(.3+i*.1).toFixed(2),ebar(P1,x,v-E,v+E)+dot(P1,x,v,{col:SUBC}));});
+  s+=G('a-fade',1.4,curve(P2,x=>x+1,{xr:[-1,5.5],w:1.8,col:'#6A5B47'}));
+  SS.forEach((x,i)=>{const v=x/(1+x)*NZ[i];s+=G('a-pop',(1.2+i*.1).toFixed(2),ebar(P2,1/x,1/(v+E),Math.min(7.5,1/(v-E)))+dot(P2,1/x,1/v,{col:SUBC}));});
+  s+=G('a-fade',2.2,dot(P2,0,1,{col:CURVE,r:3})+plab(P2,0,1,'1/'+VMX,{dx:-6,dy:-6,a:'end',col:'#2F5276'})
+    +dot(P2,-1,0,{col:CURVE,r:3})+plab(P2,-1,0,'−1/'+KM,{dy:16,a:'mid',col:'#2F5276'})
+    +plab(P2,.3,5.4,'slope = '+KM+'/'+VMX,{col:'#2F5276',fs:11}));
+  const y=(n?P2.y+P2.h:P1.y+P1.h)+52;
+  const p=para(n?16:24,y,'Inverting the equation gives a straight line, but it distorts the errors: the points taken at low [S], the least precise, gain the most leverage. Fit the hyperbola directly by nonlinear regression, and keep the double-reciprocal plot for seeing inhibition patterns. Eadie–Hofstee and Hanes–Woolf plots are other rearrangements.',n?50:92,'note start f13',17,2.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+/* ===================== Part III · inhibition ===================== */
+const INHT={
+ comp:{n:'Competitive',a:k=>1+k,ap:k=>1,K:KI,sch:[[['E + I','rev','EI'],KI]],
+   ex:'Bacterial example: sulfonamides compete with p-aminobenzoate for dihydropteroate synthase (FolP).',
+   cap:'Vmax is unchanged, because enough substrate always outcompetes the inhibitor. Km rises by α = 1 + [I]/Ki. The double-reciprocal lines meet on the 1/v axis.'},
+ unc:{n:'Uncompetitive',a:k=>1,ap:k=>1+k,K:KIP,sch:[[['ES + I','rev','ESI'],KIP]],
+   ex:'Bacterial example: glyphosate binds the EPSP synthase (AroA)·shikimate-3-phosphate complex: uncompetitive with S3P, competitive with PEP.',
+   cap:'The inhibitor binds only ES, draining it in both directions. Vmax and Km fall by the same factor α′ = 1 + [I]/Ki′, so the double-reciprocal lines are parallel.'},
+ non:{n:'Noncompetitive',a:k=>1+k,ap:k=>1+k,K:KI,sch:[[['E + I','rev','EI'],KI],[['ES + I','rev','ESI'],KIP+' = '+KI]],
+   ex:'The inhibitor binds away from the active site and does not change how well substrate binds.',
+   cap:'I binds E and ES equally (Ki = Ki′). Vmax falls by α, Km is unchanged, and the lines meet on the 1/[S] axis. Pure noncompetitive inhibition is uncommon: it is a special case of mixed.'},
+ mix:{n:'Mixed',a:k=>1+k,ap:k=>1+k/3,K:KI,sch:[[['E + I','rev','EI'],KI],[['ES + I','rev','ESI'],KIP]],
+   ex:'Typical of inhibitors that bind outside the active site, including many allosteric effectors. Here Ki′ = 3Ki.',
+   cap:'I binds E and ES with different constants. Vmax always falls. Km rises if I prefers free E (Ki < Ki′, as here) and falls if it prefers ES. Lines meet left of the 1/v axis.'}};
+const ILEV=[[0,CURVE,''],[1,CURVE4,'7 4'],[2,CURVE2,'3 3']];
+function inhCartoon(type,cx,cy,R,dx){
+  const seat=cy-.70*R, S=(x,c)=>subst(x,seat,.64*R,.48*R,{label:c==='I'?'I':'S',fill:c==='I'?INHC:SUBC,tc:c==='I'?'#F3EDE0':'#3A2E22'});
+  const side=x=>ligand(x+R*.97,cy+R*.22,R*.22,{fill:INHC,label:'I'});
+  const lab=(x,t)=>Tc(x,cy+R+18,t,'#2F5276',12,'mono mid','600');
+  const a=cx-dx, b=cx+dx;
+  if(type==='comp')return enzyme(a,cy,R)+S(a,'S')+lab(a,'ES')+T(cx,cy+4,'or','note mid f13')+enzyme(b,cy,R)+G('a-drop',.6,S(b,'I'))+lab(b,'EI');
+  if(type==='unc')return enzyme(a,cy,R)+S(a,'S')+G('a-drop',.6,ligand(a+R*.50,cy-R*1.02,R*.22,{fill:INHC,label:'I'}))+lab(a,'ESI')
+    +enzyme(b,cy,R)+G('a-fade',.9,ligand(b+R*.5,cy-R*1.55,R*.22,{fill:INHC,label:'I'})+mark(b+R*.95,cy-R*1.55,false,8))+lab(b,'E: no site for I');
+  return enzyme(a,cy,R)+S(a,'S')+G('a-drop',.6,side(a))+lab(a,'ESI')+enzyme(b,cy,R)+G('a-drop',.8,side(b))+lab(b,'EI');
+}
+function inhPlots(type,n,y,dl=0){
+  const t=INHT[type];
+  const P1=n?plot(46,y,284,140,[0,10],[0,1.1],{xlab:'[S]',ylab:'v',xdy:22,ydx:14}):plot(60,y,250,150,[0,10],[0,1.1],{xlab:'[S]',ylab:'v',xdy:22,ydx:14});
+  const P2=n?plot(30,y+140+58,300,150,[-3.2,3.2],[0,7],{ox:0,xlab:'1 / [S]',xdy:22}):plot(362,y,250,150,[-3.2,3.2],[0,7],{ox:0,xlab:'1 / [S]',xdy:22});
+  let s=G('a-fade',dl,P1.s+P2.s+T(P2.px(0)+6,P2.y+4,'1 / v','note start f12')+gline(P1,0,1,10,1)+plab(P1,10,1,VMX,{dy:-5,a:'end',fs:10}));
+  ILEV.forEach((L,i)=>{const k=L[0];
+    s+=G('a-fade',(dl+.4+i*.4).toFixed(1),curve(P1,x=>x/(t.a(k)+t.ap(k)*x),{col:L[1],dash:L[2]})+curve(P2,x=>t.a(k)*x+t.ap(k),{col:L[1],dash:L[2]}));});
+  const ly=(n?P2.y+P2.h:P1.y+P1.h)+44;
+  const it=[['[I] = 0',CURVE,''],['[I] = '+t.K,CURVE4,'7 4'],['[I] = 2'+t.K,CURVE2,'3 3']];
+  s+=G('a-fade',dl+1.4,n?legend(30,ly,it,{gap:18}):it.map((x,i)=>legend(70+i*170,ly,[x])).join(''));
+  return {s,y:ly+(n?3*18:14)};
+}
+function inhScene(type,n,o={}){
+  const t=INHT[type];
+  let s='',y;
+  const R=n?26:30, cy=n?68:82, cx=n?180:170;
+  s+=G('a-fade',0,inhCartoon(type,cx,cy,R,n?78:82));
+  let sy=n?cy+R+54:44;
+  const sx=n?24:350;
+  t.sch.forEach((L,i)=>{const sc=scheme(sx,sy,L[0],{fs:n?13:14,aw:30});
+    s+=G('a-fade',(.6+i*.2).toFixed(1),sc.s+Tc(sx+sc.w+6,sy+5,'('+L[1]+')','#2F5276',12,'mono start','600'));sy+=32;});
+  const ex=para(sx,sy+2,t.ex,n?50:40,'note start f12',16,1);
+  s+=ex.s;
+  y=n?ex.y+34:Math.max(ex.y,cy+R+30)+34;
+  if(o.eq){s+=G('a-fade',.3,Tc(n?180:320,y-6,'v = '+VMX+'[S] / (α'+KM+' + α′[S])','#2F5276',n?13:15,'mono mid','600'));y+=26;}
+  const pl=inhPlots(type,n,y,1.2);
+  s+=pl.s;
+  return {s,y:pl.y+16};
+}
+function scComp(n){const r=inhScene('comp',n), p=para(n?16:24,r.y,INHT.comp.cap,n?50:92,'note start f13',17,2.4);return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};}
+function scUnc(n){const r=inhScene('unc',n), p=para(n?16:24,r.y,INHT.unc.cap,n?50:92,'note start f13',17,2.4);return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};}
+function scMix(n){const r=inhScene('mix',n), p=para(n?16:24,r.y,'I binds E and ES with different constants. Vmax always falls. Km rises if I prefers free E (Ki < Ki′, as here) and falls if it prefers ES; the lines meet left of the 1/v axis. When Ki = Ki′ exactly, Km is unchanged and the lines meet on the 1/[S] axis: noncompetitive inhibition, the special case.',n?50:92,'note start f13',17,2.4);return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};}
+
+const INHK=['comp','unc','non','mix'];
+let inhSel=0;
+function scInhX(n){
+  const type=INHK[inhSel], r=inhScene(type,n,{eq:true});
+  let s=r.s, y=r.y+(n?12:14);
+  const rows=n?[['Competitive','same','× α','on 1/v axis'],['Uncompetitive','÷ α′','÷ α′','parallel'],['Noncompetitive','÷ α','same','on 1/[S] axis'],['Mixed','÷ α′','× α/α′','left of 1/v axis']]
+              :[['Competitive','unchanged','× α','meet on the 1/v axis'],['Uncompetitive','÷ α′','÷ α′','parallel'],['Noncompetitive','÷ α','unchanged','meet on the 1/[S] axis'],['Mixed','÷ α′','× α/α′','meet left of the 1/v axis']];
+  const c=n?[10,112,174,236]:[24,190,320,440], R2=n?350:616, y0=y+14, dy=26;
+  s+=G('a-fade',1.8,(n?['Type',VMX,KM,'LB lines']:['Type','apparent '+VMX,'apparent '+KM,'double-reciprocal lines']).map((h,i)=>T(c[i],y0,h,'cname start '+(n?'f11':'f13'))).join('')+ln(c[0],y0+6,R2,y0+6)
+    +rows.map((rw,i)=>{const yy=y0+26+i*dy;return (i===inhSel?`<rect x="${c[0]-5}" y="${yy-17}" width="${R2-c[0]+8}" height="${dy-2}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`:'')
+      +rw.map((v,j)=>T(c[j],yy,v,(j?'note':'lab')+' start '+(n?'f11':'f13'))).join('');}).join(''));
+  y=y0+26+4*dy;
+  const p=para(n?16:24,y+4,INHT[type].cap,n?50:92,'note start f13',17,2.2);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+function scIrrev(n){
+  let s='';
+  const sx=n?28:30, sy=44;
+  const parts=['E + I','rev','E·I','fwd','E–I'], sc=scheme(sx,sy,parts,{fs:n?14:15,aw:n?40:46});
+  s+=G('a-fade',0,sc.s);
+  const ew=(n?14:15)*.6*5+7, aw=n?40:46;
+  s+=G('a-fade',.3,Tc(sx+ew+aw/2,sy-12,KI,'#2F5276',12,'mono mid','600')+Tc(sx+ew+aw+(n?14:15)*.6*3+7+aw/2,sy-12,'k'+SB('inact'),'#2F5276',12,'mono mid','600'));
+  const P=n?plot(50,96,280,150,[0,6],[0,105],{xlab:'time',ylab:'% activity left',xdy:22,ydx:16})
+           :plot(64,100,240,160,[0,6],[0,105],{xlab:'time',ylab:'% activity left',xdy:22,ydx:16});
+  s+=G('a-fade',.6,P.s);
+  [[0,CURVE,''],[.5,CURVE4,'7 4'],[1,'#8C6D46','5 3'],[3,CURVE2,'3 3']].forEach((L,i)=>{const ko=L[0]/(1+L[0]);
+    s+=G('a-fade',(.9+i*.3).toFixed(1),curve(P,t=>100*Math.exp(-ko*t),{col:L[1],dash:L[2]}));});
+  s+=G('a-fade',2,plab(P,6,100,'no inhibitor',{dy:-6,a:'end',fs:10})+`<path d="M${FX(P.px(2.2))} ${FX(P.py(62))} L${FX(P.px(1.0))} ${FX(P.py(22))}" stroke="${INK}" stroke-width="1.2" marker-end="url(#ahp)"/>`
+    +plab(P,2.3,64,'more [I]',{fs:10}));
+  let y=P.y+P.h+48;
+  const np=para(n?16:30,y,'Activity falls with time, not just with dose, so irreversible inhibitors are compared by kinact/KI rather than IC50.',n?50:44,'note start f12',16,2.2);
+  s+=np.s;
+  // penicillin pathway
+  const bx=n?14:340, bw=n?332:276;
+  let by=n?np.y+28:96;
+  const bb=(x,y,w,h,f,t1,t2)=>box(x,y,w,h,f,4)+Tc(x+w/2,y+18,t1,'#3A2E22',12,'mono mid','600')+(t2?wrap(t2,Math.floor(w/6.1)).map((l,j)=>T(x+w/2,y+36+j*15,l,'note mid f11')).join(''):'');
+  s+=G('a-fade',2.4,bb(bx,by,bw,28,'#E7DEC9','Ser–OH + β-lactam')+`<path d="M${bx+bw/2} ${by+30} v18" class="arrow"/>`
+    +bb(bx,by+52,bw,28,'#E7DEC9','acyl-enzyme: Ser–O–C(=O)–drug'));
+  const hw=(bw-12)/2, ty=by+112, bh=n?72:90;
+  s+=G('a-fade',3,`<path d="M${bx+bw/2-10} ${by+82} L${bx+hw/2} ${ty-4}" class="arrow"/><path d="M${bx+bw/2+10} ${by+82} L${bx+bw-hw/2} ${ty-4}" class="arrow"/>`
+    +bb(bx,ty,hw,bh,'#E9C9C1','PBP','Deacylation takes hours: the enzyme stays dead.')+bb(bx+hw+12,ty,hw,bh,'#D9E2D3','β-lactamase','Water attacks in milliseconds: drug destroyed, enzyme free.'));
+  y=Math.max(np.y,ty+bh)+34;
+  const items=[['Penicillins mimic D-Ala-D-Ala','They enter the transpeptidase site as a substrate analogue, then acylate the active-site serine of the SxxK motif.'],
+   ['Fosfomycin','An epoxide that alkylates Cys115 of MurA, blocking the first committed step of peptidoglycan synthesis.'],
+   ['Clavulanic acid','A mechanism-based (suicide) inhibitor of class A β-lactamases: processed like a substrate, then trapped as an adduct that is not hydrolysed.']];
+  const b=bullets(n?24:30,y,items,n?44:86,{d0:3.4,gap:28});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+/* ===================== Part IV · allostery & cooperativity ===================== */
+const hillf=(n,K=1)=>x=>Math.pow(x,n)/(Math.pow(K,n)+Math.pow(x,n));
+function scSigmoid(n){
+  const P=n?plot(50,30,280,190,[0,10],[0,1.05],{xlab:'[S]  (units of '+KHALF+')',ylab:'fraction of maximum',xdy:70,ydx:16})
+           :plot(66,36,330,210,[0,10],[0,1.05],{xlab:'[S]  (units of '+KHALF+')',ylab:'fraction of maximum',xdy:70,ydx:16});
+  let s=G('a-fade',0,P.s+gline(P,0,.1,10,.1,{dash:'2 3'})+gline(P,0,.9,10,.9,{dash:'2 3'})+plab(P,10,.9,'90%',{dy:-4,a:'end',fs:10})+plab(P,10,.1,'10%',{dy:-4,a:'end',fs:10}));
+  s+=G('a-fade',.4,curve(P,hillf(1),{col:'#8C7A52',dash:'6 4'})+plab(P,6.5,.72,'hyperbolic, n = 1',{col:'#6A5B47',fs:11}));
+  s+=G('a-fade',1,curve(P,hillf(4),{n:160})+plab(P,2.2,1,'sigmoid, n = 4',{col:'#2F5276',fs:11}));
+  s+=G('a-fade',1.6,dot(P,1/9,.1,{col:'#8C7A52',r:3})+dot(P,9,.9,{col:'#8C7A52',r:3})+dot(P,Math.pow(1/9,.25),.1,{r:3})+dot(P,Math.pow(9,.25),.9,{r:3}));
+  const yb=P.y+P.h;
+  s+=G('a-fade',2,hspan(yb+30,+FX(P.px(1/9)),+FX(P.px(9)),'81-fold',{col:'#8C7A52',tc:'#6A5B47',dy:-5})
+    +hspan(yb+52,+FX(P.px(Math.pow(1/9,.25))),+FX(P.px(Math.pow(9,.25))),'',{col:CURVE})+Tc(P.px(Math.pow(9,.25))+8,yb+56,'3-fold','#2F5276',11,'mono start','600'));
+  const items=[['Switch-like','With four cooperative sites, a 3-fold rise in [S] takes activity from 10% to 90%. A hyperbolic enzyme needs an 81-fold rise.'],
+   ['Needs several sites','Binding at one site must change affinity at another, so cooperativity is found in oligomers.'],
+   ['The first example','Bohr, Hasselbalch and Krogh found haemoglobin’s O₂-binding curve to be sigmoid in 1904. Myoglobin, a monomer, is hyperbolic.']];
+  const b=n?bullets(24,yb+104,items,44,{d0:2.4,gap:28}):bullets(430,52,items,30,{d0:2.4,gap:30});
+  return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,yb+90)),s:s+b.s};
+}
+
+const HILLS=[{n:.5,t:'Negative cooperativity, or a mixture of sites with different affinities: the response is flattened.'},
+ {n:1,t:'No cooperativity: the Michaelis–Menten hyperbola.'},
+ {n:2,t:'Positive cooperativity: the first binding event makes the next easier.'},
+ {n:2.8,t:'About what haemoglobin shows for O₂, with four sites.'},
+ {n:4,t:'The ceiling for four sites: all-or-none binding, approached but never reached.'}];
+let hillSel=2;
+function scHill(n){
+  const h=HILLS[hillSel], nn=h.n;
+  let s=G('a-fade',0,Tc(n?180:320,n?30:32,'θ = [S]'+SP('n')+' / ('+KHALF+SP('n')+' + [S]'+SP('n')+')','#2F5276',n?14:16,'mono mid','600'));
+  const P1=n?plot(50,64,280,150,[0,4],[0,1.05],{xlab:'[S] / '+KHALF,ylab:'θ',xdy:22,ydx:14}):plot(62,66,240,170,[0,4],[0,1.05],{xlab:'[S] / '+KHALF,ylab:'θ',xdy:22,ydx:14});
+  const P2=n?plot(30,276,300,150,[-1.5,1.5],[-3,3],{ox:0,oy:0,xlab:'log ([S] / '+KHALF+')',xdy:22}):plot(370,66,240,170,[-1.5,1.5],[-3,3],{ox:0,oy:0,xlab:'log ([S] / '+KHALF+')',xdy:22});
+  s+=G('a-fade',0,P1.s+P2.s+T(P1.x+P1.w/2,P1.y-12,'binding curve','cname mid f13')+T(P2.x+P2.w/2,P2.y-12,'Hill plot','cname mid f13')
+    +T(P2.px(0)+6,P2.y+6,'log (θ / (1 − θ))','note start f11'));
+  s+=G('a-fade',.2,curve(P1,hillf(1),{col:'#8C7A52',dash:'6 4',w:1.6})+curve(P2,x=>x,{col:'#8C7A52',dash:'6 4',w:1.6}));
+  s+=G('a-fade',.5,curve(P1,hillf(nn),{n:160})+curve(P2,x=>nn*x)+plab(P2,Math.min(1.25,2.2/nn),nn*Math.min(1.25,2.2/nn),'slope = '+nn,{col:'#2F5276',fs:11,dx:-8,dy:-2,a:'end'}));
+  const fold=Math.pow(81,1/nn), fs=fold>=100?Math.round(fold).toLocaleString('en'):fold>=10?Math.round(fold):fold.toFixed(1);
+  let y=(n?P2.y+P2.h:P1.y+P1.h)+52;
+  s+=G('a-fade',.9,T(n?16:24,y,'n'+SB('H')+' = '+nn,'cname start')+T(n?120:150,y,'10% → 90% needs a '+fs+'-fold rise in [S]','note start '+(n?'f12':'f14')));
+  const p=para(n?16:24,y+24,h.t+' The Hill coefficient (Hill, 1910) is an empirical measure of steepness: it cannot exceed the number of sites, and is not a count of them.',n?50:92,'note start f13',17,1.1);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+function rowStates(xs,cy,r,states,arrows,dl){
+  let s='';
+  states.forEach((st,i)=>{s+=G('a-fade',(dl+i*.35).toFixed(2),oligomer(xs[i],cy,r,st.map(c=>({R:c[0]==='R',lig:c[1]==='*'}))));});
+  arrows.forEach((a,i)=>{const x1=xs[i]+r*2.5, x2=xs[i+1]-r*2.5;
+    s+=G('a-fade',(dl+i*.35+.2).toFixed(2),`<path d="M${FX(x1)} ${cy-(a==='rev'?3:0)} H${FX(x2)}" stroke="${INK}" stroke-width="1.3" marker-end="url(#ahp)" fill="none"/>`
+      +(a==='rev'?`<path d="M${FX(x2)} ${cy+4} H${FX(x1)}" stroke="${INK}" stroke-width="1.3" marker-end="url(#ahp)" fill="none"/>`+Tc((x1+x2)/2,cy-10,'L','#2F5276',11,'mono mid','600'):Tc((x1+x2)/2,cy-8,'+S','#8C5A1E',11,'mono mid','600')));});
+  return s;
+}
+function scModels(n){
+  const xs=n?[36,108,180,252,324]:[70,195,320,445,570], r=n?9:14;
+  let s='', y=n?28:32;
+  s+=G('a-fade',.2,T(n?16:24,y,'Concerted (MWC)','cname start')+T(n?16:190,n?y+18:y,'Monod, Wyman and Changeux, 1965','mono acc start f12'));
+  const cy1=y+(n?62:62);
+  s+=rowStates(xs,cy1,r,[['T-','T-','T-','T-'],['R-','R-','R-','R-'],['R*','R-','R-','R-'],['R*','R*','R-','R-'],['R*','R*','R*','R*']],['rev','fwd','fwd','fwd'],.4);
+  const p1=para(n?16:24,cy1+(n?46:58),'The whole oligomer is either T or R, in equilibrium. Ligand binds R more tightly, so each binding event pulls the equilibrium toward R. Symmetry is kept, and negative cooperativity is impossible.',n?50:92,'note start f13',17,1.6);
+  s+=p1.s;
+  y=p1.y+30;
+  s+=G('a-fade',2,T(n?16:24,y,'Sequential (KNF)','cname start')+T(n?16:190,n?y+18:y,'Koshland, Némethy and Filmer, 1966','mono acc start f12'));
+  const cy2=y+(n?62:62);
+  s+=rowStates(xs,cy2,r,[['T-','T-','T-','T-'],['R*','T-','T-','T-'],['R*','R*','T-','T-'],['R*','R*','R*','T-'],['R*','R*','R*','R*']],['fwd','fwd','fwd','fwd'],2.2);
+  const p2=para(n?16:24,cy2+(n?46:58),'Binding changes the shape of that subunit only, which alters its neighbours’ affinity. Mixed T/R oligomers exist, and cooperativity can be positive or negative. Real proteins often sit between the two models.',n?50:92,'note start f13',17,3.4);
+  const ly=p2.y+18;
+  s+=G('a-fade',3.6,`<rect x="${n?16:24}" y="${ly-9}" width="11" height="11" rx="2" fill="${TSTATE}" stroke="${INK}"/>`+T(n?32:40,ly,'T: tense, low affinity','note start f12')
+    +`<circle cx="${n?196:250}" cy="${ly-4}" r="6" fill="${RSTATE}" stroke="${INK}"/>`+T(n?206:260,ly,'R: relaxed, high affinity','note start f12')
+    +(n?'':`<circle cx="470" cy="${ly-4}" r="5" fill="${SUBC}" stroke="${INK}"/>`+T(480,ly,'bound ligand','note start f12')));
+  return {vb:n?slim(ly+12):wide(ly+14),s:s+p2.s};
+}
+
+function atcase(cx,cy,k){
+  const c=(x,y)=>`<rect x="${FX(cx+(x-30)*k)}" y="${FX(cy+(y-17)*k)}" width="${FX(60*k)}" height="${FX(34*k)}" rx="${FX(8*k)}" fill="${ENZC}" stroke="${INK}" stroke-width="1.1" class="tint"/>`+Tc(cx+x*k,cy+(y+4)*k,'c','#3A2E22',12*k,'mono mid','600');
+  const r=(x,y,lig)=>[-1,1].map(d=>`<circle cx="${FX(cx+(x+d*11)*k)}" cy="${FX(cy+y*k)}" r="${FX(11*k)}" fill="${ALLOC}" stroke="${INK}" stroke-width="1" class="tint"/>`).join('')
+    +Tc(cx+x*k,cy+(y+4)*k,'r r','#F3EDE0',10*k,'mono mid','600')+(lig?`<circle cx="${FX(cx+(x+11)*k)}" cy="${FX(cy+(y-13)*k)}" r="${FX(5*k)}" fill="${CURVE2}" stroke="${INK}" stroke-width=".7"/>`:'');
+  return G('a-fade',0,c(-66,-50)+c(0,-50)+c(66,-50))+G('a-fade',.3,c(-66,50)+c(0,50)+c(66,50))
+    +G('a-fade',.6,r(-110,0)+r(0,0,true)+r(110,0))
+    +G('a-fade',.9,Tc(cx+(11*k),cy-21*k,'CTP','#A4473A',10,'mono mid','600'));
+}
+function scATCase(n){
+  let s='';
+  if(n)s+=G('a-fade',0,T(180,26,'carbamoyl phosphate + aspartate','mono mid f12')+T(180,44,'→ N-carbamoyl-aspartate + P'+SB('i'),'mono mid f12'));
+  else s+=G('a-fade',0,T(320,30,'carbamoyl phosphate + aspartate → N-carbamoyl-aspartate + P'+SB('i'),'mono mid f13'));
+  const ax=n?180:170, ay=n?136:136, k=n?1.15:1.1;
+  s+=atcase(ax,ay,k);
+  const lp=para(n?16:24,ay+(n?92:88),'c: catalytic chain (PyrB), two trimers. r: regulatory chain (PyrI), three dimers, which bind CTP and ATP.',n?50:42,'note start f12',16,1.1);
+  s+=lp.s;
+  const P=n?plot(50,lp.y+30,280,160,[0,6],[0,1.1],{xlab:'[aspartate]',ylab:'v',xdy:22,ydx:14}):plot(370,56,240,170,[0,6],[0,1.1],{xlab:'[aspartate]',ylab:'v',xdy:22,ydx:14});
+  s+=G('a-fade',1.2,P.s+curve(P,x=>1.1*x/(1.1+x),{col:'#8C7A52',dash:'2 3',w:1.6}));
+  s+=G('a-fade',1.5,curve(P,hillf(2.2,1.2),{col:CURVE}));
+  s+=G('a-fade',1.9,curve(P,hillf(2.2,.6),{col:CURVE3,dash:'7 4'})+curve(P,hillf(2.2,2.6),{col:CURVE2,dash:'3 3'}));
+  const ly=P.y+P.h+44;
+  const it=[['+ ATP',CURVE3,'7 4'],['no effector',CURVE,''],['+ CTP',CURVE2,'3 3'],['catalytic trimer alone','#8C7A52','2 3']];
+  s+=G('a-fade',2.2,n?legend(30,ly,it,{gap:18}):it.slice(0,3).map((x,i)=>legend(370+i*84,ly,[x],{fs:'f11'})).join('')+legend(370,ly+20,[it[3]],{fs:'f11'}));
+  let y=n?ly+4*18+18:Math.max(lp.y,ly+20)+34;
+  const items=[['CTP inhibits','The pathway’s end product shuts down its first committed step: feedback inhibition (Yates and Pardee, 1956). UTP strengthens the effect.'],
+   ['ATP activates','A purine signal that keeps the pyrimidine and purine pools in balance.'],
+   ['The sites are separate','A mercurial strips off the regulatory dimers. The catalytic trimers left behind are fully active, hyperbolic and deaf to CTP (Gerhart and Schachman, 1965). Monod, Changeux and Jacob called such regulation allosteric, from “other site”, in 1963.']];
+  const b=bullets(n?24:30,y,items,n?44:86,{d0:2.6,gap:28});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scFeedback(n){
+  const X=n?[60,180,300]:[100,320,540], bw=n?102:126, nb=(x,y,t,d)=>G('a-fade',d,box(x-bw/2,y-15,bw,28,'#E7DEC9',4)+Tc(x,y+4,t,'#3A2E22',n?10:12,'mono mid','600'));
+  const Y=n?[36,156,262]:[40,160,262], fs=n?10:11, w=n?6:6.6;
+  const inh=(x,y,t,a='start')=>Tc(x,y,'⊣ '+t,'#A4473A',fs,'mono '+a,'600');
+  const en=(x,y,t,a='start')=>Tc(x,y,t,'#2F5276',fs,'mono '+a,'600');
+  const vA=(x,y1,y2)=>`<path d="M${x} ${y1+15} V${y2-17}" class="arrow"/>`, hA=(x1,x2,y)=>`<path d="M${x1+bw/2+2} ${y} H${x2-bw/2-4}" class="arrow"/>`;
+  let s='';const ax=X[0]+10, c2=ax+14*w;
+  s+=nb(X[0],Y[0],'aspartate',0)+G('a-fade',.3,vA(X[0],Y[0],Y[1])+en(ax,Y[0]+34,'aspartokinases')
+    +en(ax,Y[0]+50,'AK I (thrA)')+inh(c2,Y[0]+50,'Thr')+en(ax,Y[0]+66,'AK II (metL)')+Tc(c2,Y[0]+66,'repressed by Met','#6A5B47',fs-1,'mono start')
+    +en(ax,Y[0]+82,'AK III (lysC)')+inh(c2,Y[0]+82,'Lys'));
+  s+=nb(X[0],Y[1],'Asp semialdehyde',.6);
+  s+=G('a-fade',.9,vA(X[0],Y[1],Y[2])+en(ax,Y[1]+48,'DapA')+inh(ax+5*w,Y[1]+48,'Lys'))+nb(X[0],Y[2],'lysine',1.1);
+  s+=G('a-fade',1.3,hA(X[0],X[1],Y[1])+en((X[0]+X[1])/2+(n?6:0),Y[1]-(n?22:10),'HDH I ','end')+inh((X[0]+X[1])/2+(n?6:0),Y[1]-(n?22:10),'Thr'))+nb(X[1],Y[1],'homoserine',1.4);
+  s+=G('a-fade',1.7,vA(X[1],Y[1],Y[2])+en(X[1]+8,Y[1]+48,'several steps'))+nb(X[1],Y[2],'methionine',1.9);
+  s+=G('a-fade',2.1,hA(X[1],X[2],Y[1])+en((X[1]+X[2])/2,Y[1]-(n?22:10),'ThrB, ThrC','mid'))+nb(X[2],Y[1],'threonine',2.3);
+  s+=G('a-fade',2.5,vA(X[2],Y[1],Y[2])+en(X[2]+8,Y[1]+42,'IlvA')+inh(X[2]+8,Y[1]+58,'Ile')+Tc(X[2]-8,Y[1]+(n?76:50),'Umbarger, 1956','#6A5B47',fs-1,'mono end'))+nb(X[2],Y[2],'isoleucine',2.7);
+  let y=Y[2]+(n?54:52);
+  const items=[['Isoenzymes','E. coli makes three aspartokinases, each answering to a different end product, so no one amino acid can starve the others.'],
+   ['Concerted inhibition','In some other bacteria a single aspartokinase is shut off only when lysine and threonine are both in excess.'],
+   ['Cumulative inhibition','E. coli glutamine synthetase feeds many pathways; each end product inhibits it partly, and the effects add up (Stadtman).']];
+  const b=bullets(n?24:30,y,items,n?44:86,{d0:3,gap:28});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+/* ===================== Part V · in practice ===================== */
+function progress(S0,t){let P=0;const dt=.01;for(let x=0;x<t;x+=dt)P+=dt*(S0-P)/(1+S0-P);return P;}
+function scAssay(n){
+  const S0=[.25,.5,1,2,4], COL=['#8C7A52',CURVE4,CURVE3,CURVE,CURVE2];
+  const P1=n?plot(50,40,280,150,[0,3],[0,2.2],{xlab:'time',ylab:'[P]',xdy:22,ydx:14}):plot(62,46,240,170,[0,3],[0,2.2],{xlab:'time',ylab:'[P]',xdy:22,ydx:14});
+  const P2=n?plot(50,270,280,150,[0,4.5],[0,1.05],{xlab:'[S]'+SB('0'),ylab:'v'+SB('0'),xdy:22,ydx:14}):plot(370,46,240,170,[0,4.5],[0,1.05],{xlab:'[S]'+SB('0'),ylab:'v'+SB('0'),xdy:22,ydx:14});
+  let s=G('a-fade',0,P1.s+T(P1.x+P1.w/2,P1.y-16,'progress curves','cname mid f13'));
+  S0.forEach((S,i)=>{const pts=[];for(let t=0;t<=3.001;t+=.1)pts.push([t,progress(S,t)]);const v0=S/(1+S);
+    s+=G('a-fade',(.3+i*.25).toFixed(2),polyl(P1,pts,{col:COL[i]})+curve(P1,t=>v0*t,{xr:[0,Math.min(1.3,2.15/v0)],col:COL[i],dash:'3 3',w:1.3}));});
+  s+=G('a-fade',1.6,plab(P1,3,progress(4,3),'[S]'+SB('0')+' = 4',{dx:-4,dy:-8,a:'end',fs:10})+plab(P1,3,progress(.25,3),'0.25',{dx:-4,dy:-6,a:'end',fs:10}));
+  s+=G('a-fade',1.8,P2.s+T(P2.x+P2.w/2,P2.y-16,'initial rates','cname mid f13')+curve(P2,x=>x/(1+x),{col:'#6A5B47',w:1.6}));
+  S0.forEach((S,i)=>s+=G('a-pop',(2+i*.15).toFixed(2),dot(P2,S,S/(1+S),{col:COL[i]})));
+  const y=(n?P2.y+P2.h:P1.y+P1.h)+56;
+  const items=[['Measure initial rates','Take the straight start of each progress curve, before about 10% of the substrate is used and product builds up.'],
+   ['Keep the enzyme scarce','[E] far below [S]; check that the rate is proportional to the amount of enzyme added.'],
+   ['Span Km','Use [S] from about 0.2 to 5 Km. Without points near saturation, Vmax and Km are poorly determined.'],
+   ['Watch continuously','For example NADH absorbance at 340 nm, linked to the reaction by a coupling enzyme in excess.']];
+  const b=bullets(n?24:30,y,items,n?44:86,{d0:2.6,gap:26});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scInVivo(n){
+  const P=n?plot(50,40,280,160,[0,10],[0,1.05],{xlab:'[S] / '+KM,ylab:'v / '+VMX,xdy:22,ydx:14}):plot(62,46,250,190,[0,10],[0,1.05],{xlab:'[S] / '+KM,ylab:'v / '+VMX,xdy:22,ydx:14});
+  let s=G('a-fade',0,P.s+`<rect x="${FX(P.px(1))}" y="${P.y}" width="${FX(P.px(10)-P.px(1))}" height="${P.h}" fill="${PRODC}" opacity=".12"/>`
+    +plab(P,5.5,.97,'[S] above '+KM,{a:'mid',fs:11,col:'#3E6131'}));
+  s+=G('a-fade',.4,curve(P,x=>x/(1+x))+plab(P,4,.86,'rate',{col:'#2F5276',fs:11}));
+  s+=G('a-fade',1,curve(P,x=>1/(1+x),{col:SUBC,dash:'6 4'})+plab(P,2.6,.4,'sensitivity of rate to [S]',{col:'#8C5A1E',fs:11}));
+  const items=[['Many substrates are near saturation','In E. coli, measured metabolite concentrations are often near or above the Km of the enzymes that use them (Bennett and colleagues, 2009). The rate then responds weakly to [S].'],
+   ['Control is shared','Metabolic control analysis (Kacser and Burns, 1973; Heinrich and Rapoport, 1974) showed that control of flux is usually spread over several enzymes, not held by one rate-limiting step.'],
+   ['Three dials','Cells set flux through enzyme amount (synthesis and degradation), enzyme activity (allostery, covalent modification), and substrate supply.'],
+   ['A crowded solvent','The cytoplasm holds roughly 300–400 g/L of macromolecules, and some enzymes channel intermediates directly; test-tube constants are an approximation.']];
+  const b=n?bullets(24,P.y+P.h+58,items,44,{d0:1.4,gap:26}):bullets(344,52,items,40,{d0:1.4,gap:24,fs:'f12'});
+  return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,P.y+P.h+40)),s:s+b.s};
+}
+
+function scDrugs(n){
+  const P=n?plot(50,40,280,170,[0,5],[0,7],{xlab:'[S] / '+KM,ylab:'IC'+SB('50')+' / '+KI,xdy:22,ydx:16}):plot(62,46,250,190,[0,5],[0,7],{xlab:'[S] / '+KM,ylab:'IC'+SB('50')+' / '+KI,xdy:22,ydx:16});
+  let s=G('a-fade',0,P.s);
+  s+=G('a-fade',.4,curve(P,x=>1+x,{col:CURVE})+plab(P,4.6,5.6,'competitive',{a:'end',col:'#2F5276',fs:11,dy:-4}));
+  s+=G('a-fade',.9,curve(P,x=>1,{col:'#8C7A52',dash:'6 4'})+plab(P,4.9,1,'noncompetitive',{a:'end',col:'#6A5B47',fs:11,dy:16}));
+  s+=G('a-fade',1.4,curve(P,x=>1+1/x,{xr:[.15,5],col:CURVE2,dash:'3 3'})+plab(P,.5,3.6,'uncompetitive',{col:'#A4473A',fs:11}));
+  s+=G('a-fade',1.8,T(P.x+P.w/2,P.y-14,'Cheng and Prusoff, 1973','mono acc mid f12'));
+  const items=[['IC50 is not Ki','For a competitive inhibitor IC50 = Ki(1 + [S]/Km), so the same drug looks weaker in an assay run at high substrate. Report Ki, or state [S].'],
+   ['Blockades favour uncompetitive inhibitors','When a pathway is blocked, substrate piles up behind the block. That defeats a competitive inhibitor but strengthens an uncompetitive one.'],
+   ['Selectivity is kinetic','Trimethoprim binds bacterial dihydrofolate reductase thousands of times more tightly than the human enzyme; with a sulfonamide it blocks two steps in one pathway.'],
+   ['MIC is not Ki','Uptake, efflux, target amount, and how much inhibition growth can tolerate all lie between a Ki and the MIC.']];
+  const b=n?bullets(24,P.y+P.h+58,items,44,{d0:2.2,gap:26}):bullets(344,52,items,40,{d0:2.2,gap:24,fs:'f12'});
+  return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,P.y+P.h+40)),s:s+b.s};
+}
+const NAR='Narrator';
+const S=[
+ {p:1,title:'Slow reactions, fast enzymes',draw:scRate,
+  text:"Most of the reactions of metabolism are thermodynamically favourable but almost unmeasurably slow on their own. Without its enzyme, decarboxylation of orotidine monophosphate, a step in pyrimidine synthesis, has a half-life of tens of millions of years; on the enzyme it takes milliseconds. Richard Wolfenden's group measured many of these uncatalysed rates. Life depends less on which reactions are possible than on which ones are made fast."},
+ {p:1,title:'The energy barrier',draw:scEnergy,
+  text:"Between substrate and product lies a transition state, the least stable arrangement along the path. Its height above the starting point, the free energy of activation, sets the rate. An enzyme provides a different path with a lower barrier. It does not change the free energies of substrate or product, so it cannot shift the equilibrium; it reaches the same equilibrium faster, from either side."},
+ {p:1,title:'Binding the transition state',draw:scTS,
+  text:"Emil Fischer's lock and key, in 1894, explained why enzymes are specific. Daniel Koshland's induced fit, in 1958, added that the enzyme changes shape as substrate binds. The deeper idea, from Haldane and then Linus Pauling, is that the active site is most complementary not to the substrate but to the transition state. The enzyme binds the substrate well and the transition state better, and the difference is what lowers the barrier."},
+ {p:1,title:'The chemical toolkit',draw:scTricks,
+  text:"Transition-state binding is carried out by a small set of chemical tricks. Groups are held in the right place; side chains shuttle protons; a nucleophile forms a temporary covalent bond; metal ions organise charge; and pre-positioned dipoles stabilise the charge that develops in the transition state. Almost every enzyme uses several of these together."},
+ {p:1,title:'A real active site: the catalytic triad',draw:scTriad,
+  text:"Chymotrypsin and the other serine proteases cut peptide bonds using three residues far apart in sequence but adjacent in the folded protein: Ser195, His57 and Asp102. His57 acts as a base to make Ser195 a strong nucleophile; Asp102 holds His57 in place. The reaction runs through a covalent acyl-enzyme, which is then hydrolysed. Penicillin-binding proteins and class A beta-lactamases use the same serine acylation chemistry with different supporting residues."},
+ {p:2,title:'Saturation',draw:scSaturation,
+  text:"In 1902 Adrian Brown noticed that adding more sucrose to invertase eventually stopped making the reaction faster, and argued that the enzyme must bind its substrate in a complex. Victor Henri wrote down the rate law the next year. In 1913, in Berlin, Leonor Michaelis and Maud Menten repeated the work carefully, buffering the pH, measuring initial rates and correcting for the mutarotation of glucose, and their equation has carried their names since. Briggs and Haldane put it on a steady-state footing in 1925."},
+ {p:2,title:'Deriving the equation',draw:scDerive,
+  text:"Enzyme and substrate form a complex, which either falls apart or goes on to product. Shortly after mixing, the complex is formed as fast as it is consumed, so its concentration holds steady. Combining that steady state with the fact that enzyme is either free or bound gives a rate law with two parameters: Vmax, the rate when every enzyme is occupied, and Km, which collects the three rate constants into one."},
+ {p:2,title:'Reading the hyperbola',draw:scHyper,
+  text:"At low substrate the rate rises in proportion to substrate concentration; at high substrate it levels off at Vmax, where adding more substrate makes no difference. Km is the concentration that gives half of Vmax. Reaching 90 percent of Vmax takes nine times Km, and 99 percent takes ninety-nine times Km, which is why Vmax is never actually observed and must be estimated."},
+ {p:2,title:'kcat and kcat/Km',draw:scKcat,
+  text:"Dividing Vmax by the enzyme concentration gives kcat, the turnover number. The ratio kcat over Km is the best single measure of an enzyme's efficiency, since it is the rate constant that applies when substrate is scarce, as it often is. Its upper limit is set by how fast molecules can diffuse together. A handful of enzymes, such as triose phosphate isomerase, operate at that limit. The typical enzyme, as Bar-Even and colleagues showed from a survey of the literature, is about a thousand times slower."},
+ {p:2,title:'Straight lines',draw:scLinear,
+  text:"Before computers, the easiest way to estimate Km and Vmax was to turn the curve into a straight line. Hans Lineweaver and Dean Burk's double-reciprocal plot, from 1934, became the standard, and it is still the clearest way to recognise inhibition patterns. But it is a poor way to fit data: taking reciprocals magnifies the errors of the slowest, least reliable rates. Today the curve itself is fitted by nonlinear regression."},
+ {p:3,title:'Competitive inhibition',draw:scComp,
+  text:"A competitive inhibitor binds the free enzyme at the same site as the substrate, so the two cannot be bound at once. Raising the substrate concentration outcompetes it, so the maximal rate is unchanged; what changes is how much substrate is needed to reach it. Many substrate analogues work this way, including the sulfonamides, which mimic para-aminobenzoate in the folate pathway."},
+ {p:3,title:'Uncompetitive inhibition',draw:scUnc,
+  text:"An uncompetitive inhibitor binds only to the enzyme–substrate complex, often at a site the substrate creates. It is not overcome by substrate; rather, more substrate makes more of the complex it binds. Both Vmax and Km fall by the same factor. Pure examples are uncommon, but glyphosate behaves this way towards one substrate of EPSP synthase, the enzyme it targets in the shikimate pathway of plants and bacteria."},
+ {p:3,title:'Mixed and noncompetitive inhibition',draw:scMix,
+  text:"Many inhibitors bind at a site away from the active site and can attach whether or not substrate is bound, though usually with different affinities for the two forms. This is mixed inhibition: the maximal rate always falls, and Km moves in a direction that depends on which form the inhibitor prefers. If it binds both forms equally, Km stays put; that limiting case is called noncompetitive."},
+ {p:3,title:'Telling them apart',chips:'inh',draw:scInhX,
+  text:"Pick an inhibition type to see its binding scheme, its effect on the Michaelis–Menten curve and on the double-reciprocal plot. Each curve is calculated for inhibitor at zero, one and two times its inhibition constant. The table summarises the diagnostic patterns."},
+ {p:3,title:'Irreversible and mechanism-based inhibitors',draw:scIrrev,
+  text:"Some inhibitors bind first and then react, leaving the enzyme permanently modified. Their effect grows with time as well as dose. The beta-lactams are the most important example in microbiology: they enter the active site of penicillin-binding proteins as mimics of D-alanyl-D-alanine and acylate the catalytic serine. The PBP hydrolyses this acyl-enzyme so slowly that it is effectively dead. A beta-lactamase forms the same intermediate but hydrolyses it in milliseconds, which is exactly how it confers resistance."},
+ {p:4,title:'Sigmoid kinetics',draw:scSigmoid,
+  text:"Some enzymes, and haemoglobin, give an S-shaped curve instead of a hyperbola. They have several binding sites, and binding at one makes binding at the others easier. The result is a switch: over a narrow range of concentration, activity goes from nearly off to nearly on. That property is valuable at control points in metabolism, where a small change in a signal should produce a large change in flux."},
+ {p:4,title:'The Hill coefficient',chips:'hill',draw:scHill,
+  text:"Archibald Hill described sigmoid binding in 1910 with an empirical equation and a single steepness parameter, the Hill coefficient. Plotted on a log scale, binding gives a straight line whose slope is the Hill coefficient. Pick a value to see how it changes the curve and how large a rise in substrate is needed to go from 10 to 90 percent saturation."},
+ {p:4,title:'Two models of cooperativity',draw:scModels,
+  text:"In 1965 Jacques Monod, Jeffries Wyman and Jean-Pierre Changeux proposed that an oligomer flips between a low-affinity tense state and a high-affinity relaxed state as a unit, and that ligand binding simply shifts that equilibrium. A year later Daniel Koshland, George Némethy and David Filmer proposed instead that each subunit changes shape when it binds, and influences its neighbours one at a time. The concerted model is simpler and explains haemoglobin well; the sequential model can explain negative cooperativity, which the concerted model cannot."},
+ {p:4,title:'Aspartate transcarbamoylase',draw:scATCase,
+  text:"E. coli aspartate transcarbamoylase catalyses the first committed step of pyrimidine synthesis and is the classic allosteric enzyme. It has six catalytic and six regulatory chains. CTP, the end product of the pathway, inhibits it, and ATP activates it, both by binding the regulatory chains and shifting the enzyme between its tense and relaxed states. John Gerhart, Arthur Pardee and Howard Schachman showed that the separated catalytic subunits are active but no longer regulated, proving that regulation acts through a distinct site."},
+ {p:4,title:'Feedback in branched pathways',draw:scFeedback,
+  text:"A pathway is usually controlled at its first committed step by its final product, so that intermediates do not accumulate when the product is plentiful. Edwin Umbarger found the first clear case in 1956: isoleucine inhibits threonine deaminase in E. coli. Branched pathways need extra tricks so that one product cannot shut off the supply of another. E. coli's aspartate family, which leads to lysine, methionine, threonine and isoleucine, uses several at once."},
+ {p:5,title:'Doing the experiment',draw:scAssay,
+  text:"Kinetic constants come from initial rates. For each substrate concentration, the product formed is followed over time and the slope at the start is taken, before substrate depletion and product accumulation bend the curve. Those initial rates, plotted against substrate concentration, give the Michaelis–Menten curve to which Km and Vmax are fitted."},
+ {p:5,title:'Kinetics inside a cell',draw:scInVivo,
+  text:"Test-tube constants are only a starting point for understanding a pathway in a living bacterium. Many substrates are present at concentrations close to or above Km, so enzymes run near saturation and respond weakly to their substrate. Control over flux is usually shared among several steps. And the cytoplasm is crowded, viscous and organised in ways a dilute buffer is not."},
+ {p:5,title:'Kinetics and antibiotics',draw:scDrugs,
+  text:"Enzyme kinetics is the language of antibiotic discovery. An inhibitor's potency measured as IC50 depends on how much substrate was in the assay, as Yung-Chi Cheng and William Prusoff showed in 1973, so it is not a constant of the drug. The mode of inhibition matters in the cell too. And the distance between a tight inhibition constant and a useful minimum inhibitory concentration is made up of everything else a bacterium does: uptake, efflux, target abundance and tolerance."}
+];
+const CHIPS={inh:{list:['Competitive','Uncompetitive','Noncompetitive','Mixed'],get:()=>inhSel,set:k=>inhSel=k},
+  hill:{list:HILLS.map(h=>'n = '+h.n),get:()=>hillSel,set:k=>hillSel=k}};
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  [1,2,3,4,5].forEach(k=>$('part'+k).setAttribute('aria-current',sc.p===k));
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+[1,2,3,4,5].forEach(k=>$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protein Targeting and Modification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Protein targeting · an animated primer</p>
+    <h1>After the ribosome: sending and finishing proteins</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · Addresses</button>
+    <button id="part2" type="button">II · Crossing the membrane</button>
+    <button id="part3" type="button">III · The envelope</button>
+    <button id="part4" type="button">IV · Secretion</button>
+    <button id="part5" type="button">V · Sugars &amp; marks</button>
+    <button id="part6" type="button">VI · Where does it go?</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Bacterial systems are shown for <i>E. coli</i> unless named; eukaryotic systems are given for comparison. Envelopes and machines are schematics, not to scale. Glycans use the standard symbol nomenclature.</p>
+</div>
+<script>
+
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== shared translation glyphs ===================== */
+const SSU='#D9C89B', LSU='#BBA27A', TRNA_C='#8FB1CF', AA_C='#4F7A3F', CHAIN=['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#B4766E','#5E7F7A'];
+const GRP={np:['nonpolar','#D6C79F'],po:['polar','#A9C4DC'],ac:['acidic','#E7A99B'],ba:['basic','#B9A0C8']};
+const AAS=[['G','Gly','np'],['A','Ala','np'],['V','Val','np'],['L','Leu','np'],['I','Ile','np'],['P','Pro','np'],['F','Phe','np'],['M','Met','np'],['W','Trp','np'],
+ ['S','Ser','po'],['T','Thr','po'],['C','Cys','po'],['N','Asn','po'],['Q','Gln','po'],['Y','Tyr','po'],['D','Asp','ac'],['E','Glu','ac'],['K','Lys','ba'],['R','Arg','ba'],['H','His','ba']];
+const THREE=Object.fromEntries(AAS.map(a=>[a[0],a[1]]));THREE['*']='Stop';
+const CODE='FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+function tr(c){const o='UCAG';const i=16*o.indexOf(c[0])+4*o.indexOf(c[1])+o.indexOf(c[2]);return CODE[i];}
+function sub(x,y,k){return k;} // placeholder
+
+function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
+  const S=v=>v*k;
+  let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
+  return s+'</g>';
+}
+function chain(x,y,k,n,dir=-1){let s='';for(let i=0;i<n;i++){const xx=x-i*k*6,yy=y-i*k*13;s+=`<circle cx="${xx}" cy="${yy}" r="${k*7}" fill="${CHAIN[i%CHAIN.length]}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}return s;}
+function ribosome(cx,my,k,o={}){
+  const S=v=>v*k, sx={E:cx-S(50),P:cx,A:cx+S(50)};
+  let s='';
+  if(o.large!==false)s+=`<path d="M${cx-S(130)} ${my-S(22)} C ${cx-S(156)} ${my-S(160)}, ${cx+S(156)} ${my-S(160)}, ${cx+S(130)} ${my-S(22)} C ${cx+S(80)} ${my-S(36)}, ${cx-S(80)} ${my-S(36)}, ${cx-S(130)} ${my-S(22)} Z" fill="${LSU}" opacity=".55" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
+  if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
+  if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
+  return s;
+}
+
+function timeline(x,y,ev,wrapN,fs,indent,gap,d0){let s='',yy=y;ev.forEach((e,i)=>{const L=wrap(e[1],wrapN);s+=G('a-fade',(d0+i*.4).toFixed(1),T(x,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(x+indent,yy+j*18,l,'lab start '+fs)).join(''));yy+=L.length*18+gap;});return {s,y:yy};}
+/* ===================== envelope toolkit ===================== */
+const MEMB='#EDE0B8', HEAD='#B89A5E', PGF='#E3D6B4', SECY='#5E7F7A', SECA='#C99A2E', SRPC='#B4766E', TATC='#7D4A98', BAMC='#4F7A3F', LOLC='#2E7D78', DSB='#3E5F82', CAPC='#D9C8E6', TAC='#8C6D46';
+function bilayer(x1,x2,y,h=16){return `<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${MEMB}"/><path d="M${x1+3} ${y+2.6} H${x2} M${x1+3} ${y+h-2.6} H${x2}" stroke="${HEAD}" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`;}
+function pg(x1,x2,y,h){let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${PGF}"/>`;let d='';for(let yy=y+3;yy<y+h;yy+=6)d+=`M${x1} ${yy} H${x2}`;let c='';let r=0;for(let yy=y+3;yy+6<y+h;yy+=6,r++)for(let x=x1+(r%2?6:0)+4;x<x2;x+=14)c+=`M${x} ${yy} v6`;return s+`<path d="${d}" stroke="#A8916A" stroke-width="1.4"/><path d="${c}" stroke="#7D6A48" stroke-width="1"/>`;}
+function envelope(type,x1,x2,y0,o={}){
+  let s='',Y={};
+  if(type==='neg'||type==='myco'){
+    if(type==='neg'){let l='';for(let x=x1+6;x<x2;x+=12)l+=`M${x} ${y0+22} V${y0+8}`;s+=`<path d="${l}" stroke="#7D8A5A" stroke-width="1.6"/>`;for(let x=x1+6;x<x2;x+=12)s+=`<circle cx="${x}" cy="${y0+7}" r="2.4" fill="#7D8A5A"/>`;}
+    else s+=`<rect x="${x1}" y="${y0+8}" width="${x2-x1}" height="14" fill="#D9CDB2"/>`;
+    s+=bilayer(x1,x2,y0+22)+`<rect x="${x1}" y="${y0+38}" width="${x2-x1}" height="60" fill="#F3EEE2" opacity=".55"/>`+pg(x1,x2,y0+56,type==='myco'?20:10)+bilayer(x1,x2,y0+98);
+    Y={out:y0,om:y0+22,pg:y0+56,peri:y0+76,im:y0+98,cyto:y0+132,bottom:y0+114};
+    if(o.labels){const L=o.labels,a=o.la||'end',sh=L<80;s+=T(L,y0+34,sh?(type==='myco'?'MM':'OM'):(type==='myco'?'mycomembrane':'outer membrane'),'note '+a+' f11')+T(L,y0+(type==='myco'?70:64),sh?'PG':(type==='myco'?'arabinogalactan, PG':'peptidoglycan'),'note '+a+' f11')+T(L,y0+86,sh?'peri.':'periplasm','note '+a+' f11')+T(L,y0+110,sh?'IM':'inner membrane','note '+a+' f11')+T(L,y0+134,sh?'cyto.':'cytoplasm','note '+a+' f11');}
+  }else{
+    if(o.capsule!==false)s+=`<path d="M${x1} ${y0+20} ${Array.from({length:Math.ceil((x2-x1)/12)},(_,i)=>`q6 -14 12 0`).join(' ')} V${y0+22} H${x1} Z" fill="${CAPC}" opacity=".9"/>`;
+    s+=pg(x1,x2,y0+22,60);let t='';for(let x=x1+10;x<x2;x+=22)t+=`M${x} ${y0+88} C ${x+4} ${y0+70}, ${x-4} ${y0+44}, ${x+2} ${y0+24}`;s+=`<path d="${t}" stroke="${TAC}" stroke-width="1.6" fill="none"/>`;
+    s+=bilayer(x1,x2,y0+88);
+    Y={out:y0,cap:y0+10,pg:y0+52,im:y0+88,cyto:y0+122,bottom:y0+104};
+    if(o.labels){const L=o.labels,a=o.la||'end',sh=L<80;if(o.capsule!==false)s+=T(L,y0+16,'capsule','note '+a+' f11');s+=T(L,y0+50,sh?'wall':'peptidoglycan','note '+a+' f11')+(sh?'':T(L,y0+64,'+ teichoic acids','note '+a+' f10'))+T(L,y0+100,sh?'memb.':'membrane','note '+a+' f11')+T(L,y0+124,sh?'cyto.':'cytoplasm','note '+a+' f11');}
+  }
+  return {s,Y};
+}
+const chan=(x,y,col=SECY,h=24,w=8,gap=4)=>`<rect x="${x-gap/2-w}" y="${y-4}" width="${w}" height="${h}" rx="3" fill="${col}" stroke="${INK}" class="tint"/><rect x="${x+gap/2}" y="${y-4}" width="${w}" height="${h}" rx="3" fill="${col}" stroke="${INK}" class="tint"/>`;
+const lab=(x,y,t,c='mono mid f11')=>T(x,y,t,c);
+function barrel(x,y,w=22,h=24,col=BAMC){let s=`<rect x="${x-w/2}" y="${y-4}" width="${w}" height="${h}" rx="5" fill="${col}" stroke="${INK}" class="tint"/>`;for(let i=1;i<4;i++)s+=`<path d="M${x-w/2+i*w/4} ${y-2} v${h-4}" stroke="#F3EDE0" stroke-width="1" opacity=".6"/>`;return s;}
+function beadChain(x,y,n,dx=8,dy=0,col){let s='';for(let i=0;i<n;i++)s+=`<circle cx="${x+i*dx}" cy="${y+i*dy}" r="4" fill="${col||CHAIN[i%8]}" stroke="${INK}" stroke-width=".6"/>`;return s;}
+function prot(x,y,r=12,col='#8FB1CF',t=''){return blob(x,y,r,r*.8,col)+(t?Tc(x,y+4,t,'#3A2E22',10,'mono mid','600'):'');}
+
+/* ===================== Part I · destinations and discovery ===================== */
+function scPlaces(n){
+  let s='';
+  if(!n){
+    s+=G('a-fade',0,T(110,24,'Eukaryotic cell','cname mid')+`<ellipse cx="110" cy="140" rx="96" ry="96" fill="#EEF0DF" stroke="${INK}" stroke-width="1.4" class="tint"/>`+`<circle cx="80" cy="150" r="30" fill="#D9CDB2" stroke="${INK}"/>`+T(80,154,'nucleus','note mid f11')
+      +[0,1,2].map(i=>`<path d="M${110} ${92+i*10} q 20 -8 40 0 q 20 8 40 0" stroke="#7D4A98" stroke-width="3" fill="none"/>`).join('')+T(150,84,'ER','mono mid f11')
+      +[0,1,2,3].map(i=>`<path d="M${120+i*2} ${178+i*7} h${50-i*4}" stroke="#C99A2E" stroke-width="4" stroke-linecap="round"/>`).join('')+T(150,222,'Golgi','mono mid f11')+`<circle cx="190" cy="168" r="7" fill="none" stroke="#C99A2E" stroke-width="2"/>`);
+    const a=envelope('neg',300,440,40),b=envelope('pos',500,620,48);
+    s+=G('a-fade',.8,T(370,24,'Gram-negative','cname mid')+a.s+T(370,a.Y.bottom+40,'two membranes','note mid f12'));
+    s+=G('a-fade',1.4,T(560,24,'Gram-positive','cname mid')+b.s+T(560,b.Y.bottom+48,'one membrane, thick wall','note mid f12'));
+    s+=G('a-fade',1.8,[['outer membrane',a.Y.om+10],['peptidoglycan',a.Y.pg+8],['periplasm',a.Y.peri+16],['inner membrane',a.Y.im+10],['cytoplasm',a.Y.cyto]].map(l=>T(296,l[1],l[0],'note end f11')).join(''));
+    s+=G('a-fade',2.2,T(320,282,'Cytoplasm, membrane, periplasm, wall or outside: every protein needs an address','lab mid'));
+    return {vb:wide(300),s};
+  }
+  s+=G('a-fade',0,T(16,24,'Eukaryotes: ER → Golgi → out','cname start f15'));
+  const a=envelope('neg',90,220,40,{labels:86}),b=envelope('pos',240,350,48);
+  s+=G('a-fade',.8,T(155,206,'Gram-negative','lab mid f14')+a.s);
+  s+=G('a-fade',1.4,T(295,206,'Gram-positive','lab mid f14')+b.s+T(295,b.Y.capsule||56,'',''));
+  s+=G('a-fade',2.2,T(180,238,'Cytoplasm, membrane, periplasm,','lab mid f14')+T(180,258,'wall or outside: every protein','lab mid f14')+T(180,278,'needs an address','lab mid f14'));
+  return {vb:slim(290),s};
+}
+
+function scSignalHyp(n){
+  const k=n?.5:.62, cx=n?120:170, my=n?170:190;
+  let s=G('a-fade',0,`<rect x="${n?10:20}" y="${my+26}" width="${n?340:300}" height="16" fill="${MEMB}"/><path d="M${n?12:22} ${my+28.6} H${n?350:320} M${n?12:22} ${my+39.4} H${n?350:320}" stroke="${HEAD}" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`+T(n?14:24,my+60,'ER membrane','note start f11'));
+  s+=G('a-fade',.4,ribosome(cx,my,k,{mrna:true,trnas:[{site:'P',ac:'',aa:''}]}));
+  s+=G('a-fade',.8,`<path d="M${cx+4} ${my-k*104} C ${cx+40} ${my-k*150}, ${cx+60} ${my-k*60}, ${cx+30} ${my+24}" stroke="${RED}" stroke-width="5" fill="none" stroke-linecap="round"/>`+T(cx+52,my-k*130,'signal sequence','note start f12'));
+  s+=G('a-pop',1.2,chan(cx+30,my+26,SECY,24,9,6)+T(cx+20,my+70,'translocon','mono end f11'));
+  s+=G('a-fade',1.6,`<path d="M${cx+30} ${my+44} v24" stroke="${CHAIN[1]}" stroke-width="4"/>`+beadChain(cx+30,my+74,4,0,9,CHAIN[1]).replace(/r="4"/g,'r="4"'));
+  const tx=n?14:360, ty=n?my+124:50;
+  const ev=[['1972','César Milstein: a secreted antibody chain is first made a little longer'],['1975','Günter Blobel and Bernhard Dobberstein: an N-terminal signal sequence steers the ribosome to the ER, then is cut off'],['1999','Nobel Prize to Blobel']];
+  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:34);s+=G('a-fade',(2+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+12;});
+  return {vb:n?slim(yy):wide(Math.max(my+76,yy)),s};
+}
+
+function scSecGenes(n){
+  const x1=n?66:110, x2=n?350:400;
+  const e=envelope('neg',x1,x2,30,{labels:x1-6});
+  let s=G('a-fade',0,e.s);
+  const cx=(x1+x2)/2;
+  s+=G('a-pop',.5,chan(cx,e.Y.im,SECY,24,9,6));
+  s+=G('a-fade',.9,`<path d="M${cx} ${e.Y.im+22} v28" stroke="${RED}" stroke-width="4"/>`+blob(cx,e.Y.im+60,n?30:36,n?18:20,'#C9A0B8')+Tc(cx,e.Y.im+64,'LacZ','#3A2E22',11,'mono mid','600')+beadChain(cx-4,e.Y.im-20,3,0,-8,CHAIN[1])+T(cx+(n?36:44),e.Y.im-12,'MalE','mono start f11'));
+  s+=G('a-pop',1.4,mark(cx+(n?50:60),e.Y.im+32,false,10)+T(cx+(n?66:76),e.Y.im+36,'jammed','note start f12'));
+  const tx=n?14:430, ty=n?e.Y.bottom+90:40;
+  const L=n?['Beckwith and Silhavy fused LacZ to','exported proteins: the fusions jammed','the export machine. Selecting suppressors','found prlA (secY); other screens found','secA, secB, secD, secE, secF, secG.','','Yeast sec mutants (Schekman, 1980)','mapped the eukaryotic pathway.']
+           :['Jon Beckwith and Tom Silhavy','fused LacZ to exported proteins:','the fusions jammed the machine.','','Suppressors found prlA (secY);','other screens found secA, secB,','secD, secE, secF and secG.','','Yeast sec mutants (Schekman,','1980) mapped the eukaryotic','pathway; Nobel Prize 2013.'];
+  s+=G('a-fade',1.8,L.map((l,i)=>T(tx,ty+i*19,l,(l?'lab start ':'')+(n?'f13':'f14'))).join(''));
+  return {vb:n?slim(ty+L.length*19):wide(Math.max(e.Y.bottom+100,ty+L.length*19+6)),s};
+}
+
+function sigBar(x,y,w,parts,k=1){let s='';let xx=x;parts.forEach(p=>{const pw=w*p[0];s+=`<rect x="${xx}" y="${y}" width="${pw}" height="22" fill="${p[1]}" stroke="${INK}" stroke-width=".8" class="tint"/>`+(p[2]?Tc(xx+pw/2,y+15,p[2],p[3]||'#3A2E22',11,'mono mid','600'):'');xx+=pw;});return s;}
+function scSignals(n){
+  const x=n?14:150, w=n?330:440;
+  const rows=[['Sec signal','SPase I',[[.14,'#E7A99B','+ n'],[.38,'#C99A2E','hydrophobic h'],[.16,'#D6C79F','A-X-A'],[.32,'#8FB1CF','mature protein']],.68],
+    ['Lipoprotein','SPase II',[[.14,'#E7A99B','+ n'],[.34,'#C99A2E','h'],[.2,'#B9A0C8','L-A-G-C'],[.32,'#8FB1CF','mature']],.66],
+    ['Tat signal','SPase I',[[.24,'#E7A99B','S-R-R-x-F-L-K'],[.24,'#E0C88A','weaker h'],[.16,'#D6C79F','A-X-A'],[.36,'#8FB1CF','folded protein']],.64]];
+  let s='';
+  rows.forEach((r,i)=>{const y=(n?40:40)+i*(n?86:76);
+    s+=G('a-fade',(i*.6).toFixed(1),(n?T(x,y-10,r[0],'cname start f15'):T(x-14,y+16,r[0],'cname end'))+sigBar(x,y,w,r[2])+`<path d="M${x+w*r[3]} ${y-4} v30" stroke="${RED}" stroke-width="2" stroke-dasharray="3 2"/>`+T(x+w*r[3],y+42,r[1]+' cuts','note mid f11'));});
+  const yb=n?40+3*86+6:40+3*76+10;
+  s+=G('a-fade',2,wrap(n?'Lipoproteins become lipid-anchored on the cysteine. Tat signals carry twin arginines. Eukaryotic ER signals look like Sec signals.':'Positive charges, then a hydrophobic core, then a cleavage site. Lipoproteins are lipid-anchored on the cysteine; Tat signals carry twin arginines. Eukaryotic ER signals look like Sec signals.',n?46:84).map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yb+60):wide(yb+44),s};
+}
+
+/* ===================== Part II · crossing the inner membrane ===================== */
+function scRoutes(n){
+  const x1=n?66:100, x2=n?350:620, e=envelope('neg',x1,x2,20,{labels:x1-6});
+  let s=G('a-fade',0,e.s);
+  const ax=n?x1+70:x1+130, bx=n?x1+210:x1+390, k=n?.36:.46;
+  s+=G('a-fade',.3,T(ax,e.Y.cyto+100,n?'membrane proteins':'membrane proteins','lab mid f14')+T(ax,e.Y.cyto+118,'co-translational','note mid f12'));
+  s+=G('a-fade',.3,T(bx,e.Y.cyto+100,'secreted proteins','lab mid f14')+T(bx,e.Y.cyto+118,'post-translational','note mid f12'));
+  s+=G('a-pop',.8,ribosome(ax,e.Y.cyto+54,k,{mrna:false,small:true})+blob(ax+k*70,e.Y.cyto+10,14,10,SRPC)+T(ax+k*70+20,e.Y.cyto+14,'SRP','mono start f11')+blob(ax-k*90,e.Y.im+32,13,9,'#9C7FB0')+T(ax-k*90,e.Y.im+52,'FtsY','mono mid f10'));
+  s+=G('a-pop',1.2,chan(ax,e.Y.im,SECY)+`<path d="M${ax} ${e.Y.cyto+4} V${e.Y.im+20}" stroke="${RED}" stroke-width="3" stroke-dasharray="4 3"/>`);
+  s+=G('a-pop',1.6,beadChain(bx+50,e.Y.cyto+70,6,-9,0)+blob(bx+20,e.Y.cyto+52,16,10,'#7FA59B')+T(bx+20,e.Y.cyto+56,'SecB','mono mid f10')+blob(bx,e.Y.im+30,18,12,SECA)+T(bx,e.Y.im+34,'SecA','mono mid f10')+chan(bx,e.Y.im,SECY));
+  s+=G('a-fade',2.2,T((ax+bx)/2,e.Y.im+(n?-8:-6),'SecYEG','mono mid f12'));
+  s+=G('a-fade',2.6,T(n?180:360,e.Y.cyto+(n?148:150),n?'Signal hydrophobicity picks the route':'The signal’s hydrophobicity picks the route; both end at SecYEG (Sec61 in eukaryotes)','lab mid'));
+  return {vb:n?slim(e.Y.cyto+160):wide(e.Y.cyto+164),s};
+}
+
+function scSecY(n){
+  const cx=n?180:250, y=n?100:110, W=n?150:180;
+  let s=G('a-fade',0,bilayer(cx-W*1.1,cx+W*1.1,y,40)+T(cx+W*1.1,y-8,'membrane','note end f11'));
+  s+=G('a-pop',.4,`<path d="M${cx-60} ${y-14} L${cx-14} ${y+20} L${cx-60} ${y+54} Z" fill="${SECY}" stroke="${INK}" class="tint"/><path d="M${cx+60} ${y-14} L${cx+14} ${y+20} L${cx+60} ${y+54} Z" fill="${SECY}" stroke="${INK}" class="tint"/>`+T(cx-64,y+72,'SecY','mono end f12'));
+  s+=G('a-move',1.0,`<rect x="${cx-10}" y="${y+4}" width="20" height="10" rx="4" fill="#E0B84A" stroke="${INK}"/>`,'--dx:0px;--dy:16px')+T(cx+46,y-26,'plug moves aside','note start f11');
+  s+=G('a-fade',1.4,`<path d="M${cx} ${y+90} V${y+28} M${cx} ${y+28} C ${cx+6} ${y+20}, ${cx+14} ${y+18}, ${cx+24} ${y+16}" stroke="${RED}" stroke-width="4" fill="none" stroke-linecap="round"/>`+T(cx+64,y+60,'signal in the lateral gate','note start f11'));
+  s+=G('a-fade',1.4,beadChain(cx,y-12,4,0,-10,CHAIN[1]));
+  s+=G('a-pop',1.8,blob(cx-20,y+92,30,18,SECA)+T(cx-20,y+96,'SecA','mono mid f12')+T(cx-20,y+124,'ATP → ADP: pushes in steps','note mid f11'));
+  s+=G('a-fade',2.2,n?T(cx,y+142,'+ proton motive force; SecDF helps pull','note mid f11'):T(cx+80,y+96,'+ proton motive force','note start f12')+T(cx+80,y+112,'(SecDF helps pull)','note start f11'));
+  const ty=y+(n?172:150);
+  s+=G('a-fade',2.6,T(n?180:320,ty,n?'An hourglass with a side door':'An hourglass with a plug and a side door (van den Berg, Rapoport and colleagues, 2004)','lab mid'));
+  return {vb:n?slim(ty+12):wide(ty+14),s};
+}
+
+function scLipo(n){
+  const x1=n?66:100, x2=n?350:620, e=envelope('neg',x1,x2,20,{labels:x1-6}), w=x2-x1;
+  let s=G('a-fade',0,e.s);
+  const st=[[.08,'Lgt','adds lipid to Cys'],[.25,'LspA','cuts before Cys'],[.42,'Lnt','adds a third acyl'],[.6,'LolCDE','lifts it out'],[.8,'LolA → LolB','ferry to the OM']];
+  st.forEach((p,i)=>{const x=x1+w*p[0];s+=G('a-pop',(.4+i*.4).toFixed(1),(i<4?blob(x,e.Y.im+8,16,11,i===3?LOLC:'#9C7FB0'):blob(x,e.Y.om+30,16,11,LOLC))+lab(x,i<4?e.Y.im+46:e.Y.om+56,p[1],'mono mid f11')+(n?'':T(x,i<4?e.Y.im+62:e.Y.om+72,p[2],'note mid f11')));});
+  s+=G('a-fade',2.4,`<path d="M${x1+w*.66} ${e.Y.im-6} C ${x1+w*.72} ${e.Y.peri}, ${x1+w*.78} ${e.Y.peri}, ${x1+w*.82} ${e.Y.om+44}" stroke="${LOLC}" stroke-width="1.6" stroke-dasharray="4 3" fill="none" marker-end="url(#ahp)"/>`);
+  s+=G('a-fade',2.8,`<path d="M${x1+w*.96} ${e.Y.om+16} q 6 14 0 24" stroke="${CHAIN[1]}" stroke-width="3" fill="none"/>`+T(x1+w*.96,e.Y.peri+18,'Lpp','mono mid f11'));
+  if(n)s+=G('a-fade',3,T(14,e.Y.cyto+40,'Lgt adds lipid · LspA cuts · Lnt acylates','note start f12')+T(14,e.Y.cyto+58,'the Lol system ferries it to the OM','note start f12'));
+  const ty=e.Y.cyto+(n?86:62);
+  s+=G('a-fade',3.2,wrap(n?'Braun’s lipoprotein, Lpp, is the most abundant protein in E. coli, tying the outer membrane to the peptidoglycan. Globomycin blocks LspA.':'Braun’s lipoprotein, Lpp, found in 1969, is the most abundant protein in E. coli; it ties the outer membrane to the peptidoglycan. Globomycin blocks LspA.',n?46:84).map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+64):wide(ty+46),s};
+}
+
+function scTat(n){
+  const x1=n?66:100, x2=n?350:440, e=envelope('neg',x1,x2,20,{labels:x1-6}), cx=(x1+x2)/2-(n?0:60);
+  let s=G('a-fade',0,e.s);
+  s+=G('a-pop',.4,blob(cx,e.Y.cyto+40,26,20,'#8FB1CF')+`<circle cx="${cx+8}" cy="${e.Y.cyto+36}" r="6" fill="#E0B84A" stroke="${INK}"/>`+`<path d="M${cx-24} ${e.Y.cyto+44} q -16 4 -20 -20" stroke="${RED}" stroke-width="3" fill="none"/>`+T(cx-46,e.Y.cyto+64,'RR','mono mid f11')+T(cx+40,e.Y.cyto+64,'folded, with cofactor','note start f11'));
+  s+=G('a-pop',1.0,`<rect x="${cx-48}" y="${e.Y.im-2}" width="24" height="20" rx="5" fill="${TATC}" stroke="${INK}" class="tint"/>`+lab(cx-36,e.Y.im-8,'TatBC','mono mid f10'));
+  s+=G('a-pop',1.6,[0,1,2,3].map(i=>`<rect x="${cx-6+i*8}" y="${e.Y.im-2}" width="6" height="20" rx="2" fill="#B9A0C8" stroke="${INK}"/>`).join('')+lab(cx+10,e.Y.im-8,'TatA','mono mid f10'));
+  s+=G('a-fade',2.2,blob(cx+(n?60:90),e.Y.peri,22,16,'#8FB1CF')+`<circle cx="${cx+(n?66:96)}" cy="${e.Y.peri-4}" r="5" fill="#E0B84A" stroke="${INK}"/>`+`<path d="M${cx+12} ${e.Y.im-6} C ${cx+20} ${e.Y.peri+10}, ${cx+40} ${e.Y.peri}, ${cx+(n?36:66)} ${e.Y.peri}" class="arrow"/>`);
+  const tx=n?14:470, ty=n?e.Y.cyto+96:40;
+  const L=n?['Twin-arginine translocation moves','proteins that are already folded,','often with metal or flavin cofactors,','using only the proton motive force.','Sargent, Berks, Palmer and others, 1998.']
+           :['Twin-arginine','translocation (Tat)','moves proteins that','are already folded,','often with cofactors.','','Energy: the proton','motive force only.','','Found in 1998 by','Berks, Palmer, Sargent','and colleagues.'];
+  s+=G('a-fade',2.6,L.map((l,i)=>T(tx,ty+i*19,l,'lab start '+(n?'f13':'f14'))).join(''));
+  return {vb:n?slim(ty+L.length*19):wide(Math.max(e.Y.cyto+70,ty+L.length*19)),s};
+}
+
+function scInsert(n){
+  const cx=n?180:220, y=n?90:100, W=n?170:200;
+  let s=G('a-fade',0,bilayer(cx-W,cx+W,y,40)+T(cx-W,y-10,'periplasm','note start f12')+T(cx-W,y+68,'cytoplasm','note start f12'));
+  s+=G('a-pop',.3,`<path d="M${cx-30} ${y-10} L${cx+4} ${y+20} L${cx-30} ${y+50} Z" fill="${SECY}" stroke="${INK}" class="tint"/><path d="M${cx+50} ${y-10} L${cx+16} ${y+20} L${cx+50} ${y+50} Z" fill="${SECY}" stroke="${INK}" class="tint"/>`+T(cx+10,y+70,'SecYEG','mono mid f11'));
+  const tm=(x,dl)=>G('a-move',dl,`<rect x="${x-6}" y="${y+2}" width="12" height="36" rx="5" fill="#C99A2E" stroke="${INK}" class="tint"/>`,'--dx:'+(cx+10-x)+'px');
+  s+=tm(cx-60,.8)+tm(cx-90,1.4)+tm(cx-120,2.0);
+  s+=G('a-fade',2.4,`<path d="M${cx-114} ${y+40} q 12 18 24 0 M${cx-84} ${y} q 12 -18 24 0 M${cx-54} ${y+40} q 12 18 24 0" stroke="${CHAIN[1]}" stroke-width="2.4" fill="none"/>`+Tc(cx-102,y+64,'+ +','#3E5F82',13,'mono mid','600')+Tc(cx-42,y+64,'+ +','#3E5F82',13,'mono mid','600'));
+  s+=G('a-pop',1.0,`<rect x="${cx+70}" y="${y-4}" width="22" height="48" rx="6" fill="#9C7FB0" stroke="${INK}" class="tint"/>`+T(cx+81,y+70,'YidC','mono mid f11'));
+  const tx=n?14:460, ty=n?y+110:40;
+  const L=n?['Helices leave SecYEG sideways','through the lateral gate. YidC helps,','or inserts small proteins alone.','Positive-inside rule: Lys/Arg-rich','loops stay in the cytoplasm (von Heijne).','Eukaryotes: Sec61, EMC, GET, Oxa1.']
+           :['Each hydrophobic helix','slides out sideways','through the lateral gate.','','YidC helps, or inserts','small proteins alone.','','Positive-inside rule:','loops rich in Lys and Arg','stay in the cytoplasm','(von Heijne, 1986).','','Eukaryotes: Sec61, EMC,','GET; mitochondria: Oxa1.'];
+  s+=G('a-fade',2.8,L.map((l,i)=>T(tx,ty+i*19,l,'lab start '+(n?'f13':'f14'))).join(''));
+  return {vb:n?slim(ty+L.length*19):wide(Math.max(y+90,ty+L.length*19)),s};
+}
+
+/* ===================== Part III · finishing in the envelope ===================== */
+function scDsb(n){
+  const x1=n?66:100, x2=n?350:620, e=envelope('neg',x1,x2,20,{labels:x1-6}), w=x2-x1;
+  let s=G('a-fade',0,e.s);
+  const px=x1+w*.22, ax=x1+w*.48, bx=x1+w*.7, cxx=x1+w*.9;
+  s+=G('a-fade',.4,`<path d="M${px-30} ${e.Y.peri} q 15 -18 30 0 q 15 18 30 0" stroke="${CHAIN[1]}" stroke-width="3" fill="none"/>`+Tc(px-15,e.Y.peri-12,'SH SH','#A4473A',9,'mono mid')+T(px,e.Y.peri+26,'new protein','note mid f11'));
+  s+=G('a-pop',1.0,blob(ax,e.Y.peri,18,13,DSB)+Tc(ax,e.Y.peri+4,'DsbA','#F3EDE0',10,'mono mid','600')+`<path d="M${ax-20} ${e.Y.peri} H${px+34}" class="arrow"/>`+T(ax,e.Y.peri-20,'S–S','mono mid f11'));
+  s+=G('a-pop',1.6,`<rect x="${bx-12}" y="${e.Y.im-2}" width="24" height="20" rx="5" fill="#7FA59B" stroke="${INK}" class="tint"/>`+lab(bx,e.Y.im+36,'DsbB','mono mid f10')+`<path d="M${bx-10} ${e.Y.im-6} C ${bx-30} ${e.Y.peri+8}, ${ax+30} ${e.Y.peri+8}, ${ax+18} ${e.Y.peri+4}" class="arrow"/>`+(n?'':T(bx+18,e.Y.im+36,'→ quinones','note start f10')));
+  s+=G('a-pop',2.2,blob(cxx,e.Y.peri,16,12,'#9C7FB0')+lab(cxx,e.Y.peri+26,'DsbC','mono mid f10')+`<rect x="${cxx-10}" y="${e.Y.im-2}" width="20" height="20" rx="5" fill="#B9A0C8" stroke="${INK}"/>`+lab(cxx,e.Y.im+36,'DsbD','mono mid f10'));
+  const ty=e.Y.cyto+(n?20:24);
+  const L=wrap(n?'DsbA makes disulfides; DsbB re-oxidises it via quinones. DsbC fixes wrong pairs, kept reduced by DsbD. Eukaryotes: PDI and Ero1 in the ER.':'DsbA forms disulfide bonds and is re-oxidised by DsbB, which passes electrons to quinones. DsbC reshuffles wrong pairs, kept ready by DsbD. The cytoplasm stays reducing. Eukaryotes do this in the ER with PDI and Ero1. (Bardwell and Beckwith, 1991)',n?46:84);
+  s+=G('a-fade',2.8,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20):wide(ty+L.length*20+4),s};
+}
+
+function scOM(n){
+  const x1=n?66:100, x2=n?350:620, e=envelope('neg',x1,x2,20,{labels:x1-6}), w=x2-x1;
+  let s=G('a-fade',0,e.s);
+  const a=x1+w*.12, b=x1+w*.38, c=x1+w*.62, d=x1+w*.86;
+  s+=G('a-pop',.3,chan(a,e.Y.im,SECY)+lab(a,e.Y.im+38,'SecYEG','mono mid f10'));
+  s+=G('a-fade',.7,beadChain(a+14,e.Y.peri+8,4,8,-2)+blob(b-10,e.Y.peri+8,16,11,'#7FA59B')+lab(b-10,e.Y.peri+30,'SurA','mono mid f10'));
+  s+=G('a-pop',1.2,barrel(c,e.Y.om,30,24,BAMC)+[0,1,2,3,4].map(i=>`<circle cx="${c-12+i*6}" cy="${e.Y.om+28+i*3}" r="4" fill="#7FA59B" stroke="${INK}" stroke-width=".6"/>`).join('')+lab(c,e.Y.om-8,'BAM','mono mid f11'));
+  s+=G('a-pop',1.8,barrel(c+(n?36:50),e.Y.om,22,24,'#8FB1CF')+lab(c+(n?36:50),e.Y.om-8,'OMP','mono mid f10'));
+  s+=G('a-fade',2.2,`<path d="M${d} ${e.Y.im+18} V${e.Y.om+18}" stroke="#7D8A5A" stroke-width="8" opacity=".55"/>`+lab(d,e.Y.im+38,'Lpt','mono mid f10')+lab(d+(n?-2:18),e.Y.om-8,n?'LPS':'LPS out','mono mid f10'));
+  const ty=e.Y.cyto+(n?20:24);
+  const L=wrap(n?'Chaperones carry outer-membrane proteins across the periplasm to BAM, which folds them into the membrane. Lpt bridges carry LPS. Mitochondria still use Sam50, a BamA relative.':'Chaperones such as SurA carry unfolded outer-membrane proteins to BAM, whose BamA barrel folds them into the membrane (Voulhoux and colleagues, 2003). The Lpt bridge carries LPS to the surface. Mitochondria still use Sam50, a BamA relative: a reminder of their bacterial past.',n?46:84);
+  s+=G('a-fade',2.8,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20):wide(ty+L.length*20+4),s};
+}
+
+/* ===================== Part IV · leaving the cell ===================== */
+const SYS=[
+ {k:'T1SS',ex:'E. coli haemolysin HlyA',step:'one step',en:'ATP',text:'An inner-membrane ABC transporter, a periplasmic adaptor and the outer-membrane channel TolC form one continuous tunnel. Substrates carry a C-terminal signal.'},
+ {k:'T2SS',ex:'cholera toxin; Klebsiella pullulanase',step:'two steps',en:'ATP',text:'Proteins first reach the periplasm by Sec or Tat and fold. A piston-like pseudopilus then pushes them out through the outer-membrane secretin.'},
+ {k:'T3SS',ex:'Salmonella, Shigella, Yersinia',step:'into host cells',en:'ATP + PMF',text:'The injectisome: a needle built on a basal body that spans both membranes, related to the flagellum. A translocon pore in the host membrane lets effectors straight into the host cytoplasm.'},
+ {k:'T4SS',ex:'conjugation; Agrobacterium T-DNA; Legionella; H. pylori CagA',step:'into cells',en:'ATP',text:'A large envelope-spanning complex with a pilus. It moves DNA during conjugation and also proteins, such as H. pylori CagA, into host cells.'},
+ {k:'T5SS',ex:'Neisseria IgA protease; adhesins',step:'two steps',en:'none in the OM',text:'Autotransporters reach the periplasm by Sec, then their own β-barrel domain, helped by BAM, threads the passenger domain out through the outer membrane.'},
+ {k:'T6SS',ex:'Vibrio cholerae, Pseudomonas aeruginosa',step:'into cells',en:'contraction',text:'An inverted phage tail: a sheath contracts and fires a spiked tube into a neighbouring bacterium or host cell, delivering toxins. Bacterial warfare.'},
+ {k:'T7SS',ex:'Mycobacterium tuberculosis ESX-1 (ESAT-6)',step:'to the outside',en:'ATP',text:'ESX systems of mycobacteria and some Gram-positives. ESX-1 secretes ESAT-6 and is needed for virulence; the BCG vaccine strain has lost it.'}];
+let sysSel=2;
+function sysDraw(k,e,x1,x2){
+  const c=(x1+x2)/2, Y=e.Y; let s='';
+  const sub=(x,y)=>blob(x,y,8,6,'#C17A2C');
+  if(k==='T1SS'){s+=`<rect x="${c-14}" y="${Y.im-6}" width="28" height="28" rx="6" fill="#7FA59B" stroke="${INK}" class="tint"/><rect x="${c-10}" y="${Y.om+12}" width="20" height="${Y.im-Y.om-8}" fill="#C9A0B8" opacity=".8" stroke="${INK}"/><rect x="${c-12}" y="${Y.om-6}" width="24" height="26" rx="5" fill="${BAMC}" stroke="${INK}" class="tint"/>`+lab(c+30,Y.im+10,'ABC','mono start f10')+lab(c+30,Y.om+10,'TolC','mono start f10')+sub(c,Y.out-6);}
+  if(k==='T2SS'){s+=chan(c-70,Y.im)+lab(c-70,Y.im+40,'Sec','mono mid f10')+blob(c-30,Y.peri,10,8,'#C17A2C')+`<rect x="${c+10}" y="${Y.im-6}" width="34" height="26" rx="6" fill="#7FA59B" stroke="${INK}" class="tint"/>`+[0,1,2,3].map(i=>`<rect x="${c+21}" y="${Y.im-12-i*10}" width="12" height="9" fill="#B9A0C8" stroke="${INK}" stroke-width=".6"/>`).join('')+`<path d="M${c+10} ${Y.om-6} h34 v26 h-34 z" fill="${BAMC}" stroke="${INK}"/><rect x="${c+22}" y="${Y.om-6}" width="10" height="26" fill="${PAPER}"/>`+lab(c+60,Y.om+10,'secretin','mono start f10')+sub(c+27,Y.out-6);}
+  if(k==='T3SS'){s+=`<rect x="${c-26}" y="${Y.im-4}" width="52" height="24" rx="6" fill="#7FA59B" stroke="${INK}" class="tint"/><rect x="${c-20}" y="${Y.om-4}" width="40" height="24" rx="6" fill="${BAMC}" stroke="${INK}" class="tint"/><rect x="${c-5}" y="${Y.om+18}" width="10" height="${Y.im-Y.om-20}" fill="#C9A0B8" stroke="${INK}"/><rect x="${c-4}" y="${Y.out-46}" width="8" height="${Y.om-Y.out+42}" fill="#B9A0C8" stroke="${INK}"/>`+bilayer(c-90,c+90,Y.out-62,14)+`<rect x="${c-10}" y="${Y.out-64}" width="20" height="18" rx="4" fill="#C99A2E" stroke="${INK}"/>`+lab(c+96,Y.out-52,'host membrane','note start f10')+lab(c+20,Y.out-20,'needle','mono start f10')+sub(c,Y.out-80);}
+  if(k==='T4SS'){s+=`<rect x="${c-26}" y="${Y.im-6}" width="52" height="${Y.im-Y.om+30}" rx="8" transform="translate(0 ${-(Y.im-Y.om)})" fill="#7FA59B" opacity=".85" stroke="${INK}" class="tint"/>`+[0,1,2,3,4].map(i=>`<rect x="${c-4}" y="${Y.om-14-i*9}" width="8" height="8" fill="#B9A0C8" stroke="${INK}" stroke-width=".6"/>`).join('')+lab(c+34,Y.peri,'core complex','mono start f10')+lab(c+12,Y.out-30,'pilus','mono start f10')+`<path d="M${c-60} ${Y.cyto} q 20 -10 40 0 q 20 10 40 0" stroke="${OLD}" stroke-width="2" fill="none"/>`+lab(c-80,Y.cyto+4,'DNA or protein','note end f10');}
+  if(k==='T5SS'){s+=chan(c-60,Y.im)+lab(c-60,Y.im+40,'Sec','mono mid f10')+barrel(c+10,Y.om,26,24,'#8FB1CF')+barrel(c+46,Y.om,22,24,BAMC)+lab(c+46,Y.om-8,'BAM','mono mid f10')+`<path d="M${c+10} ${Y.om-6} C ${c+6} ${Y.out-10}, ${c-10} ${Y.out-20}, ${c-40} ${Y.out-14}" stroke="#C17A2C" stroke-width="5" fill="none" stroke-linecap="round"/>`+lab(c-44,Y.out-26,'passenger','mono end f10');}
+  if(k==='T6SS'){s+=`<rect x="${c-12}" y="${Y.im+20}" width="24" height="40" rx="6" fill="#B9A0C8" stroke="${INK}" class="tint"/><rect x="${c-4}" y="${Y.out-40}" width="8" height="${Y.im-Y.out+60}" fill="#C9A0B8" stroke="${INK}"/><path d="M${c-8} ${Y.out-40} L${c} ${Y.out-56} L${c+8} ${Y.out-40} Z" fill="${RED}"/>`+`<rect x="${c-24}" y="${Y.im-6}" width="48" height="26" rx="6" fill="#7FA59B" opacity=".7" stroke="${INK}"/>`+lab(c+20,Y.cyto+6,'sheath','mono start f10')+lab(c+14,Y.out-44,'spike','mono start f10')+bilayer(c-90,c+90,Y.out-74,12)+lab(c+96,Y.out-64,'target cell','note start f10');}
+  if(k==='T7SS'){s+=`<rect x="${c-26}" y="${Y.im-6}" width="52" height="28" rx="6" fill="#7FA59B" stroke="${INK}" class="tint"/>`+lab(c+34,Y.im+12,'EccB–E','mono start f10')+`<path d="M${c} ${Y.im-8} V${Y.om+26}" stroke="#C17A2C" stroke-width="2" stroke-dasharray="4 3"/>`+`<rect x="${c-10}" y="${Y.om-4}" width="20" height="22" rx="4" fill="none" stroke="${INK}" stroke-dasharray="3 3"/>`+lab(c+16,Y.om+10,'?','mono start f12')+sub(c,Y.out-6)+lab(c+12,Y.out-4,'EsxA','mono start f10');}
+  return s;
+}
+function scSystems(n){
+  const m=SYS[sysSel], x1=n?66:110, x2=n?350:460, y0=n?90:100, e=envelope(m.k==='T7SS'?'myco':'neg',x1,x2,y0,{labels:x1-6});
+  let s=G('a-fade',0,e.s)+G('a-pop',.3,sysDraw(m.k,e,x1,x2));
+  if(m.k!=='T3SS'&&m.k!=='T6SS')s+=T(x1+40,y0-16,'outside','note mid f11');
+  const tx=n?14:486, ty=n?e.Y.cyto+40:60;
+  let t=n?T(tx,ty,m.k,'cname start')+T(tx+60,ty,m.step+' · '+m.en,'note start f12')+T(tx,ty+20,m.ex,'note start f12'):T(tx,ty,m.k,'cname start')+T(tx,ty+20,m.step,'note start f12')+T(tx,ty+36,'energy: '+m.en,'note start f12');
+  const L=wrap(n?m.text:m.ex,n?46:20);
+  if(n)t+=L.map((l,i)=>T(tx,ty+46+i*20,l,'lab start f13')).join('');
+  else t+=L.map((l,i)=>T(tx,ty+62+i*17,l,'note start f12')).join('');
+  s+=G('a-fade',.6,t);
+  if(!n){const L2=wrap(m.text,84);s+=G('a-fade',.8,L2.map((l,i)=>T(30,e.Y.cyto+44+i*20,l,'lab start')).join(''));return {vb:wide(e.Y.cyto+44+L2.length*20),s};}
+  return {vb:slim(ty+46+L.length*20),s};
+}
+
+function scGramPos(n){
+  const x1=n?66:100, x2=n?350:620, e=envelope('pos',x1,x2,24,{labels:x1-6}), w=x2-x1;
+  let s=G('a-fade',0,e.s);
+  const a=x1+w*.18, b=x1+w*.5, c=x1+w*.8;
+  s+=G('a-pop',.4,`<rect x="${a-12}" y="${e.Y.im-2}" width="24" height="20" rx="5" fill="#9C7FB0" stroke="${INK}" class="tint"/>`+lab(a,e.Y.im+36,'SrtA','mono mid f10')+`<path d="M${a} ${e.Y.im-2} V${e.Y.pg-10}" stroke="${CHAIN[1]}" stroke-width="3"/>`+blob(a,e.Y.pg-24,16,11,'#8FB1CF')+lab(a+22,e.Y.pg+4,'LPXT↓G','mono start f10'));
+  s+=G('a-pop',1.0,blob(b,e.Y.cap,18,12,'#8FB1CF')+`<path d="M${b} ${e.Y.cap+10} V${e.Y.pg+20}" stroke="${CHAIN[1]}" stroke-width="3"/>`+[0,1,2].map(i=>`<circle cx="${b+8}" cy="${e.Y.pg-6+i*12}" r="4" fill="#E0B84A" stroke="${INK}"/>`).join('')+lab(b+26,e.Y.pg+2,n?'Cbp':'choline-binding','mono start f10'));
+  s+=G('a-pop',1.6,`<rect x="${c-32}" y="${e.Y.im-4}" width="22" height="24" rx="5" fill="${SECY}" stroke="${INK}" class="tint"/><rect x="${c+10}" y="${e.Y.im-4}" width="22" height="24" rx="5" fill="#2E7D78" stroke="${INK}" class="tint"/>`+lab(c-21,e.Y.im+38,'SecY','mono mid f10')+lab(c+21,e.Y.im+38,'SecY2','mono mid f10')+`<path d="M${c+21} ${e.Y.im-6} C ${c+20} ${e.Y.pg}, ${c+10} ${e.Y.cap}, ${c+20} ${e.Y.out}" stroke="#C17A2C" stroke-width="4" fill="none"/>`+lab(c+26,e.Y.cap,'SRR','mono start f10'));
+  const ty=e.Y.cyto+(n?20:24);
+  const L=wrap(n?'One membrane, so secretion is one step through Sec or Tat. Sortase (Schneewind, 1999) links LPXTG proteins such as S. aureus protein A to the wall. Pneumococcal PspA and CbpA grip choline on teichoic acids. Glycosylated SRR adhesins such as PsrP leave by the accessory SecA2–SecY2 system.':'With one membrane, Sec or Tat is enough to leave the cell. Sortase A cuts LPXTG motifs and links proteins such as S. aureus protein A to the wall (Schneewind and colleagues, 1999). Pneumococcal choline-binding proteins such as PspA and CbpA grip phosphorylcholine on teichoic acids. Glycosylated serine-rich adhesins, such as pneumococcal PsrP, use an accessory SecA2–SecY2 system.',n?46:84);
+  s+=G('a-fade',2.2,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20):wide(ty+L.length*20+4),s};
+}
+
+/* ===================== Part V · glycosylation and other marks ===================== */
+const SNFG={GlcNAc:(x,y,r=5)=>`<rect x="${x-r}" y="${y-r}" width="${2*r}" height="${2*r}" fill="#3E7FC1" stroke="${INK}" stroke-width=".7"/>`,
+  GalNAc:(x,y,r=5)=>`<rect x="${x-r}" y="${y-r}" width="${2*r}" height="${2*r}" fill="#F2C94C" stroke="${INK}" stroke-width=".7"/>`,
+  Man:(x,y,r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#3E9C4B" stroke="${INK}" stroke-width=".7"/>`,
+  Glc:(x,y,r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#3E7FC1" stroke="${INK}" stroke-width=".7"/>`,
+  Bac:(x,y,r=5)=>`<path d="M${x-r} ${y-r} h${2*r} v${2*r} h${-2*r} z M${x-r} ${y-r} l${2*r} ${2*r}" fill="#FFFFFF" stroke="${INK}" stroke-width=".9"/>`};
+function scEukGly(n){
+  const x1=n?10:30, x2=n?350:610, y=n?150:160;
+  let s=G('a-fade',0,bilayer(x1,x2,y,18)+T(x1,y-14,'ER lumen','note start f12')+T(x1,y+40,'cytoplasm','note start f12'));
+  const gx=n?90:150, gy=y-16;
+  let tree=`<path d="M${gx} ${y+2} V${gy}" stroke="${INK}" stroke-width="2"/>`+Tc(gx+10,y+10,'PP-dolichol','#6A5B47',10,'mono start');
+  tree+=SNFG.GlcNAc(gx,gy)+SNFG.GlcNAc(gx,gy-12)+SNFG.Man(gx,gy-24)+SNFG.Man(gx-12,gy-36)+SNFG.Man(gx+12,gy-36)+SNFG.Man(gx-12,gy-48)+SNFG.Man(gx+12,gy-48)+SNFG.Man(gx+24,gy-48)+SNFG.Man(gx-12,gy-60)+SNFG.Man(gx+12,gy-60)+SNFG.Man(gx+24,gy-60)+SNFG.Glc(gx-12,gy-72)+SNFG.Glc(gx-12,gy-84)+SNFG.Glc(gx-12,gy-96);
+  s+=G('a-fade',.4,tree+T(gx+40,gy-96,'Glc₃Man₉GlcNAc₂','mono start f11'));
+  const ox=n?190:330;
+  s+=G('a-pop',1.2,`<rect x="${ox-20}" y="${y-6}" width="40" height="30" rx="6" fill="#7FA59B" stroke="${INK}" class="tint"/>`+T(ox,y+48,'OST','mono mid f11'));
+  s+=G('a-fade',1.6,beadChain(ox+40,gy-30,6,10,0)+Tc(ox+70,gy-12,'N-X-S/T','#A4473A',11,'mono mid','600')+`<path d="M${gx+20} ${gy-40} C ${ox-60} ${gy-80}, ${ox} ${gy-80}, ${ox+60} ${gy-40}" class="arrow"/>`);
+  const ty=y+(n?70:76);
+  const L=wrap(n?'A 14-sugar tree built on dolichol is moved whole onto Asn in N-X-S/T, then trimmed and rebuilt in the ER and Golgi. Bacteria use a similar plan with undecaprenol.':'In eukaryotes, oligosaccharyltransferase moves a 14-sugar tree, prebuilt on dolichol, onto Asn in N-X-S/T as the chain enters the ER. It is trimmed and rebuilt in the ER and Golgi. Bacteria follow the same plan with a different lipid, undecaprenol.',n?46:84);
+  s+=G('a-fade',2.2,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20):wide(ty+L.length*20+4),s};
+}
+
+function scPgl(n){
+  const x1=n?66:100, x2=n?350:620, e=envelope('neg',x1,x2,20,{labels:x1-6}), w=x2-x1;
+  let s=G('a-fade',0,e.s);
+  const gx=x1+w*.18, fx=x1+w*.45, bx=x1+w*.72;
+  const glycan=(x,y,dir)=>{let g=SNFG.Bac(x,y);for(let i=1;i<6;i++)g+=SNFG.GalNAc(x,y+dir*12*i);g+=SNFG.Glc(x+12,y+dir*36);return g;};
+  s+=G('a-fade',.3,`<path d="M${gx} ${e.Y.im+16} v14" stroke="${INK}" stroke-width="2"/>`+glycan(gx,e.Y.im+36,1)+lab(gx+28,e.Y.im+54,'Und-PP','mono start f10'));
+  s+=G('a-pop',1.0,`<rect x="${fx-12}" y="${e.Y.im-4}" width="24" height="24" rx="5" fill="#9C7FB0" stroke="${INK}" class="tint"/>`+lab(fx,e.Y.im+38,'PglK','mono mid f10')+`<path d="M${gx+18} ${e.Y.im+50} C ${fx-30} ${e.Y.im+60}, ${fx} ${e.Y.im+40}, ${fx} ${e.Y.im+24}" class="arrow"/>`);
+  s+=G('a-pop',1.6,`<rect x="${bx-16}" y="${e.Y.im-6}" width="32" height="28" rx="6" fill="#7FA59B" stroke="${INK}" class="tint"/>`+lab(bx,e.Y.im+38,'PglB','mono mid f10')+glycan(bx-36,e.Y.im-10,-1)+beadChain(bx+20,e.Y.peri-12,5,9,0)+Tc(bx+40,e.Y.peri+6,'D/E-X-N-X-S/T','#A4473A',10,'mono mid','600'));
+  const ty=e.Y.cyto+(n?112:96);
+  const L=wrap(n?'Campylobacter jejuni builds a 7-sugar glycan on undecaprenyl-PP, flips it, and PglB (an OST relative) attaches it to Asn. Moved into E. coli in 2002 (Wacker, Aebi and colleagues), PglB now makes conjugate vaccines.':'Campylobacter jejuni builds a seven-sugar glycan, starting with bacillosamine, on undecaprenyl pyrophosphate in the cytoplasm. PglK flips it and PglB, a relative of eukaryotic OST, attaches it to Asn in the periplasm (Szymanski, 1999). Moved into E. coli in 2002 by Wacker, Aebi and colleagues, PglB is now used to make glycoconjugate vaccines.',n?46:84);
+  s+=G('a-fade',2.2,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join('')+SNFG.GalNAc(n?20:36,ty-30)+T(n?30:46,ty-26,'GalNAc','note start f11')+SNFG.Glc(n?90:116,ty-30)+T(n?100:126,ty-26,'Glc','note start f11')+SNFG.Bac(n?136:170,ty-30)+T(n?146:180,ty-26,'Bac','note start f11'));
+  return {vb:n?slim(ty+L.length*20):wide(ty+L.length*20+4),s};
+}
+
+function scOGly(n){
+  const rows=[['Neisseria pilin','PglL transfers glycans from undecaprenyl-PP onto serine; broad in what it accepts'],['Streptococcal SRR adhesins','GtfA/B glycosylate long serine-rich repeats in the cytoplasm, then SecA2–SecY2 export them (S. gordonii GspB; pneumococcal PsrP)'],['Flagellin','Campylobacter decorates flagellin with pseudaminic acid; without it, no flagellum']];
+  let s='';let y=n?30:36;
+  rows.forEach((r,i)=>{const L=wrap(r[1],n?44:64);s+=G('a-fade',(i*.6).toFixed(1),box(n?10:20,y-20,n?340:600,L.length*19+40,'#E7DEC9',4)+T(n?22:36,y,r[0],'cname start '+(n?'f15':''))+L.map((l,j)=>T(n?22:36,y+22+j*19,l,'note start f13')).join(''));y+=L.length*19+52;});
+  s+=G('a-fade',2,T(n?180:320,y-4,n?'O-linked sugars go on Ser/Thr':'O-linked glycans go on serine or threonine, in bacteria as in eukaryotes','lab mid'));
+  return {vb:n?slim(y+8):wide(y+10),s};
+}
+
+function scUndP(n){
+  const cx=n?180:220, cy=n?160:170, r=n?110:130;
+  let s=G('a-pop',0,`<circle cx="${cx}" cy="${cy}" r="${n?40:46}" fill="#E0B84A" stroke="${INK}" class="tint"/>`+Tc(cx,cy-2,'Und-P','#3A2E22',14,'mono mid','600')+T(cx,cy+16,'C₅₅ lipid','note mid f11'));
+  const out=[['peptidoglycan','lipid II'],['capsule','Wzy'],['O-antigen','LPS'],['teichoic acids','WTA'],['protein glycans','Pgl'],['ECA','ECA']];
+  out.forEach((o,i)=>{const a=-Math.PI/2+i*Math.PI/3,x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+    s+=G('a-pop',(.5+i*.3).toFixed(1),`<path d="M${cx+(n?42:48)*Math.cos(a)} ${cy+(n?42:48)*Math.sin(a)} L${x-24*Math.cos(a)} ${y-24*Math.sin(a)}" class="arrow"/>`+`<circle cx="${x}" cy="${y}" r="${n?22:24}" fill="${i===1?CAPC:'#E7DEC9'}" stroke="${INK}"/>`+T(x,y+(Math.sin(a)>.3?44:Math.sin(a)<-.3?-30:4)+(Math.abs(Math.sin(a))<.3?0:0),o[0],'lab mid '+(n?'f12':'f14')).replace(`y="${y+4}"`,`y="${y+4}"`)+Tc(x,y+4,o[1],'#3A2E22',9,'mono mid'));});
+  if(!n){const L=['Every cell-surface polymer is','built on the same lipid carrier,','undecaprenyl phosphate.','','In pneumococcus, most of the','~100 capsule types are made by','the Wzy pathway; the capsule is','then attached to peptidoglycan.','','Bacitracin works by trapping','the carrier.'];
+    s+=G('a-fade',2.4,L.map((l,i)=>T(400,50+i*20,l,'lab start')).join(''));return {vb:wide(360),s};}
+  const L=wrap('Every surface polymer is built on undecaprenyl phosphate. Most of the ~100 pneumococcal capsule types use the Wzy pathway. Bacitracin traps the carrier.',46);
+  s+=G('a-fade',2.4,L.map((l,i)=>T(14,cy+r+80+i*20,l,'lab start f13')).join(''));
+  return {vb:slim(cy+r+80+L.length*20),s};
+}
+
+function scOther(n){
+  const rows=[['Phosphorylation','kinase cascades','two-component His/Asp; Ser/Thr kinases such as pneumococcal StkP in division'],['Lipidation','prenyl, palmitoyl, GPI anchors','lipoproteins on a cysteine'],['Proteolytic maturation','prohormones, zymogens','propeptides; lantibiotic leaders removed'],['Acetylation','histones, N-termini','lysines and N-termini; regulates metabolism'],['Tagging for destruction','ubiquitin','Pup in mycobacteria; ssrA tag'],['Methylation','histones','chemoreceptors (CheR, CheB)']];
+  const c=n?[12,0,12]:[24,200,400], y0=n?34:40;
+  let s=G('a-fade',0,(n?'':T(c[1],y0-14,'eukaryotes','note start f12'))+T(c[2],y0-14,'bacteria','cname start acc '+(n?'f14':''))+ln(12,y0-4,n?350:616,y0-4));
+  let y=y0+18;rows.forEach((r,i)=>{const L=wrap(r[2],n?44:30);s+=G('a-fade',(.2+i*.2).toFixed(1),T(c[0],y,r[0],'lab start '+(n?'f14':'f14'))+(n?'':T(c[1],y,r[1],'note start f13'))+L.map((l,j)=>T(n?c[2]:c[2],y+(n?18:0)+j*18,l,'lab start acc '+(n?'f13':'f14'))).join(''));y+=(n?18:0)+L.length*18+(n?12:14);});
+  return {vb:n?slim(y):wide(y+4),s};
+}
+
+/* ===================== Part VI · where does it go? ===================== */
+const ROUTES=[
+ {p:'MalE',t:'neg',org:'E. coli maltose-binding protein',dest:'periplasm',stops:[['SecB','#7FA59B','cy',.2],['SecA + SecYEG',SECA,'im',.35],['SPase I','#9C7FB0','im',.5],['folds in the periplasm','#8FB1CF','peri',.62]]},
+ {p:'OmpA',t:'neg',org:'E. coli outer-membrane porin',dest:'outer membrane',stops:[['SecA + SecYEG',SECA,'im',.25],['SurA','#7FA59B','peri',.45],['BAM',BAMC,'om',.65]]},
+ {p:'Lpp',t:'neg',org:'Braun’s lipoprotein',dest:'outer membrane, inner leaflet',stops:[['SecYEG',SECY,'im',.2],['Lgt, LspA, Lnt','#9C7FB0','im',.38],['LolCDE',LOLC,'im',.55],['LolA',LOLC,'peri',.7],['LolB',LOLC,'om',.85]]},
+ {p:'LacY',t:'neg',org:'lactose permease, 12 helices',dest:'inner membrane',stops:[['SRP',SRPC,'cy',.25],['FtsY','#9C7FB0','cy',.4],['SecYEG + YidC',SECY,'im',.55]]},
+ {p:'F₀c',t:'neg',org:'ATP synthase subunit c, a small hairpin',dest:'inner membrane',stops:[['YidC alone','#9C7FB0','im',.45]]},
+ {p:'TorA',t:'neg',org:'TMAO reductase with a molybdenum cofactor',dest:'periplasm, folded',stops:[['folds with cofactor','#8FB1CF','cy',.25],['Tat',TATC,'im',.45],['periplasm','#8FB1CF','peri',.62]]},
+ {p:'HlyA',t:'neg',org:'E. coli haemolysin',dest:'outside the cell',stops:[['T1SS in one step','#7FA59B','im',.45],['TolC',BAMC,'om',.45],['released','#C17A2C','out',.45]]},
+ {p:'Protein A',t:'pos',org:'Staphylococcus aureus',dest:'cell wall surface',stops:[['SecA + SecYEG',SECA,'im',.25],['SrtA cuts LPXTG','#9C7FB0','im',.45],['linked to lipid II → wall','#8FB1CF','pg',.6]]},
+ {p:'PspA',t:'pos',org:'pneumococcal surface protein A',dest:'surface, held on choline',stops:[['SecA + SecYEG',SECA,'im',.3],['SPase I','#9C7FB0','im',.48],['grips choline on teichoic acids','#8FB1CF','pg',.66]]}];
+let rtSel=0;
+function scRoute(n){
+  const m=ROUTES[rtSel], x1=n?66:120, x2=n?350:620, y0=n?40:40, e=envelope(m.t,x1,x2,y0,{labels:x1-6}), w=x2-x1;
+  let s=G('a-fade',0,e.s);
+  const ry=k=>({cy:e.Y.cyto+16,im:e.Y.im+8,peri:e.Y.peri,om:e.Y.om+8,out:e.Y.out-8,pg:e.Y.pg})[k];
+  const rx=x1+w*.08, rY=e.Y.cyto+(n?50:50);
+  s+=G('a-pop',.2,ribosome(rx,rY,n?.26:.3,{mrna:false}));
+  let pts=[[rx,rY-20]];m.stops.forEach(st=>pts.push([x1+w*st[3],ry(st[2])]));
+  let d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L');
+  s+=G('a-fade',.4,`<path d="${d}" stroke="${RED}" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ahp)"/>`);
+  m.stops.forEach((st,i)=>{const [x,y]=pts[i+1];s+=G('a-pop',(.8+i*.5).toFixed(1),blob(x,y,12,9,st[1])+badge(x+(n?14:16),y-14,i+1));});
+  const ty=e.Y.cyto+(n?86:84);
+  s+=G('a-fade',.4,T(n?14:30,ty,m.p,'cname start')+T(n?14:30,ty+18,m.org+' → '+m.dest,'note start '+(n?'f11':'f13')));
+  m.stops.forEach((st,i)=>{const c=n?0:i%2,r=n?i:Math.floor(i/2),x=(n?14:30)+c*300,y=ty+44+r*24;s+=G('a-fade',(1+i*.4).toFixed(1),badge(x+6,y-4,i+1)+T(x+20,y+1,st[0],'lab start '+(n?'f13':'f14')));});
+  const rows=n?m.stops.length:Math.ceil(m.stops.length/2);
+  return {vb:n?slim(ty+44+rows*24):wide(ty+44+rows*24),s};
+}
+
+function stepList(n,steps,ty,x0){let s='';steps.forEach((t,i)=>{const L=wrap(t,n?44:80);s+=G('a-fade',(1.6+i*.3).toFixed(1),badge(x0+8,ty-4,i+1)+L.map((l,j)=>T(x0+24,ty+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));ty+=L.length*18+8;});return {s,y:ty};}
+function scCoTrans(n){
+  const x1=n?66:110, x2=n?350:620, e=envelope('neg',x1,x2,14,{labels:x1-6}), w=x2-x1, k=n?.34:.42, my=e.Y.bottom+(n?62:76), dock=e.Y.bottom+k*118;
+  let s=G('a-fade',0,e.s);
+  const a=x1+w*.15, b=x1+w*.47, c=x1+w*.8;
+  s+=G('a-pop',.3,ribosome(a,my,k,{mrna:false})+`<path d="M${a+k*10} ${my-k*104} q ${k*10} ${-k*20} ${k*24} ${-k*30}" stroke="${RED}" stroke-width="3" fill="none"/>`+blob(a+k*44,my-k*136,k*30,k*18,SRPC)+Tc(a+k*44,my-k*131,'SRP',"#3A2E22",10,'mono mid','600')+badge(a-k*110,my-k*130,1));
+  s+=G('a-pop',.9,ribosome(b,dock+k*30,k,{mrna:false})+blob(b+k*30,dock+k*30-k*140,k*28,k*16,SRPC)+blob(b+k*70,e.Y.im+24,k*32,k*18,'#9C7FB0')+Tc(b+k*70,e.Y.im+28,'FtsY','#F3EDE0',10,'mono mid','600')+Tc(b-k*40,e.Y.im+30,'GTP','#2F5276',10,'mono mid','600')+badge(b-k*110,my-k*130,2));
+  s+=G('a-pop',1.5,chan(c,e.Y.im)+`<rect x="${c+18}" y="${e.Y.im-4}" width="14" height="24" rx="4" fill="#9C7FB0" stroke="${INK}" class="tint"/>`+lab(c+25,e.Y.im-10,'YidC','mono mid f10')+lab(c-6,e.Y.im-10,'SecYEG','mono end f10')
+    +ribosome(c,dock,k,{mrna:false})+`<path d="M${c} ${dock-k*104} V${e.Y.im-2}" stroke="${CHAIN[1]}" stroke-width="3"/>`+`<rect x="${c-26}" y="${e.Y.im+1}" width="8" height="14" rx="3" fill="#C99A2E" stroke="${INK}"/><rect x="${c-40}" y="${e.Y.im+1}" width="8" height="14" rx="3" fill="#C99A2E" stroke="${INK}"/>`+badge(c+k*110,my-k*130,3));
+  const st=['SRP (Ffh with 4.5S RNA) binds a strongly hydrophobic signal or first transmembrane segment as it leaves the ribosome.','SRP and its membrane receptor FtsY, both GTPases, bring the ribosome to the membrane.','GTP hydrolysis hands the ribosome to SecYEG. Helices exit the lateral gate into the bilayer, helped by YidC; large periplasmic loops also need SecA.'];
+  const r=stepList(n,st,my+(n?40:44),n?10:24);s+=r.s;
+  const F=wrap('Eukaryotes: SRP → SRP receptor → Sec61. Mammals use this route for most secreted proteins as well.',n?50:96);s+=G('a-fade',2.8,F.map((l,i)=>T(n?14:30,r.y+8+i*18,l,'note start '+(n?'f12':'f13'))).join(''));
+  return {vb:n?slim(r.y+8+F.length*18):wide(r.y+10+F.length*18),s};
+}
+function scPostTrans(n){
+  const x1=n?66:110, x2=n?350:620, e=envelope('neg',x1,x2,14,{labels:x1-6}), w=x2-x1, my=e.Y.bottom+(n?62:76);
+  let s=G('a-fade',0,e.s);
+  const a=x1+w*.14, b=x1+w*.42, c=x1+w*.66, d=x1+w*.88;
+  s+=G('a-pop',.3,ribosome(a,my,n?.3:.36,{mrna:false})+blob(a+30,my-(n?52:62),12,8,'#7FA59B')+T(a+46,my-(n?48:58),'TF','mono start f10')+beadChain(a+44,my-(n?30:36),5,8,0)+`<path d="M${a+44} ${my-(n?30:36)} h-8" stroke="${RED}" stroke-width="3"/>`+badge(a-36,my-60,1));
+  s+=G('a-pop',.9,blob(b,e.Y.bottom+40,24,16,'#7FA59B')+Tc(b,e.Y.bottom+44,'SecB','#3A2E22',10,'mono mid','600')+beadChain(b-24,e.Y.bottom+64,6,9,0)+badge(b-34,e.Y.bottom+28,2));
+  s+=G('a-pop',1.5,chan(c,e.Y.im)+blob(c,e.Y.im+34,22,14,SECA)+Tc(c,e.Y.im+38,'SecA','#3A2E22',10,'mono mid','600')+Tc(c+30,e.Y.im+56,'ATP','#2F5276',10,'mono mid','600')+`<path d="M${c} ${e.Y.im+20} V${e.Y.peri}" stroke="${CHAIN[1]}" stroke-width="3"/>`+badge(c+30,e.Y.im+30,3)
+    +`<rect x="${c+16}" y="${e.Y.im-4}" width="12" height="24" rx="3" fill="#B9A0C8" stroke="${INK}"/>`+lab(c+22,e.Y.im-10,'SecDF','mono mid f10'));
+  s+=G('a-pop',2.1,`<text x="${c-14}" y="${e.Y.im-6}" class="mid" style="fill:${RED};font-size:14px">✂</text>`+lab(c-28,e.Y.peri-4,'SPase I','mono end f10')+blob(d,e.Y.peri,18,13,'#8FB1CF')+lab(d,e.Y.peri+26,'folds','note mid f11')+badge(d+24,e.Y.peri-14,4));
+  const st=['The preprotein is made in the cytoplasm. Trigger factor meets it at the ribosome; a moderately hydrophobic signal is ignored by SRP.','SecB holds it unfolded (in E. coli and relatives; many Gram-positives lack SecB).','SecA, bound to SecYEG, binds the signal and pushes the chain through in ATP-driven steps; the proton motive force and SecDF help.','Signal peptidase I cuts off the signal on the outer face, and the protein folds in the periplasm.'];
+  const r=stepList(n,st,my+(n?30:34),n?10:24);s+=r.s;
+  const F=wrap('SecA can also engage chains still on the ribosome. In yeast, the post-translational route uses Sec61 with Sec62/63 and BiP.',n?50:96);s+=G('a-fade',3,F.map((l,i)=>T(n?14:30,r.y+8+i*18,l,'note start '+(n?'f12':'f13'))).join(''));
+  return {vb:n?slim(r.y+8+F.length*18):wide(r.y+10+F.length*18),s};
+}
+
+/* ===================== scenes ===================== */
+const NAR='Narrator';
+const S=[
+ {p:1,title:'Every protein needs an address',draw:scPlaces,
+  text:"Every protein is made in the cytoplasm, but many work elsewhere. In eukaryotes, proteins bound for secretion pass through the endoplasmic reticulum and Golgi. Bacteria have no such organelles; instead they send proteins into or across their envelope. A Gram-negative cell has two membranes, with a thin peptidoglycan layer in the periplasm between them. A Gram-positive cell has one membrane, a thick wall threaded with teichoic acids, and often a capsule."},
+ {p:1,title:'The signal hypothesis',draw:scSignalHyp,
+  text:"In 1972 César Milstein noticed that a secreted antibody chain was first made slightly longer, with extra amino acids at its N-terminus. Günter Blobel and Bernhard Dobberstein explained why in 1975: the extension is a signal sequence. It emerges from the ribosome, steers the ribosome to the ER membrane and threads the chain through a channel, and then it is cut off. Blobel received the 1999 Nobel Prize. The same logic, it turned out, operates in bacteria."},
+ {p:1,title:'Genetics finds the machine',draw:scSecGenes,
+  text:"Bacterial genetics found the export machinery. Jon Beckwith, Tom Silhavy and colleagues fused β-galactosidase to exported E. coli proteins such as maltose-binding protein. The bulky fusion jammed in the membrane and made cells sick, which let them select mutants. Suppressors that rescued faulty signals mapped to prlA, now secY; screens for export defects found secA and the other sec genes. Randy Schekman's yeast sec mutants did the same for eukaryotes."},
+ {p:1,title:'Reading a signal',draw:scSignals,
+  text:"Sec signal peptides share a plan rather than a sequence: a few positive charges, a hydrophobic core, and a cleavage site, often Ala-X-Ala, for signal peptidase I. Lipoprotein signals end in a lipobox around a cysteine that will carry lipid, and are cut by signal peptidase II. Tat signals carry a twin-arginine motif and route proteins that have already folded."},
+ {p:2,title:'Two routes to one channel',draw:scRoutes,
+  text:"A new exported protein reaches SecYEG by one of two routes, decided mainly by how hydrophobic its signal is. Membrane proteins, with very hydrophobic signals or transmembrane segments, are caught by the signal recognition particle while still being made. Most secreted proteins, with milder signals, go mainly after synthesis, with SecB and SecA. The two plates that follow take each route step by step."},
+ {p:2,title:'Co-translational: SRP',draw:scCoTrans,
+  text:"The bacterial signal recognition particle is a single protein, Ffh, bound to 4.5S RNA. It binds strongly hydrophobic segments as soon as they leave the ribosome. Its receptor FtsY sits on the membrane; when the two GTPases meet, the ribosome is brought to SecYEG, GTP is hydrolysed and both let go. The ribosome then feeds the chain straight into the channel, and transmembrane helices pass sideways into the bilayer, helped by YidC. Large periplasmic loops also need SecA."},
+ {p:2,title:'Post-translational: SecB and SecA',draw:scPostTrans,
+  text:"Most periplasmic and outer-membrane proteins have milder signals that SRP ignores. They are largely made first, kept loose by trigger factor and, in E. coli, by the chaperone SecB. SecA, an ATPase bound to SecYEG, takes the signal and pushes the chain through in steps, helped by the proton motive force and SecDF. Signal peptidase I removes the signal and the protein folds in the periplasm. SecA can also start on chains still attached to the ribosome, and many Gram-positive bacteria have no SecB."},
+ {p:2,title:'Inside SecYEG',draw:scSecY,
+  text:"SecYEG is shaped like an hourglass, with a constriction ring and a short plug that seals it when idle. A signal peptide wedges into a lateral gate between two halves of SecY, the plug moves aside, and the chain passes through. In bacteria, SecA pushes the chain through in steps using ATP, and the proton motive force and SecDF help. The structure was solved in 2004 by Bert van den Berg, Tom Rapoport and colleagues."},
+ {p:2,title:'Lipoproteins',draw:scLipo,
+  text:"Lipoproteins are anchored by lipids. Lgt attaches a diacylglycerol to the lipobox cysteine, LspA (signal peptidase II) cuts just before it, and in E. coli Lnt adds a third fatty acid. LolCDE then lifts those bound for the outer membrane out of the inner membrane, LolA ferries them across the periplasm, and LolB plants them in the outer membrane. In E. coli, an aspartate next to the lipidated cysteine is a Lol-avoidance signal that keeps a lipoprotein in the inner membrane. Gram-positive lipoproteins stay on the outer face of their single membrane."},
+ {p:2,title:'Tat: folded proteins',draw:scTat,
+  text:"Some proteins must fold in the cytoplasm, for example to pick up a metal or flavin cofactor. They are exported by the twin-arginine translocation system. TatB and TatC recognise the RR signal; TatA molecules then gather and let the folded protein across, powered by the proton motive force alone. Tat is found in bacteria, archaea and chloroplasts."},
+ {p:2,title:'Inserting membrane proteins',draw:scInsert,
+  text:"As a membrane protein threads through SecYEG, each hydrophobic helix slips out sideways through the lateral gate into the lipid bilayer. YidC helps, and on its own inserts some small proteins. The orientation follows the positive-inside rule, described by Gunnar von Heijne: loops rich in lysine and arginine stay in the cytoplasm. Eukaryotes use Sec61 together with the EMC and GET insertases, and mitochondria use Oxa1, YidC's relative."},
+ {p:3,title:'Disulfide bonds',draw:scDsb,
+  text:"The cytoplasm is reducing, so disulfide bonds form only after export. In the periplasm, DsbA, found by James Bardwell and Jon Beckwith in 1991, hands its disulfide to new proteins. DsbB re-oxidises DsbA and passes the electrons to quinones in the respiratory chain. Mistakes are fixed by DsbC, which is kept active by DsbD. Eukaryotes do the same job in the ER with protein disulfide isomerase and Ero1."},
+ {p:3,title:'Building the outer membrane',draw:scOM,
+  text:"Outer-membrane proteins are β-barrels. They cross the inner membrane by Sec, are escorted across the periplasm by chaperones such as SurA, Skp and DegP, and are folded into the outer membrane by the BAM complex, built around BamA. LPS travels separately along the Lpt bridge, and lipoproteins by the Lol route. Mitochondria still use Sam50, a BamA relative, a clue to their bacterial origin."},
+ {p:4,title:'Secretion systems',chips:'sys',draw:scSystems,
+  text:"Gram-negative bacteria have evolved a range of machines to get proteins past the outer membrane, some in one step from the cytoplasm, some after Sec or Tat, and some straight into other cells. They are numbered by type. Pick one to see its architecture."},
+ {p:4,title:'Gram-positive surfaces',draw:scGramPos,
+  text:"With only one membrane, Sec or Tat takes a protein across it into the wall, and from there it can be released. Many stay attached. Sortase A recognises an LPXTG motif near the C-terminus, cuts it and links the protein to peptidoglycan precursors, displaying adhesins such as Staphylococcus aureus protein A. The pneumococcus also grips the surface with choline-binding proteins such as PspA, CbpA and LytA, which bind phosphorylcholine on its teichoic acids. Its glycosylated serine-rich adhesin PsrP leaves by an accessory SecA2–SecY2 system."},
+ {p:5,title:'Eukaryotic N-glycosylation',draw:scEukGly,
+  text:"Eukaryotic cells attach sugar trees to many secreted and membrane proteins. A 14-sugar oligosaccharide is assembled on the lipid carrier dolichol and transferred whole by oligosaccharyltransferase onto asparagine in the motif N-X-S/T as the chain enters the ER. The glycans help folding and quality control, and are trimmed and rebuilt in the Golgi."},
+ {p:5,title:'Bacteria glycosylate too',draw:scPgl,
+  text:"Bacterial protein glycosylation was long doubted. In 1999 Christine Szymanski found a general N-glycosylation system in Campylobacter jejuni. Its glycan is built on undecaprenyl pyrophosphate in the cytoplasm, flipped by PglK, and transferred by PglB, a relative of eukaryotic OST, to asparagine in an extended motif. In 2002 Michael Wacker, Markus Aebi and colleagues moved the system into E. coli, opening the way to engineered glycoconjugate vaccines."},
+ {p:5,title:'O-linked glycans',draw:scOGly,
+  text:"Bacteria also attach sugars to serine and threonine. Neisseria O-glycosylates its pilin with PglL, again from an undecaprenyl carrier. Streptococci, including the pneumococcus, glycosylate the long serine-rich repeats of SRR adhesins in the cytoplasm and export them through a dedicated SecA2–SecY2 system. Campylobacter cannot build a flagellum unless its flagellin is decorated with pseudaminic acid."},
+ {p:5,title:'One carrier, many sugars',draw:scUndP,
+  text:"In eukaryotes the glycan carrier is dolichol. In bacteria it is undecaprenyl phosphate, a 55-carbon lipid, and nearly every surface polymer is built on it: peptidoglycan through lipid II, capsules, O-antigen, teichoic acids, protein glycans and the enterobacterial common antigen. Most of the roughly 100 pneumococcal capsule types are assembled this way, flipped by Wzx and polymerised by Wzy. The antibiotic bacitracin works by trapping this carrier."},
+ {p:5,title:'Other finishing touches',draw:scOther,
+  text:"Proteins carry many other modifications. Bacteria signal with two-component systems that phosphorylate histidine and aspartate, and with Ser/Thr kinases such as the pneumococcal division kinase StkP. They cut off propeptides and leader peptides, acetylate lysines, methylate chemoreceptors during chemotaxis, and in mycobacteria tag proteins for destruction with Pup, a functional counterpart of ubiquitin."},
+ {p:6,title:'Where does it go?',chips:'route',draw:scRoute,
+  text:"Pick a protein and follow it from the ribosome to its destination: which signal it carries, which machines handle it, and where it ends up."}
+];
+const CHIPS={sys:{list:SYS.map(s=>s.k),get:()=>sysSel,set:k=>sysSel=k},route:{list:ROUTES.map(r=>r.p),get:()=>rtSel,set:k=>rtSel=k}};
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  [1,2,3,4,5,6].forEach(k=>$('part'+k).setAttribute('aria-current',sc.p===k));
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+[1,2,3,4,5,6].forEach(k=>$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>

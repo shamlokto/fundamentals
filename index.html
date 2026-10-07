@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fundamentals</title>
+<meta name="description" content="Animated, click-through primers on bacterial molecular biology, drawn as hand-tinted plates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+:root{--bg:#E9ECE6;--surface:#F7F8F4;--line:#C9CFC4;--ink:#1E2632;--muted:#5A6371;--accent:#2D5A88;
+  --paper:#EFE8D8;--paperInk:#3A2E22;--paperLine:#8C7A52;
+  --display:"Young Serif",Georgia,serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;--plate:"IM Fell English","Iowan Old Style",Georgia,serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171D;--surface:#1A2028;--line:#36404C;--ink:#E4E8EC;--muted:#9AA4B0;--accent:#86AEDB;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12171D;--surface:#1A2028;--line:#36404C;--ink:#E4E8EC;--muted:#9AA4B0;--accent:#86AEDB;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 16px 56px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,5.4vw,46px);line-height:1.1;margin:8px 0 12px;text-wrap:balance}
+.lede{max-width:62ch;color:var(--muted);margin:0 0 10px}
+.stats{display:flex;gap:22px;flex-wrap:wrap;margin:20px 0 8px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat b{display:block;font-family:var(--display);font-weight:400;font-size:28px;line-height:1}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:40px}
+.ghead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.ghead h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0}
+.ghead p{margin:0;color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;color:inherit;text-decoration:none;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+.card:hover,.card:focus-visible{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.plate{position:relative;height:96px;background:var(--paper);background-image:radial-gradient(ellipse at 50% 40%,rgba(255,255,255,.35),rgba(120,95,60,.18));border-bottom:4px double var(--paperLine);display:flex;align-items:center;justify-content:space-between;padding:0 20px;color:var(--paperInk)}
+.pno{font-family:var(--plate);font-size:44px;line-height:1}
+.psub{font-family:var(--plate);font-style:italic;font-size:17px;text-align:right;max-width:60%}
+.cbody{padding:14px 18px 18px;display:flex;flex-direction:column;gap:4px;flex:1}
+.cbody h3{margin:0;font-size:18px;font-weight:600;line-height:1.3}
+.sub{margin:0;font-family:var(--plate);font-style:italic;color:var(--muted);font-size:16px}
+.blurb{margin:6px 0 0;font-size:14px}
+.meta{margin:8px 0 0;font-family:var(--mono);font-size:12px;color:var(--accent)}
+.parts{margin:6px 0 0;padding-left:20px;font-size:13px;color:var(--muted);list-style:upper-roman}
+.parts li{margin:1px 0}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);max-width:75ch}
+footer p{margin:0 0 8px}
+a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<p class="eyebrow">Fundamentals · animated primers</p>
+<h1>Molecular microbiology, plate by plate</h1>
+<p class="lede">Click-through teaching primers on bacterial molecular biology. Each is drawn as a set of hand-tinted plates with a narrator’s caption, in the spirit of <i>DNA from the Beginning</i>. Bacteria come first, with eukaryotic counterparts for comparison.</p>
+<div class="stats"><div class="stat"><b>12</b><span>primers</span></div><div class="stat"><b>235</b><span>plates</span></div><div class="stat"><b>17</b><span>interactive plates</span></div></div>
+</header>
+<section class="group"><div class="ghead"><h2>Genetics</h2><p>How genes are organised and how their functions are found.</p></div><div class="grid"><a class="card" href="decks/bateson-epistasis/"><div class="plate" aria-hidden="true"><span class="pno">I</span><span class="psub">Genetic interactions</span></div><div class="cbody"><h3>Bateson&#x27;s Epistasis</h3><p class="sub">Two genes, one trait</p><p class="blurb">Bateson’s sweet-pea crosses, the 9:7 ratio, and the main kinds of epistasis.</p><p class="meta">15 plates · 2 parts</p><ol class="parts"><li>Bateson&#x27;s discovery</li><li>Effects of epistasis</li></ol></div></a><a class="card" href="decks/prokaryotic-gene/"><div class="plate" aria-hidden="true"><span class="pno">II</span><span class="psub">Bacterial genetics</span></div><div class="cbody"><h3>Anatomy of a Prokaryotic Gene</h3><p class="sub">From promoter to terminator</p><p class="blurb">Promoter to terminator, operons, and the causes of polar effects, including overexpression and antisense from cassettes.</p><p class="meta">15 plates · 3 parts · 1 interactive</p><ol class="parts"><li>Anatomy of a gene</li><li>Operons</li><li>Polar effects</li></ol></div></a><a class="card" href="decks/tn-seq/"><div class="plate" aria-hidden="true"><span class="pno">III</span><span class="psub">Functional genomics</span></div><div class="cbody"><h3>How Tn-seq Works</h3><p class="sub">Finding the genes a cell can’t live without</p><p class="blurb">Transposon libraries, sequencing insertion sites, and calling essential genes.</p><p class="meta">11 plates · 3 parts · 1 interactive</p><ol class="parts"><li>The question</li><li>The method</li><li>Reading it</li></ol></div></a></div></section><section class="group"><div class="ghead"><h2>The central dogma</h2><p>Copying DNA, reading it, and making and placing proteins.</p></div><div class="grid"><a class="card" href="decks/dna-replication/"><div class="plate" aria-hidden="true"><span class="pno">IV</span><span class="psub">DNA replication</span></div><div class="cbody"><h3>How DNA Is Copied</h3><p class="sub">Every cell copies its DNA before it divides</p><p class="blurb">From Meselson–Stahl and Kornberg to the bacterial replisome, with a mutant explorer.</p><p class="meta">23 plates · 3 parts · 1 interactive</p><ol class="parts"><li>The discoveries</li><li>The bacterial machine</li><li>Break it</li></ol></div></a><a class="card" href="decks/transcription/"><div class="plate" aria-hidden="true"><span class="pno">V</span><span class="psub">Transcription</span></div><div class="cbody"><h3>How Genes Are Transcribed</h3><p class="sub">Reading a gene into RNA</p><p class="blurb">RNA polymerase, sigma factors, termination and regulation in bacteria, with eukaryotic comparisons.</p><p class="meta">24 plates · 3 parts · 1 interactive</p><ol class="parts"><li>The discoveries</li><li>The bacterial machine</li><li>Jam it</li></ol></div></a><a class="card" href="decks/translation/"><div class="plate" aria-hidden="true"><span class="pno">VI</span><span class="psub">Translation</span></div><div class="cbody"><h3>How Proteins Are Made</h3><p class="sub">From messenger to protein</p><p class="blurb">Proteins, tRNA, the ribosome, the genetic code, and the antibiotics that jam translation.</p><p class="meta">30 plates · 6 parts · 2 interactive</p><ol class="parts"><li>Proteins</li><li>mRNA &amp; tRNA</li><li>The ribosome</li><li>The code</li><li>Making a protein</li><li>Stress, fate &amp; drugs</li></ol></div></a><a class="card" href="decks/protein-targeting/"><div class="plate" aria-hidden="true"><span class="pno">VII</span><span class="psub">Protein targeting</span></div><div class="cbody"><h3>Protein Targeting and Modification</h3><p class="sub">After the ribosome: sending and finishing proteins</p><p class="blurb">Signal peptides, Sec and Tat, SRP, YidC, envelope assembly, secretion systems and glycosylation.</p><p class="meta">21 plates · 6 parts · 2 interactive</p><ol class="parts"><li>Addresses</li><li>Crossing the membrane</li><li>The envelope</li><li>Secretion</li><li>Sugars &amp; marks</li><li>Where does it go?</li></ol></div></a></div></section><section class="group"><div class="ghead"><h2>The bacterial cell</h2><p>Keeping the chromosome intact and making two cells from one.</p></div><div class="grid"><a class="card" href="decks/cell-division/"><div class="plate" aria-hidden="true"><span class="pno">VIII</span><span class="psub">Bacterial cell division</span></div><div class="cbody"><h3>How Bacteria Divide</h3><p class="sub">Making two cells from one</p><p class="blurb">The fts genes, Z ring, Min and nucleoid occlusion, MapZ, the septal wall, and drugs that stop division.</p><p class="meta">18 plates · 5 parts · 2 interactive</p><ol class="parts"><li>The machine</li><li>Where to divide</li><li>Building the septum</li><li>Control &amp; drugs</li><li>Shapes</li></ol></div></a><a class="card" href="decks/dna-repair/"><div class="plate" aria-hidden="true"><span class="pno">IX</span><span class="psub">DNA repair</span></div><div class="cbody"><h3>Repairing DNA</h3><p class="sub">Keeping the genome intact</p><p class="blurb">Damage, direct reversal, excision and mismatch repair, recombination, SOS and translesion synthesis.</p><p class="meta">21 plates · 5 parts · 2 interactive</p><ol class="parts"><li>Damage</li><li>Direct reversal</li><li>Excision repair</li><li>Breaks &amp; recombination</li><li>SOS &amp; tolerance</li></ol></div></a></div></section><section class="group"><div class="ghead"><h2>Biochemistry</h2><p>How enzymes work and how fast.</p></div><div class="grid"><a class="card" href="decks/enzyme-kinetics/"><div class="plate" aria-hidden="true"><span class="pno">X</span><span class="psub">Enzymes</span></div><div class="cbody"><h3>Enzyme Kinetics</h3><p class="sub">How enzymes work, and how fast</p><p class="blurb">Catalysis, Michaelis–Menten, inhibition, cooperativity and allostery, and kinetics in antibiotic action.</p><p class="meta">23 plates · 5 parts · 2 interactive</p><ol class="parts"><li>Catalysis</li><li>Michaelis–Menten</li><li>Inhibition</li><li>Allostery</li><li>In practice</li></ol></div></a></div></section><section class="group"><div class="ghead"><h2>Tools</h2><p>Building and editing DNA in the lab.</p></div><div class="grid"><a class="card" href="decks/molecular-cloning/"><div class="plate" aria-hidden="true"><span class="pno">XI</span><span class="psub">Molecular cloning</span></div><div class="cbody"><h3>Tools for Molecular Cloning</h3><p class="sub">Ways to join DNA</p><p class="blurb">Restriction cloning to Golden Gate, MoClo and Gibson; recombineering and allelic exchange.</p><p class="meta">21 plates · 5 parts · 2 interactive</p><ol class="parts"><li>Foundations</li><li>Cut and paste</li><li>Assembly</li><li>Into the chromosome</li><li>Plan a build</li></ol></div></a><a class="card" href="decks/crispr-cas9/"><div class="plate" aria-hidden="true"><span class="pno">XII</span><span class="psub">Genome editing</span></div><div class="cbody"><h3>How CRISPR–Cas9 Works</h3><p class="sub">An immune system with a memory</p><p class="blurb">CRISPR as bacterial immunity, how Cas9 finds and cuts DNA, and how it became a genome-editing tool.</p><p class="meta">13 plates · 3 parts · 1 interactive</p><ol class="parts"><li>Discovery</li><li>How it works</li><li>A tool</li></ol></div></a></div></section>
+<footer>
+<p>Each primer is a single self-contained page that works offline once loaded. Use the arrow keys or the Back/Next buttons to step through plates, and Replay to rerun a plate’s animation. Layouts adapt to phone width.</p>
+<p>Historical attributions, dates and numerical values were written from memory and are rounded for teaching; check them against primary sources before relying on them.</p>
+</footer>
+</div>
+</body>
+</html>

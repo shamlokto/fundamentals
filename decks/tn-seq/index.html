@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Tn-seq Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move{animation:none} }
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+</defs>
+</svg>
+
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Functional genomics · an animated primer</p>
+    <h1>Finding the genes a cell can’t live without</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · The question</button>
+    <button id="part2" type="button">II · The method</button>
+    <button id="part3" type="button">III · Reading it</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Gene names and verdicts are illustrative, drawn from the kind of result a pneumococcal Tn-seq screen gives. The data shown is synthetic.</p>
+</div>
+
+<script>
+const INK='#3A2E22', TN='#7D4A98', MARK='#C99A2E', RED='#B4473A', S1='#3E5F82', S2='#5B7B40',
+      GREEN='#4F7A3F', ESS='#B4766E', DISP='#3E5F82', COND='#C99A2E', GREY='#BDB3A0', PAPER2='#E8E0CC';
+const roman=n=>[['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+function dsDNA(x1,x2,y,col,gap=8){let r='';for(let x=x1+3;x<x2;x+=7)r+=`M${x} ${y} v${gap}`;return `<path d="${r}" stroke="${col}" stroke-width="1" opacity=".5"/><path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2" fill="none"/>`;}
+function geneA(x,y,w,h,fill,label){return `<path d="M${x} ${y} h${w-10} l10 ${h/2} l-10 ${h/2} h${-(w-10)} z" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint"/>`+(label?T(x+(w-10)/2+2,y+h/2+4,label,'gl mid'):'');}
+function mark(x,y,ok){return ok?`<circle cx="${x}" cy="${y}" r="11" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="11" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function cellO(cx,cy,rx,ry,extra=''){return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#DCE2C9" stroke="${INK}" stroke-width="1.4" class="tint"/>${extra}`;}
+// Himar1 mariner transposon: two inward inverted repeats around a resistance marker
+function transposon(x,y,w,h,k=1){
+  const ir=12*k;
+  return `<g class="tint"><path d="M${x} ${y} l${ir} ${h/2} l${-ir} ${h/2} z" fill="${TN}" stroke="${INK}"/>`
+    +box(x+ir,y,w-2*ir,h,MARK)+T(x+w/2,y+h/2+4,'marker','gl mid')
+    +`<path d="M${x+w} ${y} l${-ir} ${h/2} l${ir} ${h/2} z" fill="${TN}" stroke="${INK}"/></g>`;}
+
+/* ---- synthetic genome + insertions ---- */
+const WIN=120, MAXC=42;
+const GENES=[
+ {name:'dnaA', s:5,  e:22, cls:'ess'},
+ {name:'spxB', s:26, e:40, cls:'disp'},
+ {name:'pbp2x',s:44, e:60, cls:'ess'},
+ {name:'cps2E',s:64, e:80, cls:'cond'},
+ {name:'comD', s:84, e:95, cls:'disp'},
+ {name:'ftsZ', s:99, e:116,cls:'ess'}];
+function geneAt(x){for(let i=0;i<GENES.length;i++)if(x>=GENES[i].s&&x<GENES[i].e)return i;return -1;}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const SITES=(()=>{const r=rng(12),a=[];for(let x=3;x<WIN-3;x++)if(r()<.42)a.push(x);return a;})();
+const INS=(()=>{const r=rng(99);return SITES.map(x=>{const gi=geneAt(x),g=GENES[gi];
+  let rich,serum;
+  if(!g){rich=6+Math.floor(r()*14);serum=rich;}
+  else if(g.cls==='ess'){rich=0;serum=0;}
+  else{rich=12+Math.floor(r()*28);serum=g.cls==='cond'?Math.max(0,Math.floor(rich*(.04+r()*.08))):Math.round(rich*(.8+r()*.4));}
+  return {x,gi,rich,serum};});})();
+
+function trackGeom(n){return n?{x0:16,x1:344,ay:150,mh:88,gy:158,gh:22,ly:192}:{x0:34,x1:612,ay:160,mh:98,gy:170,gh:26,ly:206};}
+function px(x,g){return g.x0+(x/WIN)*(g.x1-g.x0);}
+function geneFill(cls){return cls==='ess'?ESS:cls==='cond'?COND:DISP;}
+function drawTrack(n,cond,showGaps){
+  const g=trackGeom(n), key=cond||'rich';
+  let s=`<line x1="${g.x0}" y1="${g.ay}" x2="${g.x1}" y2="${g.ay}" class="ax"/>`;
+  s+=T(g.x0-6,g.ay-g.mh+6,'reads','note end f11')+T(g.x0-6,g.ay-2,'0','mono end f10');
+  if(showGaps)GENES.forEach(ge=>{if(ge.cls==='ess')s+=`<rect x="${px(ge.s,g).toFixed(1)}" y="${g.ay-g.mh}" width="${(px(ge.e,g)-px(ge.s,g)).toFixed(1)}" height="${g.mh}" fill="${RED}" opacity=".07"/>`;});
+  INS.forEach((d,i)=>{const c=d[key];if(c<=0)return;const x=px(d.x,g),h=Math.min(c,MAXC)/MAXC*g.mh;
+    s+=`<line x1="${x.toFixed(1)}" y1="${g.ay}" x2="${x.toFixed(1)}" y2="${(g.ay-h).toFixed(1)}" stroke="${GREEN}" stroke-width="1.6" class="a-grow" style="--d:${(0.1+i*0.012).toFixed(2)}s"/>`;});
+  GENES.forEach(ge=>{const x=px(ge.s,g),w=px(ge.e,g)-px(ge.s,g);
+    s+=box(x,g.gy,w,g.gh,geneFill(ge.cls))+T(x+w/2,g.gy+g.gh/2+4,ge.name,'gl mid');});
+  return {s,g};
+}
+
+/* ---------- Part I ---------- */
+function scQuestion(n){
+  const g=trackGeom(n);g.ay=120;g.gy=96;
+  let s=`<line x1="${g.x0}" y1="${g.ay}" x2="${g.x1}" y2="${g.ay}" class="ax"/>`+T((g.x0+g.x1)/2,52,'A bacterial genome','lab mid');
+  GENES.forEach((ge,i)=>{const x=px(ge.s,g),w=px(ge.e,g)-px(ge.s,g);s+=G('a-pop',(.2+i*.15).toFixed(2),box(x,g.gy,w,g.gh,GREY)+T(x+w/2,g.gy+g.gh/2+4,ge.name,'gl mid'));});
+  const marks=[[0,false],[1,true],[2,false],[3,true],[4,true],[5,false]];
+  s+=G('a-fade',1.3,T((g.x0+g.x1)/2,n?168:176,'Which of these can be deleted,','lab mid')+T((g.x0+g.x1)/2,n?190:198,'and which are essential?','lab mid'));
+  marks.forEach(([gi,ok],k)=>{const ge=GENES[gi],x=px(ge.s,g)+ (px(ge.e,g)-px(ge.s,g))/2;s+=G('a-pop',(2.0+k*.2).toFixed(2),`<text x="${x}" y="${g.gy-8}" class="mid" style="font-size:16px;fill:${ok?'#4F7A3F':'#A4473A'}">?</text>`);});
+  return {vb:n?slim(220):wide(230),s};
+}
+
+const HIST=[['1940s','Mobile genes — “jumping genes”','Barbara McClintock'],
+ ['1995','Signature-tagged mutagenesis pools mutants','Hensel & Holden'],
+ ['2009','Transposon insertions read by deep sequencing','Tn-seq, HITS, INSeq, TraDIS'],
+ ['2015','Genome-wide essential-gene maps','many organisms'],
+ ['today','Fitness screens across conditions','a standard tool']];
+function scHistory(n){
+  const st=n?56:52,y0=30,lx=n?48:92,yx=n?40:80,tx=n?60:106;
+  let s=`<line x1="${lx}" y1="${y0-12}" x2="${lx}" y2="${y0+st*4+6}" stroke="#B9A889" stroke-width="2"/>`;
+  HIST.forEach((h,i)=>{const y=y0+i*st;s+=G('a-fade',(.2+i*.3).toFixed(2),`<circle cx="${lx}" cy="${y-5}" r="4.5" fill="${i>=2?TN:'#2F5276'}"/>`+T(yx,y,h[0],'mono acc end '+(n?'f12':'f13'))+T(tx,y,h[1],'lab start '+(n?'f14':'f15'))+T(tx,y+16,h[2],'note start f12'));});
+  return {vb:n?slim(y0+st*4+26):wide(y0+st*4+26),s};
+}
+
+/* ---------- Part II ---------- */
+function scTransposon(n){
+  const P=n?{tx:70,tw:200,ty:30,th:30,dy:140,d1:16,d2:344,ta:180,inY:230,H:316}:{tx:200,tw:250,ty:36,th:34,dy:150,d1:40,d2:600,ta:320,inY:250,H:330};
+  let s=G('a-fade',0,transposon(P.tx,P.ty,P.tw,P.th,1)+`<path d="M${P.tx} ${P.ty+P.th+4} h4 M${P.tx+14} ${P.ty+P.th+4} h-4" stroke="${INK}"/>`
+    +T(P.tx-6,P.ty+P.th/2+4,'ITR','mono f11 end')+T(P.tx+P.tw+6,P.ty+P.th/2+4,'ITR','mono f11 start')+T(P.tx+P.tw/2,P.ty-8,'transposon (Himar1 mariner)','lab mid'));
+  s+=G('a-fade',.5,dsDNA(P.d1,P.d2,P.dy,INK,8)+T(P.d1+4,P.dy+26,'genome','note start'));
+  s+=G('a-fade',.7,box(P.ta,P.dy-7,26,14,'#D9CDB2')+T(P.ta+13,P.dy-14,'TA','mono acc mid f12')+T(P.ta+13,P.dy+30,'target site','note mid'));
+  s+=G('a-fade',1.2,`<path d="M${P.ta+13} ${P.ty+P.th+10} V${P.dy-16}" class="arrow"/>`+T(P.ta+70,(P.ty+P.th+P.dy)/2,'inserts','note start'));
+  s+=G('a-drop',1.8,transposon(P.ta+13-P.tw*.42,P.inY-14,P.tw*.84,26,.84));
+  s+=G('a-fade',2.4,dsDNA(P.d1,P.ta+13-P.tw*.42-6,P.inY,INK,8)+dsDNA(P.ta+13+P.tw*.42+6,P.d2,P.inY,INK,8)
+    +box(P.ta+13-P.tw*.42-24,P.inY-7,22,14,'#D9CDB2')+box(P.ta+13+P.tw*.42+2,P.inY-7,22,14,'#D9CDB2')
+    +T(n?180:320,P.inY+34,'The TA is duplicated — one copy on each side','lab mid'));
+  return {vb:n?slim(P.H):wide(P.H),s};
+}
+
+function scInsert(n){
+  const P=n?{cx:180,cy:120,rx:150,ry:84,gy:120,g1:60,g2:300,H:300}:{cx:320,cy:130,rx:250,ry:96,gy:130,g1:110,g2:530,H:310};
+  const g=trackGeom(n);
+  let s=G('a-fade',0,cellO(P.cx,P.cy,P.rx,P.ry)+dsDNA(P.g1,P.g2,P.gy,INK,8));
+  const gy2=P.gy-7;let gb='';GENES.forEach(ge=>{const x=P.g1+(ge.s/WIN)*(P.g2-P.g1),w=((ge.e-ge.s)/WIN)*(P.g2-P.g1);gb+=box(x,gy2,w,14,GREY)+T(x+w/2,gy2+11,ge.name,'gl mid');});
+  s+=G('a-fade',.3,gb);
+  const hit=GENES[1],hx=P.g1+((hit.s+hit.e)/2/WIN)*(P.g2-P.g1);
+  s+=G('a-drop',1.0,transposon(hx-54,P.cy- P.ry-4,108,22,.7))+G('a-fade',1.4,`<path d="M${hx} ${P.cy-P.ry+18} V${gy2-4}" class="arrow"/>`);
+  s+=G('a-pop',2.0,`<path d="M${hx} ${gy2-6} v26" stroke="${RED}" stroke-width="2.4"/>`+T(hx,gy2-20,'×','mid',)+`<text x="${hx}" y="${gy2-14}" class="mid" style="fill:${RED};font-size:18px">✂</text>`);
+  s+=G('a-fade',2.4,T(n?180:320,P.cy+P.ry+34,n?'One random insertion breaks one gene':'Each cell takes one random insertion, breaking the gene it lands in','lab mid')
+    +T(n?180:320,P.cy+P.ry+(n?54:54),'spxB is now a knockout','note mid'));
+  return {vb:n?slim(P.H):wide(P.H),s};
+}
+
+function scLibrary(n){
+  const cols=n?2:4, rows=n?3:2, cw=n?168:150, ch=n?92:120, x0=n?12:28, y0=28, gx=n?6:10, gy=12;
+  const pos=[8,40,66,90,20,54];
+  let s='';
+  for(let i=0;i<cols*rows;i++){const c=i%cols,r=Math.floor(i/cols),x=x0+c*(cw+gx),y=y0+r*(ch+gy);
+    const gl=x+16,gr=x+cw-16,gyy=y+ch/2;const p=pos[i%pos.length];const tx=gl+(p/WIN)*(gr-gl);
+    s+=G('a-pop',(.15*i).toFixed(2),cellO(x+cw/2,y+ch/2,cw/2-6,ch/2-6)+dsDNA(gl,gr,gyy,INK,6)+transposon(tx-18,gyy-20,36,10,.7)+`<path d="M${tx} ${gyy-9} v12" stroke="${RED}" stroke-width="1.6"/>`);}
+  s+=G('a-fade',(.15*cols*rows+.3).toFixed(2),T(n?180:320,y0+rows*(ch+gy)+(n?8:14),n?'~10⁵–10⁶ mutants, each hit once':'A pool of 10⁵–10⁶ mutants — together, insertions in almost every gene','lab mid'));
+  return {vb:n?slim(y0+rows*(ch+gy)+28):wide(y0+rows*(ch+gy)+30),s};
+}
+
+function scGrow(n){
+  const P=n?{x0:24,bw:44,gap:18,baseY:196,top:56,H:290,lx:20}:{x0:70,bw:62,gap:28,baseY:206,top:56,H:300,lx:40};
+  const muts=[{n:'dnaA',ess:true},{n:'spxB',ess:false},{n:'cps2E',ess:false},{n:'pbp2x',ess:true},{n:'comD',ess:false}];
+  const nb=n?4:5;
+  let s=T(P.lx,P.top-20,'Each mutant (gene::Tn) starts equal','note start');
+  let x=P.x0;
+  for(let i=0;i<nb;i++){const m=muts[i],bx=x,h0=P.baseY-P.top;
+    s+=G('a-fade',(.1*i).toFixed(2),`<rect x="${bx}" y="${P.top}" width="${P.bw}" height="${h0}" rx="3" fill="${GREY}" opacity=".5" stroke="${INK}" stroke-width=".8"/>`);
+    const h1=m.ess?0:h0*(.92+(i%2?.08:0));
+    s+=G('a-grow',(1.0+i*.15).toFixed(2),`<rect x="${bx}" y="${P.baseY-h1}" width="${P.bw}" height="${h1}" rx="3" fill="${m.ess?ESS:S2}" stroke="${INK}" stroke-width="1" class="tint"/>`);
+    if(m.ess)s+=G('a-pop',(1.9+i*.1).toFixed(2),mark(bx+P.bw/2,P.baseY-14,false));
+    s+=T(bx+P.bw/2,P.baseY+16,m.n,'mono mid f11');
+    x+=P.bw+P.gap;}
+  s+=`<line x1="${P.x0-6}" y1="${P.baseY}" x2="${x-P.gap+6}" y2="${P.baseY}" class="ax"/>`;
+  s+=G('a-fade',2.6,T(n?180:320,P.H-16,n?'Essential-gene mutants cannot grow — they drop out':'After growth: mutants in essential genes cannot divide and vanish from the pool','lab mid'));
+  return {vb:n?slim(P.H):wide(P.H),s};
+}
+
+function scSeq(n){
+  const mid=n?180:320, d1=n?20:40, d2=n?340:600, y=n?58:66, tw=n?72:92, tx=mid-tw/2;
+  let s=G('a-fade',0,dsDNA(d1,d2,y,INK,8)+transposon(tx,y-7,tw,22,.64)+T(mid,y-16,'transposon in sheared genomic DNA','note mid'));
+  const ry=n?120:128;
+  s+=G('a-fade',.6,T(mid,ry-22,'Each sequencing read','cname mid'));
+  const seg=n?[['ITR',72,TN],['adjacent genome',150,S1]]:[['transposon ITR',150,TN],['adjacent genome',236,S1]];
+  const totw=seg.reduce((a,b)=>a+b[1],0)+4; let sx=mid-totw/2;
+  seg.forEach((sg,i)=>{s+=G('a-fade',(.9+i*.4).toFixed(2),box(sx,ry,sg[1],24,sg[2])+T(sx+sg[1]/2,ry+16,sg[0],'gl mid'));sx+=sg[1]+4;});
+  s+=G('a-fade',1.8,`<path d="M${mid} ${ry+34} v12" class="arrow"/>`
+    +(n?T(mid,ry+64,'The genome part is the','lab mid')+T(mid,ry+84,'insertion’s exact TA site','lab mid')
+        :T(mid,ry+66,'The genomic part is an address: the exact TA site of the insertion','lab mid')));
+  s+=G('a-fade',2.4,T(mid,n?250:252,'Millions of reads, counted per site','note mid'));
+  return {vb:n?slim(282):wide(290),s};
+}
+
+function scMap(n){
+  const t=drawTrack(n,'rich',false),g=t.g;
+  let s=t.s+G('a-fade',2.4,T((g.x0+g.x1)/2,g.ly+(n?4:6),'Reads pile up at the TA sites that were hit','lab mid'));
+  return {vb:n?slim(g.ly+(n?22:30)):wide(g.ly+30),s};
+}
+
+/* ---------- Part III ---------- */
+function scEssential(n){
+  const t=drawTrack(n,'rich',true),g=t.g;
+  let s=t.s;
+  const ess=GENES.filter(x=>x.cls==='ess'),dsp=GENES.filter(x=>x.cls!=='ess');
+  s+=G('a-fade',1.8,T((g.x0+g.x1)/2,g.ly+(n?2:4),n?'Gaps = essential. Dense = dispensable.':'A gene with no insertions is essential; a gene peppered with them is dispensable','lab mid'));
+  const le=ess[0],x=px(le.s,g);
+  s+=G('a-pop',2.2,`<path d="M${x} ${g.ay-g.mh-6} h${(px(le.e,g)-x).toFixed(1)}" stroke="${RED}" stroke-width="2"/>`+T((x+px(le.e,g))/2,g.ay-g.mh-10,'no insertions tolerated','note mid f12'));
+  return {vb:n?slim(g.ly+(n?20:28)):wide(g.ly+30),s};
+}
+
+function scFitness(n){
+  const data=[{n:'spxB',lfc:-0.2},{n:'comD',lfc:0.3},{n:'cps2E',lfc:-3.2},{n:'manL',lfc:-1.9},{n:'adcA',lfc:-1.4}];
+  const P=n?{lblX:16,zx:300,rowH:40,y0:58,sc:56,mid:180}:{lblX:44,zx:540,rowH:46,y0:64,sc:100,mid:330};
+  const bottom=P.y0+data.length*P.rowH;
+  let s=T(P.mid,26,'Fitness in human serum vs rich medium','lab mid');
+  s+=`<line x1="${P.zx}" y1="${P.y0-16}" x2="${P.zx}" y2="${bottom-8}" class="ax"/>`+T(P.zx,P.y0-22,'log₂ fold-change','note mid f12')+T(P.zx,P.y0-6,'0','mono mid f10');
+  const thr=P.zx-1*P.sc;
+  s+=`<line x1="${thr}" y1="${P.y0-6}" x2="${thr}" y2="${bottom-8}" stroke="${RED}" stroke-width="1" stroke-dasharray="4 3"/>`;
+  data.forEach((d,i)=>{const y=P.y0+i*P.rowH,w=d.lfc*P.sc,dep=d.lfc<-1,bx=d.lfc<0?P.zx+w:P.zx;
+    s+=T(P.lblX,y+4,d.n,'mono start f12')
+      +G('a-fade',(.2+i*.22).toFixed(2),`<rect x="${bx.toFixed(1)}" y="${y-11}" width="${Math.abs(w).toFixed(1)}" height="22" rx="3" fill="${dep?RED:GREY}" stroke="${INK}" stroke-width=".8" class="tint"/>`
+      +(dep?mark(bx+12,y,false):''));});
+  const yb=bottom+(n?8:12);
+  s+=G('a-fade',1.7,T(thr,yb,'← depleted','note mid f12')+T(P.mid,yb+22,n?'cps2E drops out — capsule is needed in serum':'cps2E insertions deplete in serum: the capsule is needed there, not in rich medium','lab mid'));
+  return {vb:n?slim(yb+40):wide(yb+40),s};
+}
+
+let geneSel=3;
+function scExplore(n){
+  const ge=GENES[geneSel];
+  const g=trackGeom(n);g.x0=n?24:60;g.x1=n?336:580;g.ay=n?120:130;g.mh=n?70:82;
+  const s0=Math.max(0,ge.s-6),e0=Math.min(WIN,ge.e+6),span=e0-s0;
+  const mapx=x=>g.x0+((x-s0)/span)*(g.x1-g.x0);
+  let s=`<line x1="${g.x0}" y1="${g.ay}" x2="${g.x1}" y2="${g.ay}" class="ax"/>`+T(g.x0-6,g.ay-g.mh+6,'reads','note end f11');
+  if(ge.cls==='ess')s+=`<rect x="${mapx(ge.s).toFixed(1)}" y="${g.ay-g.mh}" width="${(mapx(ge.e)-mapx(ge.s)).toFixed(1)}" height="${g.mh}" fill="${RED}" opacity=".08"/>`;
+  let hits=0,taIn=0;
+  INS.forEach((d,i)=>{if(d.x<s0||d.x>=e0)return;const x=mapx(d.x);
+    if(d.x>=ge.s&&d.x<ge.e){taIn++;if(d.rich>0)hits++;}
+    if(d.rich>0){const h=Math.min(d.rich,MAXC)/MAXC*g.mh;s+=`<line x1="${x.toFixed(1)}" y1="${g.ay}" x2="${x.toFixed(1)}" y2="${(g.ay-h).toFixed(1)}" stroke="${GREEN}" stroke-width="2" class="a-grow" style="--d:${(0.1+i*0.02).toFixed(2)}s"/>`;}});
+  const gx=mapx(ge.s),gw=mapx(ge.e)-mapx(ge.s);
+  s+=box(gx,g.ay+8,gw,n?24:28,geneFill(ge.cls))+T(gx+gw/2,g.ay+(n?24:26),ge.name,'gl mid');
+  const idx=taIn?Math.round(hits/taIn*100):0;
+  const verdict=ge.cls==='ess'?['Essential','No insertions tolerated — the cell needs it to grow.',RED]
+    :ge.cls==='cond'?['Conditionally important','Disrupted freely in rich medium, but lost under serum selection.',COND]
+    :['Dispensable','Riddled with insertions — the cell grows fine without it.',S2];
+  const by=n?(g.ay+60):(g.ay+70);
+  s+=G('a-fade',.2,R(n?16:40,by,n?328:560,n?104:96,'card',8)
+    +`<circle cx="${n?40:66}" cy="${by+26}" r="8" fill="${verdict[2]}"/>`
+    +T(n?58:84,by+31,verdict[0],'cname start')
+    +T(n?16:40,by+(n?58:60),verdict[1],'note start f13',)
+    +T(n?16:40,by+(n?86:86),`insertion index: ${idx}%  ·  ${hits}/${taIn} TA sites hit`,'mono start f12'));
+  return {vb:n?slim(by+120):wide(by+112),s};
+}
+
+const NAR='Narrator';
+const S=[
+ {p:1,title:'Which genes are essential?',draw:scQuestion,
+  text:"A bacterial genome holds a few thousand genes. Some can be deleted with no ill effect; others are indispensable, and which is which can change with the conditions. Testing them one at a time, by making knockout after knockout, would take years. Tn-seq tests them all at once."},
+ {p:1,title:'A brief history',draw:scHistory,
+  text:"Transposons, the mobile 'jumping genes' Barbara McClintock described in maize, became the tool. Pooled transposon screens appeared in the 1990s, but reading them was slow. Around 2009 several groups joined transposon mutagenesis to deep sequencing, and the method arrived under names like Tn-seq, HITS, INSeq and TraDIS."},
+ {p:2,title:'The transposon',draw:scTransposon,
+  text:"The workhorse is the mariner transposon Himar1. It carries a selectable marker between two inverted terminal repeats, and it inserts only at TA dinucleotides, which are scattered densely through a genome. On insertion it duplicates the TA, leaving one copy on each side."},
+ {p:2,title:'One insertion per cell',draw:scInsert,
+  text:"A transposase drops the transposon into the chromosome at a random TA site. Each cell receives just one insertion. Wherever it lands inside a gene, it interrupts the coding sequence, so that gene is knocked out in that cell while every other gene stays intact."},
+ {p:2,title:'A library of mutants',draw:scLibrary,
+  text:"Do this across a whole culture and you build a library of hundreds of thousands of mutants. Each carries a single insertion at a different site. Taken together, the pool has knockouts in nearly every non-essential gene, many times over at different TA sites."},
+ {p:2,title:'Grow, then compete',draw:scGrow,
+  text:"Now grow the pool. Every mutant competes. A cell whose insertion broke a dispensable gene divides normally. A cell whose insertion broke an essential gene cannot grow at all, so it is already missing — or it is outcompeted and fades from the pool."},
+ {p:2,title:'Sequence the junctions',draw:scSeq,
+  text:"Harvest the DNA, shear it, and sequence outward from the transposon's inverted repeat into the neighbouring chromosome. Every read is part transposon, part genome. The genomic part is an address: it says exactly which TA site that insertion sits at."},
+ {p:2,title:'Map the insertions',draw:scMap,
+  text:"Map the millions of reads back to the reference genome and count them at each site. The result is a track along the chromosome: a tall stack of reads marks a TA site that tolerated an insertion, and the height reflects how many cells carried it."},
+ {p:3,title:'Reading essentiality',draw:scEssential,
+  text:"Now read the pattern against the genes. A gene dense with insertions could be broken without penalty: it is dispensable. A gene that sits empty, with no insertions recovered along its whole length, could not be broken in a growing cell. That silence is the signature of an essential gene."},
+ {p:3,title:'Fitness under a condition',draw:scFitness,
+  text:"Run the same pool under two conditions and compare insertion counts gene by gene. A gene whose mutants deplete in one condition is needed there. In serum, insertions in the capsule gene cps2E fall away, because the capsule protects the pneumococcus from complement — a cost it need not pay in rich medium."},
+ {p:3,title:'Explore a genome',chips:true,draw:scExplore,
+  text:"Pick a gene to see its own insertion profile and the call it earns. The insertion index — the fraction of TA sites that tolerated a hit — is the number behind the verdict: near zero for essential genes, high for dispensable ones."}
+];
+
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className=s.p>1?'p'+s.p:'';b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+GENES.forEach((ge,k)=>{const b=document.createElement('button');b.type='button';b.textContent=ge.name;b.onclick=()=>{geneSel=k;render();};chips.appendChild(b);});
+
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  chips.hidden=!sc.chips;
+  [...chips.children].forEach((b,k)=>b.setAttribute('aria-pressed',k===geneSel));
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  [1,2,3].forEach(k=>$('part'+k).setAttribute('aria-current',sc.p===k));
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+[1,2,3].forEach(k=>$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>

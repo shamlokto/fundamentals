@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anatomy of a Prokaryotic Gene</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+</defs>
+</svg>
+
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Bacterial genetics · an animated primer</p>
+    <h1>From promoter to terminator</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · Anatomy of a gene</button>
+    <button id="part2" type="button">II · Operons</button>
+    <button id="part3" type="button">III · Polar effects</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Sequences and consensus elements are for <i>E. coli</i> σ⁷⁰ promoters. Expression levels in the polar-effect scenes are illustrative.</p>
+</div>
+
+<script>
+const INK='#3A2E22', PROM='#7D4A98', SDC='#2E7D78', STARTC='#4F7A3F', CDS='#3E5F82', STOPC='#A4473A', TERMC='#8C6D46',
+      MR='#C17A2C', RNAPC='#9DB4AE', SIG='#E0B84A', RIB1='#E2D3A8', RIB2='#BBA27A', RHO='#7D3F5A', REP='#5E7F7A', OPC='#A79F8C',
+      GREY='#C9BFAB', PAPER='#EFE8D8';
+const roman=n=>[['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+function dsDNA(x1,x2,y,col=INK,gap=8){let r='';for(let x=x1+3;x<x2;x+=7)r+=`M${x} ${y} v${gap}`;return `<path d="${r}" stroke="${col}" stroke-width="1" opacity=".45"/><path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2" fill="none"/>`;}
+function wave(x1,x2,y,c=MR,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function arrowGene(x,y,w,h,fill,label,cls='gl mid'){return `<path d="M${x} ${y} h${w-10} l10 ${h/2} l-10 ${h/2} h${-(w-10)} z" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint"/>`+(label?T(x+(w-10)/2+2,y+h/2+4,label,cls):'');}
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function bend(x,y,h=22,len=22){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function rnap(cx,cy,k=1,sigma=false){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="32" ry="21" fill="${RNAPC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-30" cy="10" rx="16" ry="9" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-11" rx="17" ry="12" fill="${RIB2}" stroke="${INK}" stroke-width="1"/><ellipse cx="0" cy="4" rx="14" ry="7.5" fill="${RIB1}" stroke="${INK}" stroke-width="1"/></g>`;}
+function rho(cx,cy,k=1){let s='';for(let i=0;i<6;i++){const a=i*Math.PI/3;s+=`<circle cx="${(Math.cos(a)*8).toFixed(1)}" cy="${(Math.sin(a)*8).toFixed(1)}" r="5" fill="${RHO}" stroke="${INK}" stroke-width=".8"/>`;}return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint">${s}</g>`;}
+function hairpin(x,y,h,w,c=MR){let rungs='';for(let yy=y-4;yy>y-h+3;yy-=5)rungs+=`M${x} ${yy} H${x+w}`;return `<path d="${rungs}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;}
+function termIcon(x,y,k=1){return `<g transform="translate(${x} ${y}) scale(${k})"><path d="M-6 0 V-12 a6 6 0 1 1 12 0 V0" stroke="${TERMC}" stroke-width="2.4" fill="none"/><path d="M-6 -4 H6 M-6 -8 H6" stroke="${TERMC}" stroke-width="1"/></g>`;}
+function chars(str,x0,dx,y,col,fs,w=''){let s='';for(let i=0;i<str.length;i++)s+=Tc(x0+i*dx+dx/2,y,str[i],col,fs,'mono mid',w);return s;}
+function brk(x1,x2,y,label,up=false,cls='note mid'){const d=up?-6:6;return `<path d="M${x1} ${y} v${d} H${x2} v${-d}" stroke="#6A5B47" fill="none"/>`+T((x1+x2)/2,y+(up?-12:22),label,cls);}
+
+/* ===== Part I · Anatomy ===== */
+function scMap(n){
+  if(!n){
+    const y=140;
+    let s=G('a-fade',0,dsDNA(30,610,y,INK,9));
+    s+=G('a-pop',.3,box(62,y-6,44,21,PROM)+T(84,y-20,'−35','mono mid f12'));
+    s+=G('a-pop',.6,box(134,y-6,44,21,PROM)+T(156,y-20,'−10','mono mid f12'));
+    s+=G('a-fade',.9,bend(196,y-8)+T(196,y-38,'+1','mono acc mid f13'));
+    s+=G('a-fade',1.1,brk(62,200,y-58,'promoter',true,'lab mid'));
+    s+=G('a-pop',1.5,box(234,y-6,36,21,SDC)+T(252,y+42,'RBS','lab mid')+T(252,y+58,'Shine–Dalgarno','note mid f12'));
+    s+=G('a-pop',1.9,arrowGene(286,y-8,226,25,CDS,'coding sequence'));
+    s+=G('a-pop',2.1,box(286,y-8,22,25,STARTC,2)+T(297,y-20,'start','note mid f12')+T(297,y-34,'ATG','mono mid f12'));
+    s+=G('a-pop',2.3,box(480,y-8,22,25,STOPC,2)+T(491,y-20,'stop','note mid f12')+T(491,y-34,'TAA','mono mid f12'));
+    s+=G('a-pop',2.6,termIcon(560,y-2,1.4)+T(560,y-38,'terminator','lab mid'));
+    const my=y+92;
+    s+=G('a-fade',3.0,wave(196,566,my)+T(190,my+4,'5′','mono end f12')+T(572,my+4,'3′','mono start f12')+T(168,my+4,'mRNA','note end'));
+    s+=G('a-fade',3.2,`<path d="M196 ${y+14} V${my-8}" stroke="${MR}" stroke-dasharray="3 3"/><path d="M566 ${y+14} V${my-8}" stroke="${MR}" stroke-dasharray="3 3"/>`);
+    s+=G('a-fade',3.5,brk(196,286,my+14,'5′ UTR')+brk(502,566,my+14,'3′ UTR')+brk(286,502,my+14,'translated'));
+    return {vb:wide(290),s};
+  }
+  const y=86; const pts=[['−35',32],['−10',68],['+1',90],['RBS',111],['start codon',134],['coding sequence',200],['stop codon',268],['terminator',314]];
+  let s=G('a-fade',0,dsDNA(12,348,y,INK,8));
+  s+=G('a-pop',.3,box(20,y-6,26,20,PROM))+G('a-pop',.5,box(56,y-6,26,20,PROM))+G('a-fade',.7,bend(90,y-6,18,14));
+  s+=G('a-pop',.9,box(102,y-6,18,20,SDC))+G('a-pop',1.1,arrowGene(128,y-7,152,22,CDS,''))+G('a-pop',1.2,box(128,y-7,12,22,STARTC,2)+box(262,y-7,12,22,STOPC,2))+G('a-pop',1.4,termIcon(314,y-2,1.1));
+  pts.forEach((p,i)=>s+=G('a-pop',(1.6+i*.08).toFixed(2),`<circle cx="${p[1]}" cy="${y-38}" r="8.5" fill="#2F5276"/>`+Tc(p[1],y-34.5,i+1,'#F3EDE0',10,'mono mid','600')+ln(p[1],y-29,p[1],y-10,'#6A5B47',.8)));
+  const my=y+50;
+  s+=G('a-fade',2.3,wave(90,318,my)+T(84,my+4,'5′','mono end f11')+T(324,my+4,'3′','mono start f11')+T(204,my+24,'mRNA: 5′ UTR · coding · 3′ UTR','note mid f12'));
+  pts.forEach((p,i)=>{const c=i%2,r=Math.floor(i/2);s+=G('a-fade',(2.6+i*.06).toFixed(2),`<circle cx="${c?190:22}" cy="${my+56+r*24}" r="8" fill="#2F5276"/>`+Tc(c?190:22,my+59.5+r*24,i+1,'#F3EDE0',10,'mono mid','600')+T(c?204:36,my+61+r*24,p[0],'lab start f14'));});
+  return {vb:slim(my+56+4*24),s};
+}
+
+function scPromoter(n){
+  const P=n?{x1:10,x2:350,y:124,b35:[20,84],b10:[176,240],p1:290,bw:64,fs:12,sc:.95,H:300}:{x1:30,x2:610,y:124,b35:[80,168],b10:[330,418],p1:480,bw:88,fs:15,sc:1.25,H:318};
+  const {y}=P;
+  let s=G('a-fade',0,dsDNA(P.x1,P.x2,y,INK,9));
+  s+=G('a-pop',.3,box(P.b35[0],y-7,P.bw,23,PROM)+Tc((P.b35[0]+P.b35[1])/2,y+9,'TTGACA','#F3EDE0',P.fs,'mono mid','600')+T((P.b35[0]+P.b35[1])/2,y-16,'−35','mono mid f12'));
+  s+=G('a-pop',.6,box(P.b10[0],y-7,P.bw,23,PROM)+Tc((P.b10[0]+P.b10[1])/2,y+9,'TATAAT','#F3EDE0',P.fs,'mono mid','600')+T((P.b10[0]+P.b10[1])/2,y-16,'−10','mono mid f12'));
+  s+=G('a-fade',.9,brk(P.b35[1]+4,P.b10[0]-4,y+26,'17 bp spacer (15–19)'));
+  s+=G('a-fade',1.1,bend(P.p1,y-8,24,20)+T(P.p1,y-40,'+1','mono acc mid f13')+brk(P.b10[1]+4,P.p1-2,y+26,n?'~7 bp':'~7 bp to start'));
+  const cx=(P.b35[0]+P.p1)/2+(n?6:10), cy=y-(n?52:60);
+  s+=G('a-drop',1.6,rnap(cx,cy,P.sc*1.8,false)+`<ellipse cx="${(P.b35[0]+P.b35[1])/2}" cy="${y-24}" rx="${P.bw/2+4}" ry="12" fill="${SIG}" stroke="${INK}" class="tint"/>`+`<ellipse cx="${(P.b10[0]+P.b10[1])/2}" cy="${y-24}" rx="${P.bw/2+4}" ry="12" fill="${SIG}" stroke="${INK}" class="tint"/>`
+    +ln((P.b35[0]+P.b35[1])/2+P.bw/2,y-24,(P.b10[0]+P.b10[1])/2-P.bw/2,y-24,SIG,5)
+    +T(cx,cy+2,'RNA polymerase','lab mid'+(n?' f13':'')))+G('a-fade',2.1,n?T(P.x1,18,'σ<tspan baseline-shift="super" font-size="68%">70</tspan> (gold) reads −35 and −10','note start f12'):T(cx+80,cy+4,'σ<tspan baseline-shift="super" font-size="68%">70</tspan> (gold) reads −35 and −10','note start'));
+  const bx1=P.b10[0]+P.bw*.4, bx2=P.p1+8, by=y+(n?112:120);
+  s+=G('a-fade',2.6,T(P.x1+4,by-28,n?'Open complex:':'Then the DNA melts at −10 into an open complex:','note start'));
+  s+=G('a-fade',2.9,`<path d="M${P.x1} ${by} H${bx1} q${(bx2-bx1)/2} -22 ${bx2-bx1} 0 H${P.x2}" stroke="${INK}" stroke-width="2" fill="none"/><path d="M${P.x1} ${by+9} H${bx1} q${(bx2-bx1)/2} 26 ${bx2-bx1} 0 H${P.x2}" stroke="${INK}" stroke-width="2" fill="none"/>`
+    +T((bx1+bx2)/2,by+5,'bubble','note mid f12')+T(P.x2-4,by+36,n?'template strand read 3′→5′':'template strand read 3′→5′; RNA made 5′→3′','note end f12'));
+  return {vb:n?slim(P.H):wide(P.H),s};
+}
+
+function scOperator(n){
+  const P=n?{x1:10,x2:350,r1:72,r2:200,b35:16,b10:66,bw:40,op:[104,148],p1:116,txt:328,H:296}:{x1:30,x2:610,r1:84,r2:220,b35:110,b10:200,bw:56,op:[250,320],p1:270,txt:600,H:312};
+  const row=(y,label)=>T(P.x1+2,y-48,label,'cname start')+dsDNA(P.x1,P.x2,y,INK,8)+box(P.b35,y-6,P.bw,20,PROM)+box(P.b10,y-6,P.bw,20,PROM)+box(P.op[0],y-6,P.op[1]-P.op[0],20,OPC)+T((P.op[0]+P.op[1])/2,y+34,'operator','note mid f12')+bend(P.p1,y-6,16,14);
+  const rep=(cx,cy)=>`<g class="tint"><ellipse cx="${cx-12}" cy="${cy}" rx="16" ry="12" fill="${REP}" stroke="${INK}"/><ellipse cx="${cx+12}" cy="${cy}" rx="16" ry="12" fill="${REP}" stroke="${INK}"/></g>`;
+  let s=G('a-fade',0,row(P.r1,'Repressed'));
+  const oc=(P.op[0]+P.op[1])/2;
+  s+=G('a-drop',.5,rep(oc,P.r1-14)+T(oc+(n?36:40),P.r1-24,'repressor','note start f12'));
+  s+=G('a-pop',.9,rnap((P.b35+P.b10+P.bw)/2,P.r1-22,n?.9:1.1,true))+G('a-pop',1.3,mark(P.p1+(n?54:70),P.r1+4,false));
+  s+=G('a-fade',1.6,row(P.r2,'Induced'));
+  s+=G('a-fade',1.9,`<g class="a-out" style="--d:2.4s;--dx:0px;--dy:-26px">${rep(oc,P.r2-14)}<circle cx="${oc-12}" cy="${P.r2-26}" r="4" fill="#E0B84A" stroke="${INK}"/><circle cx="${oc+12}" cy="${P.r2-26}" r="4" fill="#E0B84A" stroke="${INK}"/></g>`+T(oc,P.r2-44,'+ inducer','note mid f12'));
+  s+=G('a-slow',2.8,rnap(P.op[1]+(n?60:120),P.r2-22,n?.9:1.1,false),`--dx:${-(P.op[1]+(n?60:120)-(P.b35+P.b10+P.bw)/2)}px`)+G('a-fade',3.6,wave(P.p1,P.op[1]+(n?30:90),P.r2-6,MR,2.2));
+  return {vb:n?slim(P.H):wide(P.H),s};
+}
+
+const MRNA_RBS='GAAAGGAGGAUUUCACAUGGCUAAA', R16='AUUCCUCCACUA';
+function scRBS(n){
+  const dx=n?13.4:22, x0=n?14:50, fs=n?12:16, y=n?96:112, N=MRNA_RBS.length, X=i=>x0+i*dx+dx/2;
+  let s=G('a-fade',0,T(x0-2,y,'5′','mono end f12')+T(x0+N*dx+2,y,'3′','mono start f12'));
+  for(let i=0;i<N;i++){const sd=i>=3&&i<9, st=i>=16&&i<19;
+    s+=Tc(X(i),y,MRNA_RBS[i],sd?SDC:st?STARTC:MR,fs,'mono mid',(sd||st)?'600':'');}
+  s=G('a-fade',0,s);
+  s+=G('a-fade',.4,`<rect x="${X(3)-dx/2}" y="${y-fs-4}" width="${dx*6}" height="${fs+10}" rx="3" fill="${SDC}" opacity=".14"/>`+T(X(5.5),y-fs-12,n?'Shine–Dalgarno':'Shine–Dalgarno (AGGAGG)','lab mid')
+    +`<rect x="${X(16)-dx/2}" y="${y-fs-4}" width="${dx*3}" height="${fs+10}" rx="3" fill="${STARTC}" opacity=".16"/>`+T(X(17),y-fs-12,'start codon','lab mid'));
+  s+=G('a-fade',.9,brk(X(9)-dx/2+2,X(15)+dx/2-2,y-fs-(n?32:34),n?'7 nt':'7 nt spacer (5–9)',true,'note mid f12'));
+  const y2=y+(n?44:54);
+  let pair='';for(let i=3;i<9;i++)pair+=ln(X(i),y+6,X(i),y2-fs-2,'#6A5B47',1);
+  let r='';for(let k=0;k<R16.length;k++)r+=Tc(X(k+1),y2,R16[k],INK,fs,'mono mid','600');
+  s+=G('a-drop',1.4,`<ellipse cx="${X(9)}" cy="${y2+(n?10:12)}" rx="${dx*9}" ry="${n?28:34}" fill="${RIB1}" opacity=".55" stroke="${INK}" stroke-width=".8" class="tint"/>`+pair+r+T(X(0)-2,y2,'3′','mono end f12')+T(X(13)+4,y2,'…5′','mono start f12')
+    +T(X(6),y2+(n?24:30),n?'3′ end of 16S rRNA (30S)':'3′ end of 16S rRNA, in the 30S subunit','note mid f12'));
+  const ty=y2+(n?72:86);
+  s+=G('a-drop',2.4,`<path d="M${X(17)} ${y+8} V${ty-34}" stroke="${STARTC}" stroke-width="2" stroke-dasharray="3 3"/>`+box(X(17)-dx*1.5,ty-34,dx*3,22,'#D9CDB2')+Tc(X(17),ty-19,'UAC','#3A2E22',n?11:13,'mono mid','600')
+    +T(X(17)+dx*1.5+6,ty-19,'fMet-tRNA','note start f12'));
+  s+=G('a-fade',3.1,T(n?180:320,ty+(n?14:18),n?'Base-pairing positions the AUG in the P site':'Base-pairing positions the AUG in the ribosome’s P site; then the 50S joins','lab mid'));
+  return {vb:n?slim(ty+30):wide(ty+34),s};
+}
+
+const CODONS=[['AUG','Met','M'],['GCU','Ala','A'],['AAA','Lys','K'],['GAC','Asp','D'],['CUG','Leu','L'],['UUC','Phe','F'],['GGU','Gly','G'],['UAA','stop','']];
+function scCDS(n){
+  const per=n?40:66, x0=n?20:46, y=n?150:164, fs=n?12:16;
+  let s=T(x0-4,y,'5′','mono end f12')+T(x0+CODONS.length*per+4,y,'3′','mono start f12');
+  CODONS.forEach((c,i)=>{const x=x0+i*per, last=i===CODONS.length-1;
+    s+=`<rect x="${x+2}" y="${y-fs-4}" width="${per-4}" height="${fs+10}" rx="3" fill="${last?STOPC:i===0?STARTC:(i%2?CDS:'#6F8BA8')}" opacity="${last||i===0?.22:.14}"/>`+Tc(x+per/2,y,c[0],last?STOPC:i===0?STARTC:INK,fs,'mono mid','600');
+    s+=T(x+per/2,y+(n?20:24),c[1],'note mid f12');});
+  s=G('a-fade',0,s);
+  const steps=CODONS.length-1, rx=x0+per*1, ry=y-fs-2;
+  s+=G('a-slow',.6,ribo(x0+per*(CODONS.length-1),ry,n?1.1:1.5),`--dx:${-(per*(CODONS.length-2))}px`);
+  let beads='';for(let i=0;i<7;i++){beads+=G('a-pop',(.6+i*.32).toFixed(2),`<circle cx="${(n?40:80)+i*(n?18:24)}" cy="${n?48:50}" r="${n?7:9}" fill="${['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#5E7F7A'][i]}" stroke="${INK}" class="tint"/>`+Tc((n?40:80)+i*(n?18:24),(n?52:54),CODONS[i][2],'#F3EDE0',n?8:10,'mono mid','600'));}
+  s+=beads+G('a-fade',.4,T(n?14:40,n?24:22,n?'growing polypeptide (N → C)':'growing polypeptide, N-terminus first','note start f12'));
+  s+=G('a-pop',3.2,box(x0+per*7+per/2-(n?16:22),ry-(n?44:58),n?32:44,18,STOPC)+Tc(x0+per*7+per/2,ry-(n?31:45),'RF','#F3EDE0',11,'mono mid','600')+T(x0+per*7+per/2,ry-(n?50:64),'release factor','note mid f12'));
+  s+=G('a-fade',3.6,T(n?180:320,y+(n?50:58),n?'Stops: UAA, UAG, UGA — no tRNA matches':'Stop codons UAA, UAG and UGA have no matching tRNA; a release factor frees the chain','lab mid'));
+  return {vb:n?slim(y+66):wide(y+72),s};
+}
+
+function scTerm(n){
+  const panel=(ox,oy,w,title)=>T(ox,oy,title,'cname start');
+  let s='';
+  const A=n?{ox:14,oy:24,dy:120,x2:346}:{ox:20,oy:28,dy:150,x2:300};
+  s+=G('a-fade',0,panel(A.ox,A.oy,0,'Intrinsic terminator')+dsDNA(A.ox,A.x2,A.dy,INK,8));
+  const hx=n?150:130;
+  s+=G('a-fade',.5,wave(A.ox+10,hx,A.dy-30,MR,2.4)+hairpin(hx,A.dy-30,n?40:50,14)+Tc(hx+38,A.dy-28,'UUUUUUU',MR,n?11:12,'mono start','600'));
+  s+=G('a-fade',.8,T(hx-8,A.dy-(n?58:64),'GC-rich hairpin','note end f12')+T(hx+(n?78:84),A.dy-42,'U-tract','note mid f12'));
+  s+=G('a-out',1.6,rnap(hx+(n?110:110),A.dy-4,n?.8:.9,false),'--dx:30px;--dy:-30px');
+  s+=G('a-fade',2.2,T(A.ox,A.dy+34,n?'Hairpin pulls RNA from the weak rU–dA hybrid':'Hairpin + weak rU–dA hybrid: RNA and polymerase release','note start f12'));
+  const B=n?{ox:14,oy:200,dy:300,x2:346}:{ox:340,oy:28,dy:150,x2:620};
+  s+=G('a-fade',.3,panel(B.ox,B.oy,0,'Rho-dependent')+dsDNA(B.ox,B.x2,B.dy,INK,8));
+  const rx1=B.ox+(n?20:16), rnapx=B.x2-(n?40:44);
+  s+=G('a-fade',.7,wave(rx1,rnapx-20,B.dy-30,MR,2.4)+`<rect x="${rx1+(n?30:24)}" y="${B.dy-40}" width="${n?70:72}" height="20" rx="3" fill="${RHO}" opacity=".16"/>`+T(rx1+(n?65:60),B.dy-46,'rut site (C-rich)','note mid f12'));
+  s+=G('a-pop',1.0,rnap(rnapx,B.dy-4,n?.8:.9,false));
+  s+=G('a-slow',1.3,rho(rnapx-40,B.dy-30,1.1),`--dx:${-(rnapx-40-(rx1+(n?65:60)))}px`);
+  s+=G('a-pop',3.8,mark(rnapx,B.dy-44,false,9));
+  s+=G('a-fade',3.9,T(B.ox,B.dy+34,n?'Rho chases the RNA 5′→3′ and dislodges RNAP':'Rho helicase loads on bare RNA, runs 5′→3′, dislodges RNAP','note start f12'));
+  return {vb:n?slim(350):wide(210),s};
+}
+
+/* ===== Part II · Operons ===== */
+function lacMap(n,y,opts={}){
+  const P=n?{x1:10,x2:350,p:20,o:44,z:[64,164],yy:[168,238],a:[242,302],t:322,h:22}:{x1:20,x2:620,p:40,o:84,z:[120,330],yy:[334,470],a:[474,566],t:592,h:26};
+  const dim=opts.dim||{}, lbl=opts.lbl||['lacZ','lacY','lacA'];
+  let s=dsDNA(P.x1,P.x2,y,INK,8)+box(P.p,y-6,P.o-P.p-4,20,PROM)+box(P.o,y-6,n?16:30,20,OPC)+bend(P.p+6,y-6,16,12)
+    +T((P.p+P.o)/2-2,y+34,'P','mono mid f12')+T(P.o+(n?8:15),y+34,'O','mono mid f12');
+  [[P.z,CDS,lbl[0]],[P.yy,'#5B7B40',lbl[1]],[P.a,'#7D4A98',lbl[2]]].forEach(([r,c,l],i)=>{s+=`<g style="opacity:${dim[i]?'.3':'1'}">${arrowGene(r[0],y-(P.h-8)/2-4,r[1]-r[0],P.h,c,l)}</g>`;});
+  s+=termIcon(P.t,y-2,n?1:1.3);
+  return {s,P};
+}
+function scOperon(n){
+  const y=n?60:70, L=lacMap(n,y), P=L.P;
+  let s=G('a-fade',0,L.s);
+  const my=y+(n?62:74);
+  s+=G('a-fade',.8,wave(P.p+16,P.t+4,my)+T(P.p+12,my+4,'5′','mono end f11'));
+  const rbs=[P.z[0]-(n?14:18),P.yy[0]-(n?14:18),P.a[0]-(n?14:18)];
+  rbs.forEach((x,i)=>s+=G('a-pop',(1.3+i*.2).toFixed(2),`<rect x="${x}" y="${my-8}" width="${n?10:14}" height="16" rx="2" fill="${SDC}" stroke="${INK}" stroke-width=".8"/>`));
+  s+=G('a-fade',1.9,T(rbs[0]+(n?5:7),my+28,'RBS','note mid f12')+T(rbs[1]+(n?5:7),my+28,'RBS','note mid f12')+T(rbs[2]+(n?5:7),my+28,'RBS','note mid f12'));
+  const prot=n?[['β-gal',(P.z[0]+P.z[1])/2],['permease',(P.yy[0]+P.yy[1])/2],['acetylase',(P.a[0]+P.a[1])/2]]:[['β-galactosidase',(P.z[0]+P.z[1])/2],['permease',(P.yy[0]+P.yy[1])/2],['transacetylase',(P.a[0]+P.a[1])/2]];
+  const py=my+(n?70:80);
+  prot.forEach((p,i)=>s+=G('a-pop',(2.3+i*.25).toFixed(2),ribo(p[1],my-2,n?.8:1)+`<path d="M${p[1]} ${my+16} V${py-24}" class="arrow"/>`+`<circle cx="${p[1]}" cy="${py-10}" r="${n?9:11}" fill="${[CDS,'#5B7B40','#7D4A98'][i]}" stroke="${INK}" class="tint"/>`+T(p[1],py+12,p[0],'lab mid '+(n?'f13':''))));
+  s+=G('a-fade',3.2,T(n?180:320,py+(n?36:40),n?'One promoter, one mRNA, three proteins':'One promoter, one polycistronic mRNA, three proteins','lab mid'));
+  return {vb:n?slim(py+50):wide(py+54),s};
+}
+
+function scCoupled(n){
+  const y=n?190:200, x1=n?10:20, x2=n?350:620, px=n?296:540;
+  let s=G('a-fade',0,dsDNA(x1,x2,y,INK,8)+bend(x1+20,y-6,16,12));
+  s+=G('a-fade',.3,`<path d="M${x1+26} ${y-2} C ${x1+60} ${y-120}, ${px-120} ${y-130}, ${px-26} ${y-12}" stroke="${MR}" stroke-width="2.6" fill="none"/>`+T(x1+2,y-74,'mRNA','note start'));
+  s+=G('a-move',.2,rnap(px,y+4,n?.95:1.1,false),`--dx:${-(px-x1-60)}px`);
+  const t=[.14,.34,.54,.74,.9];
+  const bez=(tt)=>{const p0=[x1+26,y-2],p1=[x1+60,y-120],p2=[px-120,y-130],p3=[px-26,y-12];const u=1-tt;return [0,1].map(k=>u*u*u*p0[k]+3*u*u*tt*p1[k]+3*u*tt*tt*p2[k]+tt*tt*tt*p3[k]);};
+  t.forEach((tt,i)=>{const [bx,by]=bez(tt);s+=G('a-pop',(1.0+i*.25).toFixed(2),ribo(bx,by,n?.75:.95));});
+  const [lx,ly]=bez(.9);
+  s+=G('a-fade',2.4,`<path d="M${lx-(n?44:52)} ${ly+30} L${lx-14} ${ly+6}" class="arrow"/>`+T(lx-(n?48:56),ly+36,'leading ribosome','note end f12'));
+  s+=G('a-fade',2.8,T(n?180:320,y+(n?42:46),n?'Translation begins before transcription ends':'No nucleus: ribosomes load while RNA polymerase is still transcribing','lab mid')
+    +T(n?180:320,y+(n?62:68),n?'The leading ribosome covers the RNA, shielding it from Rho':'The leading ribosome covers the new RNA, keeping Rho off','note mid'));
+  return {vb:n?slim(y+76):wide(y+84),s};
+}
+
+/* ===== Part III · Polar effects ===== */
+function scPolar(n){
+  const groups=[['Wild type',[100,100,100]],['Nonsense early in lacZ',[0,8,10]]];
+  const P=n?{gx:[24,196],gw:140,top:60,base:210,bw:34,gap:10,H:290}:{gx:[60,350],gw:230,top:60,base:230,bw:56,gap:18,H:310};
+  let s='';
+  groups.forEach((g,gi)=>{const ox=P.gx[gi];
+    s+=G('a-fade',(gi*.8).toFixed(1),T(ox+P.gw/2-(n?4:0),P.top-24,g[0],'cname mid '+(n?'f15':'')));
+    ['Z','Y','A'].forEach((nm,i)=>{const v=g[1][i],x=ox+i*(P.bw+P.gap)+(n?4:20),h=(P.base-P.top)*v/100;
+      s+=`<rect x="${x}" y="${P.top}" width="${P.bw}" height="${P.base-P.top}" rx="3" fill="${GREY}" opacity=".35"/>`;
+      s+=G('a-grow',(gi*.8+.3+i*.15).toFixed(2),`<rect x="${x}" y="${(P.base-h).toFixed(1)}" width="${P.bw}" height="${h.toFixed(1)}" rx="3" fill="${[CDS,'#5B7B40','#7D4A98'][i]}" stroke="${INK}" class="tint"/>`);
+      s+=T(x+P.bw/2,P.base+18,'lac'+nm,'mono mid f12')+G('a-fade',(gi*.8+.8).toFixed(1),T(x+P.bw/2,P.base-h-6,v+'%','mono mid f11'));
+      if(gi===1&&i===0)s+=G('a-pop',1.4,mark(x+P.bw/2,P.base-16,false,10));});
+    s+=ln(ox+(n?-2:14),P.base,ox+(n?3*(P.bw+P.gap)+2:3*(P.bw+P.gap)+26),P.base,'#6A5B47',1.4);});
+  s+=G('a-fade',2.0,T(n?180:320,P.H-14,n?'lacY and lacA fall, though their DNA is intact':'lacY and lacA fall, although their own DNA is untouched','lab mid'));
+  return {vb:n?slim(P.H):wide(P.H),s};
+}
+
+function scRho(n){
+  const y=n?70:80, L=lacMap(n,y,{dim:{1:true,2:true}}), P=L.P;
+  let s=G('a-fade',0,L.s);
+  const stopx=P.z[0]+(P.z[1]-P.z[0])*(n?.3:.3);
+  s+=G('a-pop',.4,`<path d="M${stopx} ${y-18} v34" stroke="${STOPC}" stroke-width="2.4"/>`+Tc(stopx,y-22,'UAG','#A4473A',n?11:12,'mono mid','600'));
+  const my=y+(n?60:70), rnapx=P.yy[0]-(n?12:16);
+  s+=G('a-fade',.8,wave(P.p+16,rnapx-26,my)+T(P.p+12,my+4,'5′','mono end f11'));
+  s+=G('a-pop',.6,rnap(rnapx,my+2,n?.8:1,false));
+  (n?[0,1]:[0,1,2]).forEach(i=>s+=G('a-pop',(1.0+i*.2).toFixed(2),ribo(stopx-(n?12:16)-i*(n?20:28),my-2,n?.7:.9)));
+  s+=G('a-fade',1.6,`<rect x="${stopx+6}" y="${my-14}" width="${rnapx-stopx-(n?34:40)}" height="26" rx="4" fill="${RHO}" opacity=".1"/>`+T((stopx+rnapx)/2-10,my+(n?32:36),n?'bare RNA, no ribosomes':'bare RNA: ribosomes released at the stop codon','note mid f12'));
+  s+=G('a-slow',2.1,rho(rnapx-(n?30:36),my-16,n?.9:1.1),`--dx:${-(rnapx-(n?30:36)-(stopx+14))}px`);
+  s+=G('a-pop',4.5,mark(rnapx,my-34,false,9));
+  s+=G('a-fade',4.7,T(n?(P.yy[0]+P.a[1])/2:(P.yy[0]+P.a[1])/2,y-26,n?'never transcribed':'never transcribed','note mid f12'));
+  const gy=my+(n?66:74);
+  s+=G('a-fade',5.0,T(n?180:320,gy,n?'Early stop → long bare stretch → strong polarity':'Early stop → long bare stretch → strong polarity','lab mid')+T(n?180:320,gy+20,n?'Late stop → short stretch → weak polarity':'Stop near the 3′ end → little bare RNA → weak polarity','note mid'));
+  return {vb:n?slim(gy+34):wide(gy+36),s};
+}
+
+function scInsert(n){
+  const y=n?70:80, L=lacMap(n,y,{dim:{1:true,2:true}}), P=L.P;
+  let s=G('a-fade',0,L.s);
+  const ix=P.z[0]+(P.z[1]-P.z[0])*.45, iw=n?50:76;
+  s+=G('a-drop',.4,`<rect x="${ix-iw/2}" y="${y-30}" width="${iw}" height="22" rx="3" fill="url(#hatch)" stroke="${INK}"/>`+termIcon(ix+iw/2-10,y-8,.9)+T(ix-4,y-38,n?'insertion':'transposon or cassette','note mid f12')+`<path d="M${ix} ${y-8} V${y-2}" stroke="${STOPC}" stroke-width="2"/>`);
+  const my=y+(n?60:70);
+  s+=G('a-fade',.9,wave(P.p+16,ix+iw/2-14,my)+T(P.p+12,my+4,'5′','mono end f11'));
+  s+=G('a-out',1.5,rnap(ix+iw/2-2,my+2,n?.8:1,false),'--dx:20px;--dy:-24px');
+  s+=G('a-fade',2.0,T(ix+iw/2+(n?34:40),my+6,n?'terminator':'insert’s own terminator','note start f12'));
+  const by=my+(n?52:58);
+  s+=G('a-fade',2.4,R(n?12:40,by,n?336:560,n?96:84,'card',6)
+    +T(n?24:58,by+24,'A caution for knockouts and Tn-seq','cname start')
+    +T(n?24:58,by+(n?46:48),n?'A phenotype can come from the silenced':'A phenotype, or an “essential” call, can come from a silenced','note start f13')
+    +T(n?24:58,by+(n?64:66),n?'downstream gene. Complement with the':'downstream gene. Complement with the first gene alone to check.','note start f13')
+    +(n?T(24,by+82,'first gene alone to check.','note start f13'):''));
+  return {vb:n?slim(by+110):wide(by+98),s};
+}
+
+function scCoupling(n){
+  const P=n?{x1:14,x2:346,r1:96,r2:236,ax:[14,170],bx:[196,346],hp:188,H:340}:{x1:30,x2:610,r1:104,r2:244,ax:[30,310],bx:[340,610],hp:326,H:350};
+  const row=(y,title,open)=>{
+    let s=T(P.x1,y-62,title,'cname start')+`<rect x="${P.ax[0]}" y="${y+12}" width="${P.ax[1]-P.ax[0]}" height="6" rx="2" fill="${CDS}" opacity=".5"/>`+T((P.ax[0]+P.ax[1])/2,y+34,'gene A','mono mid f11')
+      +`<rect x="${P.bx[0]}" y="${y+12}" width="${P.bx[1]-P.bx[0]}" height="6" rx="2" fill="#5B7B40" opacity=".5"/>`+T((P.bx[0]+P.bx[1])/2,y+34,'gene B','mono mid f11');
+    if(open){s+=wave(P.x1,P.x2,y)+`<rect x="${P.hp-10}" y="${y-8}" width="20" height="16" rx="2" fill="${SDC}" stroke="${INK}" stroke-width=".8"/>`;}
+    else{s+=wave(P.x1,P.hp-12,y)+hairpin(P.hp-12,y,34,24)+wave(P.hp+12,P.x2,y)+`<rect x="${P.hp-16}" y="${y-30}" width="8" height="14" rx="2" fill="${SDC}" stroke="${INK}" stroke-width=".6"/>`;}
+    return s;};
+  let s=G('a-fade',0,row(P.r1,'Normal: gene A is translated',true));
+  s+=G('a-slow',.4,ribo(P.hp-30,P.r1-2,n?.8:1),`--dx:${-(P.hp-30-P.ax[0]-20)}px`);
+  s+=G('a-pop',2.8,ribo(P.hp+18,P.r1-2,n?.8:1))+G('a-fade',3.0,T(P.hp,P.r1-38,n?'hairpin opened, RBS free':'ribosome unwinds hairpin; RBS of B freed','note mid f12'));
+  const sx=P.ax[0]+(P.ax[1]-P.ax[0])*.2;
+  s+=G('a-fade',1.4,row(P.r2,'Nonsense early in gene A',false)+`<path d="M${sx} ${P.r2-12} v24" stroke="${STOPC}" stroke-width="2.4"/>`+Tc(sx,P.r2+28,'UAA','#A4473A',11,'mono mid','600'));
+  s+=G('a-pop',1.8,ribo(sx-16,P.r2-2,n?.8:1))+G('a-fade',2.2,T(P.hp+20,P.r2-30,'RBS of B stays buried','note start f12'));
+  s+=G('a-pop',3.4,`<text x="${(sx+P.hp)/2}" y="${P.r2+6}" class="mid" style="fill:${STOPC};font-size:18px">✂</text>`+T((sx+P.hp)/2,P.r2+54,n?'bare RNA is cut by RNase E':'untranslated RNA is cut and degraded (RNase E)','note mid f12'));
+  return {vb:n?slim(P.H):wide(P.H),s};
+}
+
+function abcMap(n,y,opt={}){
+  const P=n?{x1:10,x2:350,p:20,A:[44,160],B:[170,250],C:[260,330],t:342,h:22}:{x1:20,x2:620,p:40,A:[84,300],B:[314,446],C:[460,580],t:600,h:26};
+  let s=dsDNA(P.x1,P.x2,y,INK,8)+box(P.p,y-6,(n?18:34),20,PROM)+bend(P.p+5,y-6,14,10);
+  s+=`<g style="opacity:${opt.dimA?'.25':'1'}">${arrowGene(P.A[0],y-(P.h-8)/2-4,P.A[1]-P.A[0],P.h,CDS,'gene A')}</g>`;
+  if(opt.dimA)s+=`<rect x="${P.A[0]}" y="${y-(P.h-8)/2-6}" width="${P.A[1]-P.A[0]}" height="${P.h+4}" fill="none" stroke="${STOPC}" stroke-dasharray="4 3"/>`+T((P.A[0]+P.A[1])/2,y-18,'deleted','note mid f12');
+  s+=arrowGene(P.B[0],y-(P.h-8)/2-4,P.B[1]-P.B[0],P.h,'#5B7B40','B')+arrowGene(P.C[0],y-(P.h-8)/2-4,P.C[1]-P.C[0],P.h,'#7D4A98','C')+termIcon(P.t,y-2,n?.9:1.2);
+  return {s,P};
+}
+function cassette(cx,y,iw,kind){
+  let s=`<rect x="${cx-iw/2}" y="${y-30}" width="${iw}" height="20" rx="3" fill="url(#hatch)" stroke="${INK}"/>`;
+  if(kind==='tn')s+=termIcon(cx+iw/2-8,y-10,.8);
+  else if(kind==='cas')s+=`<path d="M${cx-iw/2+6} ${y-20} h${iw-14}" stroke="${INK}" stroke-width="1.6" marker-end="url(#ahp)"/>`;
+  else if(kind==='out')s+=`<path d="M${cx-iw/2+7} ${y-11} v-13 h${iw-18}" stroke="${PROM}" stroke-width="2.4" fill="none" marker-end="url(#ahp)"/>`;
+  else if(kind==='anti')s+=`<path d="M${cx+iw/2-7} ${y-11} v-13 h${-(iw-18)}" stroke="${RHO}" stroke-width="2.4" fill="none" marker-end="url(#ahp)"/>`;
+  return s;
+}
+function exprBars(n,vals,top,base,d0=.3){
+  const nums=vals.filter(v=>typeof v==='number'), over=Math.max(100,...nums)>100, max=over?400:100;
+  const bw=n?62:88, gap=n?40:70, x0=n?44:150, cols=[CDS,'#5B7B40','#7D4A98'], xe=x0+3*bw+2*gap;
+  let s='';
+  vals.forEach((v,i)=>{const x=x0+i*(bw+gap);
+    s+=`<rect x="${x}" y="${top}" width="${bw}" height="${base-top}" rx="3" fill="${GREY}" opacity=".35"/>`;
+    if(typeof v==='number'){const h=(base-top)*Math.min(v,max)/max;
+      s+=G('a-grow',(d0+i*.12).toFixed(2),`<rect x="${x}" y="${(base-h).toFixed(1)}" width="${bw}" height="${h.toFixed(1)}" rx="3" fill="${cols[i]}" stroke="${INK}" class="tint"/>`)+G('a-fade',(d0+.4).toFixed(2),T(x+bw/2,base-h-8,v+'%','mono mid f12'));}
+    else if(v==='made, inactive')s+=G('a-grow',d0,`<rect x="${x}" y="${top}" width="${bw}" height="${base-top}" rx="3" fill="url(#hatch)" stroke="${INK}"/>`)+T(x+bw/2,top-8,v,'note mid f12');
+    else s+=T(x+bw/2,top-8,v,'note mid f12');
+    s+=T(x+bw/2,base+18,'gene '+'ABC'[i],'mono mid f12');});
+  s+=ln(x0-8,base,xe+8,base,'#6A5B47',1.4);
+  if(over){const yy=base-(base-top)*100/max;s+=ln(x0-8,yy,xe+8,yy,'#6A5B47',1,'4 3')+T(x0-12,yy+4,'100%','mono end f10');}
+  return s;
+}
+
+const MUTS=[
+ {k:'wt',label:'Wild type',v:[100,100,100],text:'All three genes are made.'},
+ {k:'mis',label:'Missense',v:['made, inactive',100,100],pos:.5,text:'Gene A’s protein is made but may not work. Ribosomes still run through: no polar effect.'},
+ {k:'ens',label:'Early nonsense',v:['truncated',8,10],pos:.15,text:'Ribosomes fall off early. The long bare stretch lets Rho end transcription: strongly polar.'},
+ {k:'lns',label:'Late nonsense',v:['truncated',75,80],pos:.9,text:'Ribosomes ran nearly to the end, leaving little bare RNA: weakly polar.'},
+ {k:'rho',label:'Early nonsense, rho mutant',v:['truncated',65,65],pos:.15,text:'With Rho impaired, transcription runs on past the bare stretch. Polarity is largely relieved.'},
+ {k:'tn',label:'Insertion with terminator',v:['disrupted',2,2],pos:.45,text:'The insert’s terminator stops RNA polymerase inside gene A: strongly polar.'},
+ {k:'del',label:'In-frame deletion',v:['deleted',100,100],text:'Gene A is removed but the downstream RBS and spacing are intact: non-polar.'},
+ {k:'cas',label:'Non-polar cassette',v:['disrupted',90,90],pos:.45,text:'A marker with no terminator reads through into B and C: little or no polar effect.'},
+ {k:'out',label:'Cassette, read-out promoter',v:['disrupted',380,340],pos:.45,text:'The cassette’s strong promoter reads out into B and C. They are overexpressed and no longer follow the operon’s regulation.'},
+ {k:'anti',label:'Backwards cassette in B',v:[30,'disrupted',75],pos:.5,gene:'B',text:'The cassette in gene B faces backwards. Its antisense transcription lowers gene A, upstream of the insertion.'}];
+let mutSel=2;
+function scExplore(n){
+  const m=MUTS[mutSel], y=n?40:44, M=abcMap(n,y,{dimA:m.k==='del'}), P=M.P;
+  let s=M.s;
+  if(m.pos!=null){const r=m.gene==='B'?P.B:P.A, mx=r[0]+(r[1]-r[0]-10)*m.pos;
+    if(['tn','cas','out','anti'].includes(m.k))s+=G('a-drop',.1,cassette(mx,y,n?40:60,m.k));
+    else s+=G('a-pop',.1,`<path d="M${mx} ${y-14} v28" stroke="${m.k==='mis'?'#C99A2E':STOPC}" stroke-width="2.6"/>`+Tc(mx,y-18,m.k==='mis'?'GCU→GAU':'UAA',m.k==='mis'?'#8A6A1E':STOPC,11,'mono mid','600'));}
+  const top=y+56, base=top+(n?104:120);
+  s+=exprBars(n,m.v,top,base);
+  const ty=base+(n?40:44);
+  const words=m.text.split(' ');let lines=[''],max=n?46:80;words.forEach(w=>{if((lines[lines.length-1]+' '+w).trim().length>max)lines.push(w);else lines[lines.length-1]=(lines[lines.length-1]+' '+w).trim();});
+  s+=G('a-fade',.4,lines.map((l,i)=>T(n?180:320,ty+i*20,l,'lab mid '+(n?'f14':''))).join(''));
+  return {vb:n?slim(ty+lines.length*20+6):wide(ty+lines.length*20+8),s};
+}
+
+function scReadout(n){
+  const y=n?56:60, M=abcMap(n,y), P=M.P, mid=n?180:320;
+  let s=G('a-fade',0,M.s);
+  const iw=n?44:64, cx=P.A[0]+(P.A[1]-P.A[0]-10)*.5;
+  s+=G('a-drop',.4,cassette(cx,y,iw,'out')+T(cx,y-38,n?'cassette + own promoter':'cassette with its own promoter','note mid f12'));
+  const my=y+(n?44:50);
+  s+=G('a-fade',.9,wave(P.p+10,cx-iw/2,my,MR,1.8)+T(P.p+6,my+4,'5′','mono end f11'));
+  [0,1,2].forEach(i=>s+=G('a-fade',(1.3+i*.25).toFixed(2),wave(cx-iw/2+8,P.t,my+i*9,PROM,2.4)));
+  s+=G('a-fade',2.1,T(P.t,my+42,n?'transcripts from the cassette':'many transcripts start at the cassette promoter','note end f12'));
+  const top=my+(n?78:82), base=top+(n?100:110);
+  s+=exprBars(n,['disrupted',380,340],top,base,2.3);
+  s+=G('a-fade',3.0,n?T(mid,base+42,'B and C rise above wild type','lab mid')+T(mid,base+62,'and ignore the operon’s regulation','note mid')
+                      :T(mid,base+44,'B and C rise above wild type, and stay on even when the operon is repressed','lab mid'));
+  return {vb:n?slim(base+76):wide(base+60),s};
+}
+
+function scAntisense(n){
+  const y=n?56:60, M=abcMap(n,y), P=M.P, mid=n?180:320;
+  let s=G('a-fade',0,M.s);
+  const iw=n?40:60, cx=P.B[0]+(P.B[1]-P.B[0]-10)*.5;
+  s+=G('a-drop',.4,cassette(cx,y,iw,'anti')+T(cx,y-38,n?'reversed cassette':'cassette, promoter facing back','note mid f12'));
+  s+=G('a-fade',.8,`<path d="M${cx-iw/2} ${y+22} H${P.A[0]+6}" stroke="${RHO}" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ahp)"/>`+T((P.A[0]+cx)/2,y+40,'antisense transcription','note mid f12'));
+  const x1=n?16:60, x2=n?344:580, y2=y+(n?104:110), meet=(x1+x2)/2;
+  s+=G('a-fade',1.2,T(x1,y2-40,'Polymerases collide','cname start')+dsDNA(x1,x2,y2,INK,8)+T(x1,y2+28,'gene A','mono start f11'));
+  s+=G('a-move',1.4,rnap(meet-(n?26:32),y2+4,n?.75:.9),`--dx:${-(meet-(n?26:32)-x1-24)}px`);
+  s+=G('a-move',1.4,rnap(meet+(n?26:32),y2+4,n?.75:.9),`--dx:${x2-24-(meet+(n?26:32))}px`);
+  s+=G('a-fade',1.4,`<path d="M${x1+30} ${y2-24} h28" stroke="${MR}" stroke-width="2" marker-end="url(#ahp)"/><path d="M${x2-30} ${y2-24} h-28" stroke="${RHO}" stroke-width="2" marker-end="url(#ahp)"/>`+T(x1+44,y2-34,'sense','note mid f11')+T(x2-44,y2-34,'antisense','note mid f11'));
+  s+=G('a-pop',2.4,`<text x="${meet}" y="${y2-22}" class="mid" style="fill:${STOPC};font-size:20px">✸</text>`);
+  const y3=y2+(n?74:76);
+  let rungs='';for(let x=x1+30;x<x2-30;x+=8)rungs+=`M${x} ${y3+3} v6`;
+  s+=G('a-fade',2.8,T(x1,y3-24,'RNA duplex','cname start')+wave(x1+20,x2-20,y3,MR,2.4,2.5)+`<path d="${rungs}" stroke="${INK}" stroke-width=".8" opacity=".55"/>`+wave(x1+20,x2-20,y3+12,RHO,2.4,2.5)
+    +T(x2-20,y3-10,n?'A mRNA':'gene A mRNA','note end f11')+T(x2-20,y3+32,'antisense RNA','note end f11'));
+  s+=G('a-pop',3.3,`<text x="${meet}" y="${y3+12}" class="mid" style="fill:${STOPC};font-size:18px">✂</text>`+T(meet,y3+(n?52:52),n?'RNase III cuts; RBS masked':'RNase III cuts the duplex, or the antisense masks the RBS','note mid f12'));
+  const top=y3+(n?92:94), base=top+(n?88:96);
+  s+=exprBars(n,[30,'disrupted',75],top,base,3.6);
+  s+=G('a-fade',4.2,T(mid,base+(n?42:44),n?'Gene A falls, upstream of the insertion':'Gene A falls, although the insertion lies in gene B','lab mid'));
+  return {vb:n?slim(base+56):wide(base+58),s};
+}
+
+const NAR='Narrator';
+const S=[
+ {p:1,title:'A gene, end to end',draw:scMap,
+  text:"A bacterial gene is more than its coding sequence. Upstream, a promoter tells RNA polymerase where to start. The transcribed RNA begins with a 5′ untranslated region carrying the ribosome binding site. Then comes the coding sequence, from start codon to stop codon, and finally a terminator that ends transcription."},
+ {p:1,title:'The promoter',draw:scPromoter,
+  text:"Most housekeeping promoters in E. coli are read by RNA polymerase carrying the σ⁷⁰ factor. σ⁷⁰ recognises two hexamers: TTGACA about 35 bases upstream of the start site, and TATAAT about 10 bases upstream. Real promoters only resemble these consensus sequences, and the closer the match and the nearer the spacer is to 17 bp, the stronger the promoter. At −10 the DNA melts, and transcription begins at +1."},
+ {p:1,title:'Switching it on and off',draw:scOperator,
+  text:"Many promoters carry an operator, a site for a regulatory protein. A repressor bound to an operator that overlaps the promoter blocks RNA polymerase. When an inducer binds the repressor, it lets go of the DNA and transcription proceeds. Activators work the other way, helping polymerase bind weak promoters."},
+ {p:1,title:'The ribosome binding site',draw:scRBS,
+  text:"In the mRNA, a few bases upstream of the start codon lies the Shine–Dalgarno sequence, close to AGGAGG. It base-pairs with the 3′ end of the 16S rRNA in the small ribosomal subunit. A spacer of 5 to 9 nucleotides then places the AUG start codon in the ribosome's P site, where the initiator fMet-tRNA binds."},
+ {p:1,title:'The coding sequence',draw:scCDS,
+  text:"From the start codon the ribosome reads the mRNA three bases at a time, adding one amino acid per codon. AUG is the usual start codon, with GUG and UUG used less often. Translation ends at a stop codon, UAA, UAG or UGA, which no tRNA reads. A release factor frees the finished polypeptide."},
+ {p:1,title:'Two ways to stop transcription',draw:scTerm,
+  text:"Intrinsic terminators need no extra protein: a GC-rich hairpin forms in the RNA, followed by a run of U's whose weak pairing with the DNA lets the transcript slip free. Rho-dependent termination uses Rho, a ring-shaped helicase. It loads onto bare, C-rich RNA, runs along it using ATP, and dislodges RNA polymerase when it catches up."},
+ {p:2,title:'Operons',draw:scOperon,
+  text:"Bacterial genes are often grouped into operons: several genes under one promoter, transcribed into a single polycistronic mRNA and ended by one terminator. The lac operon carries lacZ, lacY and lacA. Each coding sequence keeps its own ribosome binding site, so each is translated separately into its own protein."},
+ {p:2,title:'Transcription and translation together',draw:scCoupled,
+  text:"Bacteria have no nucleus, so ribosomes start translating an mRNA while RNA polymerase is still making it. The leading ribosome follows close behind the polymerase. This coupling matters: as long as ribosomes cover the new RNA, Rho cannot get on."},
+ {p:3,title:'The polar effect',draw:scPolar,
+  text:"In the early 1960s, geneticists studying the lac and his operons found a puzzle. A nonsense mutation in an early gene of an operon also lowered expression of the genes after it, although their DNA was intact. This is the polar effect: a mutation acts on genes downstream, and only in one direction."},
+ {p:3,title:'Cause 1: Rho on bare RNA',draw:scRho,
+  text:"A premature stop codon releases the ribosomes. The RNA between that stop and the next ribosome binding site is now bare, and Rho can load on it. Rho catches the polymerase and ends transcription before it reaches lacY and lacA. The earlier the stop, the longer the bare stretch and the stronger the effect. Rho mutations relieve this polarity."},
+ {p:3,title:'Cause 2: insertions that end transcription',draw:scInsert,
+  text:"Transposons and many antibiotic-resistance cassettes carry transcription terminators and stop codons in all reading frames. Inserted into the first gene of an operon, they end transcription inside it, silencing every gene downstream. This is why an insertion's phenotype must be checked by complementing the disrupted gene alone."},
+ {p:3,title:'Cause 3: translational coupling',draw:scCoupling,
+  text:"Sometimes a downstream gene's ribosome binding site is hidden in an RNA hairpin near the end of the upstream gene. Only a ribosome translating the upstream gene unwinds it, so the two genes are translated together. A nonsense mutation upstream leaves the hairpin closed and gene B unread. Untranslated RNA is also cut faster by RNase E."},
+ {p:3,title:'Polar, but upward: read-out promoters',draw:scReadout,
+  text:"A cassette can also push downstream genes the other way. Many resistance markers carry their own strong promoter, and if no terminator follows the marker, that promoter reads straight out into the genes beyond it. Genes B and C are overexpressed, and because the cassette promoter ignores the operon's regulators, they stay on even when the operon should be off. A phenotype may then come from too much B, not too little A."},
+ {p:3,title:'Backwards: antisense from a cassette',draw:scAntisense,
+  text:"Turn the cassette around and its promoter points back toward the genes upstream, making antisense RNA across gene A. Polymerases travelling in opposite directions collide and stall, which is called transcriptional interference. The antisense RNA also pairs with gene A's mRNA, masking its ribosome binding site or marking the duplex for cleavage by RNase III. Gene A falls, even though the insertion lies in gene B. Check the orientation of every cassette, or use a markerless deletion."},
+ {p:3,title:'Try it yourself',chips:true,draw:scExplore,
+  text:"Choose a mutation in a three-gene operon and watch what happens to all three genes. Effects can run downstream, as loss or as overexpression, and even upstream. To make a clean knockout, use an in-frame deletion, and check any cassette's orientation and promoter."}
+];
+
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className=s.p>1?'p'+s.p:'';b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+MUTS.forEach((m,k)=>{const b=document.createElement('button');b.type='button';b.textContent=m.label;b.onclick=()=>{mutSel=k;render();};chips.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  chips.hidden=!sc.chips;
+  [...chips.children].forEach((b,k)=>b.setAttribute('aria-pressed',k===mutSel));
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  [1,2,3].forEach(k=>$('part'+k).setAttribute('aria-current',sc.p===k));
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+[1,2,3].forEach(k=>$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>

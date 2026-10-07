@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repairing DNA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#A4473A"/></marker>
+  <marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#2F5276"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">DNA repair · an animated primer</p>
+    <h1>Keeping the genome intact</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · Damage</button>
+    <button id="part2" type="button">II · Direct reversal</button>
+    <button id="part3" type="button">III · Excision repair</button>
+    <button id="part4" type="button">IV · Breaks &amp; recombination</button>
+    <button id="part5" type="button">V · SOS &amp; tolerance</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Protein names are from <i>E. coli</i> unless another organism is named; the main eukaryotic counterparts are given on each plate. Strands are drawn 5′→3′ left to right on top. DNA and proteins are schematics, not to scale.</p>
+</div>
+<script>
+
+
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== shared translation glyphs ===================== */
+const SSU='#D9C89B', LSU='#BBA27A', TRNA_C='#8FB1CF', AA_C='#4F7A3F', CHAIN=['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#B4766E','#5E7F7A'];
+const GRP={np:['nonpolar','#D6C79F'],po:['polar','#A9C4DC'],ac:['acidic','#E7A99B'],ba:['basic','#B9A0C8']};
+const AAS=[['G','Gly','np'],['A','Ala','np'],['V','Val','np'],['L','Leu','np'],['I','Ile','np'],['P','Pro','np'],['F','Phe','np'],['M','Met','np'],['W','Trp','np'],
+ ['S','Ser','po'],['T','Thr','po'],['C','Cys','po'],['N','Asn','po'],['Q','Gln','po'],['Y','Tyr','po'],['D','Asp','ac'],['E','Glu','ac'],['K','Lys','ba'],['R','Arg','ba'],['H','His','ba']];
+const THREE=Object.fromEntries(AAS.map(a=>[a[0],a[1]]));THREE['*']='Stop';
+const CODE='FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+function tr(c){const o='UCAG';const i=16*o.indexOf(c[0])+4*o.indexOf(c[1])+o.indexOf(c[2]);return CODE[i];}
+function sub(x,y,k){return k;} // placeholder
+
+function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
+  const S=v=>v*k;
+  let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
+  return s+'</g>';
+}
+function chain(x,y,k,n,dir=-1){let s='';for(let i=0;i<n;i++){const xx=x-i*k*6,yy=y-i*k*13;s+=`<circle cx="${xx}" cy="${yy}" r="${k*7}" fill="${CHAIN[i%CHAIN.length]}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}return s;}
+function ribosome(cx,my,k,o={}){
+  const S=v=>v*k, sx={E:cx-S(50),P:cx,A:cx+S(50)};
+  let s='';
+  if(o.large!==false)s+=`<path d="M${cx-S(130)} ${my-S(22)} C ${cx-S(156)} ${my-S(160)}, ${cx+S(156)} ${my-S(160)}, ${cx+S(130)} ${my-S(22)} C ${cx+S(80)} ${my-S(36)}, ${cx-S(80)} ${my-S(36)}, ${cx-S(130)} ${my-S(22)} Z" fill="${LSU}" opacity=".55" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
+  if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
+  if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
+  return s;
+}
+
+function timeline(x,y,ev,wrapN,fs,indent,gap,d0){let s='',yy=y;ev.forEach((e,i)=>{const L=wrap(e[1],wrapN);s+=G('a-fade',(d0+i*.4).toFixed(1),T(x,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(x+indent,yy+j*18,l,'lab start '+fs)).join(''));yy+=L.length*18+gap;});return {s,y:yy};}
+/* ===================== text & layout utilities ===================== */
+const FX=(v,d=1)=>Number(v).toFixed(d);
+const SB=t=>`<tspan baseline-shift="-24%" style="font-size:.72em">${t}</tspan>`;
+const SP=t=>`<tspan baseline-shift="super" style="font-size:.72em">${t}</tspan>`;
+function para(x,y,text,wn,cls='note start f13',lh=17,d=0){const L=wrap(text,wn);return {s:G('a-fade',d,L.map((l,j)=>T(x,y+j*lh,l,cls)).join('')),y:y+L.length*lh};}
+function boxItem(x,y,W,head,body,o={}){
+  const L=wrap(body,Math.floor(W/(o.cw||6.3))), H=34+L.length*16+8;
+  return {s:box(x,y,W,o.H||H,o.fill||'#E7DEC9',4)+(o.num?badge(x+14,y+16,o.num):'')+T(x+(o.num?28:12),y+21,head,'lab start f14')
+    +L.map((l,j)=>T(x+12,y+42+j*16,l,'note start f12')).join(''),h:H};
+}
+function bullets(x,y,items,wrapN,o={}){
+  let s='',yy=y;
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=L.length*17+(o.gap||30);});
+  return {s,y:yy};
+}
+function wtable(n,head,rows,cols,o={}){
+  let y=o.y0||30, s=''; const R2=o.R||(n?350:620);
+  s+=G('a-fade',o.d0||0,head.map((h,i)=>T(cols[i][0],y,h,'cname start '+(n?'f13':'f14'))).join('')+ln(cols[0][0]-4,y+7,R2,y+7));
+  y+=26;
+  rows.forEach((r,i)=>{const W=r.map((c,j)=>wrap(c,cols[j][1])); const L=Math.max(...W.map(w=>w.length)); const h=L*16+10;
+    const hi=o.hi===i;
+    s+=G('a-fade',((o.d0||0)+.1*i).toFixed(2),(hi?`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+        :(i%2?'':`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" fill="#E7DEC9" opacity=".5"/>`))
+      +W.map((w,j)=>w.map((l,k)=>T(cols[j][0],y+k*16,l,(j?'note':'lab')+' start '+(n?'f12':'f13'))).join('')).join(''));
+    y+=h;});
+  return {s,y};
+}
+
+/* ===================== DNA-repair toolkit ===================== */
+const BB='#5A4632', NEW='#3E7FA8', LESU='#A4473A', OXO='#7D4A98', METH='#C17A2C', CPDC='#C99A2E', INV='#C17A2C',
+      E1='#9DB4AE', E2='#B4766E', E3='#D9B85A', E4='#A9C4DC', E5='#A9C49A', E6='#C9A9D6', RECAC='#E3B26B', PAPR='#ECE4D2';
+function segAt(segs,i){for(const s of segs)if(i>=s[0]&&i<s[1])return s[2]||BB;return null;}
+/* ladder: n base pairs from x; top strand at y, bottom at y+g.
+   o.top/o.bot = [[i0,i1,col]] strand segments; o.mk = {i:{t:col,b:col,tx:1,bx:1}} (tx/bx = base missing)
+   o.lab=[{i,s,t,col}]; o.dimer=[i]; o.me=[{i,s,op}]; o.nick=[{i,s}] (gap before index i); o.flip=[{i,s,col}] */
+function lad(x,y,n,o={}){
+  const dx=o.dx||12,g=o.g||24,top=o.top||[[0,n,BB]],bot=o.bot||[[0,n,BB]],mk=o.mk||{};
+  let s='';
+  for(let i=0;i<n;i++){const cx=x+i*dx+dx/2, tc=segAt(top,i), bc=segAt(bot,i), m=mk[i]||{};
+    if(tc&&!m.tx){const c=m.t;s+=`<path d="M${FX(cx)} ${FX(y)} V${FX(y+g/2-1.5)}" stroke="${c||tc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}
+    if(bc&&!m.bx){const c=m.b;s+=`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g/2+1.5)}" stroke="${c||bc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}}
+  const bbp=(segs,yy)=>segs.map(sg=>`<path d="M${FX(x+sg[0]*dx)} ${FX(yy)} H${FX(x+sg[1]*dx)}" stroke="${sg[2]||BB}" stroke-width="2.8"/>`).join('');
+  s+=bbp(top,y)+bbp(bot,y+g);
+  (o.nick||[]).forEach(k=>{const xx=x+k.i*dx, yy=k.s==='b'?y+g:y;s+=`<rect x="${FX(xx-2)}" y="${FX(yy-2.5)}" width="4" height="5" fill="${PAPR}"/>`;});
+  (o.dimer||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2-4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.dimerB||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2+4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.flip||[]).forEach(f=>{const cx=x+f.i*dx+dx/2;s+=f.s==='b'?`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g+12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`
+      :`<path d="M${FX(cx)} ${FX(y)} V${FX(y-12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`;});
+  (o.me||[]).forEach(m=>{const cx=x+m.i*dx+dx/2, yy=m.s==='b'?y+g+6:y-6;s+=`<circle cx="${FX(cx)}" cy="${FX(yy)}" r="3.2" fill="${METH}" stroke="${INK}" stroke-width=".6"${m.op?` opacity="${m.op}"`:''}/>`;});
+  (o.lab||[]).forEach(L=>{const cx=x+L.i*dx+dx/2;s+=Tc(FX(cx+(L.dx||0)),FX(L.s==='b'?y+g+(L.dy||16):y-(L.dy||7)),L.t,L.col||'#3A2E22',L.fs||10,'mono mid','600');});
+  if(o.ends)s+=Tc(x-5,y+4,'5′','#6A5B47',10,'mono end')+Tc(x-5,y+g+4,'3′','#6A5B47',10,'mono end')
+    +Tc(x+n*dx+5,y+4,'3′','#6A5B47',10,'mono start')+Tc(x+n*dx+5,y+g+4,'5′','#6A5B47',10,'mono start');
+  return s;
+}
+function prot(cx,cy,rx,ry,fill,label,o={}){
+  return blob(FX(cx),FX(cy),rx,ry,fill,o.op?`opacity="${o.op}"`:'')+(label?Tc(FX(cx),FX(cy+3.8),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function ring(cx,cy,rx,ry,fill,label,o={}){
+  return `<ellipse cx="${FX(cx)}" cy="${FX(cy)}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity=".55" stroke="${INK}" stroke-width="1.1" class="tint"/>`
+    +(label?Tc(FX(cx+(o.ldx||0)),FX(cy+(o.ldy!==undefined?o.ldy:-ry-5)),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function recaFil(x1,x2,y,o={}){let s='';for(let x=x1;x<=x2-8;x+=9)s+=`<rect x="${FX(x)}" y="${FX(y-6)}" width="8" height="12" rx="3" fill="${o.col||RECAC}" stroke="${INK}" stroke-width=".7"/>`;
+  return s+(o.label?Tc(FX((x1+x2)/2),FX(y-11),o.label,'#8C5A1E',10,'mono mid','600'):'');}
+function ssb(cx,y){return `<circle cx="${FX(cx)}" cy="${FX(y)}" r="5" fill="${E4}" stroke="${INK}" stroke-width=".7"/>`;}
+function arw(x1,y1,x2,y2,o={}){const m=o.red?'ahr':o.blue?'ahb':'ahp', c=o.red?'#A4473A':o.blue?'#2F5276':(o.col||'#6A5B47');
+  return `<path d="M${FX(x1)} ${FX(y1)} ${o.q?`Q${FX(o.q[0])} ${FX(o.q[1])} `:'L'}${FX(x2)} ${FX(y2)}" stroke="${c}" stroke-width="${o.w||1.6}" fill="none" marker-end="url(#${m})"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
+function pairBox(cx,cy,t,b,o={}){const w=o.w||62,h=o.h||46;
+  return box(cx-w/2,cy-h/2,w,h,o.fill||'#EFE6D2',5)+Tc(cx,cy-5,t,o.tc||'#3A2E22',o.fs||13,'mono mid','600')
+    +`<path d="M${cx-10} ${cy+1} h20" stroke="${INK}" stroke-width="1" stroke-dasharray="2 2"/>`+Tc(cx,cy+17,b,o.bc||'#3A2E22',o.fs||13,'mono mid','600');}
+function photon(x1,y1,x2,y2,col='#3E7FA8'){const L=Math.hypot(x2-x1,y2-y1), a=Math.atan2(y2-y1,x2-x1)*180/Math.PI; let d='M0 0';
+  for(let t=0;t<L-12;t+=8)d+=` q2 -5 4 0 q2 5 4 0`;
+  return `<g transform="translate(${FX(x1)} ${FX(y1)}) rotate(${FX(a)})"><path d="${d} L${FX(L-2)} 0" stroke="${col}" stroke-width="1.6" fill="none" marker-end="url(#ahb)"/></g>`;}
+/* left-text / right-drawing steps; d(x,y,w) draws a ladder whose top strand is at y */
+function stepsLad(n,steps,o={}){
+  let s='',y=o.y0||24;
+  const tx=n?16:20;
+  steps.forEach((st,i)=>{const L=wrap(st.t,n?52:(o.wn||36)), th=22+L.length*16, top=st.top||24, dh=st.dh||44, dl=((o.d0||0)+i*.6).toFixed(1);
+    const head=badge(tx+8,y-4,i+1)+T(tx+22,y,st.h,'cname start f14')+L.map((l,j)=>T(tx,y+20+j*16,l,'note start f12')).join('');
+    if(n){const dy=y+th+top;s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(24,dy,312));y=dy+dh+28;}
+    else{const h=Math.max(th,top+dh-8);s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(o.dx0||284,y-14+top,o.dw||330));
+      y+=h+22;if(i<steps.length-1)s+=ln(tx,y-14,620,y-14,'#6A5B47',.5,'2 4');}});
+  return {s,y};
+}
+function cut(cx,y){return Tc(FX(cx),FX(y),'\u25be','#A4473A',15,'mono mid');}
+function oligo(x1,x2,y,dx,dim){let s=`<path d="M${FX(x1)} ${FX(y)} H${FX(x2)}" stroke="${BB}" stroke-width="2.6"/>`;
+  for(let xx=x1+dx/2;xx<x2;xx+=dx)s+=`<path d="M${FX(xx)} ${FX(y)} V${FX(y+10)}" stroke="${BB}" stroke-width="1.8" opacity=".7"/>`;
+  if(dim!==undefined)s+=`<path d="M${FX(x1+dim*dx+dx/2)} ${FX(y)} V${FX(y+10)} M${FX(x1+(dim+1)*dx+dx/2)} ${FX(y)} V${FX(y+10)}" stroke="${CPDC}" stroke-width="4.5"/><path d="M${FX(x1+dim*dx+dx/2)} ${FX(y+7)} h${FX(dx)}" stroke="${CPDC}" stroke-width="3"/>`;
+  return s;}
+function tbox(cx,cy,w,t,o={}){return box(cx-w/2,cy-14,w,28,o.fill||'#EFE6D2',4)+Tc(cx,cy+4,t,o.tc||'#3A2E22',o.fs||12,'mono mid','600');}
+/* ===================== Part I · damage ===================== */
+function callout(cx,y,g,ty,name,cause,up,d){
+  return G('a-fade',d,up?ln(FX(cx),y-20,FX(cx),ty+5,'#6A5B47',.8)+T(FX(cx),ty-14,name,'cname mid f13')+T(FX(cx),ty,cause,'note mid f11')
+                         :ln(FX(cx),y+g+10,FX(cx),ty-15,'#6A5B47',.8)+T(FX(cx),ty,name,'cname mid f13')+T(FX(cx),ty+14,cause,'note mid f11'));
+}
+function scDamage(n){
+  const dx=14,g=26; let s='',y;
+  if(!n){const x=40; y=150;
+    s+=G('a-fade',0,lad(x,y,34,{dx,g,mk:{4:{tx:1},11:{t:LESU},17:{t:CPDC},18:{t:CPDC},24:{t:METH},28:{b:OXO}},dimer:[17],me:[{i:24,s:'t'}],
+        lab:[{i:11,t:'U',col:LESU,dy:14},{i:28,s:'b',t:'oG',col:OXO,dy:18}]})+G('a-move',.6,lad(x+34*dx+10,y,6,{dx,g}),'--dx:-10px'));
+    const c=i=>x+i*dx+dx/2;
+    s+=callout(c(4),y,g,y-40,'abasic site','depurination',1,.6)+callout(c(11),y,g,y-84,'uracil','cytosine deamination',1,.9)
+      +callout(c(17.5),y,g,y-40,'thymine dimer','UV light',1,1.2)+callout(c(24),y,g,y-84,'O⁶-methylguanine','alkylating agents',1,1.5)
+      +callout(c(28),y,g,y+g+44,'8-oxoguanine','reactive oxygen',0,1.8)+callout(x+34*dx+5,y,g,y-40,'double-strand break','collapsed forks, quinolones',1,2.1);
+    y+=g+92;
+  }else{const x=26; y=110; const c=i=>x+i*dx+dx/2;
+    s+=G('a-fade',0,lad(x,y,22,{dx,g,mk:{3:{tx:1},10:{t:LESU},16:{t:CPDC},17:{t:CPDC}},dimer:[16],lab:[{i:10,t:'U',col:LESU,dy:14}]}));
+    s+=callout(c(3),y,g,y-36,'abasic site','depurination',1,.6)+callout(c(10),y,g,y-76,'uracil','cytosine deamination',1,.9)+callout(c(16.5),y,g,y-36,'thymine dimer','UV light',1,1.2);
+    const y2=y+g+150;
+    s+=G('a-fade',1.4,lad(x,y2,16,{dx,g,mk:{3:{t:METH},9:{b:OXO}},me:[{i:3,s:'t'}],lab:[{i:9,s:'b',t:'oG',col:OXO,dy:18}]})+G('a-move',2,lad(x+16*dx+10,y2,6,{dx,g}),'--dx:-10px'));
+    s+=callout(c(3),y2,g,y2-36,'O⁶-methylguanine','alkylating agents',1,1.6)+callout(c(9),y2,g,y2+g+44,'8-oxoguanine','reactive oxygen',0,1.8)
+      +callout(x+16*dx+5,y2,g,y2-76,'double-strand break','collapsed forks, quinolones',1,2.1);
+    y=y2+g+92;}
+  const p=para(n?16:24,y,'Spontaneous chemistry alone does a great deal: Lindahl estimated about 10,000 depurinations and 100–500 cytosine deaminations per mammalian cell per day. Bacteria face the same chemistry, plus oxidative attack from host phagocytes and the damage some antibiotics cause. Each kind of lesion has its own repair route.',n?50:92,'note start f13',17,2.4);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+function scConseq(n){
+  let s='';
+  const B=n?[[46,78],[138,78],[230,46],[230,110],[318,46]]:[[70,78],[200,78],[340,46],[340,110],[490,46]], w=n?50:62;
+  const red='#A4473A';
+  s+=G('a-fade',0,pairBox(B[0][0],B[0][1],'C','G',{w}));
+  s+=G('a-fade',.5,arw(B[0][0]+w/2+3,B[0][1],B[1][0]-w/2-4,B[1][1])+T((B[0][0]+B[1][0])/2,B[0][1]-30,n?'deaminate':'deamination','note mid f11')+pairBox(B[1][0],B[1][1],'U','G',{w,tc:red}));
+  s+=G('a-fade',1,arw(B[1][0]+w/2+3,B[1][1]-6,B[2][0]-w/2-4,B[2][1])+arw(B[1][0]+w/2+3,B[1][1]+6,B[3][0]-w/2-4,B[3][1])+T((B[1][0]+B[2][0])/2,B[2][1]-30,n?'replicate':'replication','note mid f11')
+    +pairBox(B[2][0],B[2][1],'U','A',{w,tc:red})+pairBox(B[3][0],B[3][1],'C','G',{w}));
+  s+=G('a-fade',1.6,arw(B[2][0]+w/2+3,B[2][1],B[4][0]-w/2-4,B[4][1],{red:1})+T((B[2][0]+B[4][0])/2,B[4][1]-30,n?'replicate':'replication','note mid f11')
+    +pairBox(B[4][0],B[4][1],'T','A',{w,fill:'#E9C9C1'})+Tc(B[4][0],B[4][1]+(n?40:42),n?'mutant':'C·G → T·A','#A4473A',n?11:12,'mono mid','600'));
+  const rows=[['Uracil (from C)','A','C·G → T·A transition'],['8-Oxoguanine','C, or A','G·C → T·A transversion'],
+   ['O⁶-Methylguanine','T','G·C → A·T transition'],['Thymine dimer','blocks Pol III','fork stalls; bypass is error-prone'],
+   ['Abasic site','no information','often A inserted opposite'],['Double-strand break','—','chromosome lost unless repaired']];
+  const t=wtable(n,['Lesion','Pairs with','Outcome if copied'],rows,n?[[12,17],[124,14],[226,20]]:[[24,26],[230,22],[400,34]],{y0:n?176:174,d0:2});
+  const p=para(n?16:24,t.y+14,'A lesion either mispairs, becoming a mutation at the next replication, or blocks polymerases, stalling replication and transcription. Repair has to finish before the replisome arrives, or the damage must be tolerated when it does.',n?50:92,'note start f13',17,2.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
+}
+
+const HIST=[['1949','Albert Kelner and Renato Dulbecco find that visible light rescues UV-killed bacteria and phage: photoreactivation'],
+ ['1964','Setlow and Carrier, and Boyce and Howard-Flanders, show that E. coli cuts thymine dimers out in the dark; Pettijohn and Hanawalt detect repair synthesis'],
+ ['1968','Rupp and Howard-Flanders find that gaps left opposite lesions are filled by recombination'],
+ ['1974','Tomas Lindahl discovers uracil-DNA glycosylase in E. coli, the first base-excision enzyme; Miroslav Radman proposes the SOS response'],
+ ['1976','Wagner and Meselson propose that methylation marks the old strand for mismatch repair'],
+ ['1977','Leona Samson and John Cairns describe the adaptive response to alkylation'],
+ ['1983','Aziz Sancar and Dean Rupp reconstitute the UvrABC excision nuclease'],
+ ['1989','Paul Modrich’s group reconstitutes methyl-directed mismatch repair']];
+function scHistory(n){
+  const t=n?timeline(14,30,HIST,44,'f13',46,10,0):timeline(24,32,HIST,58,'f13',54,10,0);
+  let s=t.s;
+  const mx=n?180:548, my=n?t.y+56:150;
+  s+=G('a-pop',3.4,medal(mx,my,n?40:50,'2015',[['Lindahl · Modrich · Sancar','note mid f12'],['for mechanistic studies of DNA repair','note mid f11']]));
+  return {vb:n?slim(my+100):wide(Math.max(t.y,300)+4),s};
+}
+
+/* ===================== Part II · direct reversal ===================== */
+function phPanel(k,cx,y){
+  const x=cx-70, dx=14, g=24; let s='';
+  if(k===0)s+=lad(x,y,10,{dx,g,mk:{4:{t:CPDC},5:{t:CPDC}},dimer:[4]})+photon(cx-56,y-62,cx-6,y-12,'#7D4A98')+Tc(cx-60,y-64,'UV','#7D4A98',11,'mono end','600');
+  if(k===1){s+=lad(x,y,10,{dx,g,mk:{4:{tx:1},5:{tx:1}},flip:[{i:4,s:'t',col:CPDC},{i:5,s:'t',col:CPDC}]})+`<path d="M${x+4.5*dx} ${y-9} h${dx}" stroke="${CPDC}" stroke-width="3"/>`;
+    s+=`<ellipse cx="${cx}" cy="${y-24}" rx="50" ry="21" fill="${E6}" fill-opacity=".72" stroke="${INK}" stroke-width="1.1"/>`+Tc(cx-26,y-26,'PhrB','#3A2E22',11,'mono mid','600')
+      +`<circle cx="${cx+24}" cy="${y-30}" r="6" fill="${E3}" stroke="${INK}"/>`+Tc(cx+32,y-12,'FADH⁻','#3A2E22',9,'mono start','600')
+      +arw(cx+19,y-28,cx+8,y-12,{blue:1,w:1.2})+photon(cx+62,y-72,cx+30,y-38);}
+  if(k===2)s+=lad(x,y,10,{dx,g,mk:{4:{t:'#4F7A3F'},5:{t:'#4F7A3F'}},lab:[{i:4.5,t:'T T',col:'#3E6131'}]})
+    +G('a-move',.9,`<ellipse cx="${cx+40}" cy="${y-46}" rx="34" ry="15" fill="${E6}" fill-opacity=".6" stroke="${INK}" stroke-width="1"/>`+Tc(cx+40,y-42,'PhrB','#3A2E22',10,'mono mid','600'),'--dx:-40px;--dy:22px');
+  return s;
+}
+function scPhotolyase(n){
+  const P=[['UV makes a dimer','Two adjacent thymines become covalently joined.'],['Photolyase and blue light','The enzyme flips the dimer into its pocket. Absorbed light drives one electron from FADH⁻ into the dimer.'],
+   ['The dimer splits','The ring breaks, the electron returns to the flavin, and the enzyme lets go.']];
+  let s='',y;
+  if(!n){const cx=[110,320,530], ly=124;
+    P.forEach((p,i)=>{s+=G('a-fade',(i*.8).toFixed(1),T(cx[i],30,p[0],'cname mid f14')+phPanel(i,cx[i],ly)+wrap(p[1],30).map((l,j)=>T(cx[i],ly+48+j*16,l,'note mid f12')).join(''));
+      if(i<2)s+=G('a-fade',(i*.8+.5).toFixed(1),arw(cx[i]+80,ly+12,cx[i+1]-82,ly+12));});
+    y=ly+48+3*16+28;}
+  else{y=30;P.forEach((p,i)=>{const L=wrap(p[1],22);s+=G('a-fade',(i*.8).toFixed(1),T(14,y,p[0],'cname start f13')+L.map((l,j)=>T(14,y+18+j*15,l,'note start f11')).join('')+phPanel(i,262,y+66));y+=128;});y+=6;}
+  const b=bullets(n?24:30,y,[['Two cofactors','Reduced FAD does the chemistry. A second chromophore, methenyltetrahydrofolate in E. coli, harvests light like an antenna and passes the energy on.'],
+   ['One enzyme, one lesion','E. coli photolyase (phr) repairs cyclobutane pyrimidine dimers. Some organisms have a separate (6–4) photolyase for the other major UV lesion.'],
+   ['In eukaryotes','Many have photolyases, but placental mammals lost them and rely on nucleotide excision repair. Their relatives, the cryptochromes, became blue-light receptors and clock proteins.']],n?44:88,{d0:2.4,gap:26});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function geneArrow(x,y,w,label,fill){return `<path d="M${x} ${y-8} h${w-8} l8 8 l-8 8 h${-(w-8)} z" fill="${fill}" stroke="${INK}" stroke-width="1"/>`+Tc(x+(w-8)/2,y+4,label,'#3A2E22',11,'mono mid','600');}
+function adaLoop(ox,oy){
+  let s=G('a-fade',1.6,T(ox+130,oy+30,'The adaptive response','cname mid f14')+prot(ox+60,oy+76,34,16,E3,'Ada')+`<circle cx="${ox+92}" cy="${oy+66}" r="4" fill="${METH}" stroke="${INK}" stroke-width=".7"/>`
+    +T(ox+102,oy+72,'methylated at Cys38','note start f11')+T(ox+102,oy+86,'(from a methyl-phosphotriester)','note start f11'));
+  s+=G('a-fade',2.2,arw(ox+50,oy+94,ox+28,oy+146)+T(ox+50,oy+126,'activates','note start f11'));
+  s+=G('a-fade',2.4,dsDNA(ox,ox+272,oy+168)+`<rect x="${ox+6}" y="${oy+164}" width="12" height="16" fill="${LESU}" opacity=".75"/>`+`<rect x="${ox+144}" y="${oy+164}" width="12" height="16" fill="${LESU}" opacity=".75"/>`
+    +geneArrow(ox+20,oy+156,58,'ada',E3)+geneArrow(ox+80,oy+156,58,'alkB',E5)+geneArrow(ox+158,oy+156,54,'alkA',E4)+geneArrow(ox+214,oy+156,54,'aidB','#D6C79F')
+    +T(ox+12,oy+196,'Ada box','note start f11')+T(ox+80,oy+210,'more Ada; AlkB demethylase','note mid f11')+T(ox+214,oy+210,'AlkA glycosylase','note mid f11'));
+  return s;
+}
+function scAda(n){
+  let s='';const x=40,dx=14,g=24,y1=104,y2=200;
+  s+=G('a-fade',0,T(24,36,'Repair by methyl transfer','cname start f14')+lad(x,y1,10,{dx,g,mk:{4:{t:METH}},me:[{i:4,s:'t'}],lab:[{i:4,t:'O⁶-meG',col:'#8C5A1E',dy:14}]}));
+  s+=G('a-drop',.5,prot(x+4.5*dx+70,y1-34,30,15,E3,'Ada'));
+  s+=G('a-fade',1,arw(x+70,y1+g+8,x+70,y2-12)+lad(x,y2,10,{dx,g,mk:{4:{t:'#4F7A3F'}},lab:[{i:4,t:'G',col:'#3E6131'}]})
+    +prot(x+200,y2+10,30,15,E3,'Ada')+`<circle cx="${x+230}" cy="${y2}" r="4" fill="${METH}" stroke="${INK}" stroke-width=".7"/>`+T(x+200,y2+42,'Cys321–CH₃','note mid f11'));
+  const cp=para(24,y2+g+52,'The methyl group moves onto Ada’s own cysteine. Ada cannot take it off again, so each molecule repairs one lesion and is spent.',n?50:44,'note start f12',16,1.3);
+  s+=cp.s;
+  const ox=n?24:344, oy=n?cp.y+6:20;
+  s+=adaLoop(ox,oy);
+  const by=Math.max(cp.y,oy+212)+34;
+  const b=bullets(n?24:30,by,[['AlkB','An Fe(II)/α-ketoglutarate dioxygenase that oxidises methyl groups off 1-methyladenine and 3-methylcytosine, releasing formaldehyde (Trewick et al. and Falnes et al., 2002).'],
+   ['Ogt','A second, constitutive O⁶-alkylguanine methyltransferase gives a low baseline of protection.'],
+   ['In eukaryotes','MGMT does Ada’s job (and blunts the anticancer alkylator temozolomide); ALKBH proteins are AlkB relatives. There is no adaptive response.']],n?44:88,{d0:3,gap:26});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+/* ===================== Part III · excision repair ===================== */
+function berD(k){return (x,y,w)=>{const n=16,dx=w/n,g=24,c=i=>x+i*dx+dx/2, bl={i:8,s:'b',t:'G',dy:16};
+  if(k===0)return lad(x,y,n,{dx,g,mk:{8:{t:LESU}},lab:[{i:8,t:'U',col:LESU},bl]});
+  if(k===1)return lad(x,y,n,{dx,g,mk:{8:{tx:1}},lab:[bl]})+prot(c(8)-30,y-20,24,12,E2,'Ung')+G('a-move',.9,`<rect x="${FX(c(8)+6)}" y="${y-30}" width="10" height="14" rx="2" fill="${LESU}"/>`+T(c(8)+22,y-18,'U','note start f12'),'--dx:-14px;--dy:20px')+T(c(8),y+g+30,'AP site','note mid f11');
+  if(k===2)return lad(x,y,n,{dx,g,mk:{8:{tx:1}},nick:[{i:8,s:'t'}],lab:[bl]})+prot(c(8),y-22,26,12,E4,'Xth')+cut(x+8*dx,y-4);
+  if(k===3)return lad(x,y,n,{dx,g,top:[[0,8],[8,11,NEW],[11,16]],nick:[{i:11,s:'t'}],lab:[bl,{i:8,t:'C',col:NEW}]})+prot(c(11),y-22,28,12,E5,'Pol I');
+  return lad(x,y,n,{dx,g,top:[[0,8],[8,11,NEW],[11,16]],lab:[bl,{i:8,t:'C',col:NEW}]})+G('a-move',.6,prot(c(13),y-26,26,12,E3,'LigA',{op:.85}),'--dx:-20px;--dy:8px');};}
+function scBER(n){
+  const st=[{h:'Damage',t:'Cytosine has deaminated to uracil, which pairs like thymine.',d:berD(0)},
+   {h:'Glycosylase',t:'Uracil-DNA glycosylase (Ung) flips the base out of the helix and cuts it from its sugar, leaving an abasic (AP) site.',d:berD(1),dh:52,top:36},
+   {h:'AP endonuclease',t:'Exonuclease III (Xth) or endonuclease IV (Nfo) cuts the backbone on the 5′ side of the AP site.',d:berD(2),top:34},
+   {h:'DNA polymerase I',t:'Pol I fills in and, with its 5′→3′ exonuclease, removes the sugar remnant and a few nucleotides ahead.',d:berD(3),top:34},
+   {h:'Ligase',t:'DNA ligase (LigA, which uses NAD⁺ in bacteria) seals the nick.',d:berD(4),top:36}];
+  const r=stepsLad(n,st,{y0:26});
+  const p=para(n?16:24,r.y+4,'Each glycosylase recognises a family of damaged bases: Ung (uracil), MutM/Fpg and Nth (oxidised bases), AlkA and Tag (3-methyladenine), MutY (adenine opposite 8-oxoG). In eukaryotes: UNG, OGG1, NTHL1, MUTYH and AAG; then APE1, Pol β, and ligase III with XRCC1.',n?50:92,'note start f13',17,3.2);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};
+}
+
+function scGO(n){
+  let s='';
+  const w=n?64:72, P=n?{gc:[62,92],ogc:[282,92],oga:[282,244],ta:[62,244]}:{gc:[90,92],ogc:[330,92],oga:[330,250],ta:[90,250]};
+  const OX={tc:OXO}, h2=23;
+  s+=G('a-fade',0,T(n?16:24,34,'Repairing 8-oxoG in DNA','cname start f14')+pairBox(...P.gc,'G','C',{w}));
+  s+=G('a-fade',.5,arw(P.gc[0]+w/2+4,P.gc[1]-8,P.ogc[0]-w/2-4,P.ogc[1]-8)+T((P.gc[0]+P.ogc[0])/2,P.gc[1]-16,'ROS','note mid f12')+pairBox(...P.ogc,'8oG','C',{w,tc:OXO}));
+  s+=G('a-fade',1,arw(P.ogc[0]-w/2-4,P.ogc[1]+10,P.gc[0]+w/2+4,P.gc[1]+10,{blue:1})+Tc((P.gc[0]+P.ogc[0])/2,P.gc[1]+28,n?'MutM':'MutM excises 8-oxoG','#2F5276',11,'mono mid','600'));
+  s+=G('a-fade',1.5,arw(P.ogc[0]-10,P.ogc[1]+h2+4,P.oga[0]-10,P.oga[1]-h2-4)+T(P.ogc[0]-18,(P.ogc[1]+P.oga[1])/2,n?'copy':'replication','note end f12')+pairBox(...P.oga,'8oG','A',{w,tc:OXO,bc:LESU}));
+  s+=G('a-fade',2,arw(P.oga[0]+10,P.oga[1]-h2-4,P.ogc[0]+10,P.ogc[1]+h2+4,{blue:1})+Tc(P.ogc[0]+18,(P.ogc[1]+P.oga[1])/2-6,'MutY','#2F5276',11,'mono start','600')
+    +T(P.ogc[0]+18,(P.ogc[1]+P.oga[1])/2+10,n?'A out':'excises A','note start f11')+(n?'':T(P.ogc[0]+18,(P.ogc[1]+P.oga[1])/2+24,'Pol I puts C back','note start f11')));
+  s+=G('a-fade',2.5,arw(P.oga[0]-w/2-4,P.oga[1],P.ta[0]+w/2+4,P.ta[1],{red:1})+T((P.ta[0]+P.oga[0])/2,P.oga[1]-8,n?'copy again':'replication, if missed','note mid f12')
+    +pairBox(...P.ta,'T','A',{w,fill:'#E9C9C1'})+Tc(P.ta[0],P.ta[1]+40,'G·C → T·A','#A4473A',12,'mono mid','600'));
+  // pool
+  let y;
+  if(!n){const cx=530;
+    s+=G('a-fade',3,T(cx,34,'Cleaning the nucleotide pool','cname mid f14')+tbox(cx,74,110,'dGTP')+arw(cx,90,cx,128)+T(cx+8,112,'ROS','note start f12')
+      +tbox(cx,144,120,'8-oxo-dGTP',{tc:OXO})+arw(cx,160,cx,198,{blue:1})+Tc(cx+8,182,'MutT','#2F5276',11,'mono start','600')+tbox(cx,214,120,'8-oxo-dGMP')
+      +T(cx,246,'harmless; cannot be used','note mid f11'));
+    y=334;}
+  else{y=356;const xs=[56,180,304];
+    s+=G('a-fade',3,T(16,y-28,'Cleaning the nucleotide pool','cname start f14')+tbox(xs[0],y,76,'dGTP',{fs:11})+arw(xs[0]+40,y,xs[1]-48,y)+T((xs[0]+xs[1])/2-4,y-18,'ROS','note mid f11')
+      +tbox(xs[1],y,92,'8-oxo-dGTP',{tc:OXO,fs:11})+arw(xs[1]+48,y,xs[2]-48,y,{blue:1})+Tc((xs[1]+xs[2])/2+4,y-18,'MutT','#2F5276',10,'mono mid','600')+tbox(xs[2],y,92,'8-oxo-dGMP',{fs:11}));
+    y+=40;}
+  const t=wtable(n,['Mutant','What accumulates'],[['mutT','A·T → C·G, up to ~1000-fold; 8-oxo-dGTP is inserted opposite A'],['mutM','G·C → T·A, a few-fold'],['mutY','G·C → T·A, a few-fold'],['mutM mutY','G·C → T·A, strongly synergistic']],
+    n?[[14,12],[110,38]]:[[24,14],[160,70]],{y0:y,d0:3.4});
+  const p=para(n?16:24,t.y+12,'In humans the same three jobs are done by MTH1 (the pool), OGG1 (excises 8-oxoG) and MUTYH (excises A); inherited MUTYH defects cause MUTYH-associated polyposis.',n?50:92,'note start f13',17,3.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
+}
+
+function nerD(k){return (x,y,w)=>{const n=20,dx=w/n,g=24,c=i=>x+i*dx+dx/2, base={dx,g,mk:{9:{t:CPDC},10:{t:CPDC}},dimer:[9]};
+  if(k===0)return lad(x,y,n,base)+prot(c(3),y-30,17,11,E2,'A')+prot(c(5.4),y-30,17,11,E2,'A')+prot(c(4.2),y-12,18,9,E5,'B')+arw(c(7),y-22,c(8.4),y-22,{w:1.3});
+  if(k===1)return lad(x,y,n,base)+prot(c(9.5),y-14,22,10,E5,'UvrB')+G('a-move',.4,prot(c(14),y-36,17,11,E2,'A',{op:.6})+prot(c(16.4),y-36,17,11,E2,'A',{op:.6}),'--dx:-50px;--dy:20px');
+  if(k===2)return lad(x,y,n,{...base,nick:[{i:2,s:'t'},{i:15,s:'t'}]})+prot(c(9.5),y-14,22,10,E5,'UvrB')+prot(c(9.5),y-38,24,11,E3,'UvrC')+cut(x+2*dx,y-4)+cut(x+15*dx,y-4)
+    +Tc(x+2*dx,y+g+16,'8 nt 5′','#A4473A',10,'mono mid','600')+Tc(x+15*dx,y+g+16,'4–5 nt 3′','#A4473A',10,'mono mid','600');
+  if(k===3)return lad(x,y,n,{dx,g,top:[[0,2],[15,20]]})+G('a-move',.3,oligo(x+2*dx,x+15*dx,y-24,dx,7),'--dy:22px')+prot(c(16.5),y-22,22,11,E4,'UvrD')+T(c(8.5),y-34,'12–13 nt oligo','note mid f11');
+  return lad(x,y,n,{dx,g,top:[[0,2],[2,15,NEW],[15,20]]})+prot(c(13),y-22,26,11,E5,'Pol I');};}
+function scNER(n){
+  const st=[{h:'Scan',t:'UvrA₂B₂ tracks along DNA, sensing distortion of the helix rather than any particular chemistry.',d:nerD(0),top:40},
+   {h:'Verify',t:'UvrB clamps the damaged strand at the lesion and UvrA leaves.',d:nerD(1),top:40},
+   {h:'Incise',t:'UvrC cuts 8 nucleotides on the 5′ side and 4–5 on the 3′ side of the lesion.',d:nerD(2),top:50,dh:50},
+   {h:'Remove',t:'UvrD helicase releases the oligonucleotide, with UvrC, carrying the damage.',d:nerD(3),top:46},
+   {h:'Fill and seal',t:'DNA polymerase I fills the 12–13-nucleotide gap and LigA seals it.',d:nerD(4),top:34}];
+  const r=stepsLad(n,st,{y0:26});
+  const p=para(n?16:24,r.y+4,'In eukaryotes: XPC–RAD23B finds the distortion, TFIIH (with helicases XPB and XPD) opens it, XPA verifies, and XPF–ERCC1 and XPG cut, releasing 24–32 nucleotides. Inherited defects cause xeroderma pigmentosum, with extreme sensitivity to sunlight and skin cancer.',n?50:92,'note start f13',17,3.2);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};
+}
+
+function scTCR(n){
+  const N=n?22:40, dx=14, x=n?26:40, g=24, L=n?15:26, c=i=>x+i*dx+dx/2, base={dx,g,mk:{[L]:{b:CPDC},[L+1]:{b:CPDC}},dimerB:[L]};
+  const rna=(cx,cy)=>`<path d="M${FX(cx-14)} ${FX(cy-14)} q-26 -26 -76 -22" stroke="${RNAC}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  const rows=[['RNA polymerase stalls','A lesion in the template strand stops transcription; the stalled polymerase hides it from repair.'],
+   ['Mfd removes the polymerase','Mfd binds DNA behind RNAP and translocates forward, pushing it off.'],
+   ['Mfd hands over to NER','Mfd recruits UvrA₂B₂ to the exposed lesion, and excision repair follows.']];
+  let s='',y=28;
+  rows.forEach((r,k)=>{const L1=wrap(r[1],n?52:92), ly=y+18+L1.length*16+38;
+    let d=lad(x,ly,N,base);
+    if(k===0)d+=rna(c(L-2),ly+g/2)+rnap(c(L-2),ly+g/2,1.15);
+    if(k===1)d+=G('a-move',.4,rna(c(L-2),ly+g/2)+rnap(c(L-2),ly+g/2,1.15,false),'--dx:-24px')+G('a-move',.6,prot(c(L-6),ly+g/2,22,15,E2,'Mfd'),'--dx:-30px')+arw(c(L-3),ly-26,c(L+1),ly-26,{w:1.3});
+    if(k===2)d+=G('a-move',.3,`<g opacity=".4">${rnap(c(L+4),ly-26,.9)}</g>`,'--dx:-40px;--dy:30px')+prot(c(L-4),ly+g/2,22,15,E2,'Mfd')+prot(c(L-.5),ly-20,17,11,E2,'A')+prot(c(L+1.9),ly-20,17,11,E2,'A')+prot(c(L+.7),ly-2,18,9,E5,'B');
+    s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+L1.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
+    y=ly+g+36;});
+  const b=bullets(n?24:30,y+4,[['Template strand first','Lesions in the transcribed strand of an active E. coli gene are removed several times faster than in the other strand (Mellon and Hanawalt, 1989).'],
+   ['Mfd','The transcription-repair coupling factor (Selby and Sancar, 1993). A second route, in which UvrD pulls RNA polymerase backwards, has been proposed and is debated.'],
+   ['Beyond repair','Mfd also promotes mutagenesis; mfd mutants evolve antibiotic resistance more slowly (Ragheb et al., 2019).'],
+   ['In eukaryotes','CSB plays Mfd’s part; its loss causes Cockayne syndrome.']],n?44:88,{d0:2.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function mmrD(k){return (x,y,w)=>{const n=26,dx=w/n,g=24,c=i=>x+i*dx+dx/2;
+  const lab=[{i:4.5,t:'GATC',col:'#8C5A1E',dy:14},{i:18,t:'G'}], me=[{i:4,s:'t'}];
+  if(k===0)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[...lab,{i:18,s:'b',t:'T',col:LESU}]})+ring(c(18),y+g/2,15,22,E4,'MutS',{ldy:-26})+prot(c(13.4),y-20,22,10,E5,'MutL');
+  if(k===1)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[{i:18,t:'G'},{i:18,s:'b',t:'T',col:LESU}],nick:[{i:6,s:'b'}]})+ring(c(18),y+g/2,15,22,E4,'')+prot(c(13.4),y-20,22,10,E5,'MutL')
+    +prot(c(5),y+g+16,22,10,E3,'MutH')+`<path d="M${FX(c(11.6))} ${y-16} Q${FX(c(8))} ${y-36} ${FX(c(6))} ${y+g+4}" stroke="#2F5276" stroke-width="1.2" stroke-dasharray="3 3" fill="none" marker-end="url(#ahb)"/>`+cut(x+6*dx,y+g+5);
+  if(k===2)return lad(x,y,n,{dx,g,bot:[[0,6],[20,26]],me,lab:[{i:18,t:'G'}]})+prot(c(8),y+g+16,22,10,E4,'UvrD')+T(c(14),y+g+20,'exonucleases','note mid f11');
+  return lad(x,y,n,{dx,g,bot:[[0,6],[6,20,NEW],[20,26]],me:[{i:4,s:'t'},{i:4,s:'b',op:.6}],lab:[{i:18,t:'G'},{i:18,s:'b',t:'C',col:NEW},{i:4.5,t:'GATC',col:'#8C5A1E',dy:14}]})+prot(c(13),y+g+16,26,10,E5,'Pol III');};}
+function scMMR(n){
+  const st=[{h:'Recognise',t:'Dam methylates GATC, but a newly made strand is briefly unmethylated. MutS clamps on the mismatch; MutL joins it.',d:mmrD(0),top:40,dh:44},
+   {h:'Nick',t:'MutL activates MutH, which nicks the unmethylated new strand at a GATC that may be a kilobase away.',d:mmrD(1),top:40,dh:56},
+   {h:'Excise',t:'UvrD unwinds from the nick past the mismatch, and exonucleases digest the new strand.',d:mmrD(2),top:24,dh:56},
+   {h:'Resynthesise',t:'Pol III fills the gap, ligase seals it, and Dam then methylates the new strand.',d:mmrD(3),top:24,dh:56}];
+  const r=stepsLad(n,st,{y0:26});
+  const p=para(n?16:24,r.y+4,'Mismatch repair makes replication 100–1000 times more accurate. Dam and MutH occur only in E. coli and its close relatives; most bacteria and all eukaryotes lack them, and MutL itself nicks the new strand, guided by strand ends and the β clamp (PCNA). Human MSH2–MSH6 and MLH1–PMS2 defects cause Lynch syndrome.',n?50:92,'note start f13',17,3);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};
+}
+
+const LES=[{n:'Uracil',o:{mk:{9:{t:LESU}},lab:[{i:9,t:'U',col:LESU}]},path:'Base excision repair',eco:'Ung → Xth or Nfo → Pol I → LigA',hum:'UNG → APE1 → Pol β → ligase III',un:'C·G → T·A transitions'},
+ {n:'8-Oxoguanine',o:{mk:{9:{t:OXO}},lab:[{i:9,t:'8-oxoG',col:OXO}]},path:'Base excision repair: the GO system',eco:'MutM (Fpg), MutY, MutT',hum:'OGG1, MUTYH, MTH1',un:'G·C → T·A transversions'},
+ {n:'O⁶-Methylguanine',o:{mk:{9:{t:METH}},me:[{i:9,s:'t'}],lab:[{i:9,t:'O⁶-meG',col:'#8C5A1E',dy:14}]},path:'Direct reversal',eco:'Ada, Ogt',hum:'MGMT',un:'G·C → A·T transitions'},
+ {n:'3-Methyladenine',o:{mk:{9:{t:METH}},me:[{i:9,s:'t'}],lab:[{i:9,t:'3-meA',col:'#8C5A1E',dy:14}]},path:'Base excision repair',eco:'AlkA, Tag',hum:'AAG (MPG)',un:'blocks replication'},
+ {n:'Thymine dimer',o:{mk:{9:{t:CPDC},10:{t:CPDC}},dimer:[9]},path:'Photoreactivation or nucleotide excision repair',eco:'PhrB; UvrA, UvrB, UvrC, UvrD; Mfd',hum:'NER only: XPC, TFIIH, XPA, XPF–ERCC1, XPG; CSB',un:'stalls polymerases; mutagenic bypass by Pol V'},
+ {n:'Mismatch',o:{mk:{9:{b:LESU}},lab:[{i:9,t:'G'},{i:9,s:'b',t:'T',col:LESU}]},path:'Mismatch repair',eco:'MutS, MutL, MutH, UvrD; Dam',hum:'MSH2–MSH6, MSH2–MSH3, MLH1–PMS2',un:'fixed as a point mutation'},
+ {n:'Double-strand break',dsb:1,path:'Homologous recombination',eco:'RecBCD, RecA, RuvABC',hum:'MRN, RAD51, BRCA1 and BRCA2; or NHEJ (Ku, DNA-PKcs, ligase IV)',un:'chromosome lost; usually lethal'},
+ {n:'Interstrand crosslink',o:{mk:{9:{t:LESU,b:LESU}},lab:[{i:9,t:'ICL',col:LESU}]},path:'Excision plus recombination',eco:'UvrABC incises one strand; RecA fills the gap from the sister',hum:'Fanconi anaemia pathway with NER, HR and TLS',un:'blocks replication and transcription'}];
+let lesSel=0;
+function scWhich(n){
+  const L=LES[lesSel], dx=14, g=26, x=n?40:180, y=56;
+  let s=G('a-fade',0,L.dsb?lad(x,y,10,{dx,g,ends:1})+G('a-move',.3,lad(x+10*dx+12,y,10,{dx,g}),'--dx:-12px'):lad(x,y,20,{dx,g,ends:1,...L.o}));
+  const rows=[['Pathway',L.path],['In E. coli',L.eco],['In humans',L.hum],['If left',L.un]];
+  let yy=y+g+54;
+  rows.forEach((r,i)=>{const W=wrap(r[1],n?36:62);
+    s+=G('a-fade',(.3+i*.25).toFixed(2),T(n?16:60,yy,r[0],'cname start f14')+W.map((l,j)=>T(n?120:190,yy+j*18,l,(i===0?'lab':'note')+' start '+(i===0?'f15':'f13'))).join('')+ln(n?16:60,yy+W.length*18-6,n?344:580,yy+W.length*18-6,'#6A5B47',.4,'2 4'));
+    yy+=W.length*18+16;});
+  return {vb:n?slim(yy+4):wide(yy+6),s};
+}
+/* ===================== Part IV · breaks & recombination ===================== */
+function forkArms(xf,y,m,dx,g,o={}){
+  const ag=18, top=`<g transform="rotate(10 ${xf} ${y})">${lad(xf-m*dx,y-ag-3,m,{dx,g:ag,bot:[[0,m,NEW]]})}</g>`,
+        bot=`<g transform="rotate(-10 ${xf} ${y+g})">${lad(xf-m*dx,y+g+3,m,{dx,g:ag,top:[[0,m,NEW]]})}</g>`;
+  return {top,bot};
+}
+function scDSB(n){
+  const dx=14,g=24; let s='',y=30;
+  const rows=[['A fork meets a nick','A replication fork runs into a nick in its template strand…'],
+   ['…and collapses','One sister arm comes away with a free end: a one-ended double-strand break.'],
+   ['Quinolones','Ciprofloxacin traps gyrase and topoisomerase IV on DNA they have cut through, holding both strands broken.']];
+  const xf=n?150:300, m=n?8:14, np=n?13:22;
+  rows.forEach((r,k)=>{const L=wrap(r[1],n?52:90), ly=y+18+L.length*16+(k<2?62:40); let d='';
+    if(k<2){const A=forkArms(xf,ly,m,dx,g);
+      d+=lad(xf,ly,np,{dx,g,nick:k===0?[{i:6,s:'t'}]:[],top:k===0?[[0,np]]:[[6,np]]})+A.bot+(k===0?A.top+cut(xf+6*dx,ly-5):`<g transform="translate(-26 -14)">${A.top}</g>`
+        +`<circle cx="${xf-27}" cy="${ly-36}" r="10" fill="none" stroke="${LESU}" stroke-width="1.6"/>`+Tc(xf-10,ly-34,'free end','#A4473A',11,'mono start','600'));}
+    else{const x0=n?40:120, nn=n?10:14;
+      d+=lad(x0,ly,nn,{dx,g})+lad(x0+nn*dx+10,ly,nn,{dx,g})+prot(x0+nn*dx+5,ly+g/2,30,20,E1,'',{op:.75})+Tc(x0+nn*dx+5,ly+g/2+4,'gyrase','#3A2E22',11,'mono mid','600')
+        +`<circle cx="${x0+nn*dx-14}" cy="${ly-6}" r="5" fill="${LESU}" stroke="${INK}"/><circle cx="${x0+nn*dx+24}" cy="${ly+g+6}" r="5" fill="${LESU}" stroke="${INK}"/>`+T(x0+nn*dx+44,ly-8,'drug','note start f11');}
+    s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+L.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
+    y=ly+g+(k<2?66:30);});
+  const b=bullets(n?24:30,y+6,[['Why one break matters','A circular chromosome with a break cannot be finished or segregated. E. coli has no end-joining, so it must copy the missing information from an intact sister.'],
+   ['Where the sister comes from','Fast-growing E. coli runs overlapping rounds of replication, so most of the chromosome is present in two or more copies.'],
+   ['Other sources','Ionising radiation, clusters of oxidative lesions repaired at the same time, and the processing of interstrand crosslinks.']],n?44:88,{d0:2.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function bcd(cx,cy,k=1){return prot(cx-9*k,cy-6*k,13*k,11*k,E2,'B',{fs:10})+prot(cx+10*k,cy-5*k,11*k,10*k,E5,'D',{fs:10})+prot(cx,cy+9*k,13*k,9*k,E4,'C',{fs:10});}
+function recbcdD(k){return (x,y,w)=>{const n=22,dx=w/n,g=24,c=i=>x+i*dx+dx/2;
+  const end=Tc(x-4,y+4,'5′','#6A5B47',10,'mono end')+Tc(x-4,y+g+4,'3′','#6A5B47',10,'mono end');
+  if(k===0)return lad(x,y,n,{dx,g})+end+bcd(c(.6),y+g/2)+arw(c(2),y-14,c(5),y-14,{w:1.3});
+  if(k===1)return lad(x,y,n,{dx,g,top:[[10,n]],bot:[[6,n]],mk:{6:{b:LESU},7:{b:LESU},8:{b:LESU}}})+Tc(x+6*dx-4,y+g+4,'3′','#6A5B47',10,'mono end')
+    +bcd(c(10),y+g/2)+Tc(c(7),y+g+18,'Chi','#A4473A',11,'mono mid','600')+T(c(4),y+4,'degraded','note mid f11');
+  return lad(x,y,n,{dx,g,top:[[17,n]],bot:[[6,n]],mk:{6:{b:LESU},7:{b:LESU},8:{b:LESU}}})+Tc(x+6*dx-4,y+g+4,'3′','#6A5B47',10,'mono end')
+    +recaFil(c(6)-4,c(16)+2,y+g+1)+bcd(c(17.2),y+g/2)+Tc(c(11),y+g+20,'RecA','#8C5A1E',11,'mono mid','600');};}
+function scRecBCD(n){
+  const st=[{h:'Entry',t:'RecBCD binds a broken end and unwinds it fast, cutting both strands as they separate, the 3′-ended strand most often.',d:recbcdD(0),top:28},
+   {h:'Chi',t:'At a Chi site (5′-GCTGGTGG-3′) on the 3′-ended strand, RecBCD stops cutting that strand.',d:recbcdD(1),top:28,dh:50},
+   {h:'Load RecA',t:'It keeps unwinding and loads RecA onto the 3′ single-stranded tail it now leaves behind.',d:recbcdD(2),top:28,dh:52}];
+  const r=stepsLad(n,st,{y0:26});
+  const p=para(n?16:24,r.y+4,'Chi occurs about 1000 times in the E. coli chromosome, far more often than chance, mostly oriented toward the origin. DNA without Chi, such as an entering phage genome, is simply destroyed, so RecBCD doubles as a defence. Many Gram-positive bacteria use AddAB, with their own Chi (5′-AGCGG-3′ in B. subtilis). In eukaryotes MRN–CtIP, EXO1 and DNA2 resect the ends, and BRCA2 loads RAD51.',n?50:92,'note start f13',17,2.4);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};
+}
+
+function recaD(k){return (x,y,w)=>{const n=22,dx=w/n,g=22,c=i=>x+i*dx+dx/2, ys=y+58;
+  if(k===0)return lad(x,y,10,{dx,g})+`<path d="M${FX(x+10*dx)} ${y+g} H${FX(x+20*dx)}" stroke="${BB}" stroke-width="2.6"/>`+recaFil(x+10*dx,x+20*dx,y+g)
+    +lad(x,ys,n,{dx,g})+`<path d="M${FX(c(15))} ${y+g+12} V${ys-8}" stroke="#2F5276" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#ahb)" marker-start="url(#ahb)"/>`+T(c(16),y+g+28,'homology search','note start f11');
+  const loop=`<path d="M${FX(x+10*dx)} ${ys} Q${FX(c(14.5))} ${ys-30} ${FX(x+19*dx)} ${ys}" stroke="${BB}" stroke-width="2.6" fill="none"/>`;
+  const link=`<path d="M${FX(x+10*dx)} ${y+g} C${FX(x+12*dx)} ${y+g}, ${FX(x+9*dx)} ${ys}, ${FX(x+10*dx)} ${ys}" stroke="${INV}" stroke-width="2.6" fill="none"/>`;
+  if(k===1)return lad(x,y,10,{dx,g,bot:[[0,10,INV]]})+link+lad(x,ys,n,{dx,g,top:[[0,10],[10,19,INV],[19,n]],nick:[{i:10,s:'t'},{i:19,s:'t'}]})+loop+T(c(14.5),ys-24,'D-loop','note mid f11');
+  if(k===2)return lad(x,y,10,{dx,g,bot:[[0,10,INV]]})+link+lad(x,ys,n,{dx,g,top:[[0,10],[10,19,INV],[19,n,NEW]],nick:[{i:10,s:'t'}]})+prot(c(10),ys-14,20,10,E5,'RuvAB')+arw(c(12),ys-30,c(16),ys-30,{w:1.3});
+  return lad(x,y,n,{dx,g,bot:[[0,10,INV],[10,n,NEW]]})+lad(x,ys,n,{dx,g})+G('a-move',.5,prot(c(10),ys-16,20,10,E3,'RuvC',{op:.7}),'--dx:30px')+T(c(16),y-8,'repaired','note mid f11');};}
+function scRecA(n){
+  const st=[{h:'Search',t:'The RecA filament on the 3′ tail samples duplex DNA, looking for a match: usually the sister chromosome.',d:recaD(0),top:20,dh:90},
+   {h:'Invade',t:'Where it matches, the tail pairs with the complementary strand and displaces the other: a D-loop.',d:recaD(1),top:20,dh:90},
+   {h:'Extend and migrate',t:'A polymerase extends the invading 3′ end. The crossed strands form a Holliday junction, which RuvAB pushes along.',d:recaD(2),top:20,dh:90},
+   {h:'Resolve',t:'RuvC cuts the junction apart, or the D-loop is used by PriA to restart a replication fork.',d:recaD(3),top:24,dh:90}];
+  const r=stepsLad(n,st,{y0:26});
+  const p=para(n?16:24,r.y+4,'RecA was found through the recombination-deficient mutants of Alvin John Clark and Ann Dee Margulies (1965). Its eukaryotic relative is RAD51; RecG, RecQ and RecJ work alongside RuvABC in E. coli.',n?50:92,'note start f13',17,2.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};
+}
+
+function scGaps(n){
+  const N=n?22:30, dx=n?14:16, x=n?26:60, g=24, L=n?10:14, c=i=>x+i*dx+dx/2;
+  const les={mk:{[L]:{t:CPDC},[L+1]:{t:CPDC}},dimer:[L]};
+  const rows=[['Skip and reprime','The replisome passes a lesion in its template and restarts beyond it, leaving a gap in the new strand.'],
+   ['RecFOR loads RecA','SSB coats the single-stranded gap; RecF, RecO and RecR replace it with a RecA filament.'],
+   ['Fill from the sister','RecA pairs the gap with the intact sister, which supplies a patch. The lesion is still there, now paired, and NER can remove it.']];
+  let s='',y=28;
+  rows.forEach((r,k)=>{const W=wrap(r[1],n?52:90), ly=y+18+W.length*16+40; let d='';
+    const gapEnd=L+6;
+    if(k===0)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[gapEnd,N,NEW]]})+prot(c(N-1.5),ly+g+12,24,11,E5,'Pol III')+T(c(L+2),ly+g+18,'gap','note mid f11');
+    if(k===1)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[gapEnd,N,NEW]]})+recaFil(c(L-2)-6,c(gapEnd)-4,ly+g+2)+prot(c(L-5),ly+g+16,24,11,E2,'RecFOR')+ssb(c(gapEnd+1.5),ly+g+12)+T(c(L+2),ly+g+30,'RecA','note mid f11');
+    if(k===2)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[L-2,gapEnd,INV],[gapEnd,N,NEW]]})+T(c(L+2),ly+g+18,'patch from sister','note mid f11');
+    s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+W.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
+    y=ly+g+40;});
+  const b=bullets(n?24:30,y+4,[['Daughter-strand gap repair','Rupp and Howard-Flanders found in 1968 that UV-irradiated, excision-deficient E. coli make new DNA with gaps that are later filled by recombination.'],
+   ['Two loaders, one recombinase','RecBCD loads RecA at broken ends; RecFOR loads it at gaps.'],
+   ['The alternative','Translesion polymerases can fill the same gap by copying the damaged template: faster, but error-prone (Part V).']],n?44:88,{d0:2.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scNHEJ(n){
+  const dx=14,g=24,x=n?20:150,y=70,nn=n?10:12; let s='';
+  s+=G('a-fade',0,T(n?16:24,34,'End joining: Ku and LigD','cname start f14')+lad(x,y,nn,{dx,g})+lad(x+nn*dx+24,y,nn,{dx,g}));
+  s+=G('a-fade',.5,ring(x+nn*dx-8,y+g/2,12,22,E4,'Ku',{ldy:-27})+ring(x+nn*dx+32,y+g/2,12,22,E4,'Ku',{ldy:-27}));
+  s+=G('a-drop',1,prot(x+nn*dx+12,y+g+26,34,13,E6,'LigD'));
+  const y2=y+g+84;
+  s+=G('a-fade',1.6,arw(x+nn*dx+12,y+g+44,x+nn*dx+12,y2-10)+lad(x+12,y2,2*nn,{dx,g,mk:{[nn]:{t:LESU,b:LESU}}})+T(x+12+nn*dx+dx/2,y2+g+18,'often a small insertion or deletion','note mid f11'));
+  const t=wtable(n,n?['','HR','NHEJ']:['','Homologous recombination','End joining'],[['Template','sister copy','none'],['Accuracy','faithful','small insertions or deletions'],
+    ['When','growing cells with a sister','stationary phase, spores, latency'],['Bacteria','RecBCD or AddAB, RecA, RuvABC','Ku and LigD, in Mycobacterium, Bacillus spores, Pseudomonas; absent from E. coli'],
+    ['Eukaryotes','MRN, RAD51, BRCA2','Ku70–Ku80, DNA-PKcs, XRCC4–ligase IV']],n?[[10,10],[86,20],[218,21]]:[[24,14],[150,32],[380,38]],{y0:y2+g+56,d0:2});
+  const p=para(n?16:24,t.y+12,'Bacterial NHEJ was found in 2002 (Weller and colleagues, Doherty and colleagues). LigD combines polymerase, nuclease and ligase activities in one protein, and helps Mycobacterium tuberculosis survive when it is not dividing.',n?50:92,'note start f13',17,2.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
+}
+
+/* ===================== Part V · SOS & tolerance ===================== */
+function sosPanel(k,x,y){
+  let s='';
+  if(k===0)return dsDNA(x,x+270,y)+`<rect x="${x+40}" y="${y-3}" width="34" height="14" fill="${LESU}" opacity=".65"/>`+prot(x+48,y-9,11,9,E2,'')+prot(x+68,y-9,11,9,E2,'')
+    +Tc(x+58,y-22,'LexA','#3A2E22',11,'mono mid','600')+geneArrow(x+110,y+4,90,'recA',RECAC)+T(x,y-24,'off','cname start f13');
+  if(k===1)return `<path d="M${x} ${y+4} H${x+200}" stroke="${BB}" stroke-width="2.4"/>`+recaFil(x+6,x+190,y+4,{label:'RecA* on ssDNA'})
+    +G('a-move',.8,prot(x+226,y-6,10,8,E2,'')+prot(x+246,y+12,8,7,E2,''),'--dx:-24px;--dy:-6px')+T(x+236,y-22,'LexA cut','note mid f11');
+  return dsDNA(x,x+270,y)+`<rect x="${x+40}" y="${y-3}" width="34" height="14" fill="${LESU}" opacity=".35"/>`+geneArrow(x+110,y+4,90,'recA',RECAC)
+    +G('a-move',.6,rnap(x+100,y+4,.7),'--dx:-40px')+T(x,y-24,'on','cname start f13');
+}
+const SOSG=[['lexA',0,.5],['uvrA',0,.5],['uvrB',0,.5],['uvrD',0,.5],['recA',.05,.7],['sulA',.2,.7],['umuDC',.42,1]];
+function scSOS(n){
+  let s='';
+  const px=n?30:30, ys=n?[60,120,184]:[66,136,206];
+  [0,1,2].forEach(k=>s+=G('a-fade',(k*.8).toFixed(1),sosPanel(k,px,ys[k])));
+  const cx0=n?92:410, cw=n?240:200, cy0=n?250:58, rh=24;
+  s+=G('a-fade',2.4,T(n?16:330,cy0-20,'Induction after damage (schematic)','cname start f13')
+    +SOSG.map((r,i)=>{const yy=cy0+i*rh;return T(cx0-10,yy+12,r[0],'lab end f13')+`<rect x="${FX(cx0+r[1]*cw)}" y="${yy}" width="${FX((r[2]-r[1])*cw)}" height="15" rx="3" fill="${i<4?E5:i<6?RECAC:LESU}" stroke="${INK}" stroke-width=".7" opacity=".9"/>`;}).join('')
+    +ln(cx0,cy0+SOSG.length*rh+2,cx0+cw,cy0+SOSG.length*rh+2)+T(cx0,cy0+SOSG.length*rh+18,'damage','note start f11')+T(cx0+cw,cy0+SOSG.length*rh+18,'time','note end f11'));
+  const by=n?cy0+SOSG.length*rh+52:276;
+  const b=bullets(n?24:30,by,[['About 40 genes','LexA represses them by binding SOS boxes (CTGT-N₈-ACAG in E. coli). Genes with weak boxes, such as uvrA and uvrB, come on first; umuDC, tightly bound, comes on last.'],
+   ['RecA* is the sensor','RecA bound to single-stranded DNA, from stalled forks or processed breaks, stimulates LexA to cleave itself between Ala84 and Gly85.'],
+   ['Shut-off','Once the single-stranded DNA is gone, fresh LexA represses the genes again.']],n?44:88,{d0:3,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scTLS(n){
+  const N=n?22:30, dx=n?14:16, x=n?26:60, g=24, L=n?11:15, c=i=>x+i*dx+dx/2, les={mk:{[L]:{t:CPDC},[L+1]:{t:CPDC}},dimer:[L]};
+  const rows=[['Pol III stalls','The replicative polymerase cannot read past the dimer.'],['Pol V inserts','Pol V (UmuD′₂C with RecA*) takes over and puts nucleotides opposite the lesion, often the wrong ones.'],['Pol III resumes','The replicative polymerase returns and carries on.']];
+  let s='',y=28;
+  rows.forEach((r,k)=>{const W=wrap(r[1],n?52:90), ly=y+18+W.length*16+22; let d='';
+    const bc=(i)=>`<ellipse cx="${FX(c(i))}" cy="${ly+g/2}" rx="9" ry="22" fill="${E3}" fill-opacity=".45" stroke="${INK}" stroke-width="1"/>`;
+    if(k===0)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW]]})+bc(L-1)+prot(c(L-2.4),ly+g+16,26,12,E5,'Pol III');
+    if(k===1)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW],[L,L+2,INV]],mk:{...les.mk,[L]:{t:CPDC,b:INV},[L+1]:{t:CPDC,b:INV}}})+bc(L+1)+prot(c(L+1),ly+g+18,26,12,E6,'Pol V')+G('a-move',.4,prot(c(L-5),ly+g+30,24,11,E5,'Pol III',{op:.5}),'--dx:30px');
+    if(k===2)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW],[L,L+2,INV],[L+2,N-3,NEW]],mk:{...les.mk,[L]:{t:CPDC,b:INV},[L+1]:{t:CPDC,b:INV}}})+bc(N-4)+prot(c(N-5),ly+g+16,26,12,E5,'Pol III');
+    s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+W.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
+    y=ly+g+50;});
+  const t=wtable(n,['Polymerase','Gene','What it does'],[['Pol II','polB','restarts stalled forks; bypasses some adducts'],['Pol IV','dinB','bypasses some guanine adducts; makes −1 frameshifts'],['Pol V','umuD′₂C','copies past UV lesions and abasic sites; most UV mutagenesis']],
+    n?[[10,10],[84,10],[156,30]]:[[24,14],[150,14],[260,56]],{y0:y,d0:2.6});
+  const p=para(n?16:24,t.y+12,'Pol V is made late in the SOS response and only works after RecA* cleaves UmuD to UmuD′, a double safeguard against needless mutation. In eukaryotes, Pol η copies past thymine dimers correctly, inserting AA; its loss causes the variant form of xeroderma pigmentosum. Pol ι, κ, ζ and Rev1 handle other lesions.',n?50:92,'note start f13',17,3);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
+}
+
+function scAntibio(n){
+  let s='';const chain=n?[['quinolone',48],['ssDNA',130],['RecA*',212],['LexA cut',300]]:[['ciprofloxacin',100],['breaks, ssDNA',250],['RecA*',390],['LexA cleaved',530]];
+  const bw=n?74:122;
+  chain.forEach((c,i)=>{s+=G('a-fade',(i*.3).toFixed(1),tbox(c[1],40,bw,c[0],{fs:n?10:12,fill:i===3?'#E9C9C1':'#EFE6D2'})+(i<3?arw(c[1]+bw/2+2,40,chain[i+1][1]-bw/2-4,40):''));});
+  const C=[['Mutation and resistance','Ciprofloxacin induces Pol IV and Pol V. E. coli carrying uncleavable LexA barely evolved resistance in a mouse infection model (Cirz et al., 2005).'],
+   ['Gene transfer','SOS boosts transfer of the SXT integrative element (Beaber et al., 2004) and induces integron integrases that shuffle resistance cassettes (Guerin et al., 2009).'],
+   ['Prophage induction','RecA* also triggers self-cleavage of phage repressors such as λ CI. In Shiga-toxin-producing E. coli this releases toxin-carrying phage, one reason antibiotics are avoided in that infection.'],
+   ['Filaments and persisters','SulA halts division until repair is done. The SOS-induced toxin TisB helps some cells survive ciprofloxacin as dormant persisters (Dörr et al., 2010).']];
+  let y=78;
+  if(n){C.forEach((c,i)=>{const b=boxItem(14,y,332,c[0],c[1],{num:i+1,cw:6.1});s+=G('a-fade',(1.2+i*.3).toFixed(1),b.s);y+=b.h+10;});}
+  else{for(let r=0;r<2;r++){const a=boxItem(20,y,292,C[2*r][0],C[2*r][1],{num:2*r+1}),b=boxItem(328,y,292,C[2*r+1][0],C[2*r+1][1],{num:2*r+2}),h=Math.max(a.h,b.h);
+      s+=G('a-fade',(1.2+r*.5).toFixed(1),boxItem(20,y,292,C[2*r][0],C[2*r][1],{num:2*r+1,H:h}).s+boxItem(328,y,292,C[2*r+1][0],C[2*r+1][1],{num:2*r+2,H:h}).s);y+=h+12;}}
+  const pn=boxItem(n?14:20,y+4,n?332:600,'Bacteria without SOS','Streptococcus pneumoniae has no LexA. Antibiotics and DNA damage instead induce competence, and with it recA and the uptake of DNA from neighbours (Prudhomme et al., 2006).',{fill:'#D9E2D3',cw:n?6.1:6.3});
+  s+=G('a-fade',2.6,pn.s);
+  const p=para(n?16:24,y+pn.h+30,'Blocking LexA cleavage or RecA activity is being explored as a way to make existing antibiotics less likely to select for resistance.',n?50:92,'note start f13',17,3);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+}
+
+const BRK=[{g:'recA',uv:'+++',mu:'none induced',p:'Recombination and SOS',t:'No recombination and no SOS. Extremely sensitive to UV and quinolones; viable, but many cells in a culture are dead.'},
+ {g:'recB',uv:'++',mu:'normal',p:'Break processing',t:'Breaks cannot be resected or loaded with RecA. Sensitive to UV, ionising radiation and quinolones; recombination after conjugation or transduction fails.'},
+ {g:'lexA (Ind⁻)',uv:'++',mu:'none induced',p:'SOS signalling',t:'LexA cannot be cleaved, so SOS is never induced. UV-sensitive, not mutable by UV, and slow to evolve ciprofloxacin resistance.'},
+ {g:'uvrA',uv:'+++',mu:'raised after UV',p:'Nucleotide excision repair',t:'No excision repair. Very UV-sensitive in the dark; in light, photolyase rescues some cells.'},
+ {g:'mfd',uv:'+',mu:'slightly lower',p:'Transcription-coupled repair',t:'Loses transcription-coupled repair; mildly UV-sensitive, and slower to evolve antibiotic resistance.'},
+ {g:'umuDC',uv:'+',mu:'little UV mutagenesis',p:'Translesion synthesis',t:'No Pol V. UV now causes few mutations, because most UV mutagenesis is Pol V copying past lesions.'},
+ {g:'mutS',uv:'normal',mu:'~100×',p:'Mismatch repair',t:'About 100-fold more mutations, mostly transitions and frameshifts. MMR also blocks recombination between diverged DNA, so mutS cells accept foreign DNA more readily. Such hypermutators are common in chronic infections, such as Pseudomonas aeruginosa in cystic fibrosis.'},
+ {g:'mutT',uv:'normal',mu:'~1000×',p:'The GO system',t:'Cannot clear 8-oxo-dGTP from the nucleotide pool. A·T → C·G transversions rise up to a thousand-fold.'},
+ {g:'dam',uv:'normal',mu:'mildly raised',p:'Strand signal for MMR',t:'MutH can no longer tell old strand from new. A mild mutator; because mismatches can now be cut on both strands, dam cells are killed by the base analogue 2-aminopurine unless MMR is also lost.'}];
+let brkSel=0;
+function scBreakR(n){
+  const t=wtable(n,['Mutant','UV sensitivity','Mutation rate'],BRK.map(b=>[b.g,b.uv,b.mu]),n?[[12,14],[110,12],[214,20]]:[[24,14],[200,16],[380,30]],{y0:30,hi:brkSel});
+  const b=BRK[brkSel];
+  let y=t.y+30;
+  let s=G('a-fade',.6,T(n?16:24,y,b.g,'cname start')+T(n?16:24,y+20,b.p,'mono acc start f12'));
+  const p=para(n?16:24,y+44,b.t,n?50:92,'note start f13',17,.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+s+p.s};
+}
+
+function scCompare(n){
+  const rows=[['Direct reversal','PhrB; Ada, Ogt; AlkB','MGMT; ALKBH; no photolyase in placental mammals'],
+   ['Base excision','Ung, MutM, MutY, Nth, AlkA; Xth, Nfo; Pol I; LigA','UNG, OGG1, MUTYH, NTHL1, AAG; APE1; Pol β; ligase III'],
+   ['Nucleotide excision','UvrA, UvrB, UvrC, UvrD; Mfd','XPC, TFIIH, XPA, XPF–ERCC1, XPG; CSB'],
+   ['Mismatch repair','MutS, MutL, MutH; Dam','MSH2–MSH6, MSH2–MSH3, MLH1–PMS2'],
+   ['Recombination','RecBCD, RecFOR, RecA, RuvABC','MRN, CtIP, BRCA2, RAD51, resolvases'],
+   ['End joining','Ku, LigD (some species)','Ku70–Ku80, DNA-PKcs, XRCC4–ligase IV'],
+   ['Translesion synthesis','Pol II, Pol IV, Pol V','Pol η, ι, κ, ζ; Rev1'],
+   ['Damage signalling','SOS: RecA*, LexA','ATM, ATR, p53']];
+  const t=wtable(n,['Pathway','E. coli','Humans'],rows,n?[[8,12],[94,19],[224,19]]:[[24,22],[200,32],[420,28]],{y0:30});
+  const p=para(n?16:24,t.y+14,'Some pathways use clearly related proteins in all domains of life (MutS and MutL, RecA and RAD51, the glycosylase families); others solved the same chemical problem with unrelated machinery (nucleotide excision repair, damage signalling).',n?50:92,'note start f13',17,1.4);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+}
+const NAR='Narrator';
+const S=[
+ {p:1,title:'A genome under attack',draw:scDamage,
+  text:"DNA is chemically fragile. Bases fall off their sugars, cytosine loses its amino group, guanine is oxidised, alkylating agents add methyl groups, UV light fuses neighbouring pyrimidines, and both strands can break. Tomas Lindahl's measurements in the 1970s and 1990s showed that much of this happens spontaneously in water at body temperature. The genome survives only because it is constantly repaired."},
+ {p:1,title:'Why lesions matter',draw:scConseq,
+  text:"Damage matters in two ways. Some lesions are read wrongly, so the next round of replication fixes a mutation into both strands: uracil from deaminated cytosine pairs with adenine, and after two rounds a C·G pair has become T·A. Others cannot be read at all. They stall replication forks and RNA polymerase, and an unrepaired break can cost the cell its chromosome."},
+ {p:1,title:'How repair was discovered',draw:scHistory,
+  text:"Repair was found in bacteria and their phages. Visible light rescued UV-irradiated cells in 1949; in 1964 three groups showed that E. coli cuts thymine dimers out in the dark and fills the gap. Tomas Lindahl found the first DNA glycosylase in E. coli in 1974. Aziz Sancar worked out the photolyase and UvrABC systems, and Paul Modrich reconstituted mismatch repair from E. coli proteins. The three shared the 2015 Nobel Prize in Chemistry."},
+ {p:2,title:'Photolyase: repair by light',draw:scPhotolyase,
+  text:"The simplest repair is to undo the damage. Photolyase binds a thymine dimer, flips it out of the helix, and uses the energy of a blue photon to push an electron from its reduced flavin into the dimer. The extra electron makes the bond between the two thymines fall apart, and the electron then goes back to the flavin. Nothing is cut and nothing is resynthesised. Aziz Sancar cloned and purified the E. coli enzyme in the late 1970s and early 1980s."},
+ {p:2,title:'Ada and the adaptive response',draw:scAda,
+  text:"O6-methylguanine pairs with thymine and causes G·C to A·T transitions. E. coli's Ada protein simply takes the methyl group onto one of its own cysteines. The reaction is stoichiometric: each Ada molecule repairs one lesion and is then spent. Methylation of a second cysteine turns Ada into a transcriptional activator for its own gene and others, so cells exposed to a low dose of an alkylating agent become resistant to a higher one. Leona Samson and John Cairns called this the adaptive response."},
+ {p:3,title:'Base excision repair',draw:scBER,
+  text:"Small base lesions are removed one base at a time. A DNA glycosylase recognises the damaged base, flips it out of the helix into a pocket, and cuts the bond to its sugar. The abasic site that remains is cut by an AP endonuclease, filled by DNA polymerase I, and sealed by ligase. Lindahl found the first glycosylase, Ung, by looking for an activity that removed uracil from DNA in E. coli extracts."},
+ {p:3,title:'The GO system',draw:scGO,
+  text:"Oxidised guanine, 8-oxoG, is common and dangerous because it pairs with adenine as well as cytosine. E. coli handles it with three enzymes. MutM removes 8-oxoG paired with C. If replication has already put an A opposite it, MutY removes the A instead, giving MutM another chance. And MutT destroys 8-oxo-dGTP in the nucleotide pool so it is never built into DNA. Jeffrey Miller's group worked out the system from mutator mutants."},
+ {p:3,title:'Nucleotide excision repair',draw:scNER,
+  text:"Bulky lesions such as UV dimers are removed as part of a short oligonucleotide. UvrA and UvrB scan the DNA for distortion, UvrB verifies it, and UvrC cuts the damaged strand on both sides. UvrD helicase releases the fragment, and polymerase I and ligase fill the gap. Because it detects distortion rather than one chemical structure, this pathway removes a very wide range of damage. Sancar and Rupp reconstituted the excision nuclease from purified proteins in 1983."},
+ {p:3,title:'Transcription-coupled repair',draw:scTCR,
+  text:"A lesion in the strand being transcribed stops RNA polymerase, and the stalled polymerase covers the damage. Rather than wait, the cell uses the stall as an alarm. Mfd, the transcription-repair coupling factor, binds behind the polymerase, pushes it off the DNA, and recruits UvrA. So genes that are in use are repaired first."},
+ {p:3,title:'Mismatch repair',draw:scMMR,
+  text:"Even with proofreading, DNA polymerase III leaves an occasional mismatch. To fix it the cell must know which base is the error, and in E. coli the answer is methylation. Dam methylase marks the adenine of every GATC, but only after a lag, so for a few minutes the new strand is unmethylated. MutS finds the mismatch, MutL relays the signal, and MutH nicks the unmethylated strand, which is then removed past the mismatch and resynthesised."},
+ {p:3,title:'Which pathway?',chips:'les',draw:scWhich,
+  text:"Each kind of damage is matched to a pathway. Pick a lesion to see which pathway repairs it, the E. coli and human proteins involved, and what happens if it is not repaired."},
+ {p:4,title:'Double-strand breaks',draw:scDSB,
+  text:"A break through both strands is the most dangerous lesion of all. In bacteria most breaks are made by the cell's own replication: a fork that runs into a nick collapses, leaving a broken arm. Quinolone antibiotics kill largely by trapping topoisomerases on cut DNA. Repair needs a template, and in E. coli that template is the sister chromosome."},
+ {p:4,title:'RecBCD and Chi',draw:scRecBCD,
+  text:"RecBCD is a helicase–nuclease that enters at a broken end. At first it destroys both strands as it unwinds, but when it reads the eight-base Chi sequence its behaviour changes: it spares the strand with the 3′ end and loads RecA onto it. Chi is far more common in the E. coli chromosome than in foreign DNA, so the same enzyme both repairs the cell's own breaks and degrades invading phage DNA."},
+ {p:4,title:'RecA and strand exchange',draw:scRecA,
+  text:"RecA coats single-stranded DNA as a helical filament and searches the cell for a matching sequence. When it finds one, it pairs the single strand with its complement and displaces the other strand. The invading 3′ end primes DNA synthesis; RuvAB migrates the resulting Holliday junction, and RuvC cuts it apart. Often, instead, the D-loop becomes a new replication fork, which is how a collapsed fork is rebuilt."},
+ {p:4,title:'Filling gaps behind the fork',draw:scGaps,
+  text:"Replication does not always stop at a lesion. The replisome can skip it and restart beyond, leaving a gap in the new strand opposite the damage. These gaps are filled by recombination with the sister: RecF, RecO and RecR load RecA onto the gap, and a patch of intact sister strand is copied across. The original lesion remains, now paired with good DNA, and can be removed by excision repair."},
+ {p:4,title:'End joining in bacteria',draw:scNHEJ,
+  text:"E. coli can repair breaks only by recombination, but many bacteria can also join broken ends directly. Mycobacteria, Bacillus spores and Pseudomonas use a two-component version of eukaryotic non-homologous end joining: Ku, which binds the ends, and LigD, a multifunctional ligase. End joining needs no template, which matters in cells that are not replicating, but it often leaves small insertions or deletions."},
+ {p:5,title:'The SOS response',draw:scSOS,
+  text:"When damage overwhelms the constitutive repair systems, E. coli switches on the SOS response. Single-stranded DNA from stalled forks and processed breaks activates RecA, and activated RecA stimulates the repressor LexA to cut itself in half. About 40 genes are released in a defined order: excision repair first, then recombination and the division inhibitor SulA, and last the error-prone polymerase Pol V. Miroslav Radman proposed the idea, and Evelyn Witkin assembled much of the evidence."},
+ {p:5,title:'Translesion synthesis',draw:scTLS,
+  text:"When a lesion cannot be repaired in time, it can be tolerated instead. Specialised polymerases with roomy active sites copy past damaged bases that stop the replicative polymerase. They keep replication going, but often insert the wrong nucleotide, and most UV-induced mutation in E. coli comes from Pol V. Survival is bought with mutation."},
+ {p:5,title:'SOS, mutation and antibiotics',draw:scAntibio,
+  text:"Several antibiotics, quinolones especially, induce the SOS response. That has consequences beyond repair: error-prone polymerases raise the mutation rate, mobile elements and integrons move resistance genes, prophages are induced, and cells filament or become tolerant persisters. Not every bacterium has this circuit; the pneumococcus has no LexA and responds to the same stresses by becoming competent for transformation."},
+ {p:5,title:'Break the repair systems',chips:'brk',draw:scBreakR,
+  text:"Most of these pathways were discovered through mutants that were sensitive to UV, could not recombine, or mutated too often. Pick a mutant to see its phenotype and what it reveals. The table summarises them all."},
+ {p:5,title:'Bacteria and eukaryotes compared',draw:scCompare,
+  text:"The same chemical problems are solved in every organism, often with related proteins. MutS and MutL, RecA and RAD51, and the DNA glycosylases are shared across all domains of life. Nucleotide excision repair and damage signalling use different machinery in bacteria and eukaryotes, but follow the same logic."}
+];
+const CHIPS={les:{list:LES.map(l=>l.n),get:()=>lesSel,set:k=>lesSel=k},brk:{list:BRK.map(b=>b.g),get:()=>brkSel,set:k=>brkSel=k}};
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  [1,2,3,4,5].forEach(k=>$('part'+k).setAttribute('aria-current',sc.p===k));
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+[1,2,3,4,5].forEach(k=>$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>

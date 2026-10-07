@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How DNA Is Copied</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">DNA replication · an animated primer</p>
+    <h1>Every cell copies its DNA before it divides</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · The discoveries</button>
+    <button id="part2" type="button">II · The bacterial machine</button>
+    <button id="part3" type="button">III · Break it</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">The machinery shown is that of <i>E. coli</i>. Numbers in the base-composition table and the error-rate ladder are approximate.</p>
+</div>
+
+<script>
+const INK='#3A2E22', OLD='#5A4632', NEW='#3E5F82', NEWL='#8FB1CF', RNA='#C17A2C', POL3='#6F9A8E', CLAMP='#E0B84A', HELI='#7D4A98',
+      PRIM='#B4766E', SSBC='#8C6D46', GYR='#5E7F7A', POL1='#D08B5B', LIG='#4F7A3F', RED='#A4473A', GREY='#C9BFAB', TUS='#7D3F5A', PAPER='#EFE8D8';
+const roman=n=>[['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function helix(x1,x2,yc,a,c1,c2,per=56){let p1='',p2='',r='';for(let x=x1;x<=x2;x+=2){const t=(x-x1)/per*2*Math.PI,s=Math.sin(t),y1=yc+a*s,y2=yc-a*s;p1+=(x===x1?'M':'L')+x+' '+y1.toFixed(1)+' ';p2+=(x===x1?'M':'L')+x+' '+y2.toFixed(1)+' ';if((x-x1)%8===0&&Math.abs(y1-y2)>5)r+=`M${x} ${y1.toFixed(1)} V${y2.toFixed(1)}`;}
+  return `<path d="${r}" stroke="${INK}" stroke-width="1" opacity=".4"/><path d="${p1}" stroke="${c1}" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="${p2}" stroke="${c2}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;}
+function sine(x1,x2,yc,a,c,per=56,ph=0){let p='';for(let x=x1;x<=x2;x+=2){const y=yc+a*Math.sin((x-x1)/per*2*Math.PI+ph);p+=(x===x1?'M':'L')+x+' '+y.toFixed(1)+' ';}return `<path d="${p}" stroke="${c}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-26 -40 q0 -24 26 -26 q26 2 26 26" fill="#3A2E22" opacity=".55"/><circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/><ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function phage(cx,top,k=1){return `<g transform="translate(${cx} ${top}) scale(${k})" class="tint"><polygon points="0,0 13,7 13,22 0,29 -13,22 -13,7" fill="#D9CDB2" stroke="${INK}" stroke-width="1.2"/><rect x="-6" y="29" width="12" height="4" fill="#A8977A" stroke="${INK}"/><rect x="-3.5" y="33" width="7" height="16" fill="#C6B796" stroke="${INK}"/><path d="M-3 49 L-12 56 M3 49 L12 56 M-2 49 L-6 57 M2 49 L6 57" stroke="${INK}" stroke-width="1.2" fill="none"/></g>`;}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+
+/* ---------- molecular glyphs ---------- */
+function pol3(x,y,k=1,dim=false){return `<g opacity="${dim?.22:1}"><ellipse cx="${x}" cy="${y}" rx="${18*k}" ry="${14*k}" fill="${POL3}" stroke="${INK}" class="tint"/><ellipse cx="${x-15*k}" cy="${y}" rx="${5*k}" ry="${13*k}" fill="none" stroke="${CLAMP}" stroke-width="${3.2*k}"/></g>`;}
+function heli(x,y,k=1,dim=false){return `<g opacity="${dim?.22:1}"><ellipse cx="${x}" cy="${y}" rx="${9*k}" ry="${16*k}" fill="${HELI}" stroke="${INK}" class="tint"/><ellipse cx="${x}" cy="${y}" rx="${3*k}" ry="${6*k}" fill="${PAPER}"/></g>`;}
+
+/* ---------- the replication fork ---------- */
+const FW={F:360,xL:24,xR:620,yD:170,yT:96,yB:244,dg:50,k:1,lead:[36,286],polLead:298,
+  frags:[[36,90,0],[94,170,12],[176,236,12],[242,262,12]],polI:172,lig:92,polLag:248,newPr:[272,284],primase:278,ssb:[[300,0],[322,.45],[338,.75]],gyr:540};
+const FN=(()=>{const m=x=>Math.round(10+(x-24)*.6);return {F:m(360),xL:10,xR:350,yD:146,yT:84,yB:208,dg:30,k:.68,lead:[m(36),m(286)],polLead:m(298),
+  frags:FW.frags.map(f=>[m(f[0]),m(f[1]),Math.round(f[2]*.6)]),polI:m(172),lig:m(92),polLag:m(248),newPr:[m(272),m(284)],primase:m(278),ssb:[[m(300),0],[0,.45],[0,.75]],gyr:m(540)};})();
+function fork(n,o={}){
+  const g=n?FN:FW, k=g.k, off=o.off||'', D=(t)=>o.anim?t:0, {F,xL,xR,yD,yT,yB,dg}=g;
+  const dim=key=>off===key||(off==='pol3'&&key==='pol3');
+  const yTi=yT+9*Math.max(k,.8), yBi=yB-9*Math.max(k,.8);
+  let s='';
+  // parental strands
+  s+=G('a-fade',D(0),`<path d="M${xL} ${yT} H${F-dg} L${F} ${yD-5} H${xR}" stroke="${OLD}" stroke-width="2.4" fill="none"/><path d="M${xL} ${yB} H${F-dg} L${F} ${yD+5} H${xR}" stroke="${OLD}" stroke-width="2.4" fill="none"/>`+rungs(F,xR,yD-5,yD+5));
+  // leading strand
+  s+=G('a-fade',D(.4),`<path d="M${g.lead[0]} ${yTi} H${g.lead[1]}" stroke="${NEW}" stroke-width="2.6" marker-end="url(#ahn)"/>`+rungs(g.lead[0],g.lead[1]-6,yT,yTi));
+  // lagging fragments
+  let lg='';g.frags.forEach((f,i)=>{const [a,b,p]=f;lg+=rungs(a,b,yBi,yB)+`<path d="M${b-p} ${yBi} H${a}" stroke="${NEW}" stroke-width="2.6"/>`+(p?`<path d="M${b-p} ${yBi} H${b}" stroke="${RNA}" stroke-width="4" stroke-linecap="butt"/>`:'');});
+  lg+=`<path d="M${g.newPr[0]} ${yBi} H${g.newPr[1]}" stroke="${RNA}" stroke-width="4"/>`;
+  s+=G('a-fade',D(.7),lg);
+  if(off==='lig'){[1,2].forEach(i=>{const x=g.frags[i][0]-2;s+=`<path d="M${x} ${yBi-6} v12" stroke="${RED}" stroke-width="1.6"/>`;});}
+  // proteins
+  const P=[];
+  P.push(['gyr',G('a-pop',D(1.0),`<g opacity="${dim('gyr')?.22:1}"><path d="M${g.gyr-18*k} ${yD} a${18*k} ${16*k} 0 1 1 ${36*k} 0 a${18*k} ${16*k} 0 1 1 ${-36*k} 0" fill="${GYR}" stroke="${INK}" class="tint"/><path d="M${g.gyr} ${yD-16*k} v${32*k}" stroke="${PAPER}" stroke-width="${2*k}"/></g>`)]);
+  P.push(['heli',G('a-pop',D(1.2),heli(F-4*k,yD+14*k,k,dim('heli')))]);
+  const ssbXY=g.ssb.map(([x,t])=>t?[F-dg*t-(1-t)*0, yD+5+(yB-yD-5)*t]:[x,yB]).map(([x,y],i)=>i?[F-dg*g.ssb[i][1],yD+5+(yB-yD-5)*g.ssb[i][1]]:[x,y]);
+  P.push(['ssb',G('a-pop',D(1.4),`<g opacity="${dim('ssb')?.22:1}">`+ssbXY.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="${5.5*k}" fill="${SSBC}" stroke="${INK}" class="tint"/>`).join('')+`</g>`)]);
+  P.push(['primase',G('a-pop',D(1.6),`<g opacity="${dim('primase')?.22:1}">${blob(g.primase,yBi-12*k,11*k,9*k,PRIM)}</g>`)]);
+  P.push(['pol3',G('a-pop',D(1.8),pol3(g.polLead,yTi+3*k,k,dim('pol3'))+pol3(g.polLag,yBi-3*k,k,dim('pol3')))]);
+  P.push(['pol1',G('a-pop',D(2.0),`<g opacity="${dim('pol1')?.22:1}">${blob(g.polI,yBi-11*k,14*k,11*k,POL1)}</g>`)]);
+  P.push(['lig',G('a-pop',D(2.2),`<g opacity="${dim('lig')?.22:1}">${blob(g.lig,yBi-10*k,10*k,9*k,LIG)}</g>`)]);
+  P.forEach(p=>s+=p[1]);
+  if(off==='eps'){[[g.lead[0]+30,yTi],[g.lead[0]+110*k,yTi],[g.frags[1][0]+20,yBi],[g.frags[2][0]+14,yBi]].forEach(([x,y])=>s+=`<rect x="${x-2}" y="${y-5}" width="4" height="10" fill="${RED}"/>`);}
+  // labels
+  const pos={gyr:[g.gyr,yD],heli:[F-4*k,yD+14*k],ssb:ssbXY[1],primase:[g.primase,yBi-12*k],pol3:[g.polLead,yTi+3*k],pol1:[g.polI,yBi-11*k],lig:[g.lig,yBi-10*k]};
+  if(off&&pos[off])s+=mark(pos[off][0]+(n?12:16),pos[off][1]-(n?14:20),false,n?8:10);
+  if(off==='pol3')s+=mark(g.polLag+(n?12:16),yBi-3*k-(n?14:20),false,n?8:10);
+  let lab='';
+  if(o.labels!==false){
+    if(!n){
+      lab+=T(xL+4,yT+40,'leading strand','note start')+T(xL+4,yB-48,'lagging strand: Okazaki fragments','note start');
+      lab+=T(g.polLead,yT-26,'Pol III + β clamp','lab mid')+ln(g.polLead,yT-20,g.polLead,yTi-12);
+      lab+=T(g.gyr,yD+44,'gyrase','lab mid')+T(F+12,yD+46,'helicase (DnaB)','lab start')+ln(F+10,yD+38,F+2,yD+26);
+      lab+=`<path d="M${xR-90} ${yD-28} h70" stroke="${INK}" stroke-width="1.6" marker-end="url(#ahp)"/>`+T(xR-56,yD-36,'fork moves','note mid f12');
+      lab+=T(g.primase,yB+30,'primase','lab mid')+T(334,yB+30,'SSB','lab mid')+T(g.polLag,yB+52,'Pol III','lab mid')+T(g.polI,yB+30,'Pol I','lab mid')+T(g.lig,yB+52,'ligase','lab mid');
+      lab+=`<rect x="${xL+4}" y="${yB+68}" width="16" height="5" fill="${RNA}"/>`+T(xL+26,yB+74,'RNA primer','note start f12')+`<rect x="${xL+110}" y="${yB+68}" width="16" height="5" fill="${NEW}"/>`+T(xL+132,yB+74,'new DNA','note start f12')+`<rect x="${xL+200}" y="${yB+68}" width="16" height="5" fill="${OLD}"/>`+T(xL+222,yB+74,'parental DNA','note start f12');
+    } else {
+      const B=[['heli',F+8,yD+30,1],['gyr',g.gyr,yD-26,2],['ssb',ssbXY[2][0]+14,ssbXY[2][1]+4,3],['primase',g.primase,yB+20,4],['pol3a',g.polLead,yT-16,5],['pol3b',g.polLag,yB+20,5],['pol1',g.polI,yB+20,6],['lig',g.lig,yB+20,7]];
+      B.forEach(b=>lab+=badge(b[1],b[2],b[3]));
+      lab+=T(xL+2,yT+26,'leading','note start f11')+T(xL+2,yB-18,'lagging','note start f11');
+      lab+=`<path d="M${xR-52} ${yD+30} h40" stroke="${INK}" stroke-width="1.4" marker-end="url(#ahp)"/>`;
+      const key=['helicase','gyrase','SSB','primase','Pol III + clamp','Pol I','ligase'];
+      key.forEach((t,i)=>{const c=i%2,r=Math.floor(i/2),y=yB+48+r*22;lab+=badge(c?190:18,y,i+1)+T(c?204:32,y+5,t,'lab start f14');});
+      const ly=yB+48+4*22;
+      lab+=`<rect x="10" y="${ly-5}" width="14" height="5" fill="${RNA}"/>`+T(28,ly,'RNA primer','note start f12')+`<rect x="118" y="${ly-5}" width="14" height="5" fill="${NEW}"/>`+T(136,ly,'new DNA','note start f12')+`<rect x="214" y="${ly-5}" width="14" height="5" fill="${OLD}"/>`+T(232,ly,'parental','note start f12');
+    }
+    s+=G('a-fade',D(2.5),lab);
+  }
+  return {s,h:n?yB+48+4*22+12:yB+86};
+}
+
+/* ================= Part I · the discoveries ================= */
+const QUOTE='“It has not escaped our notice that the specific pairing we have postulated immediately suggests a possible copying mechanism for the genetic material.”';
+function scNotice(n){
+  let s='';
+  if(!n){
+    s+=G('a-fade',0,helix(30,190,80,22,OLD,OLD)+T(110,130,'parent','note mid'));
+    s+=G('a-fade',.6,`<path d="M202 80 h34" class="arrow"/>`+sine(250,400,52,10,OLD,56)+sine(250,400,108,10,OLD,56,Math.PI)+T(325,130,'strands part','note mid'));
+    s+=G('a-fade',1.2,`<path d="M412 80 h34" class="arrow"/>`+helix(460,610,52,16,OLD,NEWL)+helix(460,610,112,16,NEWL,OLD)+T(535,150,'two copies, each half old','note mid'));
+    const L=wrap(QUOTE,70);s+=G('a-fade',2.0,L.map((l,i)=>T(320,196+i*24,l,'lab mid').replace('class="lab mid"','class="lab mid" style="font-style:italic;font-size:18px"')).join('')+T(320,206+L.length*24,'J. D. Watson and F. H. C. Crick, Nature, April 1953','note mid'));
+    return {vb:wide(230+L.length*24),s};
+  }
+  s+=G('a-fade',0,helix(20,340,40,18,OLD,OLD)+T(180,76,'parent','note mid'));
+  s+=G('a-fade',.8,`<path d="M180 86 v20" class="arrow"/>`+helix(10,170,128,14,OLD,NEWL)+helix(190,350,128,14,NEWL,OLD)+T(180,166,'two copies, each half old','note mid'));
+  const L=wrap(QUOTE,40);s+=G('a-fade',1.6,L.map((l,i)=>`<text x="180" y="${202+i*22}" class="lab mid" style="font-style:italic;font-size:16px">${l}</text>`).join('')+T(180,212+L.length*22,'Watson and Crick, Nature, 1953','note mid'));
+  return {vb:slim(226+L.length*22),s};
+}
+
+const MODELS=[['Semiconservative',[[['o','n']],[['o','n'],['n','o']],[['o','n'],['n','n'],['n','n'],['n','o']]]],
+ ['Conservative',[[['o','o']],[['o','o'],['n','n']],[['o','o'],['n','n'],['n','n'],['n','n']]]],
+ ['Dispersive',[[['o','o']],[[[1,0,1,0],[0,1,0,1]],[[0,1,0,1],[1,0,1,0]]],[[[1,0,0,0],[0,0,1,0]],[[0,1,0,0],[0,0,0,1]],[[0,0,1,0],[1,0,0,0]],[[0,0,0,1],[0,1,0,0]]]]]];
+MODELS.forEach(m=>m[1][0]=[['o','o']]);
+function strand(x,y,w,pat){if(typeof pat==='string')return `<rect x="${x}" y="${y}" width="${w}" height="6" fill="${pat==='o'?OLD:NEWL}" stroke="${INK}" stroke-width=".6"/>`;const sw=w/pat.length;return pat.map((o,i)=>`<rect x="${(x+i*sw).toFixed(1)}" y="${y}" width="${sw.toFixed(1)}" height="6" fill="${o?OLD:NEWL}" stroke="${INK}" stroke-width=".6"/>`).join('');}
+function scModels(n){
+  const L=n?{lx:12,gx:[12,62,148],dw:30,gap:6,y0:52,rh:76,H:290}:{lx:20,gx:[200,280,410],dw:50,gap:10,y0:62,rh:76,H:300};
+  let s=G('a-fade',0,['Parent','Gen 1','Gen 2'].map((t,i)=>T(L.gx[i]+(i===0?L.dw/2:i===1?L.dw+L.gap/2:2*L.dw+1.5*L.gap),n?22:28,t,'mono mid f12')).join(''));
+  MODELS.forEach((m,r)=>{const y=L.y0+r*L.rh;
+    let row=n?T(L.lx,y-12,m[0],'cname start f15'):T(L.lx,y+12,m[0],'cname start');
+    m[1].forEach((gen,gi)=>gen.forEach((d,di)=>{const x=L.gx[gi]+di*(L.dw+L.gap);row+=G('a-pop',(.3+r*.5+gi*.25).toFixed(2),strand(x,y,L.dw,d[0])+strand(x,y+10,L.dw,d[1]));}));
+    s+=G('a-fade',(r*.5).toFixed(2),row);});
+  const ly=L.y0+3*L.rh-14;
+  s+=G('a-fade',2,`<rect x="${n?12:20}" y="${ly}" width="22" height="6" fill="${OLD}"/>`+T(n?40:48,ly+7,'parental strand','note start f12')+`<rect x="${n?170:220}" y="${ly}" width="22" height="6" fill="${NEWL}" stroke="${INK}" stroke-width=".6"/>`+T(n?198:248,ly+7,'new strand','note start f12'));
+  return {vb:n?slim(ly+20):wide(ly+22),s};
+}
+
+function scMeselson(n){
+  const L=n?{xs:[60,150,240],w:40,top:56,h:150,labX:290,anchor:'start',H:300}:{xs:[230,350,470],w:50,top:60,h:170,labX:180,anchor:'end',H:320};
+  const fr={light:.40,hybrid:.56,heavy:.72}, Y=f=>L.top+L.h*f;
+  let s=G('a-fade',0,T(n?180:320,n?24:28,'Grown in heavy ¹⁵N, then moved to light ¹⁴N','lab mid'));
+  Object.entries(fr).forEach(([k,f])=>s+=G('a-fade',.2,ln(n?L.xs[0]-30:L.labX+8,Y(f),n?L.labX-6:L.xs[2]+L.w+20,Y(f),'#B9A889',1,'3 3')+T(L.labX,Y(f)+4,n?k:{light:'light (¹⁴N/¹⁴N)',hybrid:'hybrid',heavy:'heavy (¹⁵N/¹⁵N)'}[k],'note '+L.anchor+' f12')));
+  const bands=[['heavy'],['hybrid'],['hybrid','light']];
+  L.xs.forEach((x,i)=>{s+=G('a-fade',(.3+i*.2).toFixed(1),`<rect x="${x}" y="${L.top}" width="${L.w}" height="${L.h}" rx="${L.w/2}" fill="url(#csg)" stroke="${INK}" stroke-width="1.2"/>`+T(x+L.w/2,L.top+L.h+20,'gen '+i,'mono mid f12'));
+    bands[i].forEach((b,j)=>s+=G('a-pop',(1.0+i*.7+j*.2).toFixed(2),`<rect x="${x+5}" y="${Y(fr[b])-3.5}" width="${L.w-10}" height="7" rx="3.5" fill="#2C2318" opacity=".85"/>`));});
+  const cy=L.top+L.h+(n?48:52);
+  s+=G('a-fade',3.0,T(n?180:320,cy,n?'Gen 1: one hybrid band. Not conservative.':'Generation 1: a single hybrid band rules out conservative copying','lab mid')
+    +T(n?180:320,cy+22,n?'Gen 2: hybrid + light. Not dispersive.':'Generation 2: hybrid and light bands rule out dispersive copying','lab mid'));
+  return {vb:n?slim(cy+34):wide(cy+36),s};
+}
+
+function scHunt(n){
+  const steps=[['Break open E. coli','a cell-free extract'],['Add ¹⁴C-thymidine','a radioactive DNA building block'],['Precipitate DNA with acid','small molecules wash away'],['Count what stuck','radioactivity now in DNA']];
+  let s='';
+  if(!n){
+    s+=G('a-pop',0,portrait(110,118,.82))+G('a-fade',.4,T(110,230,'Arthur Kornberg','cname mid')+T(110,250,'1918–2007','note mid')+T(110,268,'Washington University, St Louis','note mid f12'));
+    steps.forEach((st,i)=>{const y=38+i*52;s+=G('a-fade',(.6+i*.4).toFixed(1),badge(256,y,i+1)+T(274,y+5,st[0],'lab start')+T(274,y+24,st[1],'note start f12'));});
+    const my=260;
+    s+=G('a-fade',2.4,T(250,my,'The first result:','lab start')+`<rect x="250" y="${my+12}" width="360" height="16" rx="3" fill="${GREY}" stroke="${INK}" stroke-width=".6"/>`+`<rect x="250" y="${my+12}" width="3" height="16" fill="${RED}"/>`
+      +T(250,my+48,'about 50 counts out of a million added','note start')+`<path d="M252 ${my+34} v-4" stroke="${RED}"/>`);
+    return {vb:wide(320),s};
+  }
+  s+=G('a-pop',0,portrait(70,72,.5))+G('a-fade',.4,T(130,52,'Arthur Kornberg','cname start')+T(130,72,'1918–2007','note start')+T(130,90,'Washington University, St Louis','note start f12'));
+  steps.forEach((st,i)=>{const y=150+i*44;s+=G('a-fade',(.6+i*.4).toFixed(1),badge(22,y,i+1)+T(40,y+5,st[0],'lab start f15')+T(40,y+22,st[1],'note start f12'));});
+  const my=336;
+  s+=G('a-fade',2.4,T(16,my,'The first result:','lab start')+`<rect x="16" y="${my+12}" width="328" height="14" rx="3" fill="${GREY}" stroke="${INK}" stroke-width=".6"/>`+`<rect x="16" y="${my+12}" width="3" height="14" fill="${RED}"/>`+T(16,my+46,'about 50 counts out of a million','note start'));
+  return {vb:slim(my+58),s};
+}
+
+const BASECOMP=[['M. phlei','0.49','0.48'],['E. coli','0.97','0.98'],['Calf thymus','1.25','1.29'],['Phage T2','1.92','1.99']];
+function scNeeds(n){
+  const ing=[['template DNA',OLD],['dATP dGTP dCTP dTTP',NEW],['Mg²⁺','#8C8270'],['the enzyme',POL1]];
+  let s='';
+  if(!n){
+    ing.forEach((g,i)=>{s+=G('a-drop',(.2+i*.35).toFixed(2),box(20,30+i*46,170,32,'#E7DEC9',4)+`<rect x="20" y="${30+i*46}" width="8" height="32" fill="${g[1]}"/>`+T(110,51+i*46,g[0],'lab mid f15'));});
+    s+=G('a-fade',1.6,`<path d="M198 120 h36" class="arrow"/><path d="M252 70 v80 a22 22 0 0 0 44 0 v-80" fill="#F3EEE2" stroke="${INK}" stroke-width="1.4"/><rect x="254" y="118" width="40" height="52" fill="${NEWL}" opacity=".35"/>`+T(274,196,'37 °C','mono mid f12'));
+    s+=G('a-fade',2.2,`<path d="M306 120 h30" class="arrow"/>`+helix(344,416,120,12,OLD,NEW,36)+T(380,154,'new DNA','note mid'));
+    s+=G('a-fade',2.8,T(536,30,'(A+T)/(G+C)','mono mid f13')+T(446,54,'source','note start f12')+T(560,54,'template','note mid f12')+T(612,54,'product','note mid f12')+ln(440,62,632,62));
+    BASECOMP.forEach((r,i)=>s+=G('a-fade',(3.0+i*.2).toFixed(1),T(446,84+i*26,r[0],'note start f12')+T(560,84+i*26,r[1],'mono mid f13')+T(612,84+i*26,r[2],'mono mid f13')));
+    s+=G('a-fade',3.9,T(320,230,'Leave out any one ingredient and nothing is made.','lab mid')+T(320,254,'The product copies whatever template it is given.','lab mid'));
+    return {vb:wide(272),s};
+  }
+  ing.forEach((g,i)=>{const c=i%2,r=Math.floor(i/2);s+=G('a-drop',(.2+i*.35).toFixed(2),box(10+c*174,14+r*42,166,32,'#E7DEC9',4)+`<rect x="${10+c*174}" y="${14+r*42}" width="7" height="32" fill="${g[1]}"/>`+T(96+c*174,35+r*42,g[0],'lab mid f13'));});
+  s+=G('a-fade',1.6,`<path d="M180 104 v18" class="arrow"/>`+helix(110,250,146,11,OLD,NEW,40)+T(180,176,'new DNA','note mid'));
+  s+=G('a-fade',2.4,T(180,206,'(A+T)/(G+C)','mono mid f13')+T(16,228,'source','note start f12')+T(262,228,'template','note mid f12')+T(322,228,'product','note mid f12')+ln(10,236,350,236));
+  BASECOMP.forEach((r,i)=>s+=G('a-fade',(2.6+i*.2).toFixed(1),T(16,258+i*24,r[0],'note start f12')+T(262,258+i*24,r[1],'mono mid f13')+T(322,258+i*24,r[2],'mono mid f13')));
+  s+=G('a-fade',3.6,T(180,370,'Leave out any ingredient: nothing is made.','lab mid f15')+T(180,392,'The product copies its template.','lab mid f15'));
+  return {vb:slim(404),s};
+}
+
+function scRejected(n){
+  const stamp=(cx,cy,txt,rot,col)=>`<g transform="rotate(${rot} ${cx} ${cy})"><rect x="${cx-62}" y="${cy-15}" width="124" height="30" rx="3" fill="none" stroke="${col}" stroke-width="2.2"/>${Tc(cx,cy+5,txt,col,13,'mono mid','600')}</g>`;
+  const card=(x,y,w,h,lines)=>R(x,y,w,h,'card',4)+lines.map((l,i)=>T(x+14,y+26+i*20,l[0],l[1])).join('');
+  if(!n){
+    let s=G('a-fade',0,card(20,40,190,150,[['J. Biol. Chem.','mono start f12'],['Enzymatic synthesis','lab start f15'],['of deoxyribonucleic','lab start f15'],['acid. I.','lab start f15'],['submitted 1957','note start f12']]));
+    s+=G('a-pop',.8,stamp(115,160,'RETURNED',-8,RED));
+    s+=G('a-fade',1.6,`<path d="M218 115 h28" class="arrow"/>`+card(254,40,170,150,[['J. Biol. Chem.','mono start f12'],['vol. 233, 1958','note start f12'],['Lehman, Bessman,','lab start f15'],['Simms & Kornberg','lab start f15']]));
+    s+=G('a-pop',2.2,stamp(339,160,'PUBLISHED',-4,'#4F7A3F'));
+    s+=G('a-fade',3.0,`<path d="M432 115 h28" class="arrow"/><circle cx="540" cy="104" r="52" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="540" cy="104" r="42" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(540,100,'NOBEL','#3A2E22',14,'mono mid','600')+Tc(540,118,'1959','#3A2E22',13,'mono mid','600')
+      +T(540,180,'Physiology or Medicine','note mid f12')+T(540,198,'with Severo Ochoa','note mid f12'));
+    return {vb:wide(220),s};
+  }
+  let s=G('a-fade',0,card(10,14,160,156,[['J. Biol. Chem.','mono start f11'],['Enzymatic synthesis','lab start f13'],['of deoxyribo-','lab start f13'],['nucleic acid. I.','lab start f13'],['submitted 1957','note start f12']]));
+  s+=G('a-pop',.8,stamp(90,148,'RETURNED',-8,RED));
+  s+=G('a-fade',1.6,card(190,14,160,156,[['J. Biol. Chem.','mono start f11'],['vol. 233, 1958','note start f12'],['Lehman, Bessman,','lab start f13'],['Simms & Kornberg','lab start f13']]));
+  s+=G('a-pop',2.2,stamp(270,148,'PUBLISHED',-4,'#4F7A3F'));
+  s+=G('a-fade',3.0,`<circle cx="180" cy="232" r="44" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="180" cy="232" r="35" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(180,228,'NOBEL','#3A2E22',13,'mono mid','600')+Tc(180,245,'1959','#3A2E22',12,'mono mid','600')+T(180,298,'Physiology or Medicine, with Severo Ochoa','note mid f12'));
+  return {vb:slim(312),s};
+}
+
+function arcPath(cx,cy,r,a0,a1){const p=a=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];const [x0,y0]=p(a0),[x1,y1]=p(a1);const large=(a1-a0)%(2*Math.PI)>Math.PI?1:0;return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;}
+function scPhiX(n){
+  const C=n?[[90,90],[270,90]]:[[110,110],[330,110]], r=n?52:64, len=(2*Math.PI*(r-9)*.94).toFixed(0);
+  let s='';
+  s+=G('a-fade',0,`<circle cx="${C[0][0]}" cy="${C[0][1]}" r="${r}" fill="none" stroke="${OLD}" stroke-width="3"/>`+T(C[0][0],C[0][1]+4,'(+) strand','note mid f12')+T(C[0][0],C[0][1]+r+24,'natural φX174 DNA','note mid f12')+T(C[0][0],C[0][1]+r+42,'single-stranded circle','note mid f12'));
+  const a0=-Math.PI/2+.12, a1=a0+2*Math.PI*.94;
+  s+=`<path d="${arcPath(C[0][0],C[0][1],r-9,a0,a1-.001)}" stroke="${NEW}" stroke-width="3" fill="none" stroke-dasharray="${len}" class="a-draw" style="--len:${len};--d:.6s"/>`;
+  s+=G('a-pop',3.0,`<circle cx="${C[0][0]+(r-9)*Math.cos(-Math.PI/2+.06)}" cy="${C[0][1]+(r-9)*Math.sin(-Math.PI/2+.06)}" r="7" fill="${LIG}" stroke="${INK}" class="tint"/>`+T(C[0][0],C[0][1]-r-12,'ligase closes the circle','note mid f12'));
+  s+=G('a-fade',3.4,`<path d="M${C[0][0]+r+14} ${C[0][1]} H${C[1][0]-r-14}" class="arrow"/>`+T((C[0][0]+C[1][0])/2,C[0][1]-10,n?'copy again':'copy the copy','note mid f12'));
+  s+=G('a-fade',3.8,`<circle cx="${C[1][0]}" cy="${C[1][1]}" r="${r}" fill="none" stroke="${NEW}" stroke-width="3"/>`+T(C[1][0],C[1][1]+4,'synthetic (+)','note mid f12')+T(C[1][0],C[1][1]+r+24,'made entirely','note mid f12')+T(C[1][0],C[1][1]+r+42,'in a test tube','note mid f12'));
+  if(!n){s+=G('a-fade',4.4,`<path d="M${C[1][0]+r+14} ${C[1][1]} h60" class="arrow"/>`+phage(540,70,1.4)+T(540,170,'infectious','lab mid')+T(540,190,'new phage made in E. coli','note mid f12'));return {vb:wide(260),s};}
+  s+=G('a-fade',4.4,`<path d="M${C[1][0]} ${C[1][1]+r+52} v18" class="arrow"/>`+phage(C[1][0],C[1][1]+r+74,1)+T(C[1][0]-30,C[1][1]+r+108,'infectious','lab end'));
+  return {vb:slim(C[1][1]+r+140),s};
+}
+
+function scTwist(n){
+  const dish=(cx,cy,r)=>{let d=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#EDE3C8" stroke="${INK}" stroke-width="1.4"/><circle cx="${cx}" cy="${cy}" r="${r-5}" fill="none" stroke="${INK}" stroke-width=".6"/>`;let seed=5;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+    for(let i=0;i<34;i++){const a=rnd()*2*Math.PI,rr=Math.sqrt(rnd())*(r-12);d+=`<circle cx="${(cx+rr*Math.cos(a)).toFixed(1)}" cy="${(cy+rr*Math.sin(a)).toFixed(1)}" r="3.4" fill="#C9AE72" stroke="${INK}" stroke-width=".5"/>`;}return d;};
+  const wells=(x,y,w,nw,hit)=>{let s='';for(let i=0;i<nw;i++){const cx=x+i*w;s+=`<circle cx="${cx}" cy="${y}" r="${w*.36}" fill="${i===hit?'#F3EEE2':NEW}" opacity="${i===hit?1:.75}" stroke="${INK}" stroke-width=".7"/>`;}return s;};
+  const cards=[['Pol I','repair; removes primers','#D08B5B'],['Pol II','repair','#B4766E'],['Pol III','the replicase','#6F9A8E']];
+  if(!n){
+    let s=G('a-fade',0,dish(90,96,66)+`<circle cx="112" cy="80" r="8" fill="none" stroke="${RED}" stroke-width="2"/>`+T(90,184,'thousands of colonies screened','note mid f12'));
+    s+=G('a-fade',.8,`<path d="M168 96 h30" class="arrow"/>`+T(330,58,'Pol I activity in each extract','note mid f12')+wells(220,90,26,10,6)+Tc(220+6*26,122,'polA1','#A4473A',12,'mono mid','600'));
+    s+=G('a-pop',1.6,mark(500,90,true)+T(520,86,'it grows','lab start')+T(520,106,'and copies its DNA','note start f12'));
+    cards.forEach((c,i)=>s+=G('a-fade',(2.4+i*.4).toFixed(1),box(30+i*200,204,180,62,'#E7DEC9',4)+`<rect x="${30+i*200}" y="204" width="8" height="62" fill="${c[2]}"/>`+T(50+i*200,230,c[0],'cname start')+T(50+i*200,252,c[1],'note start f12')));
+    s+=G('a-fade',3.8,T(320,296,'Pol II and Pol III turned up in polA mutant extracts (1970–71)','note mid'));
+    return {vb:wide(314),s};
+  }
+  let s=G('a-fade',0,dish(70,76,56)+`<circle cx="88" cy="62" r="7" fill="none" stroke="${RED}" stroke-width="2"/>`+T(70,150,'thousands screened','note mid f12'));
+  s+=G('a-fade',.8,T(250,30,'Pol I activity','note mid f12')+wells(160,58,20,10,6).replace(/r="7.2"/g,'r="7"').split('cx="').join('cx="')+Tc(160+6*20,82,'polA1','#A4473A',11,'mono mid','600'));
+  s+=G('a-pop',1.6,mark(170,120,true)+T(188,116,'it grows','lab start f15')+T(188,134,'and replicates','note start f12'));
+  cards.forEach((c,i)=>s+=G('a-fade',(2.4+i*.4).toFixed(1),box(10,172+i*52,340,44,'#E7DEC9',4)+`<rect x="10" y="${172+i*52}" width="7" height="44" fill="${c[2]}"/>`+T(28,199+i*52,c[0],'cname start')+T(110,199+i*52,c[1],'note start f13')));
+  s+=G('a-fade',3.8,T(180,346,'Pol II and III found in polA extracts','note mid'));
+  return {vb:slim(360),s};
+}
+
+function scOkazaki(n){
+  const P=n?{x0:40,x1:340,y0:40,y1:190,H:270}:{x0:90,x1:560,y0:40,y1:220,H:300};
+  const W=P.x1-P.x0,H=P.y1-P.y0;
+  const curve=(mu,sd,amp)=>{let p='';for(let i=0;i<=60;i++){const t=i/60,x=P.x0+t*W,y=P.y1-H*amp*Math.exp(-((t-mu)**2)/(2*sd*sd));p+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' ';}return p;};
+  let s=G('a-fade',0,ln(P.x0,P.y1,P.x1,P.y1,'#6A5B47',1.4)+ln(P.x0,P.y0,P.x0,P.y1,'#6A5B47',1.4)
+    +T((P.x0+P.x1)/2,P.y1+26,'size of newly made DNA  →','note mid f12')+`<text x="${P.x0-14}" y="${(P.y0+P.y1)/2}" class="note mid f12" transform="rotate(-90 ${P.x0-14} ${(P.y0+P.y1)/2})">³H label</text>`
+    +T(P.x0+6,P.y1+14,'short','mono start f10')+T(P.x1-4,P.y1+14,'long','mono end f10'));
+  s+=G('a-fade',.6,`<path d="${curve(.18,.07,.9)}" stroke="${RED}" stroke-width="2.6" fill="none"/>`+T(P.x0+W*.18+14,P.y0+H*.1+6,n?'5 s pulse':'after a 5-second pulse','lab start '+(n?'f14':'')));
+  s+=G('a-fade',1.8,`<path d="${curve(.78,.1,.7)}" stroke="${NEW}" stroke-width="2.6" fill="none"/>`+T(P.x0+W*.78,P.y0+H*.3-12,n?'after a chase':'after a chase','lab mid '+(n?'f14':'')));
+  s+=G('a-fade',2.6,T(n?180:320,P.H-14,n?'Short pieces first, joined later':'New DNA appears first as short pieces, which are later joined','lab mid'));
+  return {vb:n?slim(P.H):wide(P.H),s};
+}
+
+/* ================= Part II · the machine ================= */
+function scRules(n){
+  const tmpl='TACGGTCAGT', made='ATGCC', dx=n?28:40, x0=n?28:60, yT=n?130:150, yN=n?84:96, fs=n?14:17;
+  let s=T(x0-10,yT+5,'3′','mono end f12')+T(x0+tmpl.length*dx+6,yT+5,'5′','mono start f12');
+  for(let i=0;i<tmpl.length;i++){const x=x0+i*dx+dx/2;s+=box(x-dx*.36,yT-12,dx*.72,24,'#E3D9C3',3)+Tc(x,yT+5,tmpl[i],OLD,fs,'mono mid','600');}
+  s+=`<path d="M${x0} ${yT+18} H${x0+tmpl.length*dx}" stroke="${OLD}" stroke-width="2.4"/>`;
+  s=G('a-fade',0,s);
+  let m=T(x0-10,yN+5,'5′','mono end f12');
+  for(let i=0;i<made.length;i++){const x=x0+i*dx+dx/2;m+=box(x-dx*.36,yN-12,dx*.72,24,NEWL,3)+Tc(x,yN+5,made[i],INK,fs,'mono mid','600')+ln(x,yN+12,x,yT-12,'#6A5B47',1);}
+  m+=`<path d="M${x0} ${yN-18} H${x0+made.length*dx-dx*.1}" stroke="${NEW}" stroke-width="2.4"/>`+T(x0+made.length*dx-4,yN-26,'3′-OH','mono acc mid f12');
+  s+=G('a-fade',.4,m);
+  const xi=x0+5*dx+dx/2;
+  s+=G('a-drop',1.2,box(xi-dx*.36,yN-12,dx*.72,24,NEWL,3)+Tc(xi,yN+5,'A',INK,fs,'mono mid','600')+ln(xi,yN+12,xi,yT-12,'#6A5B47',1)+`<path d="M${xi-dx*.36} ${yN-18} H${xi+dx*.2}" stroke="${NEW}" stroke-width="2.4"/>`);
+  s+=G('a-out',1.9,[0,1].map(i=>`<circle cx="${xi+dx*.5+i*12}" cy="${yN-30}" r="5" fill="${CLAMP}" stroke="${INK}"/>`).join('')+T(xi+dx*.5+34,yN-26,'PPi','mono start f11'),'--dx:30px;--dy:-24px');
+  s+=G('a-fade',.9,T(xi+dx*.4+(n?4:10),yN-44,n?'dATP in':'incoming dATP','note start f12'));
+  const by=yT+(n?48:54);
+  s+=G('a-fade',2.6,T(n?16:60,by,'Rule 1: chains grow only 5′ → 3′, at a free 3′-OH','lab start '+(n?'f14':''))+T(n?16:60,by+(n?24:28),'Rule 2: no primer, no start','lab start '+(n?'f14':'')));
+  s+=G('a-fade',3.2,T(n?16:60,by+(n?44:52),n?'A polymerase can extend a chain but cannot begin one.':'A DNA polymerase can extend a chain, but it cannot begin one.','note start '+(n?'f12':'')));
+  return {vb:n?slim(by+58):wide(by+66),s};
+}
+
+function scStrands(n){
+  const g=n?{F:230,xL:12,xR:350,yD:120,yT:56,yB:184,dg:40,H:260}:{F:420,xL:30,xR:620,yD:130,yT:60,yB:200,dg:60,H:280};
+  const {F,xL,xR,yD,yT,yB,dg}=g;
+  let s=G('a-fade',0,`<path d="M${xL} ${yT} H${F-dg} L${F} ${yD-5} H${xR}" stroke="${OLD}" stroke-width="2.4" fill="none"/><path d="M${xL} ${yB} H${F-dg} L${F} ${yD+5} H${xR}" stroke="${OLD}" stroke-width="2.4" fill="none"/>`+rungs(F,xR,yD-5,yD+5)
+    +T(xL,yT-10,'3′','mono start f12')+T(xL,yB+20,'5′','mono start f12')+T(xR-4,yD-14,n?'5′':'5′','mono end f12')+T(xR-4,yD+26,'3′','mono end f12'));
+  s+=G('a-fade',.6,`<path d="M${xL+10} ${yT+10} H${F-dg-6}" stroke="${NEW}" stroke-width="3" marker-end="url(#ahn)"/>`+T(xL+10,yT+30,n?'leading: continuous':'leading strand: made continuously toward the fork','note start'));
+  const fr=n?[[150,190],[96,140],[40,86]]:[[300,350],[220,290],[140,210],[60,130]];
+  fr.forEach((f,i)=>s+=G('a-fade',(1.2+i*.4).toFixed(1),`<path d="M${f[1]} ${yB-10} H${f[0]}" stroke="${NEW}" stroke-width="3" marker-end="url(#ahn)"/><path d="M${f[1]-8} ${yB-10} H${f[1]}" stroke="${RNA}" stroke-width="4"/>`));
+  s+=G('a-fade',2.6,T(xL+10,yB-28,n?'lagging: short pieces, away from fork':'lagging strand: short pieces, each made away from the fork','note start'));
+  s+=G('a-fade',.2,`<path d="M${xR-80} ${yD-30} h60" stroke="${INK}" stroke-width="1.6" marker-end="url(#ahp)"/>`+T(xR-50,yD-38,'fork moves','note mid f12'));
+  s+=G('a-fade',3.0,T(n?180:320,g.H-14,n?'Antiparallel strands force two strategies':'Because the strands are antiparallel, the two arms are copied in different ways','lab mid'));
+  return {vb:n?slim(g.H):wide(g.H),s};
+}
+
+function scOrigin(n){
+  let s='';
+  const A=n?{x1:10,x2:350,y:70}:{x1:20,x2:330,y:80};
+  const w=A.x2-A.x1, at=[A.x1+w*.06,A.x1+w*.16,A.x1+w*.26], boxes=[.42,.54,.66,.78,.9].map(f=>A.x1+w*f);
+  s+=G('a-fade',0,T(A.x1,A.y-44,'oriC','cname start')+`<path d="M${A.x1} ${A.y-5} H${A.x2} M${A.x1} ${A.y+5} H${A.x2}" stroke="${OLD}" stroke-width="2.2"/>`+rungs(A.x1,A.x2,A.y-5,A.y+5)
+    +at.map(x=>`<rect x="${x}" y="${A.y-8}" width="${w*.08}" height="16" fill="#E0B84A" opacity=".55"/>`).join('')+boxes.map(x=>`<rect x="${x}" y="${A.y-8}" width="${w*.07}" height="16" fill="${TUS}" opacity=".35"/>`).join('')
+    +T(A.x1+w*.18,A.y+30,'AT-rich 13-mers','note mid f12')+T(A.x1+w*.68,A.y+30,'DnaA boxes','note mid f12'));
+  s+=G('a-pop',.8,boxes.map(x=>blob(x+w*.035,A.y-16,w*.035+2,9,'#9C7FB0')).join('')+T(A.x1+w*.68,A.y-34,'DnaA–ATP','note mid f12'));
+  const by=A.y+(n?72:86), bx1=A.x1+w*.04, bx2=A.x1+w*.36;
+  s+=G('a-fade',1.6,`<path d="M${A.x1} ${by-5} H${bx1} q${(bx2-bx1)/2} -30 ${bx2-bx1} 0 H${A.x2}" stroke="${OLD}" stroke-width="2.2" fill="none"/><path d="M${A.x1} ${by+5} H${bx1} q${(bx2-bx1)/2} 30 ${bx2-bx1} 0 H${A.x2}" stroke="${OLD}" stroke-width="2.2" fill="none"/>`);
+  s+=G('a-pop',2.2,heli(bx1+(bx2-bx1)*.3,by-16,.9)+heli(bx1+(bx2-bx1)*.7,by+16,.9)+T(bx2+14,by+34,'DnaC loads two DnaB helicases','note start f12'));
+  const C=n?{cx:180,cy:by+150,r:72}:{cx:500,cy:150,r:92};
+  s+=G('a-fade',2.8,`<circle cx="${C.cx}" cy="${C.cy}" r="${C.r}" fill="none" stroke="${OLD}" stroke-width="3"/>`+T(C.cx,C.cy-C.r-12,'oriC','mono mid f12')+T(C.cx,C.cy+C.r+20,'ter','mono mid f12'));
+  const a=Math.PI*.42, f1=[C.cx+C.r*Math.cos(-Math.PI/2-a),C.cy+C.r*Math.sin(-Math.PI/2-a)], f2=[C.cx+C.r*Math.cos(-Math.PI/2+a),C.cy+C.r*Math.sin(-Math.PI/2+a)];
+  s+=G('a-fade',3.3,`<path d="M${f1[0].toFixed(1)} ${f1[1].toFixed(1)} Q${C.cx} ${C.cy-C.r*.15} ${f2[0].toFixed(1)} ${f2[1].toFixed(1)}" stroke="${NEW}" stroke-width="3" fill="none"/>`+`<path d="${arcPath(C.cx,C.cy,C.r,-Math.PI/2-a,-Math.PI/2+a)}" stroke="${NEW}" stroke-width="3" fill="none" stroke-dasharray="1 0" opacity=".0"/>`
+    +`<circle cx="${f1[0]}" cy="${f1[1]}" r="6" fill="${HELI}" stroke="${INK}"/><circle cx="${f2[0]}" cy="${f2[1]}" r="6" fill="${HELI}" stroke="${INK}"/>`
+    +`<path d="${arcPath(C.cx,C.cy,C.r+14,-Math.PI/2-a-.25,-Math.PI/2-a-.02)}" stroke="${INK}" stroke-width="1.4" fill="none" marker-start="url(#ahp)"/><path d="${arcPath(C.cx,C.cy,C.r+14,-Math.PI/2+a+.02,-Math.PI/2+a+.25)}" stroke="${INK}" stroke-width="1.4" fill="none" marker-end="url(#ahp)"/>`
+    +T(C.cx,C.cy+8,n?'θ form':'the θ (theta) form','note mid'));
+  return {vb:n?slim(C.cy+C.r+34):wide(270),s};
+}
+
+function scFork(n){const f=fork(n,{anim:true});return {vb:n?slim(f.h):wide(f.h),s:f.s};}
+
+function scTrombone(n){
+  const panel=(ox,oy,s0,frac,title,dl)=>{
+    const cx=ox+150, cy=oy+40;
+    let s=T(ox,oy,title,'cname start '+(n?'f15':''));
+    s+=`<path d="M${cx+10} ${cy-5} H${ox+290} M${cx+10} ${cy+5} H${ox+290}" stroke="${OLD}" stroke-width="2.2"/>`+rungs(cx+10,ox+290,cy-5,cy+5);
+    s+=`<path d="M${cx+10} ${cy-5} L${cx-14} ${cy-18} H${ox+10}" stroke="${OLD}" stroke-width="2.2" fill="none"/><path d="M${cx-30} ${cy-11} H${ox+14}" stroke="${NEW}" stroke-width="2.6"/>`;
+    const lcx=cx-14-s0*.55, lcy=cy+22+s0*.32, rx=s0*.6+12, ry=s0*.32+12;
+    s+=`<path d="M${cx+10} ${cy+5} C ${cx} ${cy+40}, ${lcx+rx} ${lcy+ry}, ${lcx} ${lcy+ry} C ${lcx-rx*1.2} ${lcy+ry}, ${lcx-rx*1.1} ${lcy-ry}, ${lcx} ${lcy-ry} C ${lcx+rx*.6} ${lcy-ry}, ${cx-40} ${cy+12}, ${cx-20} ${cy+14}" stroke="${OLD}" stroke-width="2.2" fill="none"/>`;
+    s+=`<path d="M${cx-24} ${cy+18} C ${lcx+rx*.4} ${lcy-ry+10}, ${lcx-rx*.9} ${lcy-ry+8}, ${lcx-rx*.95} ${lcy}" stroke="${NEW}" stroke-width="2.6" fill="none" stroke-dasharray="${frac*400} 400"/>`;
+    s+=`<path d="M${cx-24} ${cy+18} l-12 -2" stroke="${RNA}" stroke-width="4"/>`;
+    s+=heli(cx+6,cy+8,.8)+pol3(cx-24,cy-14,.85)+pol3(cx-24,cy+16,.85)+`<path d="M${cx-24} ${cy-2} v4" stroke="${INK}" stroke-width="3"/>`;
+    return G('a-fade',dl,s);
+  };
+  let s='';
+  if(!n){s+=panel(10,30,50,.45,'The loop grows',0)+panel(330,30,95,.9,'…until the fragment is done',1.2);
+    s+=G('a-fade',2.4,T(320,276,'One Pol III copies each strand; they are tied together, so the lagging template loops','lab mid')+T(320,298,'out like a trombone slide and is released each time a fragment finishes','lab mid'));
+    return {vb:wide(316),s};}
+  s+=panel(20,24,44,.45,'The loop grows',0)+panel(20,210,80,.9,'…until the fragment is done',1.2);
+  s+=G('a-fade',2.4,T(180,410,'Both polymerases move together,','lab mid f15')+T(180,430,'so the lagging template loops out','lab mid f15'));
+  return {vb:slim(444),s};
+}
+
+function scMature(n){
+  const x1=n?14:40, x2=n?346:600, yT=n?110:120, yN=yT-10, k=n?.7:1, jx=n?190:330, pw=n?54:84;
+  let s=G('a-fade',0,`<path d="M${x1} ${yT} H${x2}" stroke="${OLD}" stroke-width="2.4"/>`+rungs(x1,x2,yN,yT)+T(x1,yT+22,'template','note start f12'));
+  s+=G('a-fade',.3,`<path d="M${x1} ${yN} H${jx-pw}" stroke="${NEW}" stroke-width="3"/>`+T(x1+40,yN-16,'fragment A','note mid f12'));
+  s+=G('a-fade',.3,`<path d="M${jx+4} ${yN} H${x2}" stroke="${NEW}" stroke-width="3"/><path d="M${x2-pw*.6} ${yN} H${x2}" stroke="${RNA}" stroke-width="4"/>`+T(x2-60,yN-16,'fragment B','note mid f12')+T(jx+8,yN-12,"B’s 3′ end",'mono start f11'));
+  s+=`<rect x="${jx-pw}" y="${yN-2.5}" width="${pw}" height="5" fill="${RNA}" class="a-shrink" style="--d:1.2s"/>`;
+  s+=`<rect x="${jx-pw}" y="${yN-1.5}" width="${pw+4}" height="3" fill="${NEW}" class="a-growR" style="--d:1.2s"/>`;
+  s+=G('a-fade',.6,T(jx-pw/2,yT+22,"A’s RNA primer",'note mid f12'));
+  s+=G('a-move',1.2,blob(jx-pw-4,yN-14*k,16*k,12*k,POL1)+T(jx-pw-4,yN-14*k-20,'Pol I','lab mid'),`--dx:${pw+8}px`);
+  s+=G('a-pop',3.2,blob(jx-pw-2,yT+44,11*k,9*k,LIG)+T(jx-pw-2,yT+72,'ligase','lab mid'));
+  s+=G('a-pop',3.6,mark(jx-pw+(n?18:24),yT+44,true,n?9:10));
+  const ty=yT+(n?106:112);
+  s+=G('a-fade',3.8,(n?[T(180,ty,'Pol I eats the primer and fills','lab mid f15'),T(180,ty+22,'with DNA; ligase seals the nick','lab mid f15')]:[T(320,ty,'Pol I’s 5′→3′ exonuclease removes the primer as it fills the gap with DNA;','lab mid'),T(320,ty+24,'ligase then seals the last nick, using NAD⁺ in E. coli','lab mid')]).join(''));
+  return {vb:n?slim(ty+36):wide(ty+40),s};
+}
+
+function scProof(n){
+  const tm='TACGGTCA', dx=n?30:42, x0=n?14:40, yT=n?110:120, yN=n?66:72, fs=n?14:17;
+  let s='';
+  for(let i=0;i<tm.length;i++){const x=x0+i*dx+dx/2;s+=box(x-dx*.36,yT-12,dx*.72,24,'#E3D9C3',3)+Tc(x,yT+5,tm[i],OLD,fs,'mono mid','600');}
+  s=G('a-fade',0,s);
+  const made='ATGCC';
+  let m='';for(let i=0;i<made.length;i++){const x=x0+i*dx+dx/2;m+=box(x-dx*.36,yN-12,dx*.72,24,NEWL,3)+Tc(x,yN+5,made[i],INK,fs,'mono mid','600');}
+  s+=G('a-fade',.3,m);
+  const xw=x0+5*dx+dx/2;
+  s+=G('a-out',.6,box(xw-dx*.36,yN-12,dx*.72,24,'#E8B4A8',3)+Tc(xw,yN+5,'G',RED,fs,'mono mid','600')+Tc(xw,yN+28,'✕',RED,13,'mono mid'),'--dx:24px;--dy:-30px;animation-delay:2.2s');
+  s+=G('a-pop',3.0,box(xw-dx*.36,yN-12,dx*.72,24,NEWL,3)+Tc(xw,yN+5,'A',INK,fs,'mono mid','600'));
+  s+=G('a-fade',.8,blob(xw+dx*1.05,yN-6,22*(n?.7:1),16*(n?.7:1),POL3)+T(xw+dx*1.05,yN-28,'ε','mono mid f15'));
+  s+=G('a-fade',1.4,T(xw,yN-44,n?'G·T mismatch':'G opposite T: a mismatch','note mid f12'));
+  const by=yT+(n?50:56), lvl=[['base selection by Pol III',5],['+ proofreading by ε (3′→5′ exo)',7],['+ mismatch repair',10]];
+  const bw=n?21:40;
+  lvl.forEach((l,i)=>{const y=by+i*(n?40:42);s+=G('a-fade',(3.4+i*.4).toFixed(1),T(x0,y,l[0],'note start '+(n?'f12':''))+`<rect x="${x0}" y="${y+8}" width="${l[1]*bw}" height="12" rx="3" fill="${['#9DB4AE',POL3,'#3E6A5E'][i]}" stroke="${INK}" stroke-width=".7"/>`+Tc(x0+l[1]*bw+8,y+19,`~1 in 10<tspan baseline-shift="super" font-size="70%">${l[1]===10?'9–10':l[1]}</tspan>`,'#3A2E22',12,'mono start'));});
+  return {vb:n?slim(by+3*40+4):wide(by+3*42+6),s};
+}
+
+function scFinish(n){
+  const C=n?{cx:110,cy:110,r:72}:{cx:150,cy:140,r:96};
+  let s=G('a-fade',0,`<circle cx="${C.cx}" cy="${C.cy}" r="${C.r}" fill="none" stroke="${OLD}" stroke-width="3"/>`+T(C.cx,C.cy-C.r-12,'oriC','mono mid f12'));
+  s+=`<circle cx="${C.cx}" cy="${C.cy}" r="${C.r-8}" fill="none" stroke="${NEW}" stroke-width="3" stroke-dasharray="${(2*Math.PI*(C.r-8)*.47).toFixed(0)} 999" transform="rotate(-90 ${C.cx} ${C.cy})" class="a-draw" style="--len:${(2*Math.PI*(C.r-8)*.47).toFixed(0)};--d:.4s"/>`;
+  s+=`<circle cx="${C.cx}" cy="${C.cy}" r="${C.r-8}" fill="none" stroke="${NEW}" stroke-width="3" stroke-dasharray="${(2*Math.PI*(C.r-8)*.47).toFixed(0)} 999" transform="translate(${2*C.cx} 0) scale(-1 1) rotate(-90 ${C.cx} ${C.cy})" class="a-draw" style="--len:${(2*Math.PI*(C.r-8)*.47).toFixed(0)};--d:.4s"/>`;
+  [-1,1].forEach(sg=>{const a=Math.PI/2+sg*.32,x=C.cx+C.r*Math.cos(a),y=C.cy+C.r*Math.sin(a);s+=G('a-pop',2.8,`<rect x="${x-5}" y="${y-5}" width="10" height="10" fill="${TUS}" stroke="${INK}" transform="rotate(${a*180/Math.PI} ${x} ${y})"/>`);});
+  s+=G('a-fade',3.0,T(C.cx,C.cy+C.r+22,n?'forks meet at ter; Tus traps':'forks meet at ter, held by Tus–Ter traps','note mid f12')+T(C.cx,C.cy-4,'4.6 Mb','mono mid f13')+T(C.cx,C.cy+14,n?'~40 min':'~1,000 nt/s per fork','note mid f12')+(n?'':T(C.cx,C.cy+32,'about 40 minutes','note mid f12')));
+  const D=n?{x:56,y:C.cy+C.r+100,r:32}:{x:332,y:150,r:36};
+  const ring=(x,y,r,c)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c}" stroke-width="5"/>`;
+  s+=G('a-fade',3.6,ring(D.x,D.y,D.r,'#7FA7C9')+ring(D.x+D.r*1.1,D.y,D.r,'#5A7FA6')+T(D.x+D.r*.55,D.y+D.r+22,'linked daughters','note mid f12'));
+  s+=G('a-fade',4.2,`<path d="M${D.x+D.r*2.3} ${D.y} h${n?28:40}" class="arrow"/>`+T(D.x+D.r*2.3+(n?14:20),D.y-D.r-8,'Topo IV','mono mid f12'));
+  const ex=D.x+D.r*2.3+(n?44:60);
+  s+=G('a-fade',4.8,ring(ex+D.r*.8,D.y-(n?0:0),D.r*.8,'#7FA7C9')+ring(ex+D.r*2.6,D.y,D.r*.8,'#5A7FA6')+T(ex+D.r*1.7,D.y+D.r+22,'two free chromosomes','note mid f12'));
+  return {vb:n?slim(D.y+D.r+36):wide(270),s};
+}
+
+/* ================= Part III · break it ================= */
+const MUTS=[
+ {g:'dnaA',p:'initiator DnaA',off:'',cls:'slow stop',col:'#C99A2E',text:'Forks already running finish the chromosome, but no new round can start at oriC. Synthesis winds down over one cycle.'},
+ {g:'dnaB',p:'helicase',off:'heli',cls:'fast stop',col:RED,text:'Without the helicase the parental strands cannot be opened. Synthesis stops at once.'},
+ {g:'dnaG',p:'primase',off:'primase',cls:'fast stop',col:RED,text:'No new primers. Okazaki fragments cannot start, and the replisome stalls.'},
+ {g:'dnaE',p:'Pol III α subunit',off:'pol3',cls:'fast stop',col:RED,text:'The replicase itself is gone. Both strands stop.'},
+ {g:'dnaQ',p:'Pol III ε (proofreading)',off:'eps',cls:'mutator',col:'#7D4A98',text:'Replication carries on, but errors go uncorrected. Mutation rates rise by orders of magnitude.'},
+ {g:'polA',p:'Pol I',off:'pol1',cls:'slow joining',col:'#8C8270',text:'Primers are removed and gaps filled slowly. polA1 cells survive, but are sensitive to UV light.'},
+ {g:'ligA',p:'DNA ligase',off:'lig',cls:'lethal',col:RED,text:'Okazaki fragments are made but never joined. Nicks pile up on the lagging strand.'},
+ {g:'gyrA',p:'gyrase (target of quinolones)',off:'gyr',cls:'fast stop',col:RED,text:'Positive supercoils build up ahead of the fork until it can no longer advance.'},
+ {g:'ssb',p:'single-strand binding protein',off:'ssb',cls:'lethal',col:RED,text:'Exposed single strands fold back and are degraded, and the fork collapses.'}];
+let mutSel=1;
+function scBreak(n){
+  const m=MUTS[mutSel], f=fork(n,{off:m.off,labels:true});
+  let s=f.s, y=f.h+(n?6:4);
+  s+=`<rect x="${n?10:24}" y="${y}" width="${n?340:592}" height="${n?118:84}" rx="6" class="card"/>`;
+  s+=`<rect x="${n?22:40}" y="${y+14}" width="${n?96:110}" height="24" rx="12" fill="${m.col}"/>`+Tc(n?70:95,y+31,m.cls,'#F3EDE0',12,'mono mid','600');
+  s+=T(n?128:162,y+31,`<tspan font-style="italic">${m.g}</tspan>: ${m.p}`,'lab start '+(n?'f14':''));
+  const L=wrap(m.text,n?46:84);
+  s+=L.map((l,i)=>T(n?22:40,y+(n?62:62)+i*20,l,'note start '+(n?'f13':'f14'))).join('');
+  if(m.g==='dnaA')s+=mark(n?334:596,y-14,false,n?8:10);
+  return {vb:n?slim(y+(n?126:92)):wide(y+92),s};
+}
+
+/* ================= bacteria-centric additions ================= */
+function cmpTable(n,head,rows,o={}){
+  const c=n?[10,o.n1||104,o.n2||232]:[24,o.w1||210,o.w2||430], y0=n?44:46, dy=n?30:27;
+  let s=G('a-fade',0,T(c[1],y0-16,head[0],'cname start '+(n?'f14':''))+T(c[2],y0-16,head[1],'cname start acc '+(n?'f14':''))+ln(c[0],y0-6,n?350:616,y0-6));
+  rows.forEach((r,i)=>{const y=y0+18+i*dy, bact=n&&r[4]?r[4]:r[2], euk=n&&r[3]?r[3]:r[1];
+    s+=G('a-fade',(.2+i*.12).toFixed(2),(i%2?'':`<rect x="${c[0]-4}" y="${y-17}" width="${(n?350:616)-c[0]+4}" height="${dy}" fill="#E7DEC9" opacity=".6"/>`)
+      +T(c[0],y,r[0],'lab start '+(n?'f12':'f14'))+T(c[1],y,euk,'note start '+(n?'f11':'f13'))+T(c[2],y,bact,'lab start '+(n?'f12':'f14')).replace('class="lab','class="acc lab'));});
+  return {s,y:y0+18+rows.length*dy};
+}
+function scCompare(n){
+  const rows=[['Chromosome','several, linear','one, circular'],['Origins','thousands (ORC)','one: oriC (DnaA)','many, ORC','oriC, DnaA'],['Helicase','MCM2–7 (CMG)','DnaB'],['Helicase loader','Cdc6, Cdt1','DnaC'],
+    ['Primase','Pol α–primase','DnaG'],['Replicase','Pol ε (lead), Pol δ (lag)','Pol III (both strands)','Pol ε, Pol δ','Pol III'],['Sliding clamp','PCNA, a trimer','β clamp, a dimer','PCNA','β clamp'],
+    ['Primer removal','FEN1, RNase H','Pol I, RNase H'],['Ends','telomeres, telomerase','none: forks meet at ter','telomerase','none (circle)'],['Fork speed','~50 nt/s','~1,000 nt/s']];
+  const t=cmpTable(n,['Eukaryotes','Bacteria (E. coli)'],rows);
+  let s=t.s+G('a-fade',1.8,T(n?180:320,t.y+(n?14:18),n?'Same problem, two toolkits':'Same problem, two toolkits. From here on we follow the bacterial one.','lab mid'));
+  return {vb:n?slim(t.y+26):wide(t.y+30),s};
+}
+
+function scControl(n){
+  const W=n?340:196, H=n?150:240, pos=n?[[10,10],[10,172],[10,334]]:[[10,20],[222,20],[434,20]];
+  const P=[['Use up DnaA-ATP','Hda and the β clamp make DnaA hydrolyse its ATP'],['Hide oriC','SeqA grips half-methylated GATC sites'],['Soak up DnaA','the datA site traps and inactivates DnaA']];
+  let s='';
+  P.forEach((p,i)=>{const [x,y]=pos[i],cx=x+W/2,cy=y+(n?100:140);
+    let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,p[0],'lab start f14')+wrap(p[1],n?46:28).map((l,j)=>T(x+14,y+40+j*16,l,'note start f12')).join('');
+    if(i===0)g+=blob(cx-50,cy,20,14,'#9C7FB0')+Tc(cx-50,cy+4,'ATP','#3A2E22',10,'mono mid','600')+`<path d="M${cx-24} ${cy} h44" class="arrow"/>`+blob(cx+50,cy,20,14,'#C9BFAB')+Tc(cx+50,cy+4,'ADP','#3A2E22',10,'mono mid','600')+T(cx,cy-16,'Hda + β','mono mid f11')+T(cx-50,cy+30,'active','note mid f11')+T(cx+50,cy+30,'inactive','note mid f11');
+    if(i===1){const x1=x+16,x2=x+W-16;g+=`<path d="M${x1} ${cy-6} H${x2} M${x1} ${cy+6} H${x2}" stroke="${OLD}" stroke-width="2"/>`;
+      [0,1,2].forEach(j=>{const gx=x1+(x2-x1)*(.2+j*.3);g+=Tc(gx,cy-12,'CH₃','#A4473A',9,'mono mid')+blob(gx,cy+22,12,8,'#5E7F7A')+Tc(gx,cy+25,'SeqA','#F3EDE0',7,'mono mid');});
+      g+=T(cx,cy+48,'new strand not yet methylated','note mid f11');}
+    if(i===2){g+=`<circle cx="${cx}" cy="${cy}" r="${n?30:40}" fill="none" stroke="${OLD}" stroke-width="2.4"/>`+`<rect x="${cx+(n?24:34)}" y="${cy-6}" width="14" height="12" fill="${TUS}"/>`+T(cx+(n?44:56),cy-10,'datA','mono start f11');
+      const f=n?.62:1;[[-.4,-1.1],[-1.1,-.3],[.9,-.8]].forEach(([a,b])=>g+=`<path d="M${cx+a*60*(n?1.6:1)} ${cy+b*50*f} L${cx+(n?30:40)} ${cy}" stroke="#9C7FB0" stroke-dasharray="3 3"/>`+blob(cx+a*60*(n?1.6:1),cy+b*50*f,10,7,'#9C7FB0'));
+      g+=T(cx,cy-(n?6:4),'oriC → ter','note mid f10');}
+    s+=G('a-fade',(i*.8).toFixed(1),g);});
+  const yb=n?334+H+22:H+48;
+  s+=G('a-fade',2.6,T(n?180:320,yb,n?'One start per origin per cell cycle':'Three locks make sure oriC fires once, and only once, per cell cycle','lab mid'));
+  return {vb:n?slim(yb+12):wide(yb+14),s};
+}
+
+function scMultifork(n){
+  const C=n?{cx:110,cy:110,r:80}:{cx:150,cy:140,r:100};
+  let s=G('a-fade',0,`<circle cx="${C.cx}" cy="${C.cy}" r="${C.r}" fill="none" stroke="${OLD}" stroke-width="3"/>`+T(C.cx,C.cy-C.r-10,'oriC','mono mid f12')+T(C.cx,C.cy+C.r+20,'ter','mono mid f12'));
+  const arc=(r,a,col,w=3)=>{const p=t=>[C.cx+r*Math.cos(t),C.cy+r*Math.sin(t)];const a0=-Math.PI/2-a,a1=-Math.PI/2+a,[x0,y0]=p(a0),[x1,y1]=p(a1);return `<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${a>Math.PI/2?1:0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}" stroke="${col}" stroke-width="${w}" fill="none"/>`;};
+  s+=G('a-fade',.6,arc(C.r-9,Math.PI*.72,'#3E5F82')+T(C.cx,C.cy+12,'first-round forks','note mid f11'));
+  s+=G('a-fade',1.4,arc(C.r-18,Math.PI*.28,'#8FB1CF',3.4)+T(C.cx,C.cy-C.r*.45,'second round','note mid f11'));
+  const tx=n?14:310, ty=n?C.cy+C.r+52:60;
+  const lines=[['C ≈ 40 min','to copy the chromosome'],['D ≈ 20 min','from finishing to dividing'],['τ = 20 min','fastest doubling in rich broth']];
+  lines.forEach((l,i)=>s+=G('a-fade',(2+i*.4).toFixed(1),Tc(tx,ty+i*30,l[0],'#2F5276',14,'mono start','600')+T(tx+(n?110:120),ty+i*30,l[1],'lab start '+(n?'f13':''))));
+  const ny=ty+3*30+(n?10:20);
+  s+=G('a-fade',3.4,wrap(n?'To divide faster than it can copy, the cell starts new rounds before old ones finish.':'To divide faster than it can copy its DNA, the cell starts new rounds before the old ones finish: multifork replication.',n?44:44).map((l,i)=>T(tx,ny+i*20,l,'lab start '+(n?'f14':''))).join('')+T(tx,ny+(n?62:66),'Cooper & Helmstetter, 1968','note start'));
+  return {vb:n?slim(ny+76):wide(Math.max(C.cy+C.r+34,ny+80)),s};
+}
+
+function scSOS(n){
+  const steps=[['Damage','UV or a quinolone stalls the fork'],['RecA','coats exposed single strands'],['LexA cuts itself','the repressor lets go'],['SOS genes on','repair, bypass, delay division']];
+  const W=n?340:146, H=n?66:120;
+  let s='';
+  steps.forEach((st,i)=>{const x=n?10:10+i*156, y=n?10+i*78:20;
+    let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,st[0],'lab start f14')+wrap(st[1],n?44:20).map((l,j)=>T(x+14,y+40+j*16,l,'note start f12')).join('');
+    if(!n&&i===1)g+=[0,1,2,3,4].map(j=>blob(x+26+j*22,y+96,10,8,'#C99A2E')).join('')+`<path d="M${x+14} ${y+104} H${x+W-14}" stroke="${OLD}" stroke-width="2"/>`;
+    if(!n&&i===2)g+=blob(x+50,y+96,14,10,'#B4766E')+`<text x="${x+74}" y="${y+102}" class="mid" style="fill:${RED};font-size:16px">✂</text>`+blob(x+98,y+96,14,10,'#B4766E');
+    s+=G('a-fade',(i*.6).toFixed(1),g+(i<3&&!n?`<path d="M${x+W+1} ${y+H/2} h8" class="arrow"/>`:''));});
+  const gy=n?10+4*78+16:H+50;
+  const genes=[['recA, lexA','more sensor and repressor'],['uvrA, uvrB','nucleotide excision repair'],['sulA','blocks FtsZ: cells grow long'],['dinB → Pol IV','bypasses lesions, error-prone'],['umuDC → Pol V','bypasses lesions, mutagenic']];
+  genes.forEach((g,i)=>{const c=n?0:i%2,r=n?i:Math.floor(i/2),x=n?14:24+c*310,y=gy+r*(n?36:28);
+    s+=G('a-fade',(2.4+i*.2).toFixed(1),Tc(x,y,g[0],'#2F5276',13,'mono start','600').replace('mono start','mono start')+T(x+(n?150:136),y,g[1],'note start '+(n?'f12':'f13')));});
+  const yb=gy+(n?5*36+6:3*28+10);
+  s+=G('a-fade',3.6,T(n?180:320,yb,n?'Survival at the price of mutations':'Survival at the price of mutations: SOS speeds the evolution of antibiotic resistance','lab mid'));
+  return {vb:n?slim(yb+12):wide(yb+14),s};
+}
+
+function scFirm(n){
+  const rows=[['Replicase','Pol III (α = DnaE)','PolC; DnaE helps start fragments','Pol III','PolC + DnaE'],['Helicase','DnaB','DnaC (same family as DnaB)','DnaB','DnaC (!)'],['Helicase loader','DnaC','DnaI, with DnaD and DnaB','DnaC','DnaI, DnaD, DnaB'],
+    ['Fork trap','Tus–Ter','Rtp–Ter','Tus–Ter','Rtp–Ter'],['Origin','oriC beside dnaA','oriC split around dnaA','oriC','oriC (split)']];
+  const t=cmpTable(n,['E. coli','B. subtilis and kin'],rows,{w1:200,w2:400,n1:104,n2:224});
+  let s=t.s;
+  const L=wrap(n?'Low-GC Gram-positives, including staphylococci and streptococci such as the pneumococcus, use PolC. Watch the names: their DnaC is the helicase.':'Low-GC Gram-positives, including staphylococci and streptococci such as the pneumococcus, use PolC as their main replicase. Watch the names: in these bacteria, DnaC is the helicase.',n?46:84);
+  s+=G('a-fade',1.6,L.map((l,i)=>T(n?12:24,t.y+(n?16:20)+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(t.y+24+L.length*20):wide(t.y+28+L.length*20),s};
+}
+
+const NAR='Narrator';
+const S=[
+ {p:1,title:'“A possible copying mechanism”',draw:scNotice,
+  text:"In April 1953, Watson and Crick ended their paper on the double helix with one cautious sentence. If A always pairs with T and G with C, each strand carries the information needed to rebuild its partner. Separate the strands, and each can act as a template for a new one."},
+ {p:1,title:'Three ways to copy a helix',draw:scModels,
+  text:"Pairing alone did not say how the copying went. In the semiconservative model, each new molecule keeps one parental strand. In the conservative model the parental helix stays intact and a wholly new one is made. In the dispersive model, old and new pieces are mixed along every strand. Each model predicts a different pattern over two generations."},
+ {p:1,title:'Meselson and Stahl, 1958',draw:scMeselson,
+  text:"At Caltech, Matthew Meselson and Franklin Stahl grew E. coli for many generations in heavy nitrogen, ¹⁵N, then moved the cells to ordinary ¹⁴N. DNA spun to equilibrium in a caesium chloride gradient settles at its own density. After one generation all the DNA was hybrid. After two, half was hybrid and half light: exactly the semiconservative prediction."},
+ {p:1,title:'Kornberg goes looking for the enzyme',draw:scHunt,
+  text:"Knowing how DNA is copied did not say what copies it. In 1955 Arthur Kornberg, a biochemist at Washington University in St Louis, set out to find the enzyme. He broke open E. coli, added radioactive thymidine, and asked whether any of it ended up in DNA. The first signal was tiny, about 50 counts in a million. Kornberg trusted it, and spent the next years purifying the activity behind it."},
+ {p:1,title:'What the enzyme needs',draw:scNeeds,
+  text:"The purified enzyme, now called DNA polymerase I, would only work with everything present: all four deoxynucleoside triphosphates, magnesium, and existing DNA to copy. The new DNA mirrored its template. Given DNA rich in G and C, it made G+C-rich DNA; given A+T-rich DNA, it made A+T-rich DNA. The enzyme was not choosing the sequence. The template was."},
+ {p:1,title:'The papers that came back',draw:scRejected,
+  text:"In 1957 Kornberg's group sent their results to the Journal of Biological Chemistry. The papers were returned: reviewers doubted that the product deserved to be called DNA. They were published in 1958, after a new editor, John Edsall, took over the journal. The following year Kornberg shared the Nobel Prize in Physiology or Medicine with Severo Ochoa."},
+ {p:1,title:'Life in a test tube, 1967',draw:scPhiX,
+  text:"Critics still asked whether Pol I made real, working DNA. In 1967 Mehran Goulian, Kornberg and Robert Sinsheimer answered. Using Pol I and the newly found DNA ligase, they copied the circular genome of phage φX174, then copied the copy. The fully synthetic DNA was infectious and produced new phage in E. coli. President Lyndon Johnson hailed it in a speech."},
+ {p:1,title:'The twist: a mutant without Pol I',draw:scTwist,
+  text:"In 1969 Paula De Lucia and John Cairns screened thousands of E. coli colonies, one by one, for Pol I activity. One mutant, polA1, had almost none. Yet it grew and copied its chromosome normally, though it was sensitive to UV light. Pol I could not be the main replicating enzyme. Searches in polA extracts soon found Pol II and Pol III, the latter purified by Kornberg's son Thomas with Malcolm Gefter. Pol III is the replicase. Pol I mostly removes primers and repairs."},
+ {p:1,title:'Okazaki’s short pieces, 1968',draw:scOkazaki,
+  text:"Every polymerase works 5′ to 3′, yet the two strands of a fork run in opposite directions. How could both be copied as the fork advanced? Reiji and Tsuneko Okazaki fed growing cells radioactive thymidine for just a few seconds. Most of the label appeared in short pieces of DNA, about 1,000 to 2,000 nucleotides in bacteria. After a longer chase, the pieces had been joined into long strands. One strand is made in fragments."},
+ {p:2,title:'Same problem, two toolkits',draw:scCompare,
+  text:"Eukaryotes copy several linear chromosomes from thousands of origins, using MCM helicase, Pol α–primase, and Pol ε and Pol δ held by the PCNA clamp. Telomerase solves the end problem. Bacteria copy one circular chromosome from a single origin with a much smaller kit: DnaA, DnaB helicase, DnaG primase and Pol III on a β clamp, twenty times faster and with no ends to worry about. The rest of this primer follows E. coli."},
+ {p:2,title:'Two rules for every polymerase',draw:scRules,
+  text:"Each new nucleotide arrives as a triphosphate. The polymerase joins it to the free 3′-OH at the end of the growing chain, pairing it with the template, and releases pyrophosphate. So chains grow only 5′ to 3′. And because a polymerase can only extend an existing end, it cannot begin a chain on bare template. Something must lay down a primer first."},
+ {p:2,title:'Leading and lagging strands',draw:scStrands,
+  text:"At a fork the two template strands run in opposite directions. On one, the new strand can grow continuously in the direction the fork moves: the leading strand. On the other, synthesis must run away from the fork, so it is made in short Okazaki fragments, each starting from its own RNA primer: the lagging strand."},
+ {p:2,title:'Starting at oriC',draw:scOrigin,
+  text:"E. coli has a single origin, oriC. Initiator DnaA, bound to ATP, gathers on a set of 9-base DnaA boxes and pries open the neighbouring AT-rich region. DnaC then loads two ring-shaped DnaB helicases, one on each strand, and two forks set off in opposite directions. In 1963 John Cairns caught a replicating chromosome on film: a circle with an inner loop, the theta form."},
+ {p:2,title:'Once, and only once',draw:scControl,
+  text:"A bacterium must fire oriC exactly once per cell cycle. Three locks see to it. After initiation, the protein Hda working with the β clamp makes DnaA hydrolyse its ATP, inactivating it. The newly copied GATC sites at oriC are methylated only on the old strand, and SeqA binds these half-methylated sites, hiding the origin until Dam methylase catches up. And the datA locus soaks up and inactivates spare DnaA."},
+ {p:2,title:'Faster than it can copy',draw:scMultifork,
+  text:"E. coli needs about 40 minutes to copy its chromosome and another 20 to divide, yet in rich broth it doubles every 20 minutes. Stephen Cooper and Charles Helmstetter worked out how in 1968: the cell starts new rounds of replication before earlier ones have finished. A fast-growing cell carries chromosomes with several generations of forks at once, and is born with replication already under way."},
+ {p:2,title:'The replication fork',draw:scFork,
+  text:"At the fork, DnaB helicase unwinds the parental DNA while gyrase relieves the twisting ahead of it. SSB coats the exposed single strand. Primase lays down short RNA primers on the lagging strand. Pol III, held on the DNA by its β sliding clamp, extends both strands at about 1,000 nucleotides a second. Behind it, Pol I replaces the primers with DNA and ligase seals the nicks."},
+ {p:2,title:'The trombone',draw:scTrombone,
+  text:"The two Pol III cores are tied together in one replisome, so they move with the fork in the same direction. To copy the lagging strand 5′ to 3′, its template loops out behind the replisome, and the loop grows as each Okazaki fragment is made. When the fragment is finished, the loop is released and a new one begins from the next primer, like a trombone slide."},
+ {p:2,title:'Finishing the lagging strand',draw:scMature,
+  text:"An Okazaki fragment begins with about a dozen nucleotides of RNA. When the next fragment reaches it, Pol I takes over. Its 5′ to 3′ exonuclease chews away the RNA primer as its polymerase fills the gap with DNA. A single nick remains, and DNA ligase seals it, using NAD⁺ in E. coli. This is the job Pol I was doing all along."},
+ {p:2,title:'Proofreading',draw:scProof,
+  text:"Pol III picks the correct nucleotide most of the time, but now and then it adds a wrong one. The mispaired end fits poorly, so the polymerase pauses and passes it to its ε subunit, a 3′ to 5′ exonuclease, which snips it off. Synthesis then resumes. Proofreading and later mismatch repair bring errors down to about one in a billion bases or fewer."},
+ {p:2,title:'When the fork meets damage: SOS',draw:scSOS,
+  text:"UV light or a quinolone antibiotic stalls replication forks and leaves single-stranded DNA. RecA coats it, and the RecA filament prompts the LexA repressor to cut itself in two. About 40 genes switch on. Some repair DNA; SulA blocks FtsZ, so cells stop dividing and grow into filaments; and the error-prone polymerases Pol IV and Pol V copy past lesions, often inserting the wrong base. Cells survive, but mutate."},
+ {p:2,title:'Finishing the chromosome',draw:scFinish,
+  text:"The two forks travel around the 4.6-megabase chromosome and meet in the terminus region, opposite oriC. There, Tus proteins bound to Ter sites act as one-way gates, letting forks in but not out. The finished daughter chromosomes are interlinked like two rings of a chain, and topoisomerase IV unlinks them so they can be pulled apart. If recombination has fused the two circles into a dimer, XerC and XerD cut it apart at the dif site, guided by the division protein FtsK."},
+ {p:2,title:'Not every bacterium is E. coli',draw:scFirm,
+  text:"E. coli is the textbook, but low-GC Gram-positives such as Bacillus subtilis, staphylococci and streptococci do things differently. Their main replicase is PolC, with a DnaE polymerase helping to start lagging-strand fragments. Their helicase, confusingly, is called DnaC, and it is loaded by DnaI with DnaD and DnaB. B. subtilis traps its forks with Rtp rather than Tus."},
+ {p:3,title:'Break the replisome',chips:true,draw:scBreak,
+  text:"Many replication proteins were first found as temperature-sensitive mutants that stop making DNA when warmed. Some stop at once, the fast-stop mutants that hit the fork. Others stop slowly, the slow-stop mutants that block new rounds from starting. Pick a gene to see which part fails and what happens."}
+];
+
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className=s.p>1?'p'+s.p:'';b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+MUTS.forEach((m,k)=>{const b=document.createElement('button');b.type='button';b.textContent=m.g;b.style.fontStyle='italic';b.onclick=()=>{mutSel=k;render();};chips.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  chips.hidden=!sc.chips;
+  [...chips.children].forEach((b,k)=>b.setAttribute('aria-pressed',k===mutSel));
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  [1,2,3].forEach(k=>$('part'+k).setAttribute('aria-current',sc.p===k));
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+[1,2,3].forEach(k=>$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>

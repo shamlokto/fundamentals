@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Bacteria Divide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Bacterial cell division · an animated primer</p>
+    <h1>Making two cells from one</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · The machine</button>
+    <button id="part2" type="button">II · Where to divide</button>
+    <button id="part3" type="button">III · Building the septum</button>
+    <button id="part4" type="button">IV · Control &amp; drugs</button>
+    <button id="part5" type="button">V · Shapes</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Protein names are from <i>E. coli</i> unless another organism is named; <i>S. pneumoniae</i> and <i>B. subtilis</i> equivalents are given where they differ. Cells and complexes are schematics, not to scale.</p>
+</div>
+<script>
+
+
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== shared translation glyphs ===================== */
+const SSU='#D9C89B', LSU='#BBA27A', TRNA_C='#8FB1CF', AA_C='#4F7A3F', CHAIN=['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#B4766E','#5E7F7A'];
+const GRP={np:['nonpolar','#D6C79F'],po:['polar','#A9C4DC'],ac:['acidic','#E7A99B'],ba:['basic','#B9A0C8']};
+const AAS=[['G','Gly','np'],['A','Ala','np'],['V','Val','np'],['L','Leu','np'],['I','Ile','np'],['P','Pro','np'],['F','Phe','np'],['M','Met','np'],['W','Trp','np'],
+ ['S','Ser','po'],['T','Thr','po'],['C','Cys','po'],['N','Asn','po'],['Q','Gln','po'],['Y','Tyr','po'],['D','Asp','ac'],['E','Glu','ac'],['K','Lys','ba'],['R','Arg','ba'],['H','His','ba']];
+const THREE=Object.fromEntries(AAS.map(a=>[a[0],a[1]]));THREE['*']='Stop';
+const CODE='FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+function tr(c){const o='UCAG';const i=16*o.indexOf(c[0])+4*o.indexOf(c[1])+o.indexOf(c[2]);return CODE[i];}
+function sub(x,y,k){return k;} // placeholder
+
+function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
+  const S=v=>v*k;
+  let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
+  return s+'</g>';
+}
+function chain(x,y,k,n,dir=-1){let s='';for(let i=0;i<n;i++){const xx=x-i*k*6,yy=y-i*k*13;s+=`<circle cx="${xx}" cy="${yy}" r="${k*7}" fill="${CHAIN[i%CHAIN.length]}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}return s;}
+function ribosome(cx,my,k,o={}){
+  const S=v=>v*k, sx={E:cx-S(50),P:cx,A:cx+S(50)};
+  let s='';
+  if(o.large!==false)s+=`<path d="M${cx-S(130)} ${my-S(22)} C ${cx-S(156)} ${my-S(160)}, ${cx+S(156)} ${my-S(160)}, ${cx+S(130)} ${my-S(22)} C ${cx+S(80)} ${my-S(36)}, ${cx-S(80)} ${my-S(36)}, ${cx-S(130)} ${my-S(22)} Z" fill="${LSU}" opacity=".55" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
+  if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
+  if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
+  return s;
+}
+
+function timeline(x,y,ev,wrapN,fs,indent,gap,d0){let s='',yy=y;ev.forEach((e,i)=>{const L=wrap(e[1],wrapN);s+=G('a-fade',(d0+i*.4).toFixed(1),T(x,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(x+indent,yy+j*18,l,'lab start '+fs)).join(''));yy+=L.length*18+gap;});return {s,y:yy};}
+/* ===================== envelope toolkit ===================== */
+const MEMB='#EDE0B8', HEAD='#B89A5E', PGF='#E3D6B4', SECY='#5E7F7A', SECA='#C99A2E', SRPC='#B4766E', TATC='#7D4A98', BAMC='#4F7A3F', LOLC='#2E7D78', DSB='#3E5F82', CAPC='#D9C8E6', TAC='#8C6D46';
+function bilayer(x1,x2,y,h=16){return `<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${MEMB}"/><path d="M${x1+3} ${y+2.6} H${x2} M${x1+3} ${y+h-2.6} H${x2}" stroke="${HEAD}" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`;}
+function pg(x1,x2,y,h){let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${PGF}"/>`;let d='';for(let yy=y+3;yy<y+h;yy+=6)d+=`M${x1} ${yy} H${x2}`;let c='';let r=0;for(let yy=y+3;yy+6<y+h;yy+=6,r++)for(let x=x1+(r%2?6:0)+4;x<x2;x+=14)c+=`M${x} ${yy} v6`;return s+`<path d="${d}" stroke="#A8916A" stroke-width="1.4"/><path d="${c}" stroke="#7D6A48" stroke-width="1"/>`;}
+function envelope(type,x1,x2,y0,o={}){
+  let s='',Y={};
+  if(type==='neg'||type==='myco'){
+    if(type==='neg'){let l='';for(let x=x1+6;x<x2;x+=12)l+=`M${x} ${y0+22} V${y0+8}`;s+=`<path d="${l}" stroke="#7D8A5A" stroke-width="1.6"/>`;for(let x=x1+6;x<x2;x+=12)s+=`<circle cx="${x}" cy="${y0+7}" r="2.4" fill="#7D8A5A"/>`;}
+    else s+=`<rect x="${x1}" y="${y0+8}" width="${x2-x1}" height="14" fill="#D9CDB2"/>`;
+    s+=bilayer(x1,x2,y0+22)+`<rect x="${x1}" y="${y0+38}" width="${x2-x1}" height="60" fill="#F3EEE2" opacity=".55"/>`+pg(x1,x2,y0+56,type==='myco'?20:10)+bilayer(x1,x2,y0+98);
+    Y={out:y0,om:y0+22,pg:y0+56,peri:y0+76,im:y0+98,cyto:y0+132,bottom:y0+114};
+    if(o.labels){const L=o.labels,a=o.la||'end',sh=L<80;s+=T(L,y0+34,sh?(type==='myco'?'MM':'OM'):(type==='myco'?'mycomembrane':'outer membrane'),'note '+a+' f11')+T(L,y0+(type==='myco'?70:64),sh?'PG':(type==='myco'?'arabinogalactan, PG':'peptidoglycan'),'note '+a+' f11')+T(L,y0+86,sh?'peri.':'periplasm','note '+a+' f11')+T(L,y0+110,sh?'IM':'inner membrane','note '+a+' f11')+T(L,y0+134,sh?'cyto.':'cytoplasm','note '+a+' f11');}
+  }else{
+    if(o.capsule!==false)s+=`<path d="M${x1} ${y0+20} ${Array.from({length:Math.ceil((x2-x1)/12)},(_,i)=>`q6 -14 12 0`).join(' ')} V${y0+22} H${x1} Z" fill="${CAPC}" opacity=".9"/>`;
+    s+=pg(x1,x2,y0+22,60);let t='';for(let x=x1+10;x<x2;x+=22)t+=`M${x} ${y0+88} C ${x+4} ${y0+70}, ${x-4} ${y0+44}, ${x+2} ${y0+24}`;s+=`<path d="${t}" stroke="${TAC}" stroke-width="1.6" fill="none"/>`;
+    s+=bilayer(x1,x2,y0+88);
+    Y={out:y0,cap:y0+10,pg:y0+52,im:y0+88,cyto:y0+122,bottom:y0+104};
+    if(o.labels){const L=o.labels,a=o.la||'end',sh=L<80;if(o.capsule!==false)s+=T(L,y0+16,'capsule','note '+a+' f11');s+=T(L,y0+50,sh?'wall':'peptidoglycan','note '+a+' f11')+(sh?'':T(L,y0+64,'+ teichoic acids','note '+a+' f10'))+T(L,y0+100,sh?'memb.':'membrane','note '+a+' f11')+T(L,y0+124,sh?'cyto.':'cytoplasm','note '+a+' f11');}
+  }
+  return {s,Y};
+}
+const chan=(x,y,col=SECY,h=24,w=8,gap=4)=>`<rect x="${x-gap/2-w}" y="${y-4}" width="${w}" height="${h}" rx="3" fill="${col}" stroke="${INK}" class="tint"/><rect x="${x+gap/2}" y="${y-4}" width="${w}" height="${h}" rx="3" fill="${col}" stroke="${INK}" class="tint"/>`;
+const lab=(x,y,t,c='mono mid f11')=>T(x,y,t,c);
+function barrel(x,y,w=22,h=24,col=BAMC){let s=`<rect x="${x-w/2}" y="${y-4}" width="${w}" height="${h}" rx="5" fill="${col}" stroke="${INK}" class="tint"/>`;for(let i=1;i<4;i++)s+=`<path d="M${x-w/2+i*w/4} ${y-2} v${h-4}" stroke="#F3EDE0" stroke-width="1" opacity=".6"/>`;return s;}
+function beadChain(x,y,n,dx=8,dy=0,col){let s='';for(let i=0;i<n;i++)s+=`<circle cx="${x+i*dx}" cy="${y+i*dy}" r="4" fill="${col||CHAIN[i%8]}" stroke="${INK}" stroke-width=".6"/>`;return s;}
+function prot(x,y,r=12,col='#8FB1CF',t=''){return blob(x,y,r,r*.8,col)+(t?Tc(x,y+4,t,'#3A2E22',10,'mono mid','600'):'');}
+
+/* ===================== cell-division toolkit ===================== */
+const WALL='#D9C8A2', WALLE='#8C7A52', CYTO='#DCE2C9', ZC='#7D4A98', FTSA='#C99A2E', MINC='#B4766E', MIND='#3E7FA8', NOCC='#5E7F7A',
+      PBPC='#4F7A3F', SEDS='#2E7D78', NUC='#9AA98C', DNAC='#5A4632', AMI='#A4473A', TOLP='#8C6D46', MAPZ='#C17A2C', PARB='#9C7FB0';
+const FX=(v,d=1)=>Number(v).toFixed(d);
+/* rod-shaped cell; c = constriction 0..1 */
+function rodCell(cx,cy,L,R,c,o={}){
+  const x1=cx-L/2, x2=cx+L/2, w=R*0.96*c, cr=R*0.62;
+  const d=`M${FX(x1)} ${FX(cy-R)} Q${FX(cx)} ${FX(cy-R+w)} ${FX(x2)} ${FX(cy-R)}`
+    +` A${FX(cr)} ${FX(R)} 0 0 1 ${FX(x2)} ${FX(cy+R)}`
+    +` Q${FX(cx)} ${FX(cy+R-w)} ${FX(x1)} ${FX(cy+R)}`
+    +` A${FX(cr)} ${FX(R)} 0 0 1 ${FX(x1)} ${FX(cy-R)} Z`;
+  let s=`<path d="${d}" fill="${o.fill||CYTO}" stroke="${o.stroke||WALLE}" stroke-width="${o.sw||2.4}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  if(o.wall!==false)s=`<path d="${d}" fill="none" stroke="${WALL}" stroke-width="${(o.sw||2.4)+5}"/>`+s;
+  return s;
+}
+function ovoCell(cx,cy,W,H,c,o={}){
+  const w=H*0.95*c;
+  const d=`M${FX(cx-W/2)} ${FX(cy)} C ${FX(cx-W/2)} ${FX(cy-H)}, ${FX(cx)} ${FX(cy-H)}, ${FX(cx)} ${FX(cy-H+w*0)} `
+   +`C ${FX(cx)} ${FX(cy-H)}, ${FX(cx+W/2)} ${FX(cy-H)}, ${FX(cx+W/2)} ${FX(cy)} `
+   +`C ${FX(cx+W/2)} ${FX(cy+H)}, ${FX(cx)} ${FX(cy+H)}, ${FX(cx)} ${FX(cy+H)} `
+   +`C ${FX(cx)} ${FX(cy+H)}, ${FX(cx-W/2)} ${FX(cy+H)}, ${FX(cx-W/2)} ${FX(cy)} Z`;
+  let s=`<path d="${d}" fill="none" stroke="${WALL}" stroke-width="7"/><path d="${d}" fill="${o.fill||CYTO}" stroke="${WALLE}" stroke-width="2.4"/>`;
+  if(c>0){const y=H*(1-c);s+=`<path d="M${FX(cx)} ${FX(cy-H)} q ${FX(-H*.5*c)} ${FX(H*.6)} 0 ${FX(H*2*1)}" fill="none" stroke="${WALLE}" stroke-width="2.4"/>`
+    +`<path d="M${FX(cx)} ${FX(cy-H)} q ${FX(H*.5*c)} ${FX(H*.6)} 0 ${FX(H*2*1)}" fill="none" stroke="${WALLE}" stroke-width="2.4"/>`;}
+  return s;
+}
+function zring(cx,cy,R,o={}){
+  const n=o.n||9, w=o.w||6, col=o.col||ZC;
+  let s='';
+  for(let i=0;i<n;i++){const t=(i-(n-1)/2)/(n-1);
+    s+=`<rect x="${FX(cx-w/2+t*0)}" y="${FX(cy-R+1+ (i)*((2*R-2)/n))}" width="${w}" height="${FX((2*R-2)/n-1.6)}" rx="1.6" fill="${col}" stroke="${INK}" stroke-width=".5"/>`;}
+  return s;
+}
+function nucleoid(cx,cy,rx,ry,o={}){
+  let s=`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${o.fill||NUC}" opacity="${o.op||.5}"/>`;
+  let d='',seed=o.seed||5;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+  for(let i=0;i<(o.n||5);i++){const a=rnd()*Math.PI*2;d+=`M${FX(cx-rx*.7+rnd()*rx*1.4)} ${FX(cy-ry*.6+rnd()*ry*1.2)} q ${FX(rx*.3)} ${FX(-ry*.5+rnd()*ry)} ${FX(rx*.6)} 0 `;}
+  return s+`<path d="${d}" stroke="${DNAC}" stroke-width="1.4" fill="none" opacity=".55"/>`;
+}
+function filament(x,y,n,sub,o={}){
+  let s='';const w=o.w||13,h=o.h||11;
+  for(let i=0;i<n;i++)s+=`<rect x="${x+i*(w+1)}" y="${y}" width="${w}" height="${h}" rx="2.5" fill="${sub[i]||sub[sub.length-1]}" stroke="${INK}" stroke-width=".6"/>`;
+  return s;
+}
+function gradBar(x,y,w,h,stops,id){
+  return `<defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="${stops[0]}"/><stop offset=".5" stop-color="${stops[1]}"/><stop offset="1" stop-color="${stops[2]}"/></linearGradient></defs>`
+   +`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="url(#${id})" opacity=".8"/>`;
+}
+function pgStrand(x1,x2,y,col=WALLE,o={}){
+  let s=`<path d="M${x1} ${y} H${x2}" stroke="${col}" stroke-width="${o.w||3}"/>`;
+  for(let x=x1+5;x<x2;x+=10)s+=`<path d="M${x} ${y} v${o.dir||6}" stroke="${col}" stroke-width="1.4"/>`;
+  return s;
+}
+function protein(cx,cy,rx,ry,fill,label,o={}){
+  return blob(cx,cy,rx,ry,fill)+(label?Tc(cx,cy+(o.dy||4),label,o.tc||'#3A2E22',o.fs||10,'mono mid','600'):'');
+}
+function tmProt(x,y,h,w,fill,label,o={}){
+  return `<rect x="${x-w/2}" y="${y}" width="${w}" height="${h}" rx="3" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint"/>`
+   +(label?Tc(x,y+h+(o.dy||13),label,'#3A2E22',o.fs||10,'mono mid','600'):'');
+}
+function stepRows2(n,items,x,y,W,H,gap,dl,extra){
+  let s='';items.forEach((it,i)=>{const by=y+i*(H+gap);
+    s+=G('a-fade',(dl+i*.5).toFixed(1),box(x,by,W,H,'#E7DEC9',4)+badge(x+14,by+14,i+1)+T(x+28,by+19,it[0],'lab start f14')
+      +wrap(it[1],Math.floor(W/5.6)).map((l,j)=>T(x+14,by+40+j*16,l,'note start f12')).join('')+(extra&&extra[i]?extra[i](x,by,W,H):''));});
+  return s;}
+function stepCols2(n,items,x,y,W,H,gap,dl,extra){
+  let s='';items.forEach((it,i)=>{const bx=x+i*(W+gap);
+    s+=G('a-fade',(dl+i*.5).toFixed(1),box(bx,y,W,H,'#E7DEC9',4)+badge(bx+14,y+14,i+1)+T(bx+28,y+19,it[0],'lab start f14')
+      +wrap(it[1],Math.floor(W/6.2)).map((l,j)=>T(bx+14,y+40+j*16,l,'note start f12')).join('')+(extra&&extra[i]?extra[i](bx,y,W,H):''));
+    if(i<items.length-1)s+=G('a-fade',(dl+i*.5+.3).toFixed(1),`<path d="M${bx+W+2} ${y+H/2} h${gap-6}" class="arrow"/>`);});
+  return s;}
+function cmpTable2(n,head,rows,o={}){
+  const c=n?(o.nc||[10,120,240]):(o.wc||[24,200,400]), y0=n?40:44, dy=n?28:28;
+  let s=G('a-fade',0,head.map((h,i)=>T(c[i],y0-14,h,'cname start '+(n?'f13':'f14'))).join('')+ln(c[0],y0-5,n?350:616,y0-5));
+  rows.forEach((r,i)=>{const y=y0+18+i*dy;
+    s+=G('a-fade',(.15*i).toFixed(2),(i%2?'':`<rect x="${c[0]-4}" y="${y-17}" width="${(n?350:616)-c[0]+6}" height="${dy}" fill="#E7DEC9" opacity=".55"/>`)
+      +r.map((v,j)=>j<c.length?T(c[j],y,v,(j?'note':'lab')+' start '+(n?'f12':'f13')):'').join(''));});
+  return {s,y:y0+18+rows.length*dy};
+}
+/* ===================== Part I · finding the machine ===================== */
+function scProblem(n){
+  const y=n?90:100, L=n?150:190, R=n?34:40;
+  const xs=n?[90,270]:[150,480];
+  let s=G('a-fade',0,rodCell(xs[0],y,L,R,0)+nucleoid(xs[0],y,L*.3,R*.55,{seed:3})+T(xs[0],y+R+(n?30:34),'one cell','note mid f12'));
+  s+=G('a-fade',.6,rodCell(xs[1]-L*.27,y,L*.5,R,0)+rodCell(xs[1]+L*.27,y,L*.5,R,0)+nucleoid(xs[1]-L*.27,y,L*.16,R*.5,{seed:7})+nucleoid(xs[1]+L*.27,y,L*.16,R*.5,{seed:11})+T(xs[1],y+R+(n?30:34),'two cells','note mid f12'));
+  if(!n)s+=G('a-fade',1,`<path d="M${xs[0]+L/2+18} ${y} h${xs[1]-L/2-18-(xs[0]+L/2+18)}" class="arrow"/>`);
+  else s+=G('a-fade',1,`<path d="M170 ${y} h16" class="arrow"/>`);
+  const items=[['Pick the spot','exactly at midcell, and only once per cycle'],
+   ['Wait for the DNA','both copies clear of the site before the wall closes'],
+   ['Build inwards','new membrane and new wall, laid down as a ring that shrinks'],
+   ['Stay sealed','a cell at 3 atmospheres of turgor cannot afford a hole']];
+  const ty=y+R+(n?60:66);
+  let yy=ty;items.forEach((it,i)=>{const L2=wrap(it[1],n?44:76);
+    s+=G('a-fade',(1.4+i*.3).toFixed(1),badge(n?20:30,yy-4,i+1)+T(n?36:46,yy,it[0],'cname start '+(n?'f14':''))
+      +L2.map((l,j)=>T(n?36:46,yy+18+j*17,l,'note start f13')).join(''));yy+=L2.length*17+32;});
+  return {vb:n?slim(yy+8):wide(yy+10),s};
+}
+
+function scFts(n){
+  const y=n?80:88, R=n?26:30;
+  let s=G('a-fade',0,T(n?14:30,n?30:34,'Temperature-sensitive mutants that stop dividing','cname start '+(n?'f14':'')));
+  s+=G('a-fade',.4,rodCell(n?68:150,y+(n?30:34),n?96:150,R,0)+T(n?68:150,y+(n?30:34)+R+22,'30 °C: normal','note mid f12'));
+  const fy=y+(n?30:34), fx=n?244:430;
+  s+=G('a-fade',1,rodCell(fx,fy,n?190:300,R,0)+[0,1,2,3].map(i=>nucleoid(fx-(n?70:112)+i*(n?47:75),fy,n?16:24,R*.55,{seed:3+i*4})).join('')
+    +T(fx,fy+R+22,'42 °C: a filament','note mid f12'));
+  s+=G('a-fade',1.6,T(n?14:30,fy+R+(n?48:54),'The cell keeps growing and copying its DNA, but never splits.','note start '+(n?'f12':'f13')));
+  const ty=fy+R+(n?76:84);
+  const ev=[['1968','François Jacob and Yukinori Hirota collect E. coli mutants that filament when warmed and name the genes fts, for filamentation temperature sensitive'],
+   ['1980s','ftsZ, ftsA, ftsQ, ftsI and the rest are mapped to one cluster near 2 minutes on the chromosome'],
+   ['1991','Erfei Bi and Joe Lutkenhaus show by immuno-electron microscopy that FtsZ forms a ring at midcell, and that it is there before anything constricts']];
+  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:76);
+    s+=G('a-fade',(2+i*.4).toFixed(1),T(n?14:30,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(n?70:110,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+12;});
+  return {vb:n?slim(yy+8):wide(yy+10),s};
+}
+
+function scZring(n){
+  const cx=n?180:200, cy=n?110:120, L=n?230:260, R=n?44:50;
+  let s=G('a-fade',0,rodCell(cx,cy,L,R,0));
+  s+=G('a-pop',.5,zring(cx,cy,R-4,{n:8,w:7})+T(cx,cy-R-(n?14:16),'Z ring','lab mid '+(n?'f14':'')));
+  s+=G('a-fade',1,`<path d="M${cx-L/2+10} ${cy+R+(n?18:20)} H${cx+L/2-10}" stroke="#6A5B47" stroke-width="1"/>`+T(cx,cy+R+(n?34:36),'seen from the side','note mid f11'));
+  const dx=n?180:470, dy=n?244:120, dr=n?42:48;
+  s+=G('a-fade',1.4,`<circle cx="${dx}" cy="${dy}" r="${dr}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2.4"/><circle cx="${dx}" cy="${dy}" r="${dr+3}" fill="none" stroke="${WALL}" stroke-width="5" opacity=".8"/>`);
+  let ring='';for(let i=0;i<16;i++){const a=i/16*2*Math.PI;ring+=`<rect x="${FX(dx+Math.cos(a)*(dr-7)-4)}" y="${FX(dy+Math.sin(a)*(dr-7)-4)}" width="8" height="8" rx="2" fill="${ZC}" stroke="${INK}" stroke-width=".5" transform="rotate(${FX(a*180/Math.PI)} ${FX(dx+Math.cos(a)*(dr-7))} ${FX(dy+Math.sin(a)*(dr-7))})"/>`;}
+  s+=G('a-pop',1.8,ring+T(dx,dy+dr+(n?24:26),'seen end-on','note mid f11'));
+  const ty=n?dy+dr+46:cy+R+70;
+  const L2=wrap(n?'FtsZ is a GTPase and a distant relative of tubulin. It polymerises into short filaments that gather into a discontinuous ring, which arrives first and recruits everything else.':'FtsZ is a GTPase and a distant structural relative of tubulin. It polymerises into short protofilaments that gather into a patchy, discontinuous ring at midcell. The ring arrives before any other division protein, and everything else is recruited to it, which is why it is called the Z ring.',n?46:88);
+  s+=G('a-fade',2.2,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L2.length*20+14):wide(ty+L2.length*20+16),s};
+}
+
+function scDivisome(n){
+  const y=n?60:70, h=n?26:30;
+  const early=[['FtsZ',ZC],['FtsA',FTSA],['ZipA',FTSA],['FtsEX','#7FA59B']];
+  const late=[['FtsK','#9C7FB0'],['FtsQ',SEDS],['FtsL',SEDS],['FtsB',SEDS],['FtsW',PBPC],['FtsI (PBP3)',PBPC],['FtsN','#B4766E']];
+  let s=G('a-fade',0,T(n?14:30,y-18,'Recruited in order, roughly two waves','cname start '+(n?'f14':'')));
+  let x=n?14:30;
+  early.forEach((p,i)=>{const w=n?66:92;s+=G('a-pop',(.2+i*.15).toFixed(2),`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${p[1]}" stroke="${INK}"/>`+Tc(x+w/2,y+h*.68,p[0],'#F3EDE0',n?11:12,'mono mid','600'));x+=w+6;});
+  const y2=y+(n?44:48);
+  s+=G('a-fade',.9,T(n?14:30,y2-6,'early: assemble the ring and tether it to the membrane','note start f12'));
+  let x2=n?14:30, y3=y2+(n?14:16);
+  late.forEach((p,i)=>{const w=n?(p[0].length>5?92:60):92;
+    if(x2+w>(n?350:620)){x2=n?14:30;y3+=h+6;}
+    s+=G('a-pop',(1.2+i*.12).toFixed(2),`<rect x="${x2}" y="${y3}" width="${w}" height="${h}" rx="4" fill="${p[1]}" stroke="${INK}"/>`+Tc(x2+w/2,y3+h*.68,p[0],'#F3EDE0',n?10:12,'mono mid','600'));x2+=w+6;});
+  const y4=y3+h+(n?22:24);
+  s+=G('a-fade',1.9,T(n?14:30,y4,'late: bring in the enzymes that build the wall','note start f12'));
+  const ty=y4+(n?26:28);
+  const L=wrap(n?'In E. coli more than a dozen proteins arrive in a set order, each needing the one before it. FtsN is the last, and its arrival is the signal to start making septal wall.':'In E. coli more than a dozen proteins arrive in a defined order, each depending on the ones before it — a hierarchy mapped by depletion experiments. FtsN arrives last, and its arrival is the signal that switches on septal wall synthesis. Gram-positive bacteria use a smaller, overlapping set: there is no ZipA, and FtsA alone does the tethering.',n?46:88);
+  s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
+}
+
+/* ===================== Part II · where to divide ===================== */
+function scMin(n){
+  const L=n?250:330, R=n?34:38, cx=n?180:200;
+  const row=(y,phase)=>{
+    let g=rodCell(cx,y,L,R,0);
+    const x1=cx-L/2, x2=cx+L/2;
+    g+=gradBar(x1+6,y-R+5,L-12,8,phase?['#3E7FA8','#CFE0EC','#F3EEE2']:['#F3EEE2','#CFE0EC','#3E7FA8'],'mg'+(phase?'a':'b'));
+    g+=Tc(phase?x1+28:x2-28,y-R-6,'MinD',MIND,10,'mono mid','600');
+    [0,1,2].forEach(i=>{const px=phase?x1+14+i*16:x2-14-i*16;g+=`<circle cx="${px}" cy="${y+R-10}" r="4" fill="${MINC}" stroke="${INK}" stroke-width=".5"/>`;});
+    g+=Tc(phase?x1+30:x2-30,y+R+14,'MinC',MINC,10,'mono mid','600');
+    return g;};
+  const r1=n?74:76, r2=n?186:176;
+  let s=G('a-fade',0,row(r1,1)+T(n?14:30,r1-R-24,'MinD, with MinE, sweeps pole to pole','note start f12'));
+  s+=G('a-fade',1,row(r2,0));
+  s+=G('a-fade',1.6,`<path d="M${cx} ${r1+R+20} V${r2-R-16}" class="arrow"/>`+T(cx+(n?16:22),(r1+r2)/2,'~1 min','note start f11'));
+  const my=n?294:246;
+  s+=G('a-fade',2,rodCell(cx,my,L,R,0)+`<rect x="${cx-10}" y="${my-R+4}" width="20" height="${2*R-8}" fill="#F3EEE2" opacity=".85"/>`+zring(cx,my,R-4,{n:6,w:6})
+    +T(cx,my-R-12,'time-averaged MinC: lowest at midcell','note mid f12'));
+  const ty=my+R+(n?34:38);
+  const L2=wrap(n?'MinC blocks FtsZ. Because MinCD oscillate from pole to pole, their average concentration is lowest exactly at midcell, so that is the only place a ring can form. Found by Lawrence Rothfield and colleagues, 1999.':'MinC inhibits FtsZ assembly. Because MinC and MinD oscillate from pole to pole roughly once a minute, driven by MinE, their time-averaged concentration is highest at the poles and lowest exactly at midcell — so midcell is the only place a ring can form. The oscillation was seen by Rothfield, Raskin and colleagues in 1999. Bacillus subtilis has no oscillation: MinCD are held at the poles by DivIVA.',n?46:88);
+  s+=G('a-fade',2.6,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L2.length*20+14):wide(ty+L2.length*20+16),s};
+}
+
+function scNoc(n){
+  const L=n?250:300, R=n?36:40, cx=n?180:180;
+  let s=G('a-fade',0,rodCell(cx,n?80:86,L,R,0)+nucleoid(cx,n?80:86,L*.33,R*.6,{seed:5})
+    +[0,1,2,3,4].map(i=>`<circle cx="${cx-L*.3+i*L*.15}" cy="${(n?80:86)-R+12}" r="4.5" fill="${NOCC}" stroke="${INK}" stroke-width=".5"/>`).join('')
+    +T(cx,(n?80:86)-R-14,'SlmA on the DNA blocks FtsZ','note mid f12')+mark(cx+L*.42,(n?80:86),false,9));
+  const y2=n?206:210;
+  s+=G('a-fade',1,rodCell(cx,y2,L,R,0)+nucleoid(cx-L*.26,y2,L*.19,R*.55,{seed:9})+nucleoid(cx+L*.26,y2,L*.19,R*.55,{seed:13})
+    +zring(cx,y2,R-4,{n:6,w:6})+T(cx,y2-R-14,'DNA has moved aside: the ring can form','note mid f12')+mark(cx+L*.42,y2,true,9));
+  const ty=y2+R+(n?40:44);
+  const L2=wrap(n?'Nucleoid occlusion stops a septum closing on unsegregated DNA. SlmA does it in E. coli, Noc in B. subtilis — both bind sites on the chromosome and keep FtsZ off.':'Nucleoid occlusion is the second safeguard: it stops a septum closing across unsegregated DNA. SlmA in E. coli and Noc in Bacillus subtilis bind specific chromosomal sites and keep FtsZ from assembling over them. Notably, neither site is present near the replication terminus, so the region that leaves midcell last is also the last to release the block.',n?46:88);
+  s+=G('a-fade',1.8,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  const yb=ty+L2.length*20+(n?12:14);
+  const FL=wrap(n?'Delete both Min and nucleoid occlusion and cells still divide — something else also positions the ring.':'Delete both systems and cells still divide, if poorly: something else also helps place the ring, and the search for it continues.',n?46:88);
+  s+=G('a-fade',2.4,FL.map((l,i)=>T(n?14:30,yb+i*18,l,'note start '+(n?'f12':'f13'))).join(''));
+  return {vb:n?slim(yb+FL.length*18+14):wide(yb+FL.length*18+16),s};
+}
+
+function scOvo(n){
+  const W=n?92:110, H=n?48:56, y=n?106:110;
+  const xs=n?[70,180,290]:[120,320,520];
+  let s='';
+  [[0,'new cell'],[0.45,'ring at midcell'],[0.95,'two ovals']].forEach((st,i)=>{
+    s+=G('a-fade',(i*.5).toFixed(1),ovoCell(xs[i],y,W,H,st[0])+T(xs[i],y+H+(n?24:28),st[1],'note mid f12'));
+    if(i===1)s+=G('a-pop',1,zring(xs[i],y,H-6,{n:6,w:6}));
+    if(i>0)s+=G('a-pop',(i*.5+.2).toFixed(1),[0,1].map(k=>`<circle cx="${xs[i]+(k?1:-1)*W*.3}" cy="${y}" r="5" fill="${MAPZ}" stroke="${INK}" stroke-width=".6"/>`).join(''));
+    if(i===0)s+=G('a-pop',.3,`<circle cx="${xs[i]}" cy="${y}" r="5" fill="${MAPZ}" stroke="${INK}" stroke-width=".6"/>`);
+  });
+  s+=G('a-fade',1.8,T(n?180:320,n?44:48,'MapZ rings mark the site before FtsZ arrives','lab mid '+(n?'f14':''))
+    +Tc(n?70:120,y-H-(n?12:14),'MapZ',MAPZ,11,'mono mid','600'));
+  const ty=y+H+(n?52:60);
+  const L=wrap(n?'The pneumococcus is an ovococcus: it has no Min system and no MreB. MapZ (also called LocZ) forms a ring at the equator, splits in two as the cell grows, and the two daughter rings mark the next division sites. Fleurie and colleagues; Holečková and colleagues, 2014.':'Streptococcus pneumoniae is an ovococcus. It has no Min system, and although it keeps an elongasome it has no MreB, so neither of the E. coli positioning systems applies. Instead MapZ, also called LocZ, forms a ring at the equator early, binds peptidoglycan through its extracellular domain, splits into two rings as the cell grows, and those rings mark where the next divisions will happen. It guides FtsZ rather than inhibiting it elsewhere. Described independently by Fleurie and colleagues and by Holečková and colleagues in 2014.',n?46:88);
+  s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
+}
+
+function scSegregate(n){
+  const L=n?250:320, R=n?36:40, cx=n?180:200;
+  const y1=n?74:80;
+  let s=G('a-fade',0,rodCell(cx,y1,L,R,0)+nucleoid(cx,y1,L*.3,R*.6,{seed:5})
+    +[0,1].map(k=>`<circle cx="${cx+(k?10:-10)}" cy="${y1}" r="6" fill="${PARB}" stroke="${INK}" stroke-width=".6"/>`).join('')
+    +T(cx,y1-R-12,'two origins, side by side','note mid f12'));
+  const y2=n?180:186;
+  s+=G('a-fade',.8,rodCell(cx,y2,L,R,0)+nucleoid(cx-L*.24,y2,L*.2,R*.55,{seed:9})+nucleoid(cx+L*.24,y2,L*.2,R*.55,{seed:13})
+    +[0,1].map(k=>`<circle cx="${cx+(k?1:-1)*L*.38}" cy="${y2}" r="6" fill="${PARB}" stroke="${INK}" stroke-width=".6"/>`).join('')
+    +T(cx,y2-R-12,'ParABS pushes them to opposite ends','note mid f12'));
+  const y3=n?286:292;
+  s+=G('a-fade',1.6,rodCell(cx,y3,L,R,.5)+tmProt(cx,y3-R+4,2*R-8,14,'#9C7FB0','',{})+Tc(cx+(n?26:30),y3,'FtsK','#3A2E22',11,'mono start','600')
+    +`<path d="M${cx-30} ${y3+R-14} h22 M${cx+30} ${y3+R-14} h-22" stroke="${DNAC}" stroke-width="2" marker-end="url(#ahp)"/>`
+    +T(cx,y3+R+(n?22:24),'FtsK pumps any trapped DNA out of the closing septum','note mid f12'));
+  const ty=y3+R+(n?46:50);
+  const items=[['ParABS','ParB coats parS sites near the origin; ParA, an ATPase on the nucleoid, moves the complex to the far pole. Most bacteria have it; E. coli does not.'],
+   ['SMC / MukBEF','condenses each chromosome and helps keep the two apart'],
+   ['FtsK / SpoIIIE','a DNA translocase in the septum; its motor reads KOPS sequences and pumps the terminus region out of the way, and it also activates XerCD at dif']];
+  let yy=ty;items.forEach((it,i)=>{const L2=wrap(it[1],n?44:76);
+    s+=G('a-fade',(2.2+i*.3).toFixed(1),T(n?14:30,yy,it[0],'cname start '+(n?'f14':''))+L2.map((l,j)=>T(n?14:30,yy+18+j*17,l,'note start f13')).join(''));yy+=L2.length*17+32;});
+  return {vb:n?slim(yy+8):wide(yy+10),s};
+}
+
+/* ===================== Part III · building the septum ===================== */
+function scTreadmill(n){
+  const x=n?26:60, y=n?80:90, w=n?15:17;
+  const cols=i=>i<2?'#C9BFAB':ZC;
+  let s=G('a-fade',0,T(n?180:320,n?34:38,'A filament that moves without moving','lab mid '+(n?'f14':'')));
+  const rows=[['t = 0',0],['t = 1',1],['t = 2',2]];
+  rows.forEach((r,ri)=>{const yy=y+ri*(n?48:52);
+    let f='';
+    for(let i=0;i<12;i++){const live=i>=ri&&i<ri+9;
+      f+=`<rect x="${x+i*(w+1)}" y="${yy}" width="${w}" height="${n?13:15}" rx="2.5" fill="${live?(i<ri+2?'#B59BC9':ZC):'none'}" stroke="${live?INK:'#C9BFAB'}" stroke-width="${live?.7:.5}" ${live?'':'stroke-dasharray="2 2"'}/>`;}
+    s+=G('a-fade',(.3+ri*.4).toFixed(1),f+T(x-8,yy+(n?11:13),r[0],'mono end f11'));});
+  const ay=y+3*(n?48:52);
+  s+=G('a-fade',1.6,T(x,ay+(n?6:8),'GTP-bound subunits add at one end','note start f12')+T(x,ay+(n?24:26),'GDP subunits fall off the other','note start f12')
+    +`<path d="M${x+10*(w+1)} ${ay-(n?30:34)} h${n?26:30}" stroke="${PBPC}" stroke-width="2" marker-end="url(#ahp)"/>`
+    +T(x+(n?11.6:12)*(w+1)+(n?10:14),ay-(n?34:38),'net movement','note start f11'));
+  const ty=ay+(n?52:58);
+  const L=wrap(n?'The filament itself does not slide. Subunits join at one end and leave at the other, so the filament appears to travel. In 2017 two groups showed FtsZ filaments treadmill around the ring, carrying the wall-building enzymes with them and setting how fast the septum is built.':'The filament itself does not slide. Subunits add at one end and dissociate from the other, so it appears to travel: treadmilling. In 2017 the Xiao and Garner groups showed that FtsZ filaments treadmill around the division site, and that they carry the wall-building enzymes with them. The speed of treadmilling sets how evenly, and in some species how fast, the septum is built.',n?46:88);
+  s+=G('a-fade',2.2,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
+}
+
+function scAnchor(n){
+  const y=n?130:140, x1=n?16:60, x2=n?344:600;
+  let s=G('a-fade',0,bilayer(x1,x2,y,16)+T(x1,y-10,'periplasm','note start f11')+T(x1,y+40,'cytoplasm','note start f11'));
+  const zx=n?180:320;
+  s+=G('a-pop',.4,filament(zx-(n?60:70),y+(n?48:52),8,[ZC],{w:n?13:15,h:11})+T(zx,y+(n?76:80),'FtsZ filament','note mid f12'));
+  s+=G('a-pop',.9,tmProt(zx-(n?70:84),y,16,12,FTSA,'FtsA',{dy:14})+`<path d="M${zx-(n?70:84)} ${y+16} v${n?30:34}" stroke="${FTSA}" stroke-width="2.6"/>`);
+  s+=G('a-pop',1.3,tmProt(zx+(n?60:76),y,16,12,'#D9B85A','ZipA',{dy:14})+`<path d="M${zx+(n?60:76)} ${y+16} v${n?30:34}" stroke="#D9B85A" stroke-width="2.6"/>`);
+  s+=G('a-pop',1.7,tmProt(zx,y,16,22,'#7FA59B','FtsEX',{dy:14}));
+  const ty=y+(n?104:110);
+  const items=[['FtsA','an actin relative; binds FtsZ through its C-terminal tail and sits on the membrane by an amphipathic helix. Essential, and present in almost all bacteria.'],
+   ['ZipA','a membrane protein that does the same job in E. coli and close relatives only. Either FtsA or ZipA will do; losing both is lethal.'],
+   ['FtsEX','an ABC-transporter-like complex that spans the membrane and, later, switches on the wall hydrolases that split the septum.']];
+  let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:76);
+    s+=G('a-fade',(2+i*.3).toFixed(1),T(n?14:30,yy,it[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T(n?14:30,yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+32;});
+  const L2=wrap(n?'The Z ring has no motor. It is a scaffold held just under the membrane, and the force that closes the septum comes mostly from building new wall.':'The Z ring is not a motor in the way a muscle is. It is a scaffold held just under the membrane, and the force that closes the septum comes largely from the new wall being built behind it.',n?46:88);
+  s+=G('a-fade',3.2,L2.map((l,i)=>T(n?14:30,yy+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yy+L2.length*20+14):wide(yy+L2.length*20+16),s};
+}
+
+function scSwitch(n){
+  const W=n?162:290, H=n?150:170, y=n?56:62;
+  const panel=(x,on)=>{
+    let g=box(x,y,W,H,'#E7DEC9',4)+T(x+16,y+26,on?'ON':'OFF','cname start '+(n?'f15':''))+Tc(x+W-16,y+26,on?'septum builds':'nothing happens',on?'#4F7A3F':'#A4473A',11,'mono end','600');
+    const my=y+H-(n?44:48), cx=x+W/2;
+    g+=bilayer(x+14,x+W-14,my,14);
+    g+=tmProt(cx-(n?30:44),my,14,(n?26:34),SEDS,'',{})+Tc(cx-(n?30:44),my+(n?26:28),'FtsQLB','#3A2E22',9,'mono mid','600');
+    g+=tmProt(cx+(n?14:22),my,14,(n?22:28),PBPC,'',{})+Tc(cx+(n?14:22),my+(n?26:28),'FtsWI','#3A2E22',9,'mono mid','600');
+    if(on){g+=tmProt(cx+(n?46:72),my,14,12,'#B4766E','',{})+Tc(cx+(n?46:72),my+(n?26:28),'FtsN','#3A2E22',9,'mono mid','600');
+      g+=pgStrand(x+20,x+W-20,my-(n?16:18),PBPC,{w:3,dir:-5})+Tc(cx,my-(n?26:30),'new wall','#4F7A3F',10,'mono mid','600');}
+    else g+=Tc(cx+(n?44:68),my+7,'—','#A4473A',14,'mono mid','600');
+    return g;};
+  let s=G('a-fade',0,panel(n?8:22,0))+G('a-fade',.8,panel(n?190:330,1));
+  if(!n)s+=G('a-fade',1.2,`<path d="M${22+W+4} ${y+H/2} h${330-22-W-8}" class="arrow"/>`);
+  const ty=y+H+(n?26:30);
+  const L=wrap(n?'FtsQ, FtsL and FtsB form a sensor that keeps the wall-building pair FtsW and FtsI switched off until the whole divisome is present. FtsN arrives last and flips the switch, so the septum is only built once everything is ready.':'FtsQ, FtsL and FtsB form a complex that sits between the early and late proteins and keeps the wall-building pair, FtsW and FtsI, switched off. FtsN arrives last, and its arrival relieves the block. The point of this arrangement is timing: septal wall synthesis cannot begin until the whole divisome has assembled, and mutations in FtsL or FtsB that bypass the requirement for FtsN make cells divide too early.',n?46:88);
+  s+=G('a-fade',1.8,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
+}
+
+function scTwoMachines(n){
+  const rows=n?[['Scaffold','MreB (rods)','FtsZ'],['Glycosyl-\u200btransferase','RodA','FtsW'],['Trans-\u200bpeptidase','PBP2 / 2b','PBP3 / 2x'],['Direction','longer','septum'],['Blocked by','mecillinam','cephalexin']]
+   :[['Scaffold','MreB (actin-like) in rods','FtsZ (tubulin-like), midcell'],['Glycosyltransferase','RodA','FtsW'],['Transpeptidase','PBP2 / PBP2b','PBP3 (FtsI) / PBP2x'],['Direction','the cell gets longer','the cell gets a septum'],['Blocked by','mecillinam','cephalexin, aztreonam']];
+  const t=cmpTable2(n,['','Elongasome','Divisome'],rows,{wc:[24,210,420],nc:[10,150,254]});
+  let s=t.s;
+  const dy=t.y+(n?18:24), L=n?120:150, R=n?30:34;
+  s+=G('a-fade',1.4,rodCell(n?92:170,dy+R+6,L,R,0)+[0,1,2].map(i=>`<path d="M${(n?92:170)-L*.25+i*L*.25} ${dy+6} v${2*R-12}" stroke="#C17A2C" stroke-width="3" opacity=".8"/>`).join('')
+    +T(n?92:170,dy+2*R+(n?18:22),'elongation','note mid f12'));
+  s+=G('a-fade',1.8,rodCell(n?258:430,dy+R+6,L,R,.35)+zring(n?258:430,dy+R+6,R-6,{n:5,w:6})+T(n?258:430,dy+2*R+(n?18:22),'division','note mid f12'));
+  const ty=dy+2*R+(n?44:50);
+  const L2=wrap(n?'Both use the same chemistry: a SEDS glycosyltransferase paired with a class B PBP. The pneumococcus has no MreB but keeps the rest of the elongasome (RodA–PBP2b, MreCD, RodZ), which works at midcell beside the divisome and lengthens the cell before the septum closes.':'Both machines use the same chemistry: a SEDS-family glycosyltransferase paired with a class B penicillin-binding protein that cross-links. In rods they work in different places. The pneumococcus has no MreB but keeps the rest of the elongasome (RodA with PBP2b, MreC, MreD and RodZ); without MreB to spread it along the side wall, it works at midcell beside the divisome, making peripheral wall that lengthens the cell while the septum forms. That is how ovococci get their oval shape. Spherical cocci such as Staphylococcus aureus grow mainly by septal synthesis.',n?46:88);
+  s+=G('a-fade',2.4,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+L2.length*20+14):wide(ty+L2.length*20+16),s};
+}
+
+function scPG(n){
+  const y=n?96:104, x1=n?20:60, x2=n?344:600;
+  let s=G('a-fade',0,T(n?14:30,n?30:34,'Lipid II arrives, is polymerised, then cross-linked','cname start '+(n?'f14':'')));
+  s+=G('a-fade',.4,bilayer(x1,x2,y,16)+T(x1,y-8,'outside','note start f11')+T(x1,y+42,'cytoplasm','note start f11'));
+  const lx=n?70:140;
+  s+=G('a-pop',.8,`<path d="M${lx} ${y+34} v-18" stroke="#E0B84A" stroke-width="3"/>`+`<rect x="${lx-7}" y="${y+2}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`
+    +T(lx,y+(n?54:56),'lipid II on undecaprenyl','note mid f11'));
+  const mx=n?180:320;
+  s+=G('a-pop',1.3,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx,y-(n?12:14),'FtsW flips and polymerises','#2E7D78',10,'mono mid','600'));
+  const px=n?268:450;
+  s+=G('a-pop',1.8,tmProt(px,y,16,14,PBPC,'',{})+`<path d="M${px} ${y} v-${n?22:26}" stroke="${PBPC}" stroke-width="3"/>`+blob(px,y-(n?30:34),n?14:16,n?10:11,PBPC)+Tc(px,y-(n?27:31),'PBP3','#F3EDE0',9,'mono mid','600'));
+  s+=G('a-fade',2.2,pgStrand(mx+(n?16:20),x2-10,y-(n?8:10),WALLE,{w:3,dir:-6})
+    +[0,1,2].map(i=>`<path d="M${px-(n?30:40)+i*(n?22:28)} ${y-(n?8:10)} v-6" stroke="${PBPC}" stroke-width="2"/>`).join(''));
+  const ty=y+(n?76:82);
+  const items=[['SEDS proteins','FtsW and RodA belong to the SEDS family. They were long thought to be flippases; since 2016 they are known to be the glycosyltransferases that make the glycan chains.'],
+   ['Class B PBPs','FtsI (PBP3) and PBP2 are transpeptidases: they cross-link the peptide stems. These are the enzymes β-lactams kill.'],
+   ['Class A PBPs','PBP1a and PBP1b do both jobs and act as repair and reinforcement crews rather than as the primary builders.']];
+  let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:76);
+    s+=G('a-fade',(2.6+i*.3).toFixed(1),T(n?14:30,yy,it[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T(n?14:30,yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+32;});
+  return {vb:n?slim(yy+8):wide(yy+10),s};
+}
+
+function scSplit(n){
+  const W=n?162:196, H=n?132:150, y=n?52:58;
+  const xs=n?[8,190]:[12,218,424];
+  const panel=(x,i)=>{
+    let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1);
+    const t=['Septum complete','Amidases cut','Daughters part'][i];
+    g+=T(x+28,y+19,t,'lab start f14');
+    const cy=y+H-(n?46:52), cx=x+W/2, cw=n?58:70, R=n?26:30;
+    g+=rodCell(cx,cy,cw*2,R,i===0?1:i===1?1:1);
+    if(i===0)g+=`<rect x="${cx-5}" y="${cy-R+3}" width="10" height="${2*R-6}" fill="${WALL}" stroke="${WALLE}" stroke-width="1"/>`+Tc(cx,cy+R+(n?16:18),'shared wall','#6A5B47',10,'mono mid');
+    if(i===1)g+=`<rect x="${cx-5}" y="${cy-R+3}" width="10" height="${2*R-6}" fill="${WALL}" stroke="${WALLE}" stroke-width="1"/>`
+      +blob(cx,cy-R-(n?12:14),n?13:15,n?9:10,AMI)+Tc(cx,cy-R-(n?9:11),'Ami','#F3EDE0',9,'mono mid','600')
+      +`<path d="M${cx} ${cy-R+2} v${2*R-4}" stroke="${AMI}" stroke-width="2" stroke-dasharray="3 2"/>`;
+    if(i===2)g+=`<path d="M${cx-3} ${cy-R+3} v${2*R-6} M${cx+3} ${cy-R+3} v${2*R-6}" stroke="${WALLE}" stroke-width="2"/>`;
+    return g;};
+  let s='';
+  if(n){s+=G('a-fade',0,panel(xs[0],0))+G('a-fade',.6,panel(xs[1],1))+G('a-fade',1.2,panel(xs[0],2).replace(`x="${xs[0]}" y="${y}"`,`x="${xs[0]}" y="${y+H+10}"`));
+    s=G('a-fade',0,panel(8,0))+G('a-fade',.6,panel(190,1));
+    const y2=y+H+12;
+    s+=G('a-fade',1.2,box(8,y2,W,H,'#E7DEC9',4)+badge(22,y2+14,3)+T(36,y2+19,'Daughters part','lab start f14')
+      +rodCell(8+W/2,y2+H-46,116,26,1)+`<path d="M${8+W/2-3} ${y2+H-46-23} v46 M${8+W/2+3} ${y2+H-46-23} v46" stroke="${WALLE}" stroke-width="2"/>`);
+  } else s=G('a-fade',0,panel(xs[0],0))+G('a-fade',.6,panel(xs[1],1))+G('a-fade',1.2,panel(xs[2],2));
+  const ty=n?y+2*(H+12)+14:y+H+28;
+  const items=[['Amidases','AmiA, AmiB and AmiC in E. coli cut the peptide cross-links in the shared septal wall. They are kept off until FtsEX and their LytM activators switch them on, so the wall is never weakened early.'],
+   ['Tol–Pal','in Gram-negatives, pulls the outer membrane inwards so it follows the constricting wall rather than lagging behind'],
+   ['Pneumococcus','LytB trims the septal wall to separate daughters; without it cells stay in long chains, which is also how some strains avoid being swept away']];
+  let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:76);
+    s+=G('a-fade',(1.8+i*.3).toFixed(1),T(n?14:30,yy,it[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T(n?14:30,yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+32;});
+  return {vb:n?slim(yy+8):wide(yy+10),s};
+}
+
+/* ===================== Part IV · control and drugs ===================== */
+function scControl(n){
+  const items=[['Damage stops division','SOS induction makes SulA, which binds FtsZ and blocks assembly. Cells grow into filaments until the damage is repaired, then divide again. This is the filamentation you see after a quinolone or UV.'],
+   ['Growth rate sets size','Faster-growing cells are bigger. Each cell adds roughly a constant amount of mass between divisions — the adder behaviour described by Jun, Taheri-Araghi and others — which keeps size stable without measuring it.'],
+   ['Division waits for the chromosome','Nucleoid occlusion and FtsK make sure a septum never closes on DNA, and in fast growth several rounds of replication overlap, so a cell is born already replicating.'],
+   ['Signals and kinases','In the pneumococcus the Ser/Thr kinase StkP phosphorylates division proteins such as DivIVA and detects the state of the wall, coordinating septation with wall synthesis.']];
+  const W=n?340:300;
+  let s='',yb=0;
+  if(n){let y=10;items.forEach((it,i)=>{const L=wrap(it[1],44),H=58+L.length*17;
+      s+=G('a-fade',(i*.4).toFixed(1),box(10,y,W,H,'#E7DEC9',4)+T(26,y+26,it[0],'cname start f15')
+        +L.map((l,j)=>T(26,y+48+j*17,l,'note start f13')).join(''));y+=H+10;});yb=y;}
+  else{const H=136;items.forEach((it,i)=>{const x=10+(i%2)*312,y=20+Math.floor(i/2)*(H+14);
+      s+=G('a-fade',(i*.4).toFixed(1),box(x,y,W,H,'#E7DEC9',4)+T(x+16,y+26,it[0],'cname start')
+        +wrap(it[1],44).map((l,j)=>T(x+16,y+48+j*17,l,'note start f13')).join(''));});yb=20+2*(H+14)+6;}
+  return {vb:n?slim(yb+12):wide(yb+14),s};
+}
+
+const DRUGS=[
+ {d:'Penicillin, ampicillin',t:'PBPs, broadly',at:'pbp',text:'β-lactams mimic the D-Ala-D-Ala end of the peptide stem and acylate the transpeptidase, which stops cross-linking. The cell keeps making wall it cannot stitch together, and lyses.'},
+ {d:'Cephalexin',t:'PBP3 (FtsI) in E. coli',at:'pbp',text:'Selective for the division transpeptidase. Cells elongate normally but cannot build a septum, so they grow into long filaments — the classic way to show that division and elongation are separate jobs.'},
+ {d:'Mecillinam',t:'PBP2 in E. coli',at:'elong',text:'The mirror image: it blocks the elongation transpeptidase, so rods stop extending and round up into spheres while still dividing.'},
+ {d:'Moenomycin',t:'class A PBP glycosyltransferase',at:'pbp',text:'Binds the glycosyltransferase site and stops glycan chains being made. Highly potent against Gram-positives, but too poorly absorbed for human use; it is used in agriculture.'},
+ {d:'PC190723',t:'FtsZ',at:'z',text:'Binds a pocket between the two halves of FtsZ and locks the subunit in its straight, polymerised state, so the ring cannot remodel. Active against Staphylococcus aureus, including MRSA; a proof of principle that the Z ring is druggable.'},
+ {d:'Fosfomycin',t:'MurA',at:'cyto',text:'Acts far upstream, blocking the first committed step of peptidoglycan precursor synthesis in the cytoplasm, so lipid II never reaches the septum.'},
+ {d:'Vancomycin',t:'lipid II substrate',at:'sub',text:'Does not inhibit an enzyme at all: it binds the D-Ala-D-Ala end of lipid II itself, hiding the substrate from both the glycosyltransferase and the transpeptidase.'}];
+let drugSel=0;
+function scDrugs(n){
+  const m=DRUGS[drugSel];
+  const y=n?92:100, x1=n?20:60, x2=n?344:600;
+  let s=G('a-fade',0,bilayer(x1,x2,y,16)+T(x1,y-8,'outside','note start f11')+T(x1,y+42,'cytoplasm','note start f11'));
+  const lx=n?64:130, mx=n?150:280, px=n?232:410, zx=n?300:520;
+  s+=G('a-pop',.1,`<path d="M${lx} ${y+34} v-18" stroke="#E0B84A" stroke-width="3"/><rect x="${lx-7}" y="${y+2}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`+T(lx,y+(n?54:56),'lipid II','note mid f11'));
+  s+=G('a-pop',.1,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx,y+(n?34:36),'FtsW','#3A2E22',10,'mono mid','600'));
+  s+=G('a-pop',.1,tmProt(px,y,16,14,PBPC,'',{})+blob(px,y-(n?26:30),n?13:15,n?9:10,PBPC)+Tc(px,y-(n?23:27),'PBP','#F3EDE0',9,'mono mid','600'));
+  s+=G('a-pop',.1,filament(zx-(n?34:40),y+(n?40:44),5,[ZC],{w:n?12:14,h:10})+T(zx,y+(n?66:70),'FtsZ','mono mid f11'));
+  s+=G('a-pop',.1,blob(n?64:130,y+(n?74:80),n?14:16,n?10:11,'#C9BFAB')+Tc(n?64:130,y+(n?77:83),'Mur','#3A2E22',9,'mono mid','600'));
+  const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?45:49)],cyto:[n?64:130,y+(n?74:80)],sub:[lx,y+8]}[m.at];
+  s+=G('a-pop',.4,`<circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?17:20}" fill="${AMI}" opacity=".3"/><circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?22:26}" fill="none" stroke="${AMI}" stroke-width="2" stroke-dasharray="4 3"/>`);
+  const ty=y+(n?104:112);
+  s+=G('a-fade',.6,T(n?14:30,ty,m.d,'cname start')+T(n?14:30,ty+20,'target: '+m.t,'note start '+(n?'f12':'f13')));
+  const L=wrap(m.text,n?46:88);
+  s+=G('a-fade',.8,L.map((l,i)=>T(n?14:30,ty+46+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(ty+46+L.length*20+10):wide(ty+46+L.length*20+12),s};
+}
+
+const BREAK=[
+ {g:'ftsZ',p:'the ring itself',cls:'no ring at all',col:AMI,text:'Nothing assembles, so nothing else is recruited. Cells grow into smooth filaments with evenly spaced nucleoids and eventually lyse. The original fts phenotype.'},
+ {g:'ftsA',p:'membrane tether',cls:'ring, but unanchored',col:AMI,text:'FtsZ can still polymerise but is not held at the membrane properly, and the late proteins never arrive. Filaments again, sometimes with faint rings visible.'},
+ {g:'ftsI (pbp3)',p:'septal transpeptidase',cls:'ring, no wall',col:'#C99A2E',text:'The divisome assembles and may even begin to constrict, but septal wall cannot be cross-linked. This is what cephalexin does chemically.'},
+ {g:'ftsN',p:'the final signal',cls:'assembled but switched off',col:'#C99A2E',text:'Everything is in place and nothing happens, because the FtsQLB switch is never released. Suppressor mutations in ftsL or ftsB bypass it, which is how the switch was worked out.'},
+ {g:'minCDE',p:'ring placement',cls:'minicells',col:'#7D4A98',text:'Rings form at the poles as well as midcell. Division at a pole pinches off a small, DNA-free minicell — harmless to the mother, and a classic teaching phenotype.'},
+ {g:'slmA / noc',p:'nucleoid occlusion',cls:'guillotined DNA',col:'#7D4A98',text:'Alone, mild. Combined with a Min defect, septa close over unsegregated chromosomes and cut them, which is lethal.'},
+ {g:'amiABC',p:'septum splitting',cls:'chains',col:SEDS,text:'Division completes but daughters stay joined, so cells grow in chains. In the pneumococcus the equivalent loss of LytB gives exactly this.'},
+ {g:'sulA (induced)',p:'SOS brake',cls:'reversible block',col:'#5E7F7A',text:'Not a mutant but a response: DNA damage switches on SulA, which sequesters FtsZ. Cells filament until repair is done, then resume. Deleting sulA removes the brake.'}];
+let brkSel=0;
+function scBreak(n){
+  const m=BREAK[brkSel];
+  const y=n?92:100, L=n?240:300, R=n?36:40, cx=n?180:200;
+  let s='';
+  const k=m.g;
+  if(k==='ftsZ'||k==='ftsA'||k==='ftsI (pbp3)'||k==='ftsN'||k==='sulA (induced)'){
+    s+=G('a-fade',0,rodCell(cx,y,L*1.3,R,0)+[0,1,2,3].map(i=>nucleoid(cx-L*.48+i*L*.32,y,L*.1,R*.55,{seed:3+i*5})).join(''));
+    if(k==='ftsI (pbp3)'||k==='ftsN')s+=G('a-pop',.6,[0,1,2].map(i=>zring(cx-L*.32+i*L*.32,y,R-6,{n:4,w:5})).join(''));
+    if(k==='sulA (induced)')s+=G('a-pop',.6,[0,1,2].map(i=>blob(cx-L*.32+i*L*.32,y,n?10:12,n?7:8,'#5E7F7A')).join('')+T(cx,y-R-14,'SulA holds FtsZ','note mid f11'));
+    s+=G('a-fade',1,T(cx,y+R+(n?22:24),'a filament','note mid f12'));
+  } else if(k==='minCDE'){
+    s+=G('a-fade',0,rodCell(cx,y,L,R,0)+nucleoid(cx,y,L*.3,R*.6,{seed:5})+zring(cx-L*.44,y,R-8,{n:4,w:5})+zring(cx,y,R-6,{n:5,w:6}));
+    s+=G('a-pop',.8,`<circle cx="${cx-L*.62}" cy="${y}" r="${R*.5}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`+T(cx-L*.62,y+R*.5+(n?16:18),'minicell','note mid f11'));
+    s+=G('a-fade',1,T(cx+L*.2,y+R+(n?22:24),'rings at the poles too','note mid f12'));
+  } else if(k==='slmA / noc'){
+    s+=G('a-fade',0,rodCell(cx,y,L,R,.7)+nucleoid(cx,y,L*.26,R*.55,{seed:5})
+      +`<path d="M${cx-4} ${y-R+6} v${2*R-12} M${cx+4} ${y-R+6} v${2*R-12}" stroke="${AMI}" stroke-width="2.4"/>`);
+    s+=G('a-fade',1,T(cx,y+R+(n?22:24),'septum closing across the DNA','note mid f12'));
+  } else {
+    s+=G('a-fade',0,[0,1,2,3].map(i=>rodCell(cx-L*.36+i*L*.24,y,L*.26,R*.8,0)).join(''));
+    s+=G('a-fade',1,T(cx,y+R+(n?22:24),'a chain of joined cells','note mid f12'));
+  }
+  const ty=y+R+(n?48:54);
+  s+=G('a-fade',.4,`<rect x="${n?14:30}" y="${ty-18}" width="${n?130:150}" height="24" rx="12" fill="${m.col}"/>`+Tc(n?79:105,ty-1,m.cls,'#F3EDE0',11,'mono mid','600')
+    +T(n?152:192,ty-1,m.g+' — '+m.p,'lab start '+(n?'f13':'')));
+  const L2=wrap(m.text,n?46:88);
+  s+=G('a-fade',.7,L2.map((l,i)=>T(n?14:30,ty+28+i*20,l,'lab start '+(n?'f13':'f14'))).join(''));
+  return {vb:n?slim(ty+28+L2.length*20+10):wide(ty+28+L2.length*20+12),s};
+}
+
+/* ===================== Part V · shapes ===================== */
+function scShapes(n){
+  const sh=[['Rod','E. coli, B. subtilis','elongasome along the side, then a septum at midcell'],
+   ['Coccus','S. aureus','mostly septal growth; successive septa in perpendicular planes'],
+   ['Ovococcus','S. pneumoniae','elongasome without MreB, working at midcell beside the divisome'],
+   ['Stalked','Caulobacter crescentus','asymmetric division: a stalked cell and a swarmer with a flagellum'],
+   ['Acid-fast','M. tuberculosis','grows from the poles, unevenly, giving daughters of different sizes']];
+  const W=n?340:196, H=n?104:162;
+  let s='';
+  sh.forEach((c,i)=>{const x=n?10:10+(i%3)*210, y=n?10+i*(H+8):20+Math.floor(i/3)*(H+16);
+    let g=box(x,y,W,H,'#E7DEC9',4)+T(x+16,y+24,c[0],'cname start '+(n?'f15':''))+T(x+16,y+42,c[1],'note start f12');
+    const cx=n?x+W-80:x+W/2, cy=n?y+H/2+6:y+H-30;
+    if(i===0)g+=rodCell(cx,cy,n?110:120,n?20:22,.3);
+    if(i===1){[0,1].forEach(k=>g+=`<circle cx="${cx+(k?22:-22)}" cy="${cy}" r="${n?20:22}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`);g+=`<path d="M${cx} ${cy-20} v40" stroke="${WALLE}" stroke-width="2.4"/>`;}
+    if(i===2)g+=ovoCell(cx,cy,n?90:96,n?24:26,.4);
+    if(i===3){g+=rodCell(cx-14,cy,n?70:76,n?18:20,0);g+=`<path d="M${cx-50} ${cy} h-16" stroke="${WALLE}" stroke-width="3"/><circle cx="${cx-70}" cy="${cy}" r="4" fill="${WALLE}"/>`;
+      g+=`<path d="M${cx+26} ${cy} q 14 -8 22 0 q -14 8 -22 0" stroke="${WALLE}" stroke-width="2" fill="none"/>`;}
+    if(i===4){g+=rodCell(cx,cy,n?100:110,n?17:19,0);g+=`<path d="M${cx-50} ${cy-18} v36 M${cx+50} ${cy-18} v36" stroke="${PBPC}" stroke-width="3"/>`;}
+    if(!n)g+=wrap(c[2],26).map((l,j)=>T(x+16,y+60+j*15,l,'note start f11')).join('');
+    else g+=wrap(c[2],26).map((l,j)=>T(x+16,y+62+j*15,l,'note start f11')).join('');
+    s+=G('a-fade',(i*.4).toFixed(1),g);});
+  const yb=n?10+5*(H+8)+12:20+2*(H+16)+10;
+  const L=wrap(n?'The same core proteins are arranged differently in each. Shape is not decoration: it sets how a cell swims, sticks, is eaten by phagocytes, and how it is seen on a Gram stain.':'The same core proteins — FtsZ, a SEDS protein, a class B PBP — are arranged differently in each. Shape is not decoration: it determines how a cell swims and sticks, whether phagocytes can engulf it, and what you see down the microscope on a Gram stain.',n?46:88);
+  s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
+  return {vb:n?slim(yb+L.length*20+14):wide(yb+L.length*20+16),s};
+}
+
+/* ===================== scenes ===================== */
+const NAR='Narrator';
+const S=[
+ {p:1,title:'One cell into two',draw:scProblem,
+  text:"A dividing bacterium has to solve four problems at once: find the middle, wait until both copies of the chromosome are out of the way, build new membrane and new wall inwards as a closing ring, and never let the envelope leak. A cell at several atmospheres of internal pressure cannot afford a single hole, so every step is interlocked with the next."},
+ {p:1,title:'The fts mutants',draw:scFts,
+  text:"The machinery was found by looking for cells that could not do it. In 1968 François Jacob and Yukinori Hirota collected E. coli mutants that grew normally at 30 °C but, at 42 °C, kept growing and copying their DNA without ever splitting, turning into long filaments. They called the genes fts, for filamentation temperature sensitive. Most of them turned out to lie in one cluster on the chromosome, and most encode parts of one machine."},
+ {p:1,title:'FtsZ makes a ring',draw:scZring,
+  text:"In 1991 Erfei Bi and Joe Lutkenhaus used immuno-electron microscopy to show that FtsZ, the product of the first fts gene, forms a ring around the inside of the cell at midcell, and that it is there before any constriction is visible. FtsZ is a GTPase and a distant relative of tubulin; its ring is patchy rather than continuous, built from short overlapping filaments. Everything else in the divisome is recruited to it."},
+ {p:1,title:'The divisome',draw:scDivisome,
+  text:"More than a dozen proteins join the ring in a defined order, worked out by depleting one at a time and asking which others still arrive. An early group assembles and anchors the ring; a late group brings the enzymes that build the wall. The last to arrive, FtsN, is the one that gives the signal to start. Gram-positive bacteria use a smaller version of the same set."},
+ {p:2,title:'The Min system',draw:scMin,
+  text:"How does a cell find its own middle? MinC inhibits FtsZ assembly, and MinC with MinD oscillates from one pole to the other about once a minute, driven by MinE. Averaged over time, the inhibitor is abundant at the poles and scarce at midcell, which leaves exactly one place where a ring can form. The oscillation was seen directly by Rothfield, Raskin and colleagues in 1999. Bacillus subtilis gets the same result without oscillating: DivIVA holds MinCD at the poles."},
+ {p:2,title:'Nucleoid occlusion',draw:scNoc,
+  text:"The second safeguard makes sure the septum never closes on DNA. SlmA in E. coli and Noc in Bacillus subtilis bind specific sites scattered over the chromosome and prevent FtsZ assembling above them. As the two chromosomes separate, midcell clears and the block is lifted. Neither protein has sites near the replication terminus, so the region that leaves last does not delay division indefinitely. Cells lacking both Min and nucleoid occlusion still divide, so a third mechanism must exist."},
+ {p:2,title:'Ovococci: MapZ',draw:scOvo,
+  text:"Streptococcus pneumoniae has no Min system and no MreB, and it is not a sphere: it is an ovococcus, a slightly elongated coccus that divides in parallel planes. MapZ, also called LocZ, forms a ring at the equator early in the cycle, anchored to the wall by an extracellular domain. As the cell grows, that ring splits into two that move apart and mark where the next divisions will occur. It positions FtsZ by attracting it, not by excluding it. Described independently by two groups in 2014."},
+ {p:2,title:'Getting the DNA out of the way',draw:scSegregate,
+  text:"Division is tied to chromosome segregation. In most bacteria ParB coats parS sites near the origin and the ATPase ParA walks the complex to the far pole; E. coli manages without this system. Condensins — SMC, or MukBEF in E. coli — compact each chromosome and help keep them apart. Finally FtsK, a DNA translocase built into the septum, pumps any trapped DNA out of the closing ring, reading KOPS sequences to know which way to push, and activates XerCD to unlink chromosome dimers."},
+ {p:3,title:'Treadmilling',draw:scTreadmill,
+  text:"FtsZ filaments do not slide. Subunits add GTP-bound at one end and leave, hydrolysed, from the other, so the filament appears to travel while each subunit stays put: treadmilling. In 2017 the Xiao and Garner groups showed that FtsZ filaments treadmill around the division site and carry the wall-building enzymes along with them, distributing new wall evenly around the ring. In Bacillus subtilis the treadmilling rate sets how fast the septum closes; in E. coli it mostly governs how evenly."},
+ {p:3,title:'Anchoring the ring',draw:scAnchor,
+  text:"FtsZ is a cytoplasmic protein, so it must be held against the membrane. FtsA, an actin relative, binds FtsZ's C-terminal tail and tucks an amphipathic helix into the lipid; ZipA, found only in E. coli and its close relatives, does the same job through a transmembrane segment. Either will do, but losing both is lethal. FtsEX, which looks like an ABC transporter, joins early and later switches on the enzymes that split the septum. The Z ring is a scaffold rather than a motor: most of the force comes from the wall built behind it."},
+ {p:3,title:'The switch',draw:scSwitch,
+  text:"Having the enzymes present is not the same as letting them work. FtsQ, FtsL and FtsB form a complex that sits between the early and late proteins and holds the wall-building pair FtsW and FtsI switched off. FtsN arrives last, and its arrival relieves the block, so septal wall synthesis begins only when the whole divisome is assembled. Mutations in ftsL or ftsB that switch the complex on prematurely let cells divide without FtsN, which is how the logic was worked out."},
+ {p:3,title:'Two machines, one chemistry',draw:scTwoMachines,
+  text:"A rod-shaped bacterium runs two wall-building machines. The elongasome, organised by MreB filaments, inserts wall along the side and makes the cell longer. The divisome, organised by FtsZ, inserts wall inwards and makes a septum. Both pair a SEDS glycosyltransferase with a class B penicillin-binding protein: RodA with PBP2 for elongation, FtsW with PBP3 for division. MreB is what places the elongasome along the side wall. Ovococci such as the pneumococcus have lost MreB but kept the rest of the elongasome, RodA with PBP2b and the MreC, MreD and RodZ proteins, so it works at midcell beside the divisome: peripheral synthesis lengthens the cell while septal synthesis closes it. Spherical cocci such as Staphylococcus aureus grow mainly by septal synthesis."},
+ {p:3,title:'Building the wall',draw:scPG,
+  text:"The building block is lipid II: a disaccharide-pentapeptide carried on undecaprenyl phosphate, the same lipid carrier used for capsule and teichoic acids. It is flipped to the outer face, where the SEDS protein FtsW polymerises the sugars into glycan chains — a role only established in 2016, having long been attributed to the class A PBPs — and the class B transpeptidase FtsI cross-links the peptide stems. Class A PBPs such as PBP1a and PBP1b do both reactions and act as a repair crew rather than the primary builders."},
+ {p:3,title:'Splitting the septum',draw:scSplit,
+  text:"When the septum is complete the two daughters still share one wall, and it has to be cut down the middle without breaching either cell. Amidases — AmiA, AmiB and AmiC in E. coli — hydrolyse the cross-links, and they are kept inactive until FtsEX and their LytM-domain activators switch them on. In Gram-negative cells the Tol–Pal system drags the outer membrane inwards so it keeps pace. In the pneumococcus LytB does the separating; without it, cells remain in long chains."},
+ {p:4,title:'Knowing when',draw:scControl,
+  text:"Division has to be timed as well as placed. DNA damage induces SulA, which sequesters FtsZ and stops division until repair is finished — the filamentation seen after a quinolone or UV. Cell size is set by growth: each cell adds roughly a constant amount of mass between divisions, the adder behaviour described by Jun, Taheri-Araghi and colleagues, which keeps size stable without any cell having to measure itself. And signalling proteins such as the pneumococcal kinase StkP read the state of the wall and phosphorylate division proteins to keep the two in step."},
+ {p:4,title:'Drugs that stop division',chips:'drug',draw:scDrugs,
+  text:"The division machine and the wall it builds are the target of more antibiotics than any other process in the cell, because animals have nothing like them. Pick one to see where it acts and what the cell does in response."},
+ {p:4,title:'Break the divisome',chips:'break',draw:scBreak,
+  text:"Every step has a characteristic failure. Pick a gene to see what the cell looks like when it is lost, and what that tells you about the step."},
+ {p:5,title:'Different shapes, same parts',draw:scShapes,
+  text:"The same core proteins are rearranged to give very different cells. Rods elongate then septate; cocci such as Staphylococcus aureus grow mainly by septal synthesis and divide in successive perpendicular planes; ovococci such as the pneumococcus have an elongasome without MreB, which works at midcell beside the divisome, so peripheral and septal synthesis run side by side. Caulobacter divides asymmetrically into a stalked cell and a swimming swarmer, and mycobacteria grow from their poles at unequal rates, which is one reason a population of them is so variable."}
+];
+const CHIPS={drug:{list:DRUGS.map(d=>d.d),get:()=>drugSel,set:k=>drugSel=k},break:{list:BREAK.map(b=>b.g),get:()=>brkSel,set:k=>brkSel=k}};
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  [1,2,3,4,5].forEach(k=>$('part'+k).setAttribute('aria-current',sc.p===k));
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+[1,2,3,4,5].forEach(k=>$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k)));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>
