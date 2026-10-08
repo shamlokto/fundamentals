@@ -80,6 +80,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #stage .ax{stroke:#6A5B47;stroke-width:1.4}
 #stage .tint{filter:url(#plate)}
+#stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
 
 /* Motion */
 .a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
@@ -493,6 +494,18 @@ function pileup(x,y,w,reads,o={}){
   reads.forEach((r,i)=>{const rx=x+r[0]*w,rw=r[1]*w,ry=y+12+i*(o.gap||9);
     s+=`<path d="M${FX(rx)} ${FX(ry)} h${FX(rw)}" stroke="${r[2]||'#8FB1CF'}" stroke-width="${o.sw||5}" stroke-linecap="round"/>`;});
   return s;}
+
+/* clickable external link rendered inside the plate */
+function xlink(x,y,text,url,o={}){
+  return `<a href="${url}" target="_blank" rel="noopener"><text x="${FX(x)}" y="${FX(y)}" class="mono ${o.a||'start'} ${o.fs||'f11'}">${text} \u2197</text></a>`;}
+const VENDOR={
+  illumina:['Illumina: sequencing by synthesis, with animation','https://www.illumina.com/science/technology/next-generation-sequencing/sequencing-technology.html'],
+  ion:['Thermo Fisher: Ion Torrent semiconductor sequencing','https://www.thermofisher.com/sg/en/home/life-science/sequencing/next-generation-sequencing/ion-torrent-next-generation-sequencing-technology.html'],
+  mgi:['MGI: DNBSEQ technology, with figures','https://global-mgitech.com/technologies/dnbseq-technology'],
+  pacbio:['PacBio: the steps of SMRT sequencing','https://www.pacb.com/blog/steps-of-smrt-sequencing'],
+  hifi:['PacBio: HiFi reads','https://www.pacb.com/technology/hifi-sequencing/'],
+  ont:['Oxford Nanopore: how nanopore sequencing works','https://nanoporetech.com/platform/technology']};
+function vendorLine(n,y,keys){let s='',yy=y;keys.forEach(k=>{const v=VENDOR[k];s+=xlink(n?16:30,yy,n?v[0].replace(/, with (animation|figures)/,''):v[0],v[1],{fs:n?'f10':'f11'});yy+=16;});return {s,y:yy};}
 /* ===================== Part I · the idea ===================== */
 const OUT=[['Sanger capillary, 96 wells','2005',7.7e4,'#9A9384'],['454 pyrosequencing','2005',2e7,'#B9AE96'],['Illumina Genome Analyzer','2007',1e9,'#8FB1CF'],
  ['Illumina HiSeq 2500','2013',6e11,'#5E87AD'],['Illumina NovaSeq X','2023',1.6e13,'#2F5276'],['Nanopore PromethION','2023',1.4e13,'#C17A2C']];
@@ -547,9 +560,9 @@ function scN3(n){
       s+=G('a-fade',(i*.5).toFixed(1),badge(cx-52,y+2,i+1)+T(cx-38,y+6,st[0],'cname start f13')+pic(i,cx,y+56)+L.map((l,j)=>T(cx,y+110+j*15,l,'note mid f11')).join(''));
       if(i<4)s+=G('a-fade',(i*.5+.3).toFixed(1),arw(cx+62,y+56,cx+112,y+56,{w:1.2}));});
     y+=110+maxL*15+10;}
-  else{steps.forEach((st,i)=>{const L=wrap(st[1],50);
-      s+=G('a-fade',(i*.5).toFixed(1),badge(24,y,i+1)+T(40,y+4,st[0],'cname start f14')+L.map((l,j)=>T(16,y+24+j*16,l,'note start f12')).join('')+pic(i,250,y+56+L.length*16-30));
-      y+=Math.max(96,30+L.length*16+40);});}
+  else{steps.forEach((st,i)=>{const L=wrap(st[1],36);
+      s+=G('a-fade',(i*.5).toFixed(1),badge(24,y,i+1)+T(40,y+4,st[0],'cname start f14')+L.map((l,j)=>T(16,y+24+j*16,l,'note start f12')).join('')+pic(i,288,y+24+Math.max(2,L.length)*8));
+      y+=Math.max(96,30+L.length*16+16);});}
   const p=para(n?16:30,y+6,'Every short-read platform follows all five steps; the long-read platforms drop the amplification and read a single molecule directly. The rest of this deck is about how each one does step two and step four, and what that costs you.',n?50:92,'note start f13',17,2.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
@@ -590,13 +603,14 @@ function scN5(n){
       s+=G('a-fade',(i*.5).toFixed(1),badge(cx-66,y+2,i+1)+T(cx-52,y+6,st[0],'cname start f13')+pic(i,cx,y+86)+L.map((l,j)=>T(cx,y+114+j*15,l,'note mid f11')).join(''));
       if(i<3)s+=G('a-fade',(i*.5+.3).toFixed(1),arw(cx+62,y+60,cx+140,y+60,{w:1.2}));});
     y+=114+maxL*15+12;}
-  else{steps.forEach((st,i)=>{const L=wrap(st[1],50);
-      s+=G('a-fade',(i*.5).toFixed(1),badge(24,y,i+1)+T(40,y+4,st[0],'cname start f14')+L.map((l,j)=>T(16,y+24+j*16,l,'note start f12')).join('')+pic(i,250,y+76+L.length*16-34));
-      y+=Math.max(104,34+L.length*16+48);});}
+  else{steps.forEach((st,i)=>{const L=wrap(st[1],36);
+      s+=G('a-fade',(i*.5).toFixed(1),badge(24,y,i+1)+T(40,y+4,st[0],'cname start f14')+L.map((l,j)=>T(16,y+24+j*16,l,'note start f12')).join('')+pic(i,288,y+30+Math.max(3,L.length)*8));
+      y+=Math.max(104,34+L.length*16+16);});}
   const b=bullets(n?20:30,y+8,[['Why amplify at all','One fluorophore on one molecule is too dim to image reliably. A cluster of about a thousand copies gives a spot a camera can read.'],
    ['Patterned flow cells','Newer instruments etch billions of nanowells at fixed positions and seed one molecule per well by an isothermal reaction (ExAmp), which packs clusters more densely and makes their positions known in advance.'],
    ['The failure mode','If two molecules seed one well or cluster, the spot gives a mixed signal and is discarded as a polyclonal cluster.']],n?44:88,{d0:2.4,gap:24});
-  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+  const Lk=vendorLine(n,b.y,['illumina']);
+  return {vb:n?slim(Lk.y+2):wide(Lk.y+2),s:s+b.s+Lk.s};
 }
 
 function scN6(n){
@@ -623,7 +637,8 @@ function scN6(n){
   const t=wtable(n,['Chemistry','How a base is told apart','Instruments'],rows,n?[[10,10],[96,20],[244,14]]:[[30,12],[170,30],[420,24]],{y0:y,d0:2.2});
   const b=bullets(n?20:30,t.y+12,[['Paired-end reads','After the first read the cluster is regenerated and sequenced from the other end. The two reads bracket a fragment of known approximate length, which helps across repeats and detects structural variants.'],
    ['Phasing','A few strands in a cluster fall a base behind or jump a base ahead. The mixture grows with each cycle, which is why quality falls towards the end of a read and why read length is capped around 300 bases.']],n?44:88,{d0:2.8,gap:24});
-  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
+  const Lk=vendorLine(n,b.y,['illumina']);
+  return {vb:n?slim(Lk.y+2):wide(Lk.y+2),s:s+t.s+b.s+Lk.s};
 }
 
 function scN7(n){
@@ -633,7 +648,7 @@ function scN7(n){
   wx.forEach((x,i)=>{s+=G('a-fade',(.3+i*.4).toFixed(1),well(x,by,ww,n?50:58,{sense:i===2?'#B9C6CE':'#9FB4C0'})
     +Tc(x,by-(n?62:70),seqs[i][1]?('+'+seqs[i][1]+' H'+SP('+')):'no H'+SP('+'),seqs[i][1]?'#A4473A':'#6A5B47',12,'mono mid','600')
     +T(x,by+28,'flood with d'+seqs[i][0]+'TP','note mid f11')
-    +T(x,by+44,seqs[i][1]===2?'two bases: twice the signal':seqs[i][1]===1?'one base added':'no match: no signal','note mid f11'));});
+    +(n?'':T(x,by+44,seqs[i][1]===2?'two bases: twice the signal':seqs[i][1]===1?'one base added':'no match: no signal','note mid f11')));});
   let y=by+(n?70:74);
   const px=n?20:60, pw=n?320:300;
   s+=G('a-fade',1.6,trace(px,y,pw,n?56:62,[0,0,.3,.3,.3,.75,.75,.75,.75,.3,.3,0,0,.95,.95,.95],{step:true,col:'#A4473A'})
@@ -645,7 +660,8 @@ function scN7(n){
    :bullets(30,y,[['No optics at all','Each well sits on an ion-sensitive field-effect transistor from a standard semiconductor fab. Releasing a proton when a base is added shifts the voltage — no dyes, lasers or camera, so runs are fast and instruments cheap.'],
    ['Emulsion PCR first','Fragments are amplified clonally on beads in water-in-oil droplets, and one bead is loaded per well.'],
    ['Homopolymers are the weakness','Signal is proportional to run length, and the relationship flattens. Beyond six or eight identical bases the length is guessed, giving insertions and deletions — exactly the errors that break reading frames in bacterial annotation.']],88,{d0:2.2,gap:24});
-  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+  const Lk=vendorLine(n,b.y,['ion']);
+  return {vb:n?slim(Lk.y+2):wide(Lk.y+2),s:s+b.s+Lk.s};
 }
 
 function scN8(n){
@@ -665,7 +681,8 @@ function scN8(n){
   const b=bullets(n?20:30,y,[['No PCR duplicates','Every copy in a nanoball comes from the same original circle by rolling-circle replication, so errors do not compound the way they do through cycles of PCR, and there is no exponential amplification bias.'],
    ['Index hopping is reduced','Because the copies stay physically bound in one ball rather than free in solution, the free-adapter exchange that causes hopping on patterned Illumina flow cells is largely avoided.'],
    ['The same read-out','Detection is still sequencing by synthesis with fluorescent reversible terminators (called cPAS), so read lengths, error profile and uses closely resemble Illumina’s.']],n?44:88,{d0:2.4,gap:24});
-  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+  const Lk=vendorLine(n,b.y,['mgi']);
+  return {vb:n?slim(Lk.y+2):wide(Lk.y+2),s:s+b.s+Lk.s};
 }
 /* ===================== Part III · long reads ===================== */
 function scN9(n){
@@ -694,7 +711,8 @@ function scN9(n){
   const b=bullets(n?20:30,y,[['Two modes from one chemistry','Read the insert once and you get a long, error-prone read (CLR). Make the insert short enough to go round many times and average the passes, and you get a HiFi read of 15–25 kb at about 99.9 percent accuracy.'],
    ['Random errors, not systematic','Because the errors are mostly random indels at each pass, averaging removes them. That is why consensus works so well here.'],
    ['The trade','HiFi costs throughput: the more passes you demand, the fewer distinct molecules you read. Instruments are also expensive and not portable.']],n?44:88,{d0:2.4,gap:24});
-  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+  const Lk=vendorLine(n,b.y,['pacbio','hifi']);
+  return {vb:n?slim(Lk.y+2):wide(Lk.y+2),s:s+b.s+Lk.s};
 }
 
 function scN10(n){
@@ -711,31 +729,32 @@ function scN10(n){
    ['Read length is set by your pipetting','Reads as long as the DNA you deliver: tens of kilobases routinely, megabases if handled gently. Nothing in the chemistry imposes a limit.'],
    ['Accuracy has moved fast','Early pores made around 10 percent errors. R10.4 chemistry with modern basecallers reaches roughly 99 percent for single reads and higher for duplex, though homopolymers and some modified bases remain harder.'],
    ['Portable and real time','A MinION is the size of a stapler and streams data as it runs, so a run can be stopped once enough is in hand, and adaptive sampling can reject uninteresting molecules mid-strand.']],n?44:88,{d0:2.2,gap:24});
-  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+  const Lk=vendorLine(n,b.y,['ont']);
+  return {vb:n?slim(Lk.y+2):wide(Lk.y+2),s:s+b.s+Lk.s};
 }
 
 const PLAT=[
- {n:'Illumina',sub:'SBS, reversible terminators',read:'2 × 150 bp typical, up to 2 × 300',acc:'~99.9% (Q30+), errors mostly substitutions',out:'up to ~16 Tb per run',time:'~1–2 days',
+ {n:'Illumina',link:'illumina',sub:'SBS, reversible terminators',read:'2 × 150 bp typical, up to 2 × 300',acc:'~99.9% (Q30+), errors mostly substitutions',out:'up to ~16 Tb per run',time:'~1–2 days',
   pro:['Cheapest per base by a wide margin','Very high per-base accuracy','Enormous installed base; every tool supports it','Mature multiplexing: hundreds of samples per lane'],
   con:['Reads too short to span most repeats','GC-extreme regions covered unevenly if PCR is used','Index hopping on patterned flow cells','Large instruments, long turnaround, batching needed'],
   use:'Variant calling, RNA-seq, Tn-seq, amplicon and metagenomic surveys, anything needing depth and accuracy.'},
- {n:'Ion Torrent',sub:'semiconductor, pH detection',read:'200–600 bp',acc:'~99%, indel errors in homopolymers',out:'up to ~50 Gb per run',time:'2–8 hours',
+ {n:'Ion Torrent',link:'ion',sub:'semiconductor, pH detection',read:'200–600 bp',acc:'~99%, indel errors in homopolymers',out:'up to ~50 Gb per run',time:'2–8 hours',
   pro:['Fast runs and inexpensive instruments','No optics, so simple and robust','Good for targeted panels in clinical labs'],
   con:['Homopolymer indels corrupt reading frames','Lower throughput than Illumina','Shrinking ecosystem and tool support'],
   use:'Targeted clinical panels and rapid typing where turnaround beats throughput.'},
- {n:'DNBSEQ',sub:'nanoballs, cPAS',read:'2 × 100 to 2 × 150 bp',acc:'~99.9%, like Illumina',out:'up to ~several Tb per run',time:'~1 day',
+ {n:'DNBSEQ',link:'mgi',sub:'nanoballs, cPAS',read:'2 × 100 to 2 × 150 bp',acc:'~99.9%, like Illumina',out:'up to ~several Tb per run',time:'~1 day',
   pro:['Rolling circle avoids PCR duplicate stacking','Low index hopping','Competitive pricing per gigabase'],
   con:['Short reads, with the same repeat problem','Fewer third-party protocols than Illumina','Availability varies by region'],
   use:'A drop-in alternative to Illumina for large resequencing projects.'},
- {n:'PacBio HiFi',sub:'SMRT, circular consensus',read:'15–25 kb',acc:'~99.9% after consensus (Q20–Q30)',out:'tens of Gb per SMRT cell',time:'~1 day',
+ {n:'PacBio HiFi',link:'hifi',sub:'SMRT, circular consensus',read:'15–25 kb',acc:'~99.9% after consensus (Q20–Q30)',out:'tens of Gb per SMRT cell',time:'~1 day',
   pro:['Long and accurate at once: the best of both','Closes most bacterial genomes from one library','Detects base modifications from kinetics','Even coverage across GC extremes'],
   con:['Expensive instrument and consumables','Lower throughput per pound than short reads','Needs high-quality, high-mass input DNA'],
   use:'Reference-quality bacterial assemblies, plasmid and structural resolution, complex metagenome assembly.'},
- {n:'Nanopore',sub:'current through a protein pore',read:'10 kb to megabases',acc:'~99% single read (R10.4), higher with duplex',out:'Gb (MinION) to Tb (PromethION)',time:'minutes to 72 hours, streamed',
+ {n:'Nanopore',link:'ont',sub:'current through a protein pore',read:'10 kb to megabases',acc:'~99% single read (R10.4), higher with duplex',out:'Gb (MinION) to Tb (PromethION)',time:'minutes to 72 hours, streamed',
   pro:['Longest reads available; limited only by DNA handling','Portable and real time; works in the field','Reads base modifications natively','Cheap entry cost; adaptive sampling enriches targets'],
   con:['Highest raw error rate of the current platforms','Systematic errors in homopolymers and some motifs','Yield varies between flow cells and with input quality','Basecalling needs real compute'],
   use:'Rapid outbreak typing, closing genomes, long-range structure, field and clinical metagenomics.'},
- {n:'Sanger',sub:'capillary chain termination',read:'500–1000 bp',acc:'highest for a single clean template',out:'~0.1 Mb per run (96 wells)',time:'hours',
+ {n:'Sanger',link:'',sub:'capillary chain termination',read:'500–1000 bp',acc:'highest for a single clean template',out:'~0.1 Mb per run (96 wells)',time:'hours',
   pro:['Still the reference for confirming one variant','Simple, cheap for a handful of templates','Trivially interpretable trace'],
   con:['No throughput at all by modern standards','Needs a pure template or a cloned fragment','Cannot see minor variants in a mixture'],
   use:'Confirming a construct, a clone or a single mutation; MLST in small studies.'}];
@@ -757,7 +776,8 @@ function scN11(n){
   s+=G('a-fade',.9,A.d)+G('a-fade',1.1,B.d);
   y=Math.max(A.end,B.end)+14;
   const u=para(n?16:24,y,'Typical use: '+p.use,n?50:92,'lab start f13',17,1.4);
-  return {vb:n?slim(u.y+6):wide(u.y+8),s:s+u.s};
+  const Lk=p.link?vendorLine(n,u.y+10,[p.link]):{s:'',y:u.y};
+  return {vb:n?slim(Lk.y+4):wide(Lk.y+6),s:s+u.s+Lk.s};
 }
 /* ===================== Part IV · using them ===================== */
 function scN12(n){

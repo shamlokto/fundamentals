@@ -428,16 +428,39 @@ function snfg(t,cx,cy,r=8,o={}){const [sh,c]=SN[t];let s='';
   return s;}
 /* link two sugar-centres with a thin line (drawn first so symbols sit on top) */
 function glink(x1,y1,x2,y2){return `<path d="M${FX(x1)} ${FX(y1)} L${FX(x2)} ${FX(y2)}" stroke="${INK}" stroke-width="1"/>`;}
-/* Haworth pyranose. subs keyed by ring position 1..4 and 6; each [text, 'up'|'down']. hi = positions drawn red */
+/* Haworth pyranose, drawn with the ring oxygen as a proper vertex.
+   subs keyed by ring position 1..4 and 6; each [text,'up'|'down']. hi = positions drawn red.
+   returns the SVG; use haworthExtent(cy,k) for the lowest drawn y. */
 function haworth(cx,cy,k,subs,o={}){
-  const P={1:[58,0],2:[29,20],3:[-29,20],4:[-58,0],5:[-29,-16],O:[29,-16]}, p=i=>[cx+P[i][0]*k,cy+P[i][1]*k];
-  const edge=(a,b,w)=>`<path d="M${FX(p(a)[0])} ${FX(p(a)[1])} L${FX(p(b)[0])} ${FX(p(b)[1])}" stroke="${INK}" stroke-width="${w}"/>`;
-  let s=edge(1,2,3.4)+edge(2,3,4.4)+edge(3,4,3.4)+edge(4,5,1.5)+edge(5,'O',1.5)+edge('O',1,1.5);
-  s+=Tc(FX(p('O')[0]),FX(p('O')[1]-3*k),'O','#A4473A',12*k,'mono mid','600');
-  const put=(i,sb)=>{if(!sb)return;const anchor=i===6?p(5):p(i),dir=sb[1]==='up'?-1:1,len=22*k,col=(o.hi||[]).includes(i)?'#A4473A':'#3A2E22';
-    s+=`<path d="M${FX(anchor[0])} ${FX(anchor[1])} V${FX(anchor[1]+dir*len)}" stroke="${INK}" stroke-width="1.2"/>`+Tc(FX(anchor[0]),FX(anchor[1]+dir*len+(dir<0?-4:12*k)),sb[0],col,10.5*k,'mono mid','600');};
+  const P={1:[62,0],2:[31,23],3:[-31,23],4:[-62,0],5:[-31,-18],O:[31,-18]};
+  const p=i=>[cx+P[i][0]*k,cy+P[i][1]*k];
+  /* t1,t2 trim the ends so the oxygen glyph sits in a clean gap */
+  const bond=(a,b,w,t1,t2)=>{const [x1,y1]=p(a),[x2,y2]=p(b),dx=x2-x1,dy=y2-y1;
+    return `<path d="M${FX(x1+dx*(t1||0))} ${FX(y1+dy*(t1||0))} L${FX(x2-dx*(t2||0))} ${FX(y2-dy*(t2||0))}" stroke="${INK}" stroke-width="${w}" stroke-linecap="round"/>`;};
+  let s=bond(4,5,1.4)+bond(5,'O',1.4,0,.26)+bond('O',1,1.4,.26,0)+bond(1,2,3.2)+bond(2,3,4.2)+bond(3,4,3.2);
+  const [ox,oy]=p('O');
+  s+=Tc(FX(ox),FX(oy+4.6*k),'O','#A4473A',13.5*k,'mono mid','600');
+  /* ring position numbers, just outside each vertex on the side away from the substituent bonds */
+  if(o.num!==false){const off={1:[11,4],2:[9,10],3:[-9,10],4:[-11,4],5:[-11,-2]};
+    [1,2,3,4,5].forEach(i=>{const [x,y]=p(i);s+=Tc(FX(x+off[i][0]*k),FX(y+off[i][1]*k),String(i),'#9A8E78',8*k,'mono mid');});}
+  /* substituents: a vertical bond from the ring carbon, label beyond it */
+  const put=(i,sb)=>{if(!sb)return;const anchor=i===6?p(5):p(i),dir=sb[1]==='up'?-1:1,len=24*k,col=(o.hi||[]).includes(i)?'#A4473A':'#3A2E22';
+    s+=`<path d="M${FX(anchor[0])} ${FX(anchor[1])} V${FX(anchor[1]+dir*len)}" stroke="${INK}" stroke-width="1.3"/>`
+      +Tc(FX(anchor[0]),FX(anchor[1]+dir*len+(dir<0?-5*k:13*k)),sb[0],col,11*k,'mono mid','600');};
   [1,2,3,4,6].forEach(i=>put(i,subs[i]));
-  (o.num!==false)&&[1,2,3,4].forEach(i=>s+=Tc(FX(p(i)[0]+(i===1?11:i===4?-11:0)*k),FX(p(i)[1]+(i===2||i===3?13:3)*k),String(i),'#8C7A52',7.5*k,'mono mid'));
+  return s;}
+/* lowest y the ring and its substituents reach */
+function haworthExtent(cy,k){return cy+23*k+24*k+16*k;}
+/* a row of SNFG symbols joined by bonds: links drawn first, symbols on top */
+function glycanRow(x,y,types,dx,r,o={}){
+  let links='';for(let i=1;i<types.length;i++)links+=glink(x+(i-1)*dx,y,x+i*dx,y);
+  let syms='';types.forEach((t,i)=>{syms+=snfg(t,x+i*dx,y,r);});
+  let labs='';if(o.labels)types.forEach((t,i)=>{labs+=T(FX(x+i*dx),FX(y+r+(o.ldy||13)),t,'note mid '+(o.fs||'f10'));});
+  return links+syms+labs;}
+/* key: symbol + name, laid out in columns */
+function snfgKey(x,y,items,cols,cw,rh,o={}){
+  let s='';items.forEach((t,i)=>{const c=i%cols,rw=Math.floor(i/cols),px=x+c*cw,py=y+rw*rh;
+    s+=snfg(t,px,py,o.r||7)+T(px+(o.r||7)+7,py+4,t,'note start '+(o.fs||'f11'));});
   return s;}
 /* membrane bilayer band */
 function memb(x1,x2,y,h=24){return `<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="#EDE0B8"/><path d="M${x1+3} ${y+3} H${x2} M${x1+3} ${y+h-3} H${x2}" stroke="#B89A5E" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`;}
@@ -459,13 +482,18 @@ function sugarChain(x,y0,seq,dir,r=6.5,gap=15){
 function scG1(n){
   const groups=[['Peptidoglycan','the wall backbone',['GlcNAc','MurNAc','GlcNAc','MurNAc']],['Capsule','repeating units, 2–8 sugars',['Glc','Rha','GlcA','Rha']],['O-antigen','the Gram-negative surface',['Man','Rha','Gal','Man']],['Teichoic acids','Gram-positive wall polymers',['GlcNAc','Glc','GlcNAc','Glc']]];
   let s='',y;
-  if(!n){groups.forEach((g,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.4).toFixed(1),g[2].map((t,j)=>(j?glink(cx-36+(j-1)*24,60,cx-36+j*24,60):'')+snfg(t,cx-36+j*24,60,8)).join('')+T(cx,96,g[0],'cname mid f14')+T(cx,114,g[1],'note mid f11'));});y=150;}
-  else{y=30;groups.forEach((g,i)=>{s+=G('a-fade',(i*.4).toFixed(1),g[2].map((t,j)=>(j?glink(26+(j-1)*22,y,26+j*22,y):'')+snfg(t,26+j*22,y,7)).join('')+T(122,y-2,g[0],'cname start f13')+T(122,y+14,g[1],'note start f11'));y+=46;});y+=4;}
-  s+=G('a-fade',1.6,T(n?16:24,y,'Why sugars carry so much information','cname start f14'));y+=22;
+  if(!n){groups.forEach((g,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.35).toFixed(2),glycanRow(cx-36,56,g[2],24,8)+T(cx,90,g[0],'cname mid f14')+T(cx,107,g[1],'note mid f11'));});y=132;}
+  else{y=30;groups.forEach((g,i)=>{s+=G('a-fade',(i*.35).toFixed(2),glycanRow(26,y,g[2],22,7)+T(122,y-2,g[0],'cname start f13')+T(122,y+14,g[1],'note start f11'));y+=44;});y+=4;}
+  const key=['Glc','Gal','Man','GlcNAc','GalNAc','GlcA','Rha','MurNAc'];
+  s+=G('a-fade',1.5,T(n?16:24,y,'Symbol key (SNFG)','mono acc start f11'));
+  y+=18;
+  s+=G('a-fade',1.6,n?snfgKey(26,y+2,key,2,166,22,{r:6.5,fs:'f11'}):snfgKey(34,y+2,key,8,75,0,{r:6.5,fs:'f11'}));
+  y+=n?4*22+8:34;
+  s+=G('a-fade',1.9,T(n?16:24,y,'Why sugars carry so much information','cname start f14'));y+=22;
   const L=[['linkage','a sugar can join through C2, C3, C4 or C6 of the next'],['anomer','each new bond is α or β'],['branching','one sugar can carry several others at once']];
-  L.forEach((l,i)=>{s+=G('a-fade',(1.8+i*.25).toFixed(1),Tc(n?16:24,y+i*22,l[0],'#2F5276',n?12:13,'mono start','600')+T(n?110:150,y+i*22,l[1],'note start f12'));});
-  y+=3*22+12;
-  const p=para(n?16:24,y,'Two glucoses can be joined in eleven distinct ways; two amino acids, in one. A short glycan therefore holds more structural information than a short peptide, and bacterial surfaces are built mostly of glycans — which is exactly what antibodies, phages and host receptors read first.',n?50:92,'note start f13',17,2.6);
+  L.forEach((l,i)=>{const W=wrap(l[1],n?36:70);s+=G('a-fade',(2.1+i*.25).toFixed(2),Tc(n?16:24,y,l[0],'#2F5276',n?12:13,'mono start','600')+W.map((w,j)=>T(n?110:150,y+j*15,w,'note start f12')).join(''));y+=Math.max(1,W.length)*15+8;});
+  y+=10;
+  const p=para(n?16:24,y,'Two glucoses can be joined in eleven distinct ways; two amino acids, in one. A short glycan therefore holds more structural information than a short peptide, and bacterial surfaces are built mostly of glycans — which is exactly what antibodies, phages and host receptors read first.',n?50:92,'note start f13',17,2.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 
@@ -476,25 +504,30 @@ const MONO=[
  {n:'N-Acetylglucosamine',sym:'GlcNAc',subs:{1:['OH','up'],2:['NHAc','down'],3:['OH','up'],4:['OH','down'],6:['CH₂OH','up']},hi:[2],t:'An amino sugar: the C2 hydroxyl is replaced by an acetylated amine. One of the two sugars of peptidoglycan; donated as UDP-GlcNAc, the hub of amino-sugar metabolism.'},
  {n:'N-Acetylmuramic acid',sym:'MurNAc',subs:{1:['OH','up'],2:['NHAc','down'],3:['O–lactyl','up'],4:['OH','down'],6:['CH₂OH','up']},hi:[3],t:'GlcNAc with a lactyl ether added to C3. That lactyl group’s carboxyl carries the stem peptide of peptidoglycan. Found only in bacteria — a target with no human counterpart.'},
  {n:'D-Glucuronic acid',sym:'GlcA',subs:{1:['OH','up'],2:['OH','down'],3:['OH','up'],4:['OH','down'],6:['COOH','up']},hi:[6],t:'Glucose with carbon 6 oxidised to a carboxyl. It gives many capsules their negative charge. UDP-GlcA is made from UDP-Glc by a dehydrogenase.'},
- {n:'L-Rhamnose',sym:'Rha',subs:{1:['OH','down'],2:['OH','down'],3:['OH','down'],4:['OH','up'],6:['CH₃','down']},hi:[6],t:'6-deoxy-L-mannose: an L-sugar with a methyl where glucose has CH₂OH. Absent from humans, common in bacterial walls and capsules; built as dTDP-L-rhamnose by the RmlABCD pathway, itself a drug target.'}];
+ {n:'L-Rhamnose',sym:'Rha',subs:{1:['OH','down'],2:['OH','down'],3:['OH','down'],4:['OH','up'],6:['CH₃','down']},hi:[6],t:'6-deoxy-L-mannose: an L-sugar with a methyl where glucose has CH₂OH. Being L-series, every group sits on the opposite face to its position in D-mannose, which is why the ring looks inverted here. Absent from humans, common in bacterial walls and capsules; built as dTDP-L-rhamnose by RmlABCD, itself a drug target.'}];
 let monoSel=0;
 function scG2(n){
   const m=MONO[monoSel];let s='';
-  const cx=n?150:200, cy=n?96:116, k=n?1.25:1.55;
-  s+=G('a-fade',0,haworth(cx,cy,k,m.subs,{hi:m.hi})+T(cx,cy+(n?74:88),m.n,'cname mid f15'));
-  s+=G('a-fade',.3,snfg(m.sym,n?312:470,cy-12,n?13:18)+T(n?312:470,cy+(n?16:28),m.sym,'note mid f12'));
-  const y=cy+(n?104:124);
-  const p=para(n?16:24,y,m.t,n?50:92,'note start f13',17,.5);
-  const q=para(n?16:24,p.y+14,'Haworth projection; the ring carbons are numbered, and the group that differs from glucose is red. Symbols follow the Symbol Nomenclature for Glycans (SNFG).',n?50:92,'lab start f12',16,.8);
+  const k=n?1.15:1.45, cx=n?128:190, cy=n?108:124;
+  s+=G('a-fade',0,haworth(cx,cy,k,m.subs,{hi:m.hi}));
+  const sx=n?290:460, sy=cy-6;
+  s+=G('a-fade',.3,snfg(m.sym,sx,sy,n?13:18)+T(sx,sy+(n?30:36),m.sym,'lab mid f13')+T(sx,sy+(n?46:52),'SNFG symbol','note mid f10'));
+  let y=haworthExtent(cy,k)+(n?14:16);
+  s+=G('a-fade',.5,T(cx,y,m.n,'cname mid f15'));
+  y+=22;
+  const p=para(n?16:24,y,m.t,n?50:92,'note start f13',17,.6);
+  const q=para(n?16:24,p.y+14,'Haworth projection of the pyranose ring: the ring oxygen sits at the back right, carbon 1 (the anomeric carbon) at the right, and the three front bonds are drawn bold. Ring positions are numbered beside each carbon; the group that differs from glucose is red.',n?50:92,'lab start f12',16,.9);
   return {vb:n?slim(q.y+6):wide(q.y+8),s:s+p.s+q.s};
 }
 
 function scG3(n){
-  let s='';const k=n?.95:1.15, y=n?82:98, c1=n?96:160, c2=n?272:410;
+  let s='';const k=n?.9:1.1, y=n?112:124, c1=n?96:160, c2=n?272:410;
   s+=G('a-fade',0,T(n?16:24,30,'The anomeric carbon: α and β','cname start f14'));
-  s+=G('a-fade',.3,haworth(c1,y,k,{1:['OH','down'],2:['OH','down'],3:['OH','up'],4:['OH','down'],6:['CH₂OH','up']},{hi:[1],num:false})+T(c1,y+(n?58:66),'α: C1–OH points down','note mid f12'));
-  s+=G('a-fade',.6,haworth(c2,y,k,{1:['OH','up'],2:['OH','down'],3:['OH','up'],4:['OH','down'],6:['CH₂OH','up']},{hi:[1],num:false})+T(c2,y+(n?58:66),'β: C1–OH points up','note mid f12'));
-  let yy=y+(n?92:104);
+  s+=G('a-fade',.3,haworth(c1,y,k,{1:['OH','down'],2:['OH','down'],3:['OH','up'],4:['OH','down'],6:['CH₂OH','up']},{hi:[1],num:false}));
+  s+=G('a-fade',.6,haworth(c2,y,k,{1:['OH','up'],2:['OH','down'],3:['OH','up'],4:['OH','down'],6:['CH₂OH','up']},{hi:[1],num:false}));
+  const ce=haworthExtent(y,k)+14;
+  s+=G('a-fade',.8,T(c1,ce,'α: C1–OH points down','note mid f12')+T(c2,ce,'β: C1–OH points up','note mid f12'));
+  let yy=ce+30;
   const rows=[['Starch, glycogen','Glc α1→4 Glc','coils; an energy store the cell can digest'],['Cellulose','Glc β1→4 Glc','straight H-bonded fibres; stiffens biofilms'],['Peptidoglycan','GlcNAc β1→4 MurNAc','strands cross-linked by peptides']];
   const t=wtable(n,['Polymer','Linkage','What it does'],rows,n?[[10,14],[112,15],[224,20]]:[[24,22],[180,24],[380,36]],{y0:yy,d0:1});
   const p=para(n?16:24,t.y+12,'A glycosidic bond joins the anomeric carbon (C1) of a donor to a hydroxyl of the acceptor, and is written donor-first: Glcβ1→4Glc is C1 of a β-glucose bonded to O4 of the next. The same two sugars, linked α or β, give starch or cellulose — utterly different materials.',n?50:92,'note start f13',17,1.8);
@@ -525,7 +558,7 @@ function scG5(n){
   C.forEach((c,i)=>{const L=wrap(c[1],n?52:42);
     if(n){s+=G('a-fade',(1.2+i*.5).toFixed(1),T(16,yy,c[0],'cname start f14')+L.map((l,j)=>T(16,yy+20+j*16,l,'note start f12')).join(''));yy+=24+L.length*16+14;}
     else s+=G('a-fade',(1.2+i*.5).toFixed(1),T(i?330:24,yy,c[0],'cname start f14')+L.map((l,j)=>T(i?330:24,yy+20+j*16,l,'note start f12')).join(''));});
-  if(!n)yy+=24+4*16+14;
+  if(!n)yy+=24+Math.max(...C.map(c=>wrap(c[1],42).length))*16+22;
   const p=para(n?16:24,yy,'A glycosyltransferase is specific for its donor sugar, its acceptor, the carbon it links to, and whether the bond is α or β — one enzyme, one linkage, as a rule. That is why a polysaccharide’s structure is effectively encoded in the set of GT genes that build it.',n?50:92,'note start f13',17,2.4);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
@@ -549,16 +582,28 @@ function scG6(n){
 }
 
 function scG7(n){
-  let s='';const x1=n?14:30, x2=n?346:610, my=n?66:78;
-  s+=G('a-fade',0,memb(x1,x2,my,24)+T(x1,my-10,'outside','note start f12')+T(x1,my+46,'cytoplasm','note start f12'));
-  const L=undp(n?70:120,my,24,'in',2);
-  s+=G('a-fade',.4,L.s+snfg('Glc',n?70:120,L.end+8,7)+T(n?70:120,L.end+28,'sugar on the carrier','note mid f11'));
-  const fx=n?250:420, M=undp(fx,my,24,'out',2);
-  s+=G('a-fade',.9,`<rect x="${fx-32}" y="${my-6}" width="20" height="36" rx="5" fill="${E2}" stroke="${INK}"/>`+T(fx-22,my+44,'flippase','note mid f11')+M.s+snfg('Glc',fx,M.end-8,7)+arw(fx-52,my+36,fx-52,my-12,{blue:1}));
-  const y=my+86;
-  const b=bullets(n?24:30,y,[['One lipid, many jobs','Undecaprenyl phosphate (Und-P), a C55 isoprenoid, ferries sugars across the membrane for peptidoglycan, capsule, O-antigen and wall teichoic acids alike — so these pathways all draw on one small shared pool.'],
-   ['Starting the chain','Enzymes such as MraY, WecA and WbaP put a sugar-1-phosphate onto Und-P to give Und-PP-sugar; GTs then extend it from nucleotide donors.'],
-   ['Flipping and recycling','Wzx-family flippases (and MurJ, for lipid II) move the lipid-linked unit to the outer face. Afterwards Und-PP is recycled; the antibiotic bacitracin kills by sequestering it, and so starves every one of these pathways.']],n?44:88,{d0:1.4,gap:24});
+  let s='';
+  const x1=n?8:20, x2=n?352:620, my=n?108:112, h=24, X=n?[48,114,180,246,312]:[82,190,298,406,514];
+  s+=G('a-fade',0,memb(x1,x2,my,h)+T(x1+2,my-8,n?'outside':'outside the membrane','note start f11')+T(x1+2,my+h+14,n?'cyto.':'cytoplasm','note start f11'));
+  const names=n?['Und-P','+ sugar-P','+ sugars','flipped','Und-PP left']:['undecaprenyl-P','+ sugar-1-P','+ more sugars','flipped out','Und-PP released'];
+  const who=n?['','PGT','GTs','Wzx','polymerase']:['','PGT: WbaP, MraY, CpsE','GTs, nucleotide sugars','Wzx or MurJ','Wzy or a synthase'];
+  const st=[];
+  {const L=undp(X[0],my,h,'in',1);st.push(L.s);}
+  {const L=undp(X[1],my,h,'in',2);st.push(L.s+snfg('Glc',X[1],L.end+7,6.5));}
+  {const L=undp(X[2],my,h,'in',2);st.push(L.s+sugarChain(X[2],L.end+7,['Glc','Rha','GlcA'],1,6,13));}
+  {const L=undp(X[3],my,h,'out',2);st.push(L.s+sugarChain(X[3],L.end-7,['Glc','Rha','GlcA'],-1,6,13));}
+  {const L=undp(X[4],my,h,'out',2);st.push(L.s);}
+  st.forEach((d,i)=>{s+=G('a-fade',(.3+i*.35).toFixed(2),d+T(X[i],my+h+(n?74:78),names[i],'lab mid '+(n?'f10':'f11'))+(who[i]?T(X[i],my+h+(n?88:93),who[i],'note mid '+(n?'f9':'f10')):''));
+    if(i<4)s+=G('a-fade',(.5+i*.35).toFixed(2),arw(X[i]+(n?16:22),my-66,X[i+1]-(n?16:22),my-66,{w:1.2}));});
+  /* recycling: Und-PP is dephosphorylated and returns to the inner face */
+  const ry=my+h+(n?112:118);
+  s+=G('a-fade',2.2,`<path d="M${X[4]} ${my+h+(n?98:104)} V${ry} H${X[0]} V${my+h+(n?20:22)}" stroke="#6A5B47" stroke-width="1.3" fill="none" stroke-dasharray="4 3" marker-end="url(#ahp)"/>`
+    +T((X[0]+X[4])/2,ry+14,n?'phosphatase, then flipped back: Und-P again':'a phosphatase removes one phosphate and the carrier flips back: Und-P again, ready for the next round','note mid '+(n?'f10':'f11'))
+    +Tc((X[1]+X[2])/2,ry-6,'⊣ bacitracin','#A4473A',n?10:11,'mono mid','600'));
+  const y=ry+(n?34:36);
+  const b=bullets(n?20:30,y,[['One lipid, many jobs','Undecaprenyl phosphate, a C55 isoprenoid, carries sugars across the membrane for peptidoglycan, capsule, O-antigen and wall teichoic acids alike — so these pathways all draw on one small shared pool.'],
+   ['The cycle','A phosphoglycosyltransferase loads the first sugar-phosphate, giving Und-PP-sugar; GTs extend it; a flippase moves it out; the polymer is built; and the spent Und-PP is dephosphorylated and returned.'],
+   ['Where it breaks','Bacitracin binds Und-PP and stops the recycling step, so every carrier-dependent pathway starves at once. Blocking a middle step of any one pathway traps the carrier the same way (plate 11).']],n?44:88,{d0:2.6,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 /* ===================== Part III · building polymers ===================== */
@@ -597,21 +642,35 @@ function scG9(n){
   const p=para(n?16:24,t.y+12,'Streptococcus pneumoniae has roughly 100 capsule serotypes, nearly all built by the Wzx/Wzy route from a cps locus sitting between the housekeeping genes dexB and aliA. The flanking genes are shared; the middle varies by serotype. Bentley and colleagues sequenced 90 loci in 2006.',n?50:92,'note start f13',17,1.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
 }
-/* shared capsule-assembly picture; block = index of last working step (rest dimmed + X) */
+/* shared capsule-assembly picture; block = index of last working step (rest dimmed + X).
+   Layers from top: capsule space, wall, gap, membrane, cytoplasm. Chains that grow outward pass through the wall. */
 const RU=['Glc',['Rha',['GlcA']],'Rha'];
 function capsuleScene(n,block){
-  const x1=n?8:20, x2=n?352:620, my=n?146:156, X=n?[38,104,172,242,312]:[72,186,300,414,528];
-  let s=`<rect x="${x1}" y="${my-70}" width="${x2-x1}" height="22" fill="#E3D6B4"/><path d="M${x1} ${my-65} H${x2} M${x1} ${my-55} H${x2}" stroke="#A8916A" stroke-width="1.1"/>`+Tc(x2-6,my-76,'wall','#8C7A52',11,'mono end')+memb(x1,x2,my,22)+Tc(x2-6,my+38,'cytoplasm','#6A5B47',11,'mono end');
+  const x1=n?8:20, x2=n?352:620, X=n?[62,126,190,254,318]:[112,216,320,424,528];
+  const wy=98, wh=20, my=166, mh=24, lx=n?10:24;
+  let s=`<rect x="${x1}" y="${wy}" width="${x2-x1}" height="${wh}" fill="#E3D6B4" opacity=".85"/><path d="M${x1} ${wy+5} H${x2} M${x1} ${wy+15} H${x2}" stroke="#A8916A" stroke-width="1.1"/>`+memb(x1,x2,my,mh);
+  /* layer labels in the empty left margin */
+  s+=T(lx,wy+14,'wall','note start f11')+T(lx,my+16,n?'memb.':'membrane','note start f11')+T(lx,my+mh+22,n?'cyto.':'cytoplasm','note start f11');
   const st=[];
-  {const L=undp(X[0],my,22,'in',2);st.push(L.s+snfg('Glc',X[0],L.end+8,6)+`<rect x="${X[0]+10}" y="${my+1}" width="15" height="28" rx="4" fill="#3E7FA8" fill-opacity=".85" stroke="${INK}"/>`+Tc(X[0]+17,my+44,'CpsE','#2F5276',9.5,'mono mid','600'));}
-  {const L=undp(X[1],my,22,'in',2);st.push(L.s+sugarChain(X[1],L.end+6,RU,1,6,13)+`<rect x="${X[1]+22}" y="${my+4}" width="15" height="24" rx="4" fill="#7FA05A" stroke="${INK}"/>`+Tc(X[1]+30,my+44,'GTs','#3E6131',9.5,'mono mid','600'));}
-  {const L=undp(X[2],my,22,'out',2);st.push(`<rect x="${X[2]-28}" y="${my-6}" width="16" height="34" rx="5" fill="#A9C4DC" stroke="${INK}"/>`+Tc(X[2]-20,my+44,'Wzx','#2F5276',9.5,'mono mid','600')+L.s+sugarChain(X[2],L.end-6,RU,-1,6,13));}
-  {const L=undp(X[3],my,22,'out',2);st.push(`<rect x="${X[3]+14}" y="${my-6}" width="18" height="34" rx="5" fill="#C99A2E" stroke="${INK}"/>`+Tc(X[3]+23,my+44,'Wzy','#8C5A1E',9.5,'mono mid','600')+L.s+sugarChain(X[3],L.end-6,RU.concat(RU),-1,5.5,11)+`<rect x="${X[3]-30}" y="${my-2}" width="11" height="26" rx="3" fill="#B4766E" stroke="${INK}"/>`+Tc(X[3]-24,my+44,'CpsD','#8C5A1E',9.5,'mono mid','600'));}
-  {st.push(sugarChain(X[4],my-50,RU.concat(RU).concat(['Glc']),1,5.5,11)+`<rect x="${X[4]+14}" y="${my-6}" width="15" height="34" rx="4" fill="#B4766E" stroke="${INK}"/>`+Tc(X[4]+21,my+44,'CpsA','#8C5A1E',9.5,'mono mid','600')+glink(X[4],my-50,X[4],my-44));}
-  st.forEach((d,i)=>{const dim=block!==undefined&&i>block;s+=G('a-fade',(.3+i*.45).toFixed(1),`<g opacity="${dim?.16:1}">${d}</g>`+Tc(X[i],my-92,String(i+1),'#2F5276',12,'mono mid','600'));
-    if(i<4){const adim=block!==undefined&&i>=block;s+=G('a-fade',(.5+i*.45).toFixed(1),`<g opacity="${adim?.16:1}">${arw(X[i]+(n?20:34),my-92,X[i+1]-(n?20:34),my-92,{w:1.1})}</g>`);}});
-  if(block!==undefined)s+=G('a-fade',.6,mark(X[block]+(n?18:28),my-92,false,8));
-  return {s,y:my+78};
+  {const L=undp(X[0],my,mh,'in',2);st.push(L.s+snfg('Glc',X[0],L.end+7,6)+`<rect x="${X[0]+14}" y="${my+1}" width="15" height="22" rx="4" fill="#3E7FA8" fill-opacity=".85" stroke="${INK}"/>`);}
+  {const L=undp(X[1],my,mh,'in',2);st.push(L.s+sugarChain(X[1],L.end+7,RU,1,6,13)+`<rect x="${X[1]+22}" y="${my+2}" width="15" height="20" rx="4" fill="#7FA05A" stroke="${INK}"/>`);}
+  {const L=undp(X[2],my,mh,'out',2);st.push(`<rect x="${X[2]-30}" y="${my-5}" width="16" height="34" rx="5" fill="#A9C4DC" stroke="${INK}"/>`+L.s+sugarChain(X[2],L.end-7,RU,-1,6,13));}
+  {const L=undp(X[3],my,mh,'out',2);st.push(`<rect x="${X[3]+14}" y="${my-5}" width="18" height="34" rx="5" fill="#C99A2E" stroke="${INK}"/>`+L.s+sugarChain(X[3],L.end-7,RU.concat(RU),-1,5.5,13)+`<rect x="${X[3]-32}" y="${my-1}" width="11" height="26" rx="3" fill="#B4766E" stroke="${INK}"/>`);}
+  {st.push(`<rect x="${X[4]+14}" y="${my-5}" width="15" height="34" rx="4" fill="#B4766E" stroke="${INK}"/>`
+     +`<path d="M${X[4]+21} ${my-7} V${wy+wh+2}" stroke="#8C5A1E" stroke-width="1.2" stroke-dasharray="3 2" marker-end="url(#ahp)"/>`
+     +`<circle cx="${X[4]}" cy="${wy+4}" r="3" fill="#8C5A1E" stroke="${INK}" stroke-width=".7"/>`+sugarChain(X[4],wy-9,RU.concat(['Glc','Rha']),-1,5.5,13)+glink(X[4],wy+4,X[4],wy-9));}
+  const names=['CpsE','GTs','Wzx','Wzy','CpsA'], nx=n?[X[0]+18,X[1]+20,X[2]-16,X[3]+22,X[4]+20]:[X[0]+22,X[1]+30,X[2]-22,X[3]+23,X[4]+22], ncol=['#2F5276','#3E6131','#2F5276','#8C5A1E','#8C5A1E'];
+  st.forEach((d,i)=>{const dim=block!==undefined&&i>block;
+    s+=G('a-fade',(.3+i*.45).toFixed(1),`<g opacity="${dim?.16:1}">${d}</g>`+Tc(X[i],16+4,String(i+1),'#2F5276',12,'mono mid','600')
+      +`<g opacity="${dim?.3:1}">${Tc(nx[i],my+mh+(n?60:62),names[i],ncol[i],n?9.5:10,'mono mid','600')}</g>`);
+    if(i<4){const adim=block!==undefined&&i>=block;s+=G('a-fade',(.5+i*.45).toFixed(1),`<g opacity="${adim?.16:1}">${arw(X[i]+(n?16:26),16,X[i+1]-(n?16:26),16,{w:1.1})}</g>`);}});
+  /* step 4 also shows CpsD beside Wzy */
+  s+=G('a-fade',1.9,`<g opacity="${block!==undefined&&3>block?.3:1}">${Tc(X[3]-(n?26:27),my+mh+(n?60:62),'CpsD','#8C5A1E',n?9:9.5,'mono mid','600')}</g>`);
+  /* point out the capsule on the extracellular side */
+  const cdim=block!==undefined&&block<3;
+  s+=G('a-fade',2.4,`<g opacity="${cdim?.3:1}">${T(lx,52,n?'capsule, outside':'capsule, outside the wall','lab start '+(n?'f11':'f12'))+arw(lx+(n?96:150),56,X[3]-14,72,{w:1.2})+(n?'':T(lx,66,'the chain grows out through the peptidoglycan','note start f10'))}</g>`);
+  if(block!==undefined)s+=G('a-fade',.6,mark(X[block]+(n?16:26),16,false,8));
+  return {s,y:my+mh+(n?72:76)};
 }
 function scG10(n){
   const r=capsuleScene(n);
