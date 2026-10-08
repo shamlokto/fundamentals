@@ -18,13 +18,14 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | X | Glycans and Glycosyltransferases | 12 | [`decks/glycans/`](decks/glycans/) |
 | XI | Tools for Molecular Cloning | 21 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
 | XII | How CRISPR–Cas9 Works | 13 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
-| XIII | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
-| XIV | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
-| XV | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
-| XVI | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
-| XVII | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
-| XVIII | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
-| XIX | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
-| XX | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
+| XIII | Next-Generation Sequencing | 15 | [`decks/sequencing/`](decks/sequencing/) |
+| XIV | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
+| XV | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
+| XVI | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
+| XVII | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
+| XVIII | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
+| XIX | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
+| XX | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
+| XXI | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
 
 Historical attributions, dates and figures are rounded for teaching and should be checked against primary sources.
