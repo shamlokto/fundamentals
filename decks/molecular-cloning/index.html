@@ -231,7 +231,7 @@ function tube(cx,cy,w,h,fill='#BFD4E0'){return `<path d="M${cx-w/2} ${cy-h/2} v$
   +`<path d="M${cx-w/2} ${cy+h*.02} v${h*.1} a${w/2} ${w/2} 0 0 0 ${w} 0 v${-h*.1} z" fill="${fill}" opacity=".75"/>`;}
 function dish(cx,cy,r,cols){let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#EDE3C8" stroke="${INK}" stroke-width="1.4"/><circle cx="${cx}" cy="${cy}" r="${r-5}" fill="none" stroke="${INK}" stroke-width=".6"/>`;
   let seed=7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
-  (cols||[]).forEach(c=>{for(let i=0;i<c[1];i++){const a=rnd()*2*Math.PI,rr=Math.sqrt(rnd())*(r-14);s+=`<circle cx="${F(cx+rr*Math.cos(a))}" cy="${F(cy+rr*Math.sin(a))}" r="3.6" fill="${c[0]}" stroke="${INK}" stroke-width=".5"/>`;}});
+  const pts=[];(cols||[]).forEach(c=>{let k=0;for(let i=0;i<c[1]&&k<400;k++){const a=rnd()*2*Math.PI,rr=Math.sqrt(rnd())*(r-14),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);if(pts.some(p=>Math.hypot(p[0]-x,p[1]-y)<8.5))continue;pts.push([x,y]);i++;s+=`<circle cx="${F(x)}" cy="${F(y)}" r="3.6" fill="${c[0]}" stroke="${INK}" stroke-width=".5"/>`;}});
   return s;}
 function gel(x,y,w,h,lanes){
   let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${GEL}" stroke="${INK}" stroke-width="1"/>`;
@@ -241,10 +241,11 @@ function gel(x,y,w,h,lanes){
     if(ln.t)s+=Tc(lx,y+h+14,ln.t,'#6A5B47',10,'mono mid');});
   return s;}
 function stepBoxes(n,items,x,y,W,H,gap,dl){
+  if(gap<22){W-=(22-gap)*(items.length-1)/items.length;gap=22;}
   let s='';items.forEach((it,i)=>{const bx=x+i*(W+gap);
     s+=G('a-fade',(dl+i*.5).toFixed(1),box(bx,y,W,H,'#E7DEC9',4)+badge(bx+14,y+14,i+1)+T(bx+28,y+19,it[0],'lab start f14')
       +wrap(it[1],Math.floor(W/6.2)).map((l,j)=>T(bx+14,y+40+j*16,l,'note start f12')).join('')+(it[2]?it[2](bx,y,W,H):''));
-    if(i<items.length-1)s+=G('a-fade',(dl+i*.5+.3).toFixed(1),`<path d="M${bx+W+2} ${y+H/2} h${gap-6}" class="arrow"/>`);});
+    if(i<items.length-1)s+=G('a-fade',(dl+i*.5+.3).toFixed(1),`<path d="M${bx+W+3} ${y+H/2} h${gap-9}" class="arrow"/>`);});
   return s;}
 function stepRows(n,items,x,y,W,H,gap,dl){
   let s='';items.forEach((it,i)=>{const by=y+i*(H+gap);
@@ -363,11 +364,11 @@ function scTransform(n){
    ['Screen','Blue–white: the MCS sits inside lacZα. An insert breaks it, so no β-galactosidase and no blue X-gal product.',null]];
   const W=n?340:200, H=n?128:150;
   let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,12,0);
-  const py=n?10+3*(H+10)+60:H+80, px=n?110:190;
+  const py=n?10+3*(H+10)+60:H+96, px=n?110:190;
   s+=G('a-pop',1.8,dish(px,py,n?54:62,[['#3E5F82',10],['#F3EEE2',14]])+T(px,py+(n?70:80),'white colonies carry an insert','note mid f12'));
   const tx=n?14:300, ty=n?py+96+30:py-28;
   s+=G('a-fade',2.4,wrap(n?'Blue–white needs X-gal and IPTG, and only works with lacZα vectors in a lacZΔM15 host such as DH5α.':'Blue–white screening needs X-gal and IPTG in the plate, a lacZα vector such as pUC19, and a host like DH5α carrying lacZΔM15. Many modern vectors use a toxic gene instead: only a clone that interrupts it survives.',n?46:48).map((l,i)=>T(tx,ty+i*19,l,'lab start '+(n?'f13':'f14'))).join(''));
-  return {vb:n?slim(py+170):wide(py+70),s};
+  return {vb:n?slim(py+170):wide(py+90),s};
 }
 
 function scCheck(n){
@@ -446,7 +447,7 @@ function scGolden(n){
 function scGoldenPot(n){
   const x=n?14:30, y0=n?36:42;
   let s=G('a-fade',0,T(x,y0,'One tube: enzyme, ligase, all the parts and the vector','cname start '+(n?'f14':'')));
-  const cy=y0+(n?62:62), cx=n?92:140, r=n?38:44;
+  const cy=y0+(n?74:80), cx=n?92:140, r=n?38:44;
   s+=G('a-fade',.4,`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#B9A889" stroke-width="2" stroke-dasharray="5 4"/>`
     +Tc(cx,cy-6,'37 °C','#A4473A',n?12:13,'mono mid','600')+Tc(cx,cy+12,'16 °C','#2F5276',n?12:13,'mono mid','600')
     +`<path d="${arcP(cx,cy,r,-Math.PI*.9,-Math.PI*.1)}" stroke="${RED2}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`
@@ -472,9 +473,9 @@ function scMoClo(n){
   let s=G('a-fade',0,T(x,n?30:36,'The trouble with one round of assembly','cname start '+(n?'f14':''))
     +wrap('If every junction needs its own overhang, a big construct needs a long list of them, and each part must be free of the enzyme’s sites. MoClo solves both by building in levels.',n?46:88).map((l,i)=>T(x,(n?52:58)+i*19,l,'note start '+(n?'f12':'f13'))).join(''));
   const y0=n?118:122, W=n?340:188, H=n?106:118;
-  const lv=[['Level 0','a single part: promoter, RBS, coding sequence or terminator','BsmBI','into a part vector'],
+  const lv=[['Level 0','a single part: promoter, RBS, coding sequence or terminator','BpiI','into a part vector'],
    ['Level 1','one transcription unit, built from four Level 0 parts','BsaI','position tags set the order'],
-   ['Level 2','several units in one plasmid','BsmBI','end-linkers close the set']];
+   ['Level 2','several units in one plasmid','BpiI','end-linkers close the set']];
   lv.forEach((l,i)=>{const bx=n?10:10+i*206, by=n?y0+i*(H+12):y0;
     let g=box(bx,by,W,H,'#E7DEC9',4)+T(bx+16,by+24,l[0],'cname start '+(n?'f15':''))+Tc(bx+W-16,by+24,l[2],'#2F5276',12,'mono end','600')
       +wrap(l[1],n?42:26).map((t,j)=>T(bx+16,by+44+j*15,t,'note start f12')).join('');
@@ -493,8 +494,8 @@ function scTopo(n){
   let s=G('a-fade',0,T(n?180:320,n?32:38,'The enzyme arrives already loaded','lab mid '+(n?'f14':'')));
   s+=G('a-fade',.4,duplex(x,x+(n?130:180),y,{col:VEC})+T(x+(n?65:90),y+32,'linearised vector','note mid f11')
     +Tc(x+(n?138:188),y+4,'CCCTT','#A4473A',n?11:13,'mono start','600'));
-  s+=G('a-pop',1.0,blob(x+(n?150:210),y-20,n?20:24,n?14:16,ENZ)+Tc(x+(n?150:210),y-16,'Topo','#3A2E22',10,'mono mid','600')
-    +`<path d="M${x+(n?150:210)} ${y-6} v${n?8:10}" stroke="${ENZ}" stroke-width="3"/>`+(n?T(180,y-44,'covalent bond to the 3′ phosphate','note mid f11'):T(x+250,y-18,'covalent bond to the 3′ phosphate','note start f11')));
+  s+=G('a-pop',1.0,blob(x+(n?150:210),y-30,n?20:24,n?14:16,ENZ)+Tc(x+(n?150:210),y-26,'Topo','#3A2E22',10,'mono mid','600')
+    +`<path d="M${x+(n?150:210)} ${y-(n?16:14)} v${n?6:4}" stroke="${ENZ}" stroke-width="3"/>`+(n?T(180,y-44,'covalent bond to the 3′ phosphate','note mid f11'):T(x+250,y-26,'covalent bond to the 3′ phosphate','note start f11')));
   const y2=y+(n?80:86);
   s+=G('a-fade',1.8,duplex(x,x+(n?120:160),y2,{col:INS})+T(x+(n?60:80),y2+30,'your PCR product','note mid f11')
     +`<path d="M${x+(n?130:176)} ${y2+4} h${n?40:60}" class="arrow"/>`+T(x+(n?190:260),y2+8,'5 min, room temperature','lab start '+(n?'f13':'')));
@@ -533,7 +534,7 @@ function scPick(n){
   const m=PICK[pickSel];
   let s=G('a-fade',0,T(n?14:30,n?30:36,'You want to…','note start f12')+T(n?14:30,n?54:62,m.k,'cname start '+(n?'':'')));
   const by=n?76:86;
-  s+=G('a-pop',.3,box(n?10:24,by,n?340:400,n?62:64,'#E7DEC9',4)+T(n?24:40,by+26,'Use','note start f12')+T(n?60:84,by+27,m.best,'cname start acc '+(n?'f15':''))
+  s+=G('a-pop',.3,box(n?10:24,by,n?340:400,n?62:64,'#E7DEC9',4)+T(n?24:40,by+26,'Use','note start f12')+T(n?60:84,by+27,m.best,'cname start acc '+(n?(m.best.length>30?'f12':'f15'):(m.best.length>34?'f15':'')))
     +(m.alt?T(n?24:40,by+48,m.alt,'note start f12'):''));
   const ty=by+(n?80:84);
   s+=G('a-fade',.6,wrap(m.why,n?46:84).map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f14':''))).join(''));
@@ -581,7 +582,7 @@ function scRecomb(n){
   const items=[['Arm the cell','pKD46 carries the three genes under an arabinose promoter, so you induce them only when needed.'],
    ['Make the cassette','PCR a resistance gene flanked by FRT sites, with 40–50 nt of chromosomal homology added as primer tails.'],
    ['Electroporate','Red recombines the linear product into the chromosome; select for the resistance.'],
-   ['Remove the marker','pCP20 supplies FLP, which recombines the two FRT sites and excises the marker, leaving an 80 bp scar.']];
+   ['Excise the marker','pCP20 supplies FLP, which recombines the two FRT sites and excises the marker, leaving an 80 bp scar.']];
   s+=n?stepRows(n,items,10,py,W,H,10,2.2):stepBoxes(n,items,10,py,W,H,10,2.2);
   const yb=n?py+4*(H+10)+10:py+H+26;
   const L3=wrap(n?'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way.':'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way. Supplying Beta alone with a single-stranded oligo can change one base, with no marker and no scar at all.',n?46:88);
@@ -623,7 +624,7 @@ const PLANS=[
  {k:'Delete a gene',steps:[['Build the flanks','PCR ~1 kb each side'],['Join to a marker','Golden Gate or overlap PCR gives flank–marker–flank'],['Deliver','natural transformation, recombineering, or a suicide plasmid'],['Confirm','PCR across both junctions and sequence']],note:'Use a markerless route (Janus, sacB, Cas9 counterselection) if you plan several deletions in one strain.'},
  {k:'Knock down an essential gene',steps:[['Pick guides','20 nt next to a PAM on the non-template strand, near the promoter'],['Clone the guide','anneal two oligos into a BsaI-cut sgRNA vector'],['Deliver dCas9','Mobile-CRISPRi at attTn7, or a replicating plasmid'],['Titrate','induce at several levels and measure growth']],note:'Remember the knockdown is polar: everything downstream in the operon goes down too.'},
  {k:'Tag a protein at its own locus',steps:[['Design the junction','keep the reading frame; add a flexible linker such as GSGS'],['Build','Gibson or Golden Gate, tag between the last codon and the stop'],['Integrate','transform with flanks, select, then remove the marker'],['Check','western blot and a function test — tags can break things']],note:'For a membrane or secreted protein, put the tag where it will not block the signal peptide or the sortase motif.'},
- {k:'Build a synthetic operon',steps:[['Collect parts','promoter, RBS, CDSs, terminator as Level 0 parts'],['Domesticate','remove internal BsaI and BsmBI sites by silent mutation'],['Assemble','Golden Gate, Level 1 then Level 2'],['Tune','swap RBS parts to balance expression']],note:'Standard overhangs mean the second and third build take an afternoon rather than a month.'},
+ {k:'Build a synthetic operon',steps:[['Collect parts','promoter, RBS, CDSs, terminator as Level 0 parts'],['Domesticate','remove internal BsaI and BpiI sites by silent mutation'],['Assemble','Golden Gate, Level 1 then Level 2'],['Tune','swap RBS parts to balance expression']],note:'Standard overhangs mean the second and third build take an afternoon rather than a month.'},
  {k:'Make a mutant library',steps:[['Randomise','degenerate bases, such as NNK, in the primer tail'],['Assemble','Golden Gate for defined junctions'],['Transform at scale','electroporation; count colonies to estimate coverage'],['Screen or select','or sequence the pool before and after']],note:'Library size is usually limited by transformation, not by the assembly.'}];
 let planSel=0;
 function scPlan(n){
@@ -669,7 +670,7 @@ const S=[
  {p:3,title:'Golden Gate: one pot, one direction',draw:scGoldenPot,
   text:"Because the released part has lost its recognition sites, the reaction becomes a ratchet. Everything goes into a single tube and cycles between 37 °C, where BsaI cuts, and 16 °C, where ligase joins. Overhangs that do not match cannot be ligated at all; a part that religates to its old flanking DNA still carries a site and is simply cut again; but a correct junction contains nothing but the overhang, so it is safe for good. The order of the parts is set by giving every junction a different four-base sequence. Engler and Marillonnet, 2008."},
  {p:3,title:'MoClo: building in levels',draw:scMoClo,
-  text:"One round of Golden Gate handles a handful of parts well, but a large construct would need a different overhang at every junction and every part would have to be free of the enzyme sites throughout. MoClo splits the job into levels and alternates two enzymes. Level 0 stores single parts, released with BsmBI. Level 1 joins four of them into one transcription unit using BsaI. Level 2 combines units with BsmBI again. Each round removes the sites the round before left behind, so the product of one level is a clean substrate for the next, and because the overhangs are agreed in advance a promoter made in one lab drops into another lab’s build."},
+  text:"One round of Golden Gate handles a handful of parts well, but a large construct would need a different overhang at every junction and every part would have to be free of the enzyme sites throughout. MoClo splits the job into levels and alternates two enzymes. Level 0 stores single parts, each domesticated and flanked by BsaI sites. Level 1 joins them into one transcription unit using BsaI. Level 2 combines units with the second enzyme, BpiI (BbsI). Each round removes the sites the round before left behind, so the product of one level is a clean substrate for the next, and because the overhangs are agreed in advance a promoter made in one lab drops into another lab’s build."},
  {p:3,title:'TOPO and TA cloning',draw:scTopo,
   text:"TOPO cloning looks like magic because the enzyme is already attached. Vaccinia virus topoisomerase I cuts the vector at CCCTT and stays bound through a phosphotyrosine bond that stores the energy of the broken bond. When your insert anneals, the enzyme runs the reaction backwards and seals the join, then releases. No ligase, no ATP, five minutes. TA cloning uses the 3′-A that Taq leaves; directional TOPO adds CACC to one primer so the product can only go in one way."},
  {p:3,title:'Changing one base',draw:scMutagenesis,
