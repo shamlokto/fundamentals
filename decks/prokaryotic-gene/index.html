@@ -237,7 +237,7 @@ function scOperator(n){
 
 const MRNA_RBS='GAAAGGAGGAUUUCACAUGGCUAAA', R16='AUUCCUCCACUA';
 function scRBS(n){
-  const dx=n?13.4:22, x0=n?14:50, fs=n?12:16, y=n?96:112, N=MRNA_RBS.length, X=i=>x0+i*dx+dx/2;
+  const dx=n?12.6:22, x0=n?20:50, fs=n?12:16, y=n?96:112, N=MRNA_RBS.length, X=i=>x0+i*dx+dx/2;
   let s=G('a-fade',0,T(x0-2,y,'5′','mono end f12')+T(x0+N*dx+2,y,'3′','mono start f12'));
   for(let i=0;i<N;i++){const sd=i>=3&&i<9, st=i>=16&&i<19;
     s+=Tc(X(i),y,MRNA_RBS[i],sd?SDC:st?STARTC:MR,fs,'mono mid',(sd||st)?'600':'');}
@@ -266,7 +266,7 @@ function scCDS(n){
     s+=T(x+per/2,y+(n?20:24),c[1],'note mid f12');});
   s=G('a-fade',0,s);
   const steps=CODONS.length-1, rx=x0+per*1, ry=y-fs-2;
-  s+=G('a-slow',.6,ribo(x0+per*(CODONS.length-1),ry,n?1.1:1.5),`--dx:${-(per*(CODONS.length-2))}px`);
+  s+=G('a-slow',.6,`<g opacity=".85">${ribo(x0+per*(CODONS.length-1),ry-(n?10:14),n?1.1:1.5)}</g>`,`--dx:${-(per*(CODONS.length-2))}px`);
   let beads='';for(let i=0;i<7;i++){beads+=G('a-pop',(.6+i*.32).toFixed(2),`<circle cx="${(n?40:80)+i*(n?18:24)}" cy="${n?48:50}" r="${n?7:9}" fill="${['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#5E7F7A'][i]}" stroke="${INK}" class="tint"/>`+Tc((n?40:80)+i*(n?18:24),(n?52:54),CODONS[i][2],'#F3EDE0',n?8:10,'mono mid','600'));}
   s+=beads+G('a-fade',.4,T(n?14:40,n?24:22,n?'growing polypeptide (N → C)':'growing polypeptide, N-terminus first','note start f12'));
   s+=G('a-pop',3.2,box(x0+per*7+per/2-(n?16:22),ry-(n?44:58),n?32:44,18,STOPC)+Tc(x0+per*7+per/2,ry-(n?31:45),'RF','#F3EDE0',11,'mono mid','600')+T(x0+per*7+per/2,ry-(n?50:64),'release factor','note mid f12'));
@@ -440,7 +440,7 @@ function exprBars(n,vals,top,base,d0=.3){
 
 const MUTS=[
  {k:'wt',label:'Wild type',v:[100,100,100],text:'All three genes are made.'},
- {k:'mis',label:'Missense',v:['made, inactive',100,100],pos:.5,text:'Gene A’s protein is made but may not work. Ribosomes still run through: no polar effect.'},
+ {k:'mis',label:'Missense',v:['made, inactive',100,100],pos:.7,text:'Gene A’s protein is made but may not work. Ribosomes still run through: no polar effect.'},
  {k:'ens',label:'Early nonsense',v:['truncated',8,10],pos:.15,text:'Ribosomes fall off early. The long bare stretch lets Rho end transcription: strongly polar.'},
  {k:'lns',label:'Late nonsense',v:['truncated',75,80],pos:.9,text:'Ribosomes ran nearly to the end, leaving little bare RNA: weakly polar.'},
  {k:'rho',label:'Early nonsense, rho mutant',v:['truncated',65,65],pos:.15,text:'With Rho impaired, transcription runs on past the bare stretch. Polarity is largely relieved.'},
@@ -490,7 +490,7 @@ function scAntisense(n){
   s+=G('a-fade',1.2,T(x1,y2-40,'Polymerases collide','cname start')+dsDNA(x1,x2,y2,INK,8)+T(x1,y2+28,'gene A','mono start f11'));
   s+=G('a-move',1.4,rnap(meet-(n?26:32),y2+4,n?.75:.9),`--dx:${-(meet-(n?26:32)-x1-24)}px`);
   s+=G('a-move',1.4,rnap(meet+(n?26:32),y2+4,n?.75:.9),`--dx:${x2-24-(meet+(n?26:32))}px`);
-  s+=G('a-fade',1.4,`<path d="M${x1+30} ${y2-24} h28" stroke="${MR}" stroke-width="2" marker-end="url(#ahp)"/><path d="M${x2-30} ${y2-24} h-28" stroke="${RHO}" stroke-width="2" marker-end="url(#ahp)"/>`+T(x1+44,y2-34,'sense','note mid f11')+T(x2-44,y2-34,'antisense','note mid f11'));
+  s+=G('a-fade',1.4,`<path d="M${x1+(x2-x1)*.24} ${y2+26} h28" stroke="${MR}" stroke-width="2" marker-end="url(#ahp)"/><path d="M${x2-30} ${y2+26} h-28" stroke="${RHO}" stroke-width="2" marker-end="url(#ahp)"/>`+T(x1+(x2-x1)*.24+14,y2+42,'sense','note mid f11')+T(x2-44,y2+42,'antisense','note mid f11'));
   s+=G('a-pop',2.4,`<text x="${meet}" y="${y2-22}" class="mid" style="fill:${STOPC};font-size:20px">✸</text>`);
   const y3=y2+(n?74:76);
   let rungs='';for(let x=x1+30;x<x2-30;x+=8)rungs+=`M${x} ${y3+3} v6`;
