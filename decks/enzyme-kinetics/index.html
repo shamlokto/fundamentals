@@ -412,7 +412,7 @@ function scEnergy(n){
   s+=G('a-fade',.4,ecurve([[x0+6,yS],[mid,yU],[x1-6,yP]],{col:'#8C7A52',dash:'6 5'})+Tc(mid,yU-7,'S‡','#6A5B47',12,'mono mid','600'));
   s+=G('a-fade',1,ecurve([[x0+6,yS],[x0+w*.25,yES],[mid,yC],[x0+w*.75,yEP],[x1-6,yP]],{col:CURVE})
     +Tc(mid,yC-7,'ES‡','#2F5276',12,'mono mid','600')+Tc(x0+w*.25,yES+16,'ES','#2F5276',12,'mono mid','600')+Tc(x0+w*.75,yEP+15,'EP','#2F5276',12,'mono mid','600'));
-  s+=G('a-fade',.1,Tc(x0+10,yS-7,'S','#3A2E22',13,'mono start','600')+Tc(x1-10,yP-7,'P','#3A2E22',13,'mono end','600'));
+  s+=G('a-fade',.1,Tc(x0+4,yS+18,'S','#3A2E22',13,'mono start','600')+Tc(x1-10,yP-7,'P','#3A2E22',13,'mono end','600'));
   s+=G('a-fade',1.6,span(x0+16,yS,yU,'a',{dx:6})+span(x0+w*.25,yES,yC,'b',{dx:6})+span(x1+12,yS,yP,'c',{dx:6}));
   s+=G('a-fade',.6,legend(x1-104,top+4,[['no enzyme','#8C7A52','6 5'],['with enzyme',CURVE]]));
   let ky=top+H+46;
@@ -560,7 +560,7 @@ function scDerive(n){
            :plot(440,70,180,170,[0,14],[0,10.5],{xlab:'time',ylab:'concentration',xdy:22,ydx:14});
   s+=G('a-fade',2.4,P.s+`<rect x="${FX(P.px(.4))}" y="${P.y}" width="${FX(P.px(8)-P.px(.4))}" height="${P.h}" fill="${CURVE}" opacity=".08"/>`
     +polyl(P,D.map(d=>[d[0],d[1]]),{col:SUBC})+polyl(P,D.map(d=>[d[0],d[3]]),{col:PRODC})+polyl(P,D.map(d=>[d[0],d[2]*8]),{col:CURVE,dash:'5 3'})
-    +plab(P,1.2,9.3,'[S]',{col:'#8C5A1E'})+plab(P,11.6,9.2,'[P]',{col:'#3E6131'})+plab(P,8.6,6.4,'[ES] ×8',{col:'#2F5276',fs:10})
+    +plab(P,1.2,9.3,'[S]',{col:'#8C5A1E'})+plab(P,9.6,9.4,'[P]',{col:'#3E6131'})+plab(P,9.3,7.3,'[ES] ×8',{col:'#2F5276',fs:10})
     +T(P.px(4.2),P.y-6,'steady state','note mid f11'));
   const ay=n?P.y+P.h+50:Math.max(y+14,P.y+P.h+50);
   const p=para(n?16:24,ay,'Assumes [S] far exceeds [E]T, a single substrate, and initial rates, measured before product builds up and the reverse reaction matters.',n?50:92,'note start f13',17,2.8);
@@ -746,7 +746,7 @@ function scSigmoid(n){
            :plot(66,36,330,210,[0,10],[0,1.05],{xlab:'[S]  (units of '+KHALF+')',ylab:'fraction of maximum',xdy:70,ydx:16});
   let s=G('a-fade',0,P.s+gline(P,0,.1,10,.1,{dash:'2 3'})+gline(P,0,.9,10,.9,{dash:'2 3'})+plab(P,10,.9,'90%',{dy:-4,a:'end',fs:10})+plab(P,10,.1,'10%',{dy:-4,a:'end',fs:10}));
   s+=G('a-fade',.4,curve(P,hillf(1),{col:'#8C7A52',dash:'6 4'})+plab(P,6.5,.72,'hyperbolic, n = 1',{col:'#6A5B47',fs:11}));
-  s+=G('a-fade',1,curve(P,hillf(4),{n:160})+plab(P,2.2,1,'sigmoid, n = 4',{col:'#2F5276',fs:11}));
+  s+=G('a-fade',1,curve(P,hillf(4),{n:160})+plab(P,2.2,1.06,'sigmoid, n = 4',{col:'#2F5276',fs:11}));
   s+=G('a-fade',1.6,dot(P,1/9,.1,{col:'#8C7A52',r:3})+dot(P,9,.9,{col:'#8C7A52',r:3})+dot(P,Math.pow(1/9,.25),.1,{r:3})+dot(P,Math.pow(9,.25),.9,{r:3}));
   const yb=P.y+P.h;
   s+=G('a-fade',2,hspan(yb+30,+FX(P.px(1/9)),+FX(P.px(9)),'81-fold',{col:'#8C7A52',tc:'#6A5B47',dy:-5})
@@ -770,9 +770,9 @@ function scHill(n){
   const P1=n?plot(50,64,280,150,[0,4],[0,1.05],{xlab:'[S] / '+KHALF,ylab:'θ',xdy:22,ydx:14}):plot(62,66,240,170,[0,4],[0,1.05],{xlab:'[S] / '+KHALF,ylab:'θ',xdy:22,ydx:14});
   const P2=n?plot(30,276,300,150,[-1.5,1.5],[-3,3],{ox:0,oy:0,xlab:'log ([S] / '+KHALF+')',xdy:22}):plot(370,66,240,170,[-1.5,1.5],[-3,3],{ox:0,oy:0,xlab:'log ([S] / '+KHALF+')',xdy:22});
   s+=G('a-fade',0,P1.s+P2.s+T(P1.x+P1.w/2,P1.y-12,'binding curve','cname mid f13')+T(P2.x+P2.w/2,P2.y-12,'Hill plot','cname mid f13')
-    +T(P2.px(0)+6,P2.y+6,'log (θ / (1 − θ))','note start f11'));
+    +T(P2.px(0)-6,P2.y+6,'log (θ / (1 − θ))','note end f11'));
   s+=G('a-fade',.2,curve(P1,hillf(1),{col:'#8C7A52',dash:'6 4',w:1.6})+curve(P2,x=>x,{col:'#8C7A52',dash:'6 4',w:1.6}));
-  s+=G('a-fade',.5,curve(P1,hillf(nn),{n:160})+curve(P2,x=>nn*x)+plab(P2,Math.min(1.25,2.2/nn),nn*Math.min(1.25,2.2/nn),'slope = '+nn,{col:'#2F5276',fs:11,dx:-8,dy:-2,a:'end'}));
+  s+=G('a-fade',.5,curve(P1,hillf(nn),{n:160})+curve(P2,x=>nn*x)+Tc(P2.x+P2.w-4,P2.y+P2.h-10,'slope = '+nn,'#2F5276',11,'mono end halo','600'));
   const fold=Math.pow(81,1/nn), fs=fold>=100?Math.round(fold).toLocaleString('en'):fold>=10?Math.round(fold):fold.toFixed(1);
   let y=(n?P2.y+P2.h:P1.y+P1.h)+52;
   s+=G('a-fade',.9,T(n?16:24,y,'n'+SB('H')+' = '+nn,'cname start')+T(n?120:150,y,'10% → 90% needs a '+fs+'-fold rise in [S]','note start '+(n?'f12':'f14')));
