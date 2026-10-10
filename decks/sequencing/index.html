@@ -508,7 +508,7 @@ const VENDOR={
   ont:['Oxford Nanopore: how nanopore sequencing works','https://nanoporetech.com/platform/technology']};
 function vendorLine(n,y,keys){let s='',yy=y;keys.forEach(k=>{const v=VENDOR[k];s+=xlink(n?16:30,yy,n?v[0].replace(/, with (animation|figures)/,''):v[0],v[1],{fs:n?'f10':'f11'});yy+=16;});return {s,y:yy};}
 /* ===================== Part I · the idea ===================== */
-const OUT=[['Sanger capillary, 96 wells','2005',7.7e4,'#9A9384'],['454 pyrosequencing','2005',2e7,'#B9AE96'],['Illumina Genome Analyzer','2007',1e9,'#8FB1CF'],
+const OUT=[['Sanger capillary, 96 wells','c. 2000',7.7e4,'#9A9384'],['454 pyrosequencing','2005',2e7,'#B9AE96'],['Illumina Genome Analyzer','2007',1e9,'#8FB1CF'],
  ['Illumina HiSeq 2500','2013',6e11,'#5E87AD'],['Illumina NovaSeq X','2023',1.6e13,'#2F5276'],['Nanopore PromethION','2023',1.4e13,'#C17A2C']];
 function scN1(n){
   const x0=n?14:30, x1=n?300:560, lo=4, hi=13.6, X=v=>x0+(Math.log10(v)-lo)/(hi-lo)*(x1-x0);
@@ -552,14 +552,14 @@ function scN3(n){
   let s='',y=28;
   const pic=(i,cx,cy)=>{
     if(i===0)return frag(cx-56,cy-5,112,{a:14,h:10});
-    if(i===1)return lawn(cx-60,cx+60,cy+16)+[0,1,2].map(j=>`<path d="M${cx-34+j*34} ${cy+16} v-14" stroke="${DNAC}" stroke-width="1.8"/>`).join('');
-    if(i===2)return lawn(cx-60,cx+60,cy+16)+[0,1,2].map(j=>clust(cx-34+j*34,cy+16,5,DNAC,{h:15})).join('');
-    if(i===3)return lawn(cx-60,cx+60,cy+16)+[['A',-34],['C',0],['G',34]].map(c=>clust(cx+c[1],cy+16,5,DNAC,{h:15,dot:NB[c[0]]})).join('');
+    if(i===1)return lawn(cx-52,cx+52,cy+16)+[0,1,2].map(j=>`<path d="M${cx-34+j*34} ${cy+16} v-14" stroke="${DNAC}" stroke-width="1.8"/>`).join('');
+    if(i===2)return lawn(cx-52,cx+52,cy+16)+[0,1,2].map(j=>clust(cx-34+j*34,cy+16,5,DNAC,{h:15})).join('');
+    if(i===3)return lawn(cx-52,cx+52,cy+16)+[['A',-34],['C',0],['G',34]].map(c=>clust(cx+c[1],cy+16,5,DNAC,{h:15,dot:NB[c[0]]})).join('');
     return baseSeq(cx-54,cy+4,'ACGTAC',18,{fs:13})+T(cx,cy+22,'Q30','mono acc mid f11');};
   const maxL=Math.max(...steps.map(st=>wrap(st[1],21).length));
   if(!n){steps.forEach((st,i)=>{const cx=76+i*127;const L=wrap(st[1],21);
       s+=G('a-fade',(i*.5).toFixed(1),badge(cx-52,y+2,i+1)+T(cx-38,y+6,st[0],'cname start f13')+pic(i,cx,y+56)+L.map((l,j)=>T(cx,y+110+j*15,l,'note mid f11')).join(''));
-      if(i<4)s+=G('a-fade',(i*.5+.3).toFixed(1),arw(cx+62,y+56,cx+112,y+56,{w:1.2}));});
+      if(i<4)s+=G('a-fade',(i*.5+.3).toFixed(1),arw(cx+40,y+34,cx+88,y+34,{w:1.2}));});
     y+=110+maxL*15+10;}
   else{steps.forEach((st,i)=>{const L=wrap(st[1],36);
       s+=G('a-fade',(i*.5).toFixed(1),badge(24,y,i+1)+T(40,y+4,st[0],'cname start f14')+L.map((l,j)=>T(16,y+24+j*16,l,'note start f12')).join('')+pic(i,288,y+24+Math.max(2,L.length)*8));
@@ -602,7 +602,7 @@ function scN5(n){
   const maxL=Math.max(...steps.map(st=>wrap(st[1],22).length));
   if(!n){steps.forEach((st,i)=>{const cx=94+i*154;const L=wrap(st[1],22);
       s+=G('a-fade',(i*.5).toFixed(1),badge(cx-66,y+2,i+1)+T(cx-52,y+6,st[0],'cname start f13')+pic(i,cx,y+86)+L.map((l,j)=>T(cx,y+114+j*15,l,'note mid f11')).join(''));
-      if(i<3)s+=G('a-fade',(i*.5+.3).toFixed(1),arw(cx+62,y+60,cx+140,y+60,{w:1.2}));});
+      if(i<3)s+=G('a-fade',(i*.5+.3).toFixed(1),arw(cx+60,y+44,cx+94,y+44,{w:1.2}));});
     y+=114+maxL*15+12;}
   else{steps.forEach((st,i)=>{const L=wrap(st[1],36);
       s+=G('a-fade',(i*.5).toFixed(1),badge(24,y,i+1)+T(40,y+4,st[0],'cname start f14')+L.map((l,j)=>T(16,y+24+j*16,l,'note start f12')).join('')+pic(i,288,y+30+Math.max(3,L.length)*8));
@@ -634,7 +634,7 @@ function scN6(n){
       +T(bx+2*(bw+gap),54+bh+32,'repeat for every base of the read','note mid f11'));
     my=54+bh+46;}
   let y=my+(n?10:12);
-  const rows=[['4-colour','one dye per base','older HiSeq, MiSeq'],['2-colour','red, green, both, or neither','NextSeq, NovaSeq'],['1-colour','two images per cycle distinguish the four','iSeq, MiniSeq']];
+  const rows=[['4-colour','one dye per base','older HiSeq, MiSeq'],['2-colour','red, green, both, or neither','NextSeq, NovaSeq, MiniSeq'],['1-colour','two images per cycle distinguish the four','iSeq 100']];
   const t=wtable(n,['Chemistry','How a base is told apart','Instruments'],rows,n?[[10,10],[96,20],[244,14]]:[[30,12],[170,30],[420,24]],{y0:y,d0:2.2});
   const b=bullets(n?20:30,t.y+12,[['Paired-end reads','After the first read the cluster is regenerated and sequenced from the other end. The two reads bracket a fragment of known approximate length, which helps across repeats and detects structural variants.'],
    ['Phasing','A few strands in a cluster fall a base behind or jump a base ahead. The mixture grows with each cycle, which is why quality falls towards the end of a read and why read length is capped around 300 bases.']],n?44:88,{d0:2.8,gap:24});
