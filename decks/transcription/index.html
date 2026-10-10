@@ -218,7 +218,7 @@ function scSigma(n){
   const hx=n?60:110, hy=60;
   s+=G('a-fade',0,rnap(hx,hy,n?1:1.2,true)+T(hx,hy+44,'holoenzyme','note mid f12'));
   s+=G('a-fade',.6,`<path d="M${hx+(n?40:50)} ${hy} h${n?30:50}" class="arrow"/>`+`<rect x="${hx+(n?78:110)}" y="${hy-36}" width="22" height="72" rx="4" fill="#E3D9C3" stroke="${INK}"/>`+T(hx+(n?89:121),hy+52,n?'column':'phosphocellulose','note mid f12'));
-  s+=G('a-fade',1.2,`<path d="M${hx+(n?104:136)} ${hy-10} l${n?28:40} -16 M${hx+(n?104:136)} ${hy+10} l${n?28:40} 16" class="arrow"/>`+rnap(hx+(n?168:220),hy-28,n?.9:1,false)+T(hx+(n?168:220)+(n?36:42),hy-24,'core','note start f12')
+  s+=G('a-fade',1.2,`<path d="M${hx+(n?104:136)} ${hy-10} l${n?24:34} -12" class="arrow"/><path d="M${hx+(n?104:136)} ${hy+10} l${n?28:40} 16" class="arrow"/>`+rnap(hx+(n?168:220),hy-28,n?.9:1,false)+T(hx+(n?168:220)+(n?36:42),hy-24,'core','note start f12')
     +`<ellipse cx="${hx+(n?162:214)}" cy="${hy+32}" rx="14" ry="8" fill="${SIG}" stroke="${INK}" class="tint"/>`+T(hx+(n?162:214)+(n?22:24),hy+36,'σ','mono start f15'));
   const r1=n?150:172, r2=n?230:252, x1=n?14:40, x2=n?346:600;
   const row=(y,title)=>T(x1,y-26,title,'cname start '+(n?'f15':''))+dsDNA(x1,x2,y,DNA,7);
@@ -406,7 +406,7 @@ function scInside(n){
 
 function scAdd(n){
   const panels=[['NTP arrives','enters through the pore'],['Trigger loop closes','checks the base pair'],['Bond forms','PPi released'],['Translocate','one step downstream']];
-  const pw=n?170:150, ph=n?120:150, cols=n?2:4;
+  const pw=n?170:150, ph=n?140:150, cols=n?2:4;
   let s='';
   panels.forEach((p,i)=>{const c=i%cols,r=Math.floor(i/cols),ox=(n?10:10)+c*(pw+(n?0:8)),oy=(n?10:20)+r*(ph+30);
     let g=box(ox,oy,pw-6,ph,'#E7DEC9',4)+badge(ox+14,oy+14,i+1)+T(ox+28,oy+19,p[0],'lab start '+(n?'f13':'f14'));
@@ -415,7 +415,7 @@ function scAdd(n){
     g+=`<circle cx="${as}" cy="${ty-28}" r="4.5" fill="${SIG}" stroke="${INK}"/>`;
     if(i===0)g+=`<circle cx="${as+18}" cy="${ty-48}" r="6" fill="${BLUE}" stroke="${INK}"/><path d="M${as+16} ${ty-40} l-8 16" class="arrow"/>`;
     if(i===1)g+=`<circle cx="${as+2}" cy="${ty-14}" r="6" fill="${BLUE}" stroke="${INK}"/><path d="M${as+16} ${ty-40} C ${as+26} ${ty-20}, ${as+20} ${ty-4}, ${as+8} ${ty-6}" stroke="${ROSE}" stroke-width="3" fill="none"/>`;
-    if(i===2)g+=`<path d="M${as-8} ${ty-12} H${as+4}" stroke="${RNAC}" stroke-width="2.6"/>`+[0,1].map(j=>`<circle cx="${as+20+j*10}" cy="${ty-46}" r="4" fill="${SIG}" stroke="${INK}"/>`).join('')+T(as+46,ty-42,'PPi','mono start f10');
+    if(i===2)g+=`<path d="M${as-8} ${ty-12} H${as+4}" stroke="${RNAC}" stroke-width="2.6"/>`+[0,1].map(j=>`<circle cx="${as+6+j*10}" cy="${ty-46}" r="4" fill="${SIG}" stroke="${INK}"/>`).join('')+T(as+30,ty-42,'PPi','mono start f10');
     if(i===3)g+=`<path d="M${as-20} ${ty-12} H${as-8}" stroke="${RNAC}" stroke-width="2.6"/>`+`<path d="M${ox+20} ${oy+ph-10} h40" stroke="${INK}" stroke-width="1.4" marker-end="url(#ahp)"/>`+T(ox+66,oy+ph-6,'1 nt','mono start f10');
     g+=T(ox+(pw-6)/2,oy+40,p[1],'note mid f12');
     s+=G('a-fade',(i*.7).toFixed(1),g);});
@@ -480,12 +480,12 @@ const DRUGS=[
  {d:'Streptolydigin',org:'bacteria',k:'bh',at:[384,150],step:3,src:'from Streptomyces lydicus',text:'Binds beside the bridge helix and freezes the trigger loop, so no more nucleotides can be added.'},
  {d:'Actinomycin D',org:'all cells',k:'down',at:[560,152],step:3,src:'from Streptomyces',text:'Slides between G·C base pairs of the DNA itself and blocks the advancing polymerase. Used as an anticancer drug.'},
  {d:'Cordycepin',org:'many polymerases',k:'mg',at:[340,178],step:3,src:'3′-deoxyadenosine, from Cordyceps fungi',text:'Added like ATP, but has no 3′-OH. The next nucleotide has nothing to join to, so the chain ends.'},
- {d:'α-Amanitin',org:'eukaryotic Pol II only',k:'bh',at:[392,186],step:4,src:'from the death cap mushroom',text:'The eukaryotic contrast: it traps Pol II’s trigger loop and blocks translocation, but leaves bacterial RNA polymerase untouched.'}];
+ {d:'α-Amanitin',org:'eukaryotic Pol II, and Pol III weakly',k:'bh',at:[392,186],step:4,src:'from the death cap mushroom',text:'The eukaryotic contrast: it traps Pol II’s trigger loop and blocks translocation, but leaves bacterial RNA polymerase untouched.'}];
 let drugSel=0;
 function scDrugs(n){
   const D=DRUGS[drugSel], steps=['bind','open','initiate','elongate','translocate'];
   const k=n?.56:.8, ox=n?-22:0;
-  let s=`<g transform="translate(${ox} 0) scale(${k})">${ecShapes()}<circle cx="${D.at[0]}" cy="${D.at[1]}" r="18" fill="${RED}" opacity=".85" class="a-pop" style="--d:.3s"/><circle cx="${D.at[0]}" cy="${D.at[1]}" r="26" fill="none" stroke="${RED}" stroke-width="2" stroke-dasharray="4 3"/></g>`;
+  let s=`<g transform="translate(${ox} 0) scale(${k})">${ecShapes()}<circle cx="${D.at[0]}" cy="${D.at[1]}" r="18" fill="${RED}" opacity=".45" class="a-pop" style="--d:.3s"/><circle cx="${D.at[0]}" cy="${D.at[1]}" r="26" fill="none" stroke="${RED}" stroke-width="2" stroke-dasharray="4 3"/></g>`;
   const yb=n?190:270;
   const sx=n?14:30, maxX=n?346:610;let x=sx,yy=yb;
   steps.forEach((t,i)=>{const w=t.length*(n?6.8:7.4)+22,hit=i===D.step;if(x+w>maxX){x=sx;yy+=34;}s+=`<rect x="${x}" y="${yy}" width="${w}" height="26" rx="13" fill="${hit?RED:'none'}" stroke="${hit?RED:'#B9A889'}"/>`+Tc(x+w/2,yy+17,t,hit?'#F3EDE0':'#6A5B47',n?11:12,'mono mid',hit?'600':'');x+=w+8;});
@@ -503,7 +503,7 @@ function rnapCore(cx,cy,k,o={}){const S=v=>v*k;
   s+=`<path d="M${cx+S(70)} ${cy+S(30)} C ${cx+S(110)} ${cy-S(10)}, ${cx+S(80)} ${cy-S(80)}, ${cx+S(10)} ${cy-S(60)} L${cx+S(14)} ${cy-S(10)} C ${cx+S(40)} ${cy-S(16)}, ${cx+S(52)} ${cy+S(10)}, ${cx+S(30)} ${cy+S(30)} Z" fill="#9DB4AE" stroke="${INK}" class="tint"/>`;
   s+=blob(cx-S(22),cy+S(46),S(16),S(11),'#C9B892')+blob(cx+S(14),cy+S(50),S(16),S(11),'#C9B892')+blob(cx-S(64),cy+S(40),S(9),S(7),'#B4766E');
   if(o.sigma)s+=`<path d="M${cx-S(60)} ${cy-S(66)} C ${cx-S(20)} ${cy-S(86)}, ${cx+S(30)} ${cy-S(86)}, ${cx+S(64)} ${cy-S(62)}" stroke="${SIG}" stroke-width="${S(10)}" fill="none" stroke-linecap="round"/>`;
-  if(o.labels)s+=Tc(cx-S(62),cy-S(14),"β′",'#3A2E22',S(14),'mono mid','600')+Tc(cx+S(62),cy-S(14),'β','#3A2E22',S(14),'mono mid','600')+Tc(cx-S(4),cy+S(50),'α₂','#3A2E22',S(12),'mono mid','600')+Tc(cx-S(64),cy+S(44),'ω','#F3EDE0',S(10),'mono mid','600')+(o.sigma?Tc(cx,cy-S(90),'σ','#8A6A1E',S(14),'mono mid','600'):'');
+  if(o.labels)s+=Tc(cx-S(62),cy-S(14),"β′",'#3A2E22',S(14),'mono mid','600')+Tc(cx+S(62),cy-S(14),'β','#3A2E22',S(14),'mono mid','600')+Tc(cx-S(4),cy+S(78),'α₂','#3A2E22',S(12),'mono mid','600')+Tc(cx-S(64),cy+S(44),'ω','#F3EDE0',S(10),'mono mid','600')+(o.sigma?Tc(cx,cy-S(90),'σ','#8A6A1E',S(14),'mono mid','600'):'');
   return s;
 }
 function scOnePol(n){
@@ -544,7 +544,7 @@ function scActivators(n){
   s+=G('a-fade',1.6,T(x1,r2-(n?98:108),n?'σ⁵⁴ and an enhancer':'σ⁵⁴ waits for an enhancer-binding protein','cname start '+(n?'f15':''))
     +`<path d="M${x1} ${r2} H${n?110:200} C ${n?150:260} ${r2}, ${n?150:260} ${r2-70}, ${n?200:330} ${r2-70} C ${n?250:400} ${r2-70}, ${n?250:400} ${r2}, ${n?290:470} ${r2} H${x2}" stroke="${OLD}" stroke-width="2.6" fill="none"/>`);
   s+=G('a-pop',2.0,blob(n?60:120,r2-12,n?22:28,12,'#9C7FB0')+T(n?60:120,r2-8,'NtrC~P','mono mid f11')+T(n?60:120,r2+24,n?'~100 bp up':'~100 bp upstream','note mid f11'));
-  s+=G('a-pop',2.2,blob(n?200:330,r2-62,n?14:16,10,'#7D3F5A')+T(n?220:354,r2-58,'IHF','mono start f11'));
+  s+=G('a-pop',2.2,blob(n?200:330,r2-62,n?14:16,10,'#7D3F5A')+T(n?200:330,r2-80,'IHF','mono mid f11'));
   s+=G('a-pop',2.4,rnapCore(n?310:510,r2-26,n?.36:.5,{})+`<ellipse cx="${n?286:478}" cy="${r2-4}" rx="${n?14:18}" ry="7" fill="${SIG}" stroke="${INK}"/>`+T(n?310:510,r2+24,'σ⁵⁴ at −24/−12','note mid f11'));
   s+=G('a-fade',2.8,`<path d="M${n?80:150} ${r2-26} C ${n?150:250} ${r2-110}, ${n?240:420} ${r2-110}, ${n?290:480} ${r2-24}" stroke="#9C7FB0" stroke-dasharray="4 3" fill="none"/>`+T(n?180:320,r2+(n?50:52),n?'ATP from the activator opens the DNA':'The activator loops over and uses ATP to open the DNA: a bacterial enhancer','lab mid'));
   return {vb:n?slim(r2+62):wide(r2+64),s};
@@ -594,7 +594,7 @@ function scRiboswitch(n){
   const row=(y,bound)=>{let g=`<path d="M${x1} ${y} H${x2}" stroke="${RNAC}" stroke-width="2.4"/>`;
     g+=`<path d="M${x1+w*.1} ${y} C ${x1+w*.1} ${y-60}, ${x1+w*.3} ${y-60}, ${x1+w*.3} ${y}" stroke="${RNAC}" stroke-width="2.4" fill="none"/>`+T(x1+w*.2,y+20,'aptamer','note mid f11');
     if(bound)g+=`<circle cx="${x1+w*.2}" cy="${y-30}" r="8" fill="${SIG}" stroke="${INK}"/>`+hairpin(x1+w*.5,y-2,30,18,'#7D4A98')+Tc(x1+w*.5+9,y-44,'terminator','#7D4A98',11,'mono mid','600')+mark(x2-14,y-24,false,9);
-    else g+=hairpin(x1+w*.38,y-2,24,16,'#8FB1CF')+Tc(x1+w*.38+8,y-36,'anti-terminator','#2F5276',11,'mono mid','600')+mark(x2-14,y-24,true,9);
+    else g+=hairpin(x1+w*.38,y-2,24,16,'#8FB1CF')+Tc(x1+w*.38-4,y-36,'anti-terminator','#2F5276',11,'mono start','600')+mark(x2-14,y-24,true,9);
     g+=box(x1+w*.7,y-7,w*.2,14,BLUE)+Tc(x1+w*.8,y+4,'gene','#F3EDE0',11,'mono mid','600');return g;};
   let s=G('a-fade',0,T(x1,30,n?'No ligand: gene on':'No metabolite: the gene is transcribed','cname start '+(n?'f15':''))+row(n?110:120,false));
   s+=G('a-fade',1.4,T(x1,n?160:170,n?'Ligand bound: gene off':'Metabolite bound: a terminator forms','cname start '+(n?'f15':''))+row(n?240:260,true));
