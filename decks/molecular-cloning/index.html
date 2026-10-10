@@ -582,7 +582,7 @@ function scRecomb(n){
   const items=[['Arm the cell','pKD46 carries the three genes under an arabinose promoter, so you induce them only when needed.'],
    ['Make the cassette','PCR a resistance gene flanked by FRT sites, with 40–50 nt of chromosomal homology added as primer tails.'],
    ['Electroporate','Red recombines the linear product into the chromosome; select for the resistance.'],
-   ['Excise the marker','pCP20 supplies FLP, which recombines the two FRT sites and excises the marker, leaving an 80 bp scar.']];
+   ['Excise marker','pCP20 supplies FLP, which recombines the two FRT sites and excises the marker, leaving an 80 bp scar.']];
   s+=n?stepRows(n,items,10,py,W,H,10,2.2):stepBoxes(n,items,10,py,W,H,10,2.2);
   const yb=n?py+4*(H+10)+10:py+H+26;
   const L3=wrap(n?'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way.':'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way. Supplying Beta alone with a single-stranded oligo can change one base, with no marker and no scar at all.',n?46:88);
