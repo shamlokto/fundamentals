@@ -80,6 +80,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #stage .ax{stroke:#6A5B47;stroke-width:1.4}
 #stage .tint{filter:url(#plate)}
+#stage .halo{paint-order:stroke;stroke:#EFE8D8;stroke-width:3.5px;stroke-linejoin:round}
 
 /* Motion */
 .a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
@@ -244,7 +245,7 @@ function envelope(type,x1,x2,y0,o={}){
   return {s,Y};
 }
 const chan=(x,y,col=SECY,h=24,w=8,gap=4)=>`<rect x="${x-gap/2-w}" y="${y-4}" width="${w}" height="${h}" rx="3" fill="${col}" stroke="${INK}" class="tint"/><rect x="${x+gap/2}" y="${y-4}" width="${w}" height="${h}" rx="3" fill="${col}" stroke="${INK}" class="tint"/>`;
-const lab=(x,y,t,c='mono mid f11')=>T(x,y,t,c);
+const lab=(x,y,t,c='mono mid f11')=>T(x,y,t,c+' halo');
 function barrel(x,y,w=22,h=24,col=BAMC){let s=`<rect x="${x-w/2}" y="${y-4}" width="${w}" height="${h}" rx="5" fill="${col}" stroke="${INK}" class="tint"/>`;for(let i=1;i<4;i++)s+=`<path d="M${x-w/2+i*w/4} ${y-2} v${h-4}" stroke="#F3EDE0" stroke-width="1" opacity=".6"/>`;return s;}
 function beadChain(x,y,n,dx=8,dy=0,col){let s='';for(let i=0;i<n;i++)s+=`<circle cx="${x+i*dx}" cy="${y+i*dy}" r="4" fill="${col||CHAIN[i%8]}" stroke="${INK}" stroke-width=".6"/>`;return s;}
 function prot(x,y,r=12,col='#8FB1CF',t=''){return blob(x,y,r,r*.8,col)+(t?Tc(x,y+4,t,'#3A2E22',10,'mono mid','600'):'');}
