@@ -29,3 +29,9 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | XXI | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
 
 Historical attributions, dates and figures are rounded for teaching and should be checked against primary sources.
+
+## Portraits in the History decks
+
+Each History deck's title plate can show a photograph of its scientist inside the oval frame. To add one, put the image at `decks/<deck>/portrait.jpg` (a portrait crop, about 400 × 500 px, is plenty) and set `PHOTO.credit` near the top of that deck's script to the photographer, source and licence. If the file is missing, the engraved bust is shown instead. The photograph is toned sepia so it matches the plates.
+
+Use only public-domain or openly licensed images, and check the licence on the file's own page. Older portraits such as Pasteur, Koch, Winogradsky and Beijerinck are public domain. Photographs of Griffith, Avery, the Lederbergs and Woese may still be in copyright, so check each one.
