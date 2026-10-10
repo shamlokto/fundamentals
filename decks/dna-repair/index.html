@@ -324,7 +324,7 @@ function scDamage(n){
   const dx=14,g=26; let s='',y;
   if(!n){const x=40; y=150;
     s+=G('a-fade',0,lad(x,y,34,{dx,g,mk:{4:{tx:1},11:{t:LESU},17:{t:CPDC},18:{t:CPDC},24:{t:METH},28:{b:OXO}},dimer:[17],me:[{i:24,s:'t'}],
-        lab:[{i:11,t:'U',col:LESU,dy:14},{i:28,s:'b',t:'oG',col:OXO,dy:18}]})+G('a-move',.6,lad(x+34*dx+10,y,6,{dx,g}),'--dx:-10px'));
+        lab:[{i:11,t:'U',col:LESU,dy:14},{i:28,s:'b',t:'oG',col:OXO,dy:18,dx:-12}]})+G('a-move',.6,lad(x+34*dx+10,y,6,{dx,g}),'--dx:-10px'));
     const c=i=>x+i*dx+dx/2;
     s+=callout(c(4),y,g,y-40,'abasic site','depurination',1,.6)+callout(c(11),y,g,y-84,'uracil','cytosine deamination',1,.9)
       +callout(c(17.5),y,g,y-40,'thymine dimer','UV light',1,1.2)+callout(c(24),y,g,y-84,'O⁶-methylguanine','alkylating agents',1,1.5)
@@ -334,7 +334,7 @@ function scDamage(n){
     s+=G('a-fade',0,lad(x,y,22,{dx,g,mk:{3:{tx:1},10:{t:LESU},16:{t:CPDC},17:{t:CPDC}},dimer:[16],lab:[{i:10,t:'U',col:LESU,dy:14}]}));
     s+=callout(c(3),y,g,y-36,'abasic site','depurination',1,.6)+callout(c(10),y,g,y-76,'uracil','cytosine deamination',1,.9)+callout(c(16.5),y,g,y-36,'thymine dimer','UV light',1,1.2);
     const y2=y+g+150;
-    s+=G('a-fade',1.4,lad(x,y2,16,{dx,g,mk:{3:{t:METH},9:{b:OXO}},me:[{i:3,s:'t'}],lab:[{i:9,s:'b',t:'oG',col:OXO,dy:18}]})+G('a-move',2,lad(x+16*dx+10,y2,6,{dx,g}),'--dx:-10px'));
+    s+=G('a-fade',1.4,lad(x,y2,16,{dx,g,mk:{3:{t:METH},9:{b:OXO}},me:[{i:3,s:'t'}],lab:[{i:9,s:'b',t:'oG',col:OXO,dy:18,dx:-12}]})+G('a-move',2,lad(x+16*dx+10,y2,6,{dx,g}),'--dx:-10px'));
     s+=callout(c(3),y2,g,y2-36,'O⁶-methylguanine','alkylating agents',1,1.6)+callout(c(9),y2,g,y2+g+44,'8-oxoguanine','reactive oxygen',0,1.8)
       +callout(x+16*dx+5,y2,g,y2-76,'double-strand break','collapsed forks, quinolones',1,2.1);
     y=y2+g+92;}
@@ -382,7 +382,7 @@ function phPanel(k,cx,y){
   if(k===0)s+=lad(x,y,10,{dx,g,mk:{4:{t:CPDC},5:{t:CPDC}},dimer:[4]})+photon(cx-56,y-62,cx-6,y-12,'#7D4A98')+Tc(cx-60,y-64,'UV','#7D4A98',11,'mono end','600');
   if(k===1){s+=lad(x,y,10,{dx,g,mk:{4:{tx:1},5:{tx:1}},flip:[{i:4,s:'t',col:CPDC},{i:5,s:'t',col:CPDC}]})+`<path d="M${x+4.5*dx} ${y-9} h${dx}" stroke="${CPDC}" stroke-width="3"/>`;
     s+=`<ellipse cx="${cx}" cy="${y-24}" rx="50" ry="21" fill="${E6}" fill-opacity=".72" stroke="${INK}" stroke-width="1.1"/>`+Tc(cx-26,y-26,'PhrB','#3A2E22',11,'mono mid','600')
-      +`<circle cx="${cx+24}" cy="${y-30}" r="6" fill="${E3}" stroke="${INK}"/>`+Tc(cx+32,y-12,'FADH⁻','#3A2E22',9,'mono start','600')
+      +`<circle cx="${cx+24}" cy="${y-30}" r="6" fill="${E3}" stroke="${INK}"/>`+Tc(cx+34,y-26,'FADH⁻','#3A2E22',9,'mono start halo','600')
       +arw(cx+19,y-28,cx+8,y-12,{blue:1,w:1.2})+photon(cx+62,y-72,cx+30,y-38);}
   if(k===2)s+=lad(x,y,10,{dx,g,mk:{4:{t:'#4F7A3F'},5:{t:'#4F7A3F'}},lab:[{i:4.5,t:'T T',col:'#3E6131'}]})
     +G('a-move',.9,`<ellipse cx="${cx+40}" cy="${y-46}" rx="34" ry="15" fill="${E6}" fill-opacity=".6" stroke="${INK}" stroke-width="1"/>`+Tc(cx+40,y-42,'PhrB','#3A2E22',10,'mono mid','600'),'--dx:-40px;--dy:22px');
@@ -517,7 +517,7 @@ function scTCR(n){
 
 function mmrD(k){return (x,y,w)=>{const n=26,dx=w/n,g=24,c=i=>x+i*dx+dx/2;
   const lab=[{i:4.5,t:'GATC',col:'#8C5A1E',dy:14},{i:18,t:'G'}], me=[{i:4,s:'t'}];
-  if(k===0)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[...lab,{i:18,s:'b',t:'T',col:LESU}]})+ring(c(18),y+g/2,15,22,E4,'MutS',{ldy:-26})+prot(c(13.4),y-20,22,10,E5,'MutL');
+  if(k===0)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[...lab,{i:18,s:'b',t:'T',col:LESU}]})+ring(c(18),y+g/2,15,22,E4,'MutS',{ldx:34,ldy:-14})+prot(c(13.4),y-20,22,10,E5,'MutL');
   if(k===1)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[{i:18,t:'G'},{i:18,s:'b',t:'T',col:LESU}],nick:[{i:6,s:'b'}]})+ring(c(18),y+g/2,15,22,E4,'')+prot(c(13.4),y-20,22,10,E5,'MutL')
     +prot(c(5),y+g+16,22,10,E3,'MutH')+`<path d="M${FX(c(11.6))} ${y-16} Q${FX(c(8))} ${y-36} ${FX(c(6))} ${y+g+4}" stroke="#2F5276" stroke-width="1.2" stroke-dasharray="3 3" fill="none" marker-end="url(#ahb)"/>`+cut(x+6*dx,y+g+5);
   if(k===2)return lad(x,y,n,{dx,g,bot:[[0,6],[20,26]],me,lab:[{i:18,t:'G'}]})+prot(c(8),y+g+16,22,10,E4,'UvrD')+T(c(14),y+g+20,'exonucleases','note mid f11');
@@ -543,7 +543,7 @@ const LES=[{n:'Uracil',o:{mk:{9:{t:LESU}},lab:[{i:9,t:'U',col:LESU}]},path:'Base
 let lesSel=0;
 function scWhich(n){
   const L=LES[lesSel], dx=14, g=26, x=n?40:180, y=56;
-  let s=G('a-fade',0,L.dsb?lad(x,y,10,{dx,g,ends:1})+G('a-move',.3,lad(x+10*dx+12,y,10,{dx,g}),'--dx:-12px'):lad(x,y,20,{dx,g,ends:1,...L.o}));
+  let s=G('a-fade',0,L.dsb?lad(x,y,10,{dx,g,ends:1})+G('a-move',.3,lad(x+10*dx+28,y,10,{dx,g}),'--dx:-24px'):lad(x,y,20,{dx,g,ends:1,...L.o}));
   const rows=[['Pathway',L.path],['In E. coli',L.eco],['In humans',L.hum],['If left',L.un]];
   let yy=y+g+54;
   rows.forEach((r,i)=>{const W=wrap(r[1],n?36:62);
@@ -563,7 +563,7 @@ function scDSB(n){
    ['…and collapses','One sister arm comes away with a free end: a one-ended double-strand break.'],
    ['Quinolones','Ciprofloxacin traps gyrase and topoisomerase IV on DNA they have cut through, holding both strands broken.']];
   const xf=n?150:300, m=n?8:14, np=n?13:22;
-  rows.forEach((r,k)=>{const L=wrap(r[1],n?52:90), ly=y+18+L.length*16+(k<2?62:40); let d='';
+  rows.forEach((r,k)=>{const L=wrap(r[1],n?52:90), ly=y+18+L.length*16+(k===1?84:k===0?62:40); let d='';
     if(k<2){const A=forkArms(xf,ly,m,dx,g);
       d+=lad(xf,ly,np,{dx,g,nick:k===0?[{i:6,s:'t'}]:[],top:k===0?[[0,np]]:[[6,np]]})+A.bot+(k===0?A.top+cut(xf+6*dx,ly-5):`<g transform="translate(-26 -14)">${A.top}</g>`
         +`<circle cx="${xf-27}" cy="${ly-36}" r="10" fill="none" stroke="${LESU}" stroke-width="1.6"/>`+Tc(xf-10,ly-34,'free end','#A4473A',11,'mono start','600'));}
@@ -571,7 +571,7 @@ function scDSB(n){
       d+=lad(x0,ly,nn,{dx,g})+lad(x0+nn*dx+10,ly,nn,{dx,g})+prot(x0+nn*dx+5,ly+g/2,30,20,E1,'',{op:.75})+Tc(x0+nn*dx+5,ly+g/2+4,'gyrase','#3A2E22',11,'mono mid','600')
         +`<circle cx="${x0+nn*dx-14}" cy="${ly-6}" r="5" fill="${LESU}" stroke="${INK}"/><circle cx="${x0+nn*dx+24}" cy="${ly+g+6}" r="5" fill="${LESU}" stroke="${INK}"/>`+T(x0+nn*dx+44,ly-8,'drug','note start f11');}
     s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+L.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
-    y=ly+g+(k<2?66:30);});
+    y=ly+g+(k<2?(n?80:100):30);});
   const b=bullets(n?24:30,y+6,[['Why one break matters','A circular chromosome with a break cannot be finished or segregated. E. coli has no end-joining, so it must copy the missing information from an intact sister.'],
    ['Where the sister comes from','Fast-growing E. coli runs overlapping rounds of replication, so most of the chromosome is present in two or more copies.'],
    ['Other sources','Ionising radiation, clusters of oxidative lesions repaired at the same time, and the processing of interstrand crosslinks.']],n?44:88,{d0:2.8,gap:24});
