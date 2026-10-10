@@ -331,12 +331,12 @@ function cmpTable2(n,head,rows,o={}){
 }
 /* ===================== Part I · finding the machine ===================== */
 function scProblem(n){
-  const y=n?90:100, L=n?150:190, R=n?34:40;
-  const xs=n?[90,270]:[150,480];
+  const y=n?90:100, L=n?110:190, R=n?30:40, cr=R*.62, dL=n?.4:.5;
+  const xs=n?[78,268]:[150,474], o=L*dL/2+cr+4;
   let s=G('a-fade',0,rodCell(xs[0],y,L,R,0)+nucleoid(xs[0],y,L*.3,R*.55,{seed:3})+T(xs[0],y+R+(n?30:34),'one cell','note mid f12'));
-  s+=G('a-fade',.6,rodCell(xs[1]-L*.27,y,L*.5,R,0)+rodCell(xs[1]+L*.27,y,L*.5,R,0)+nucleoid(xs[1]-L*.27,y,L*.16,R*.5,{seed:7})+nucleoid(xs[1]+L*.27,y,L*.16,R*.5,{seed:11})+T(xs[1],y+R+(n?30:34),'two cells','note mid f12'));
-  if(!n)s+=G('a-fade',1,`<path d="M${xs[0]+L/2+18} ${y} h${xs[1]-L/2-18-(xs[0]+L/2+18)}" class="arrow"/>`);
-  else s+=G('a-fade',1,`<path d="M170 ${y} h16" class="arrow"/>`);
+  s+=G('a-fade',.6,rodCell(xs[1]-o,y,L*dL,R,0)+rodCell(xs[1]+o,y,L*dL,R,0)+nucleoid(xs[1]-o,y,L*dL*.32,R*.5,{seed:7})+nucleoid(xs[1]+o,y,L*dL*.32,R*.5,{seed:11})+T(xs[1],y+R+(n?30:34),'two cells','note mid f12'));
+  const a1=xs[0]+L/2+cr+8, a2=xs[1]-o-L*dL/2-cr-8;
+  s+=G('a-fade',1,`<path d="M${FX(a1)} ${y} H${FX(a2)}" class="arrow"/>`);
   const items=[['Pick the spot','exactly at midcell, and only once per cycle'],
    ['Wait for the DNA','both copies clear of the site before the wall closes'],
    ['Build inwards','new membrane and new wall, laid down as a ring that shrinks'],
@@ -412,11 +412,11 @@ function scMin(n){
     [0,1,2].forEach(i=>{const px=phase?x1+14+i*16:x2-14-i*16;g+=`<circle cx="${px}" cy="${y+R-10}" r="4" fill="${MINC}" stroke="${INK}" stroke-width=".5"/>`;});
     g+=Tc(phase?x1+30:x2-30,y+R+14,'MinC',MINC,10,'mono mid','600');
     return g;};
-  const r1=n?74:76, r2=n?186:176;
+  const r1=n?74:76, r2=r1+2*R+(n?50:52);
   let s=G('a-fade',0,row(r1,1)+T(n?14:30,r1-R-24,'MinD, with MinE, sweeps pole to pole','note start f12'));
   s+=G('a-fade',1,row(r2,0));
-  s+=G('a-fade',1.6,`<path d="M${cx} ${r1+R+20} V${r2-R-16}" class="arrow"/>`+T(cx+(n?16:22),(r1+r2)/2,'~1 min','note start f11'));
-  const my=n?294:246;
+  s+=G('a-fade',1.6,`<path d="M${cx} ${r1+R+8} V${r2-R-8}" class="arrow"/>`+T(cx+(n?16:22),(r1+r2)/2,'~1 min','note start f11'));
+  const my=r2+2*R+(n?36:40);
   s+=G('a-fade',2,rodCell(cx,my,L,R,0)+`<rect x="${cx-10}" y="${my-R+4}" width="20" height="${2*R-8}" fill="#F3EEE2" opacity=".85"/>`+zring(cx,my,R-4,{n:6,w:6})
     +T(cx,my-R-12,'time-averaged MinC: lowest at midcell','note mid f12'));
   const ty=my+R+(n?34:38);
@@ -443,7 +443,7 @@ function scNoc(n){
 }
 
 function scOvo(n){
-  const W=n?92:110, H=n?48:56, y=n?106:110;
+  const W=n?92:110, H=n?48:56, y=n?120:124;
   const xs=n?[70,180,290]:[120,320,520];
   let s='';
   [[0,'new cell'],[0.45,'ring at midcell'],[0.95,'two ovals']].forEach((st,i)=>{
@@ -453,7 +453,7 @@ function scOvo(n){
     if(i===0)s+=G('a-pop',.3,`<circle cx="${xs[i]}" cy="${y}" r="5" fill="${MAPZ}" stroke="${INK}" stroke-width=".6"/>`);
   });
   s+=G('a-fade',1.8,T(n?180:320,n?44:48,'MapZ rings mark the site before FtsZ arrives','lab mid '+(n?'f14':''))
-    +Tc(n?70:120,y-H-(n?12:14),'MapZ',MAPZ,11,'mono mid','600'));
+    +Tc(xs[0]+(n?14:16),y-(n?14:16),'MapZ',MAPZ,11,'mono start','600'));
   const ty=y+H+(n?52:60);
   const L=wrap(n?'The pneumococcus is an ovococcus: it has no Min system and no MreB. MapZ (also called LocZ) forms a ring at the equator, splits in two as the cell grows, and the two daughter rings mark the next division sites. Fleurie and colleagues; Holečková and colleagues, 2014.':'Streptococcus pneumoniae is an ovococcus. It has no Min system, and although it keeps an elongasome it has no MreB, so neither of the E. coli positioning systems applies. Instead MapZ, also called LocZ, forms a ring at the equator early, binds peptidoglycan through its extracellular domain, splits into two rings as the cell grows, and those rings mark where the next divisions will happen. It guides FtsZ rather than inhibiting it elsewhere. Described independently by Fleurie and colleagues and by Holečková and colleagues in 2014.',n?46:88);
   s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
@@ -485,7 +485,7 @@ function scSegregate(n){
 
 /* ===================== Part III · building the septum ===================== */
 function scTreadmill(n){
-  const x=n?26:60, y=n?80:90, w=n?15:17;
+  const x=n?54:60, y=n?80:90, w=n?14:17;
   const cols=i=>i<2?'#C9BFAB':ZC;
   let s=G('a-fade',0,T(n?180:320,n?34:38,'A filament that moves without moving','lab mid '+(n?'f14':'')));
   const rows=[['t = 0',0],['t = 1',1],['t = 2',2]];
@@ -566,7 +566,7 @@ function scPG(n){
   s+=G('a-pop',.8,`<path d="M${lx} ${y+34} v-18" stroke="#E0B84A" stroke-width="3"/>`+`<rect x="${lx-7}" y="${y+2}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`
     +T(lx,y+(n?54:56),'lipid II on undecaprenyl','note mid f11'));
   const mx=n?180:320;
-  s+=G('a-pop',1.3,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx,y-(n?12:14),'FtsW flips and polymerises','#2E7D78',10,'mono mid','600'));
+  s+=G('a-pop',1.3,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx-(n?40:60),y-(n?12:14),'FtsW polymerises','#2E7D78',10,'mono mid','600'));
   const px=n?268:450;
   s+=G('a-pop',1.8,tmProt(px,y,16,14,PBPC,'',{})+`<path d="M${px} ${y} v-${n?22:26}" stroke="${PBPC}" stroke-width="3"/>`+blob(px,y-(n?30:34),n?14:16,n?10:11,PBPC)+Tc(px,y-(n?27:31),'PBP3','#F3EDE0',9,'mono mid','600'));
   s+=G('a-fade',2.2,pgStrand(mx+(n?16:20),x2-10,y-(n?8:10),WALLE,{w:3,dir:-6})
@@ -614,7 +614,7 @@ function scSplit(n){
 /* ===================== Part IV · control and drugs ===================== */
 function scControl(n){
   const items=[['Damage stops division','SOS induction makes SulA, which binds FtsZ and blocks assembly. Cells grow into filaments until the damage is repaired, then divide again. This is the filamentation you see after a quinolone or UV.'],
-   ['Growth rate sets size','Faster-growing cells are bigger. Each cell adds roughly a constant amount of mass between divisions — the adder behaviour described by Jun, Taheri-Araghi and others — which keeps size stable without measuring it.'],
+   ['Growth rate sets size','Faster-growing cells are bigger. Each cell adds roughly a constant amount of mass between divisions: the adder behaviour (Jun, Taheri-Araghi and others).'],
    ['Division waits for the chromosome','Nucleoid occlusion and FtsK make sure a septum never closes on DNA, and in fast growth several rounds of replication overlap, so a cell is born already replicating.'],
    ['Signals and kinases','In the pneumococcus the Ser/Thr kinase StkP phosphorylates division proteins such as DivIVA and detects the state of the wall, coordinating septation with wall synthesis.']];
   const W=n?340:300;
@@ -646,8 +646,8 @@ function scDrugs(n){
   s+=G('a-pop',.1,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx,y+(n?34:36),'FtsW','#3A2E22',10,'mono mid','600'));
   s+=G('a-pop',.1,tmProt(px,y,16,14,PBPC,'',{})+blob(px,y-(n?26:30),n?13:15,n?9:10,PBPC)+Tc(px,y-(n?23:27),'PBP','#F3EDE0',9,'mono mid','600'));
   s+=G('a-pop',.1,filament(zx-(n?34:40),y+(n?40:44),5,[ZC],{w:n?12:14,h:10})+T(zx,y+(n?66:70),'FtsZ','mono mid f11'));
-  s+=G('a-pop',.1,blob(n?64:130,y+(n?74:80),n?14:16,n?10:11,'#C9BFAB')+Tc(n?64:130,y+(n?77:83),'Mur','#3A2E22',9,'mono mid','600'));
-  const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?45:49)],cyto:[n?64:130,y+(n?74:80)],sub:[lx,y+8]}[m.at];
+  s+=G('a-pop',.1,blob(n?64:130,y+(n?88:94),n?14:16,n?10:11,'#C9BFAB')+Tc(n?64:130,y+(n?91:97),'Mur','#3A2E22',9,'mono mid','600'));
+  const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?45:49)],cyto:[n?64:130,y+(n?88:94)],sub:[lx,y+8]}[m.at];
   s+=G('a-pop',.4,`<circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?17:20}" fill="${AMI}" opacity=".3"/><circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?22:26}" fill="none" stroke="${AMI}" stroke-width="2" stroke-dasharray="4 3"/>`);
   const ty=y+(n?104:112);
   s+=G('a-fade',.6,T(n?14:30,ty,m.d,'cname start')+T(n?14:30,ty+20,'target: '+m.t,'note start '+(n?'f12':'f13')));
@@ -672,25 +672,25 @@ function scBreak(n){
   let s='';
   const k=m.g;
   if(k==='ftsZ'||k==='ftsA'||k==='ftsI (pbp3)'||k==='ftsN'||k==='sulA (induced)'){
-    s+=G('a-fade',0,rodCell(cx,y,L*1.3,R,0)+[0,1,2,3].map(i=>nucleoid(cx-L*.48+i*L*.32,y,L*.1,R*.55,{seed:3+i*5})).join(''));
-    if(k==='ftsI (pbp3)'||k==='ftsN')s+=G('a-pop',.6,[0,1,2].map(i=>zring(cx-L*.32+i*L*.32,y,R-6,{n:4,w:5})).join(''));
-    if(k==='sulA (induced)')s+=G('a-pop',.6,[0,1,2].map(i=>blob(cx-L*.32+i*L*.32,y,n?10:12,n?7:8,'#5E7F7A')).join('')+T(cx,y-R-14,'SulA holds FtsZ','note mid f11'));
+    s+=G('a-fade',0,rodCell(cx,y,L*1.1,R,0)+[0,1,2,3].map(i=>nucleoid(cx-L*.42+i*L*.28,y,L*.1,R*.55,{seed:3+i*5})).join(''));
+    if(k==='ftsI (pbp3)'||k==='ftsN')s+=G('a-pop',.6,[0,1,2].map(i=>zring(cx-L*.28+i*L*.28,y,R-6,{n:4,w:5})).join(''));
+    if(k==='sulA (induced)')s+=G('a-pop',.6,[0,1,2].map(i=>blob(cx-L*.28+i*L*.28,y,n?10:12,n?7:8,'#5E7F7A')).join('')+T(cx,y-R-14,'SulA holds FtsZ','note mid f11'));
     s+=G('a-fade',1,T(cx,y+R+(n?22:24),'a filament','note mid f12'));
   } else if(k==='minCDE'){
     s+=G('a-fade',0,rodCell(cx,y,L,R,0)+nucleoid(cx,y,L*.3,R*.6,{seed:5})+zring(cx-L*.44,y,R-8,{n:4,w:5})+zring(cx,y,R-6,{n:5,w:6}));
-    s+=G('a-pop',.8,`<circle cx="${cx-L*.62}" cy="${y}" r="${R*.5}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`+T(cx-L*.62,y+R*.5+(n?16:18),'minicell','note mid f11'));
+    s+=G('a-pop',.8,`<circle cx="${cx-L*.62}" cy="${y}" r="${R*.5}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`+T(Math.max(cx-L*.62,22),y+R*.5+(n?16:18),'minicell','note mid f11'));
     s+=G('a-fade',1,T(cx+L*.2,y+R+(n?22:24),'rings at the poles too','note mid f12'));
   } else if(k==='slmA / noc'){
     s+=G('a-fade',0,rodCell(cx,y,L,R,.7)+nucleoid(cx,y,L*.26,R*.55,{seed:5})
       +`<path d="M${cx-4} ${y-R+6} v${2*R-12} M${cx+4} ${y-R+6} v${2*R-12}" stroke="${AMI}" stroke-width="2.4"/>`);
     s+=G('a-fade',1,T(cx,y+R+(n?22:24),'septum closing across the DNA','note mid f12'));
   } else {
-    s+=G('a-fade',0,[0,1,2,3].map(i=>rodCell(cx-L*.36+i*L*.24,y,L*.26,R*.8,0)).join(''));
+    {const w=L*.16,sp=w+2*R*.8*.62;s+=G('a-fade',0,[0,1,2,3].map(i=>rodCell(cx+(i-1.5)*sp,y,w,R*.8,0)).join(''));}
     s+=G('a-fade',1,T(cx,y+R+(n?22:24),'a chain of joined cells','note mid f12'));
   }
   const ty=y+R+(n?48:54);
-  s+=G('a-fade',.4,`<rect x="${n?14:30}" y="${ty-18}" width="${n?130:150}" height="24" rx="12" fill="${m.col}"/>`+Tc(n?79:105,ty-1,m.cls,'#F3EDE0',11,'mono mid','600')
-    +T(n?152:192,ty-1,m.g+' — '+m.p,'lab start '+(n?'f13':'')));
+  s+=G('a-fade',.4,`<rect x="${n?14:30}" y="${ty-18}" width="${Math.max(n?130:150,m.cls.length*7+20)}" height="24" rx="12" fill="${m.col}"/>`+Tc((n?14:30)+Math.max(n?130:150,m.cls.length*7+20)/2,ty-1,m.cls,'#F3EDE0',11,'mono mid','600')
+    +T((n?14:30)+Math.max(n?130:150,m.cls.length*7+20)+(n?8:12),ty-1,m.g+' — '+m.p,'lab start '+(n?'f13':'')));
   const L2=wrap(m.text,n?46:88);
   s+=G('a-fade',.7,L2.map((l,i)=>T(n?14:30,ty+28+i*20,l,'lab start '+(n?'f13':'f14'))).join(''));
   return {vb:n?slim(ty+28+L2.length*20+10):wide(ty+28+L2.length*20+12),s};
