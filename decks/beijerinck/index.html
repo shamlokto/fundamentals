@@ -370,7 +370,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -434,7 +434,7 @@ function scB2(n){
   const steps=[['Sick plant','Mottled, light and dark green leaves.',(cx,cy)=>plant(cx,cy+40,true,1)],
    ['Press out the sap','Mayer, 1886: the sap passes the disease to healthy plants.',(cx,cy)=>tube(cx,cy+40,{h:70,w:22,fill:'#A9C49A',full:.6})],
    ['Filter it','Ivanovsky, 1892: still infectious after a Chamberland filter that holds back bacteria.',(cx,cy)=>candle(cx,cy+40,80)],
-   ['Healthy plant','Inoculated with the filtrate, it develops mosaic.',(cx,cy)=>plant(cx,cy+40,true,1)+syringe(cx-56,cy-10,30,20)]];
+   ['Healthy plant','Inoculated with the filtrate, it develops mosaic.',(cx,cy)=>plant(cx,cy+40,true,1)+syringe(cx-46,cy+24,22,-25)]];
   let s='',y;
   if(!n){steps.forEach((st,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx-58,28,i+1)+T(cx-44,32,st[0],'cname start f14')+st[2](cx,92)+wrap(st[1],24).map((l,j)=>T(cx,160+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+52,96,cx+102,96));});y=232;}
   else{y=24;steps.forEach((st,i)=>{const L=wrap(st[1],30);s+=G('a-fade',(i*.6).toFixed(1),badge(24,y-4,i+1)+T(40,y,st[0],'cname start f14')+L.map((l,j)=>T(16,y+20+j*15,l,'note start f12')).join('')+st[2](280,y+30));y+=Math.max(100,28+L.length*15)+12;});}

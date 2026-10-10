@@ -371,7 +371,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -426,13 +426,13 @@ function scK1(n){return titlePlate(n,{name:'Robert Koch',dates:'1843–1910',gla
   items:['Anthrax and the logic of serial passage','Solid media and the pure culture','Tuberculosis','The postulates, and the diseases that break them','Molecular Koch’s postulates']});}
 
 function scK2(n){
-  const cx=n?180:200, R=n?92:100, cy=R+64;
+  const cx=n?180:200, R=n?92:100, cy=R+78;
   const ang=[-90,30,150], P=a=>[cx+R*Math.cos(a*Math.PI/180),cy+R*Math.sin(a*Math.PI/180)];
-  const lab=[['in the blood of a dying animal','rods multiply, long chains'],['in soil, outside the body','rods form tough spores'],['in a grazing animal','spores germinate']];
+  const lab=[['in the blood of a dying animal','rods multiply, long chains'],['in soil, outside the body','rods form tough spores'],['in a new host','spores germinate']];
   let s=G('a-fade',0,`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${AXC}" stroke-width="1" stroke-dasharray="4 4"/>`);
   ang.forEach((a,i)=>{const [x,y]=P(a);
     let pic=i===0?field(x,y,32,chainRods(x-24,y-6,4,0)+chainRods(x-14,y+10,3,0)):i===1?field(x,y,32,[[-12,-8],[6,-10],[14,8],[-6,10],[-16,6]].map(q=>spore(x+q[0],y+q[1])).join(''),{bg:'#E3D6B4'}):`<circle cx="${x}" cy="${y}" r="32" fill="#F4EFE2" stroke="${INK}" stroke-width="1.6"/>`+mouse(x-8,y+4,.95);
-    const ly=i===0?y-50:y+62;
+    const ly=i===0?y-62:y+62;
     s+=G('a-fade',(.4+i*.6).toFixed(1),pic+T(x,ly,lab[i][0],'cname mid f12')+T(x,ly+16,lab[i][1],'note mid f11'));});
   const arc=(a1,a2)=>{const [x1,y1]=P(a1),[x2,y2]=P(a2);return `<path d="M${FX(x1)} ${FX(y1)} A${R} ${R} 0 0 1 ${FX(x2)} ${FX(y2)}" stroke="#6A5B47" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`;};
   s+=G('a-fade',2,arc(-90+24,30-24)+arc(30+24,150-24)+arc(150+24,270-24));
@@ -445,7 +445,7 @@ function scK2(n){
 function scK3(n){
   const N=n?5:8, x0=n?30:44, dx=n?62:74, y0=n?60:66;
   let s=G('a-fade',0,mouse(x0,y0,0.9,{dead:true})+T(x0,y0+34,'anthrax blood','note mid f11'));
-  for(let i=0;i<N;i++){const x=x0+50+i*dx;s+=G('a-fade',(.3+i*.25).toFixed(2),arw(x-26,y0,x-14,y0,{w:1.2})+field(x+8,y0,18,chainRods(x-6,y0,2,0))+Tc(x+8,y0+32,i===N-1?(n?'5th':'8th'):String(i+1),'#2F5276',10,'mono mid','600'));}
+  for(let i=0;i<N;i++){const x=x0+50+i*dx;s+=G('a-fade',(.3+i*.25).toFixed(2),arw(x-30,y0,x-16,y0,{w:1.2})+field(x+8,y0,18,chainRods(x-6,y0,2,0))+Tc(x+8,y0+32,n?['1','2','3','…','8th'][i]:i===N-1?'8th':String(i+1),'#2F5276',10,'mono mid','600'));}
   const xe=x0+50+N*dx;
   s+=G('a-fade',(.4+N*.25).toFixed(2),arw(xe-26,y0,xe-10,y0)+mouse(xe+18,y0,.9,{dead:true}));
   const y=y0+70;
@@ -473,10 +473,10 @@ function scK4(n){
 function scK5(n){
   const steps=[['Stain','Alkaline methylene blue for a day, then a brown counterstain: thin blue rods stand out in brown tissue.',(cx,cy)=>field(cx,cy,34,`<circle cx="${cx}" cy="${cy}" r="33" fill="#D9B98C" opacity=".5"/>`+[[-14,-6,30],[6,-12,-20],[10,8,50],[-6,12,10],[18,-2,80]].map(q=>rod(cx+q[0],cy+q[1],12,3,q[2],'#3E5F82')).join(''))],
    ['Culture','On coagulated blood serum at body temperature. Nothing visible for about two weeks, then small dry scales.',(cx,cy)=>tube(cx-14,cy+34,{h:64,w:20,fill:'#D8B9A0',full:.6})+tube(cx+14,cy+34,{h:64,w:20,fill:'#D8B9A0',full:.6})+[[-14,4],[14,0],[14,10]].map(q=>`<circle cx="${cx+q[0]}" cy="${cy+q[1]}" r="2.2" fill="#EEE5CF" stroke="${INK}" stroke-width=".5"/>`).join('')],
-   ['Inoculate','Cultures injected into guinea pigs and rabbits produce tuberculosis.',(cx,cy)=>syringe(cx-56,cy,36)+mouse(cx+14,cy+4,1.15)],
+   ['Inoculate','Cultures injected into guinea pigs and rabbits produce tuberculosis.',(cx,cy)=>syringe(cx-48,cy-24,22,30)+mouse(cx+8,cy+6,1.05)],
    ['Re-isolate','The same bacilli are seen in, and grown again from, the inoculated animals.',(cx,cy)=>field(cx,cy,34,[[-14,-6,30],[6,-12,-20],[10,8,50]].map(q=>rod(cx+q[0],cy+q[1],12,3,q[2],'#3E5F82')).join(''))]];
   let s='',y;
-  if(!n){steps.forEach((st,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx-58,28,i+1)+T(cx-44,32,st[0],'cname start f14')+st[2](cx,96)+wrap(st[1],24).map((l,j)=>T(cx,160+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+50,96,cx+104,96));});y=246;}
+  if(!n){steps.forEach((st,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx-58,28,i+1)+T(cx-44,32,st[0],'cname start f14')+st[2](cx,96)+wrap(st[1],24).map((l,j)=>T(cx,160+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+50,96,cx+104,96));});y=266;}
   else{y=24;steps.forEach((st,i)=>{const L=wrap(st[1],30);s+=G('a-fade',(i*.6).toFixed(1),badge(24,y-4,i+1)+T(40,y,st[0],'cname start f14')+L.map((l,j)=>T(16,y+20+j*15,l,'note start f12')).join('')+st[2](280,y+30));y+=Math.max(100,28+L.length*15)+12;});}
   const p=para(n?16:24,y+6,'Announced in Berlin on 24 March 1882, now World Tuberculosis Day. The difficulties were real: the bacillus resists ordinary stains, which is why it is now called acid-fast, and it divides only about once a day.',n?50:92,'note start f13',17,2.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
@@ -487,9 +487,9 @@ const POST=[['Found in every case','The microbe is present in every case of the 
  ['Causes the disease','The pure culture causes the same disease when given to a healthy, susceptible host.'],
  ['Recovered again','The same microbe is re-isolated from the newly diseased host.']];
 function postPic(i,cx,cy){
-  if(i===0)return mouse(cx-6,cy+6,1.1,{dead:true})+field(cx+44,cy-14,16,chainRods(cx+34,cy-14,2,0));
+  if(i===0)return mouse(cx-4,cy+10,1.05,{dead:true})+field(cx+30,cy-22,14,chainRods(cx+21,cy-22,2,0));
   if(i===1)return dish(cx,cy+2,30,[[-12,-8,2.4],[-4,-2,2.6],[4,4,2.8],[12,10,3]]);
-  if(i===2)return syringe(cx-48,cy-6,30)+mouse(cx+12,cy+6,1.05,{dead:true});
+  if(i===2)return syringe(cx-50,cy-22,22,30)+mouse(cx+12,cy+8,1.05,{dead:true});
   return dish(cx,cy+2,30,[[-12,-8,2.4],[-4,-2,2.6],[4,4,2.8],[12,10,3]]);}
 function scK6(n){
   let s='',y;
@@ -502,7 +502,7 @@ function scK6(n){
 const CASES=[
  {n:'Anthrax',m:[1,1,1,1],t:'The model case: found in every animal that dies of it, easily grown, lethal in mice, and recovered again. Koch, 1876.'},
  {n:'Tuberculosis',m:[1,1,1,1],t:'Satisfied in guinea pigs, with great effort (1882). Many people carry Mycobacterium tuberculosis in latent infection without disease, a point the first postulate cannot accommodate.'},
- {n:'Cholera',m:[0,1,0,1],t:'Koch found the comma bacillus in every patient in Egypt and Calcutta (1883–84) and grew it, but could not make animals ill, and healthy carriers also harboured it. Max von Pettenkofer drank a culture in 1892 to prove Koch wrong and had only mild diarrhoea.'},
+ {n:'Cholera',m:[0,1,0,0],t:'Koch found the comma bacillus in every patient in Egypt and Calcutta (1883–84) and grew it, but could not make animals ill, so there was nothing to re-isolate, and healthy carriers also harboured it. Max von Pettenkofer drank a culture in 1892 to prove Koch wrong and had only mild diarrhoea.'},
  {n:'Leprosy',m:[1,0,0,0],t:'Gerhard Armauer Hansen saw the bacillus in 1873, before Koch’s anthrax work, but Mycobacterium leprae has never been grown in culture. It multiplies in mouse footpads and nine-banded armadillos.'},
  {n:'Viral diseases',m:[1,0,0,0],t:'Viruses cannot be grown on media at all; they need living cells. Thomas Rivers proposed modified postulates for viruses in 1937.'},
  {n:'Helicobacter pylori',m:[1,1,1,1],t:'Robin Warren and Barry Marshall grew it from gastric biopsies in 1982. In 1984 Marshall drank a culture, developed gastritis, and the organism was recovered from his stomach: all four, in a human volunteer.'},

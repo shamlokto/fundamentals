@@ -370,7 +370,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -418,7 +418,7 @@ function utube(cx,by,o={}){const w=o.w||110,h=o.h||90;
   let s=`<path d="M${cx-w/2} ${by-h} V${by-20} a20 20 0 0 0 20 20 H${cx+w/2-20} a20 20 0 0 0 20 -20 V${by-h}" fill="none" stroke="${GLASSE}" stroke-width="16" stroke-linecap="round"/>`
    +`<path d="M${cx-w/2} ${by-h*.6} V${by-20} a20 20 0 0 0 20 20 H${cx+w/2-20} a20 20 0 0 0 20 -20 V${by-h*.6}" fill="none" stroke="${BROTH}" stroke-width="11"/>`
    +`<path d="M${cx} ${by-10} v20" stroke="${INK}" stroke-width="3" stroke-dasharray="2 2"/>`;
-  if(o.labels)s+=T(cx-w/2,by-h-10,o.labels[0],'note mid f11')+T(cx+w/2,by-h-10,o.labels[1],'note mid f11')+T(cx,by+28,'filter','note mid f11');
+  if(o.labels)s+=T(cx-w/2,by-h-10,o.labels[0],'note mid f11')+T(cx+w/2,by-h-10,o.labels[1],'note mid f11')+T(cx,by-18,'filter','note mid f11');
   return s;}
 function countDish(cx,cy,R,k,seed){const c=colonySet(Math.min(k,30),seed,R).map(q=>[q[0],q[1],Math.min(q[2],3.2)]);return dish(cx,cy,R,c)+Tc(cx,cy+R+14,String(k),'#2F5276',11,'mono mid','600');}
 function scL1(n){return titlePlate(n,{name:'Joshua Lederberg',dates:'1925–2008',q:'Do bacteria have genes that mutate and recombine, like those of other organisms?',

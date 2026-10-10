@@ -372,7 +372,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -499,8 +499,8 @@ const FLASKTEST={dh:150,dhn:150,
    pred:[['growth','air reaches the broth'],['growth','the broth picks up the trapped dust'],['no growth','the broth is still boiled']],obs:['growth','cloudy within days']},
   {n:'Unboiled broth',d:'A control: the same broth in a swan-neck flask, but never heated.',draw:(cx,y)=>flask(cx-40,y+130,'swan',{r:32,turbid:1,seed:8}),
    pred:[['growth','air reaches the broth'],['growth','microbes were already in it'],['growth','the broth was never harmed']],obs:['growth','cloudy']},
-  {n:'Opened on a glacier',d:'Sealed flasks of boiled broth are opened briefly at different places, then resealed.',draw:(cx,y,n)=>{let s=`<path d="M${cx-150} ${y+140} L${cx-30} ${y+20} L${cx+30} ${y+60} L${cx+150} ${y+140} Z" fill="#E3E0D6" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${cx-48} ${y+38} L${cx-30} ${y+20} L${cx-12} ${y+38} Z" fill="#FFF"/>`;
-     [[-110,128,'8/20'],[-60,92,'5/20'],[-30,44,'1/20']].forEach(p=>s+=flask(cx+p[0],y+p[1],'sealed',{r:10,turbid:p[2]!=='1/20',seed:3})+Tc(cx+p[0]+16,y+p[1]-8,p[2],'#2F5276',11,'mono start','600'));return s;},
+  {n:'Opened at altitude',d:'Sealed flasks of boiled broth are opened briefly at different places, then resealed.',draw:(cx,y,n)=>{let s=`<path d="M${cx-150} ${y+140} L${cx-30} ${y+20} L${cx+30} ${y+60} L${cx+150} ${y+140} Z" fill="#E3E0D6" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${cx-48} ${y+38} L${cx-30} ${y+20} L${cx-12} ${y+38} Z" fill="#FFF"/>`;
+     [[-110,128,'8/20'],[-60,92,'5/20'],[-30,44,'1/20']].forEach(p=>s+=flask(cx+p[0],y+p[1],'sealed',{r:10,turbid:p[2]!=='1/20',seed:3})+Tc(cx+p[0]-16,y+p[1]-8,p[2],'#2F5276',11,'mono end','600'));return s;},
    pred:[['all grow','air is the same everywhere'],['fewer grow higher up','mountain air carries less dust'],['none grow','the broths are all boiled']],obs:['fewer grow higher up','8, 5 and 1 of 20 flasks, rising in altitude']}]};
 let flaskSel=0;
 function scP5(n){return predictPlate(n,FLASKTEST,flaskSel);}
@@ -508,8 +508,8 @@ function scP5(n){return predictPlate(n,FLASKTEST,flaskSel);}
 function scP6(n){
   const cx=n?180:200, by=n?226:236;
   let s=G('a-fade',0,`<path d="M${cx-170} ${by} L${cx-20} ${by-160} L${cx+40} ${by-110} L${cx+170} ${by} Z" fill="#E3E0D6" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${cx-44} ${by-128} L${cx-20} ${by-160} L${cx+2} ${by-130} Z" fill="#FFF"/>`);
-  const sites=[[-130,-12,'near Arbois',8],[-75,-74,'Jura, about 850 m',5],[-24,-150,'Montanvert, near the Mer de Glace',1]];
-  sites.forEach((p,i)=>{s+=G('a-fade',(.5+i*.5).toFixed(1),flask(cx+p[0],by+p[1],'sealed',{r:11,turbid:i<2,seed:4+i})+Tc(cx+p[0]+18,by+p[1]-10,p[3]+' of 20','#2F5276',11,'mono start','600'));});
+  const sites=[[-130,-12,'near Arbois',8],[-75,-74,'Jura, about 850 m',5],[-24,-150,'Montanvert, about 1,900 m',1]];
+  sites.forEach((p,i)=>{s+=G('a-fade',(.5+i*.5).toFixed(1),flask(cx+p[0],by+p[1],'sealed',{r:11,turbid:i<2,seed:4+i})+(i===0?Tc(cx+p[0]+18,by+p[1]+2,p[3]+' of 20','#2F5276',11,'mono start','600'):Tc(cx+p[0]-18,by+p[1]-10,p[3]+' of 20','#2F5276',11,'mono end','600')));});
   const bx=n?40:420, bw=n?260:180, byy=n?by+50:60;
   s+=G('a-fade',2,T(bx,byy,'Flasks that turned cloudy','cname start f13')+sites.map((p,i)=>{const yy=byy+22+i*40;return `<rect x="${bx}" y="${yy}" width="${FX(bw*p[3]/20)}" height="16" fill="${TURB}" stroke="${INK}" stroke-width=".7"/><rect x="${bx}" y="${yy}" width="${bw}" height="16" fill="none" stroke="${INK}" stroke-width=".5" stroke-dasharray="2 2"/>`+T(bx+bw+8,yy+12,p[3]+'/20','note start f12')+T(bx,yy+29,p[2],'note start f11');}).join(''));
   const y=n?byy+22+3*40+24:by+30;

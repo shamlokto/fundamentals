@@ -371,7 +371,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -439,7 +439,7 @@ function scA3(n){
   let s='',y=34;const mx=n?300:430, px=n?126:250, pw=n?38:44;
   rows.forEach((r,i)=>{const L=n?16:24;
     let pics=r[2].map((p,j)=>`<g opacity="${p[1]?.45:1}">${pneumo(px+j*pw,y+6,n?.8:.9,p[0]==='S')}</g>`+(p[1]?Tc(px+j*pw,y+28,'killed','#A4473A',9,'mono mid','600'):'')).join('');
-    s+=G('a-fade',(i*.7).toFixed(1),T(n?16:24,y,n&&i===3?'R + killed S':r[0],'cname start '+(n?'f13':'f14'))+T(n?16:24,y+17,r[1],'note start f11')+pics+arw(px+r[2].length*pw-14,y+6,mx-30,y+6)+mouse(mx,y+8,.85,{dead:r[3]===1})
+    s+=G('a-fade',(i*.7).toFixed(1),T(n?16:24,y,n&&i===3?'R + killed S':r[0],'cname start '+(n?'f13':'f14'))+T(n?16:24,y+17,r[1],'note start f11')+pics+arw(px+r[2].length*pw-14,y+6,mx-44,y+6)+mouse(mx,y+8,.85,{dead:r[3]===1})
       +(n?'':T(mx+40,y+12,r[3]?'dies':'lives','lab start f13'))+(r[4]?Tc(n?mx-20:mx+40,y+(n?40:28),r[4],'#7D4A98',10,'mono '+(n?'mid':'start'),'600'):''));
     y+=n?70:58;});
   const p=para(n?16:24,y+8,'Frederick Griffith, Ministry of Health, London, 1928. The decisive detail is the type: the R strain came from type II, but the bacteria recovered were type III, the type of the dead cells. The R cells had not simply reverted to their own parent type; something from the dead type III cells had changed them, heritably.',n?50:92,'note start f13',17,3);
@@ -449,13 +449,13 @@ function scA3(n){
 const GRIF={dh:110,dhn:110,
  hyps:[['R cells revert to their own parent type','reversion'],['Heat-killed S cells come back to life','revival'],['Something from the dead S cells transforms the R cells','transformation']],
  conds:[
-  {n:'Live R alone',d:'R cells derived from a type II strain, injected alone.',draw:(cx,y)=>pneumo(cx-80,y+60,1.2,false)+arw(cx-40,y+60,cx+20,y+60)+mouse(cx+70,y+62,1),
+  {n:'Live R alone',d:'R cells derived from a type II strain, injected alone.',draw:(cx,y)=>pneumo(cx-80,y+60,1.2,false)+arw(cx-40,y+60,cx+10,y+60)+mouse(cx+70,y+62,1),
    pred:[['dies, type II recovered','R reverts'],['lives','nothing dead to revive'],['lives','nothing to transform it']],obs:['lives','no S cells recovered']},
-  {n:'Heat-killed type III S alone',d:'S cells of type III, killed by heat, injected alone.',draw:(cx,y)=>`<g opacity=".45">${pneumo(cx-80,y+60,1.2,true)}</g>`+arw(cx-40,y+60,cx+20,y+60)+mouse(cx+70,y+62,1),
+  {n:'Heat-killed type III S alone',d:'S cells of type III, killed by heat, injected alone.',draw:(cx,y)=>`<g opacity=".45">${pneumo(cx-80,y+60,1.2,true)}</g>`+arw(cx-40,y+60,cx+10,y+60)+mouse(cx+70,y+62,1),
    pred:[['lives','no R cells to revert'],['dies, type III recovered','the dead cells revive'],['lives','no living cells to transform']],obs:['lives','no bacteria recovered']},
-  {n:'Live R + heat-killed type III S',d:'The two injected together.',draw:(cx,y)=>pneumo(cx-110,y+60,1.1,false)+`<g opacity=".45">${pneumo(cx-60,y+60,1.1,true)}</g>`+arw(cx-30,y+60,cx+20,y+60)+mouse(cx+70,y+62,1,{dead:true}),
+  {n:'Live R + heat-killed type III S',d:'The two injected together.',draw:(cx,y)=>pneumo(cx-110,y+60,1.1,false)+`<g opacity=".45">${pneumo(cx-60,y+60,1.1,true)}</g>`+arw(cx-30,y+60,cx+10,y+60)+mouse(cx+70,y+62,1,{dead:true}),
    pred:[['dies, type II recovered','R reverts to its own type'],['dies, type III recovered','dead S revive'],['dies, type III recovered','R cells become type III']],obs:['dies, type III recovered','living type III S in the blood']},
-  {n:'In a test tube, with a cell-free extract',d:'Live R cells grown with a filtered extract of type III cells, no mice (Dawson and Sia 1931; Alloway 1932).',draw:(cx,y)=>tube(cx-60,y+100,{h:80,w:22,full:.6})+arw(cx-30,y+60,cx+20,y+60)+dish(cx+80,y+56,40,[[-14,-6,6],[10,8,5],[6,-14,4]].map(c=>[...c,'#EDE3C6'])),
+  {n:'In a test tube, with a cell-free extract',d:'Live R cells grown in a test tube with killed type III cells (Dawson and Sia, 1931), then with a filtered, cell-free extract of them (Alloway, 1932).',draw:(cx,y)=>tube(cx-60,y+100,{h:80,w:22,full:.6})+arw(cx-30,y+60,cx+20,y+60)+dish(cx+80,y+56,40,[[-14,-6,6],[10,8,5],[6,-14,4]].map(c=>[...c,'#EDE3C6'])),
    pred:[['type II S colonies','reversion'],['no S colonies','no cells to revive'],['type III S colonies','the extract transforms']],obs:['type III S colonies','transformed colonies are type III']}]};
 let grSel=0;
 function scA4(n){return predictPlate(n,GRIF,grSel);}

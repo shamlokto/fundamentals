@@ -370,7 +370,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -455,7 +455,7 @@ const NITRO={dh:130,dhn:130,
    pred:[['little growth','contaminants are scarce'],['growth','energy from ammonium, carbon from CO₂'],['no growth','no light']],obs:['growth','nitrifier colonies; nitrite then nitrate appears']},
   {n:'Same, without ammonium',d:'Everything identical, but no ammonium.',draw:(cx,y)=>dish(cx,y+64,52,[],{agar:'#D9DED8'}),
    pred:[['little growth','contaminants are still there'],['no growth','no fuel to oxidise'],['no growth','no light']],obs:['no growth','nothing grows']},
-  {n:'Measure the carbon',d:'Organic carbon in the culture is measured before and after.',draw:(cx,y)=>`<rect x="${cx-70}" y="${y+100}" width="40" height="20" fill="#C9BFAB" stroke="${INK}"/><rect x="${cx+30}" y="${y+40}" width="40" height="80" fill="#4F7A3F" stroke="${INK}"/>`+T(cx-50,y+136,'start','note mid f11')+T(cx+50,y+136,'end','note mid f11'),
+  {n:'Measure the carbon',d:'Organic carbon in the culture is measured before and after.',draw:(cx,y)=>`<rect x="${cx-70}" y="${y+86}" width="40" height="20" fill="#C9BFAB" stroke="${INK}"/><rect x="${cx+30}" y="${y+26}" width="40" height="80" fill="#4F7A3F" stroke="${INK}"/>`+T(cx-50,y+120,'start','note mid f11')+T(cx+50,y+120,'end','note mid f11'),
    pred:[['no net gain','organic carbon is only used up'],['carbon rises with ammonium oxidised','CO₂ is fixed'],['no net gain','no light to fix CO₂']],obs:['carbon rises with ammonium oxidised','new organic matter in proportion to nitrogen oxidised']},
   {n:'Add sugar',d:'A little glucose or peptone is added to the mineral medium.',draw:(cx,y)=>dish(cx,y+64,52,colonySet(3,8,52).map(c=>[c[0],c[1],2,'#E9E3D2']),{agar:'#D9DED8'})+T(cx+70,y+40,'+ sugar','note start f12'),
    pred:[['more growth','more food'],['no better, often worse','they do not need it, and it can inhibit them'],['no change','still no light']],obs:['no better, often worse','nitrification slowed']}]};
@@ -481,13 +481,13 @@ const COLV=[{n:'Standard column',on:[1,1,1,1,1,1,1],t:'Mud with shredded paper (
 let colSel=0;
 function column(x,y,w,h,on){
   const bands=[.13,.14,.06,.12,.14,.14,.27];let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="2"/>`;let yy=y+6;
-  LAYERS.forEach((L,i)=>{const hh=h*bands[i];const op=on[i];s+=`<rect x="${x+4}" y="${FX(yy)}" width="${w-8}" height="${FX(hh)}" fill="${op?L[1]:'#D8D2C2'}" opacity="${op?Math.max(.35,op):.55}"/>`;yy+=hh;});
+  LAYERS.forEach((L,i)=>{const hh=(h-12)*bands[i];const op=on[i];s+=`<rect x="${x+4}" y="${FX(yy)}" width="${w-8}" height="${FX(hh)}" fill="${op?L[1]:'#D8D2C2'}" opacity="${op?Math.max(.35,op):.55}"/>`;yy+=hh;});
   return s;}
 function scW6(n){
   const v=COLV[colSel], x=n?24:60, y=26, w=n?90:110, h=n?300:320;
   let s=G('a-fade',0,column(x,y,w,h,v.on));
   const bands=[.13,.14,.06,.12,.14,.14,.27];let yy=y+6;
-  LAYERS.forEach((L,i)=>{const hh=h*bands[i];const ly=yy+hh/2+4;s+=G('a-fade',(.2+i*.1).toFixed(1),ln(x+w+2,FX(ly-4),x+w+16,FX(ly-4))+T(x+w+20,FX(ly),L[0],(v.on[i]?'lab':'note')+' start '+(n?'f11':'f13')));yy+=hh;});
+  LAYERS.forEach((L,i)=>{const hh=(h-12)*bands[i];const ly=yy+hh/2+4;s+=G('a-fade',(.2+i*.1).toFixed(1),ln(x+w+2,FX(ly-4),x+w+16,FX(ly-4))+T(x+w+20,FX(ly),L[0],(v.on[i]?'lab':'note')+' start '+(n?'f11':'f13')));yy+=hh;});
   const gx=n?x+w+6:x+w+260;
   if(!n)s+=G('a-fade',1,`<path d="M${gx} ${y+10} V${y+h-10}" stroke="#3E7FA8" stroke-width="8" opacity=".2"/>`+arw(gx-14,y+20,gx-14,y+h*.45,{blue:1})+T(gx-20,y+16,'O₂','mono end f12')
     +arw(gx+14,y+h-20,gx+14,y+h*.45,{red:1})+T(gx+20,y+h-10,'H₂S','mono start f12'));
@@ -501,14 +501,15 @@ function scW7(n){
   const P=(a,r=R)=>[cx+r*Math.cos(a*Math.PI/180),cy+r*Math.sin(a*Math.PI/180)];
   const nodes=[['N₂',-90],['NH₄⁺',-10],['NO₂⁻',70],['NO₃⁻',150]];
   let s='';
-  const arc=(a1,a2,lab,i,inside)=>{const [x1,y1]=P(a1+16),[x2,y2]=P(a2-16),[lx,ly]=P((a1+a2)/2,inside?R-16:R+22);
+  const gp=a=>(a===-90||a===270)?27:16;
+  const arc=(a1,a2,lab,i,inside)=>{const [x1,y1]=P(a1+gp(a1)),[x2,y2]=P(a2-gp(a2)),[lx,ly]=P((a1+a2)/2,inside?R-16:R+22);
     return G('a-fade',(.3+i*.3).toFixed(1),`<path d="M${FX(x1)} ${FX(y1)} A${R} ${R} 0 0 1 ${FX(x2)} ${FX(y2)}" stroke="#6A5B47" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`
       +Tc(FX(lx),FX(ly+4),lab,'#2F5276',n?10:11,'mono '+(inside?'start':lx>cx+8?'start':lx<cx-8?'end':'mid'),'600'));};
   s+=arc(-90,-10,'fixation',0)+arc(-10,70,'nitritation',1)+arc(70,150,'nitratation',2)+arc(150,270,'denitrification',3,1);
   nodes.forEach(nd=>{const [x,y]=P(nd[1]);s+=G('a-fade',0,tbox(x,y,n?58:70,nd[0],{fs:12}));});
   s+=G('a-fade',1.6,tbox(cx,cy,n?84:96,'organic N',{fs:12})+arw(cx+(n?44:50),cy-6,P(-10)[0]-(n?30:36),P(-10)[1]+6)+Tc(cx+(n?40:46),cy+30,'ammonification','#2F5276',n?10:11,'mono mid','600'));
-  const b=n?bullets(24,cy+R+46,[['The cycles are microbial','Fixation, nitrification, denitrification and sulfate reduction were all traced to particular bacteria by Winogradsky and Beijerinck between 1887 and 1901.'],['Look where they live','In the 1920s Winogradsky argued for studying soil microbes by direct microscopy rather than plate counts, which miss most cells: the later “great plate count anomaly”.'],['Still being found','Anaerobic ammonium oxidation (anammox, 1990s) and complete ammonia oxidation by one organism (comammox, 2015) were found by the same elective logic.']],44,{d0:1.8,gap:24})
-    :bullets(390,44,[['The cycles are microbial','Fixation, nitrification, denitrification and sulfate reduction were all traced to particular bacteria by Winogradsky and Beijerinck between 1887 and 1901.'],['Look where they live','In the 1920s Winogradsky argued for studying soil microbes by direct microscopy rather than plate counts, which miss most cells: the later “great plate count anomaly”.'],['Still being found','Anaerobic ammonium oxidation (anammox, 1990s) and complete ammonia oxidation by one organism (comammox, 2015) were found by the same elective logic.']],34,{d0:1.8,gap:24});
+  const b=n?bullets(24,cy+R+46,[['The cycles are microbial','Nitrification, nitrogen fixation and sulfate reduction were traced to particular bacteria by Winogradsky and Beijerinck between 1887 and 1901.'],['Look where they live','In the 1920s Winogradsky argued for studying soil microbes by direct microscopy rather than plate counts, which miss most cells: the later “great plate count anomaly”.'],['Still being found','Anaerobic ammonium oxidation (anammox, 1990s) and complete ammonia oxidation by one organism (comammox, 2015) were found by the same elective logic.']],44,{d0:1.8,gap:24})
+    :bullets(390,44,[['The cycles are microbial','Nitrification, nitrogen fixation and sulfate reduction were traced to particular bacteria by Winogradsky and Beijerinck between 1887 and 1901.'],['Look where they live','In the 1920s Winogradsky argued for studying soil microbes by direct microscopy rather than plate counts, which miss most cells: the later “great plate count anomaly”.'],['Still being found','Anaerobic ammonium oxidation (anammox, 1990s) and complete ammonia oxidation by one organism (comammox, 2015) were found by the same elective logic.']],34,{d0:1.8,gap:24});
   return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,cy+R+40)),s:s+b.s};
 }
 
@@ -516,7 +517,7 @@ const NAR='Narrator';
 const S=[
  {p:1,title:'Sergei Winogradsky',draw:scW1,text:"Winogradsky was born in Kyiv and worked in Strasbourg, Zurich, St Petersburg and finally at the Pasteur Institute outside Paris. Where Pasteur and Koch looked at microbes in disease, he looked at them in soil and water, and asked what they did for a living."},
  {p:1,title:'Beggiatoa and sulfur',draw:scW2,text:"Beggiatoa forms white filaments in sulfide-rich springs, packed with sulfur granules. Winogradsky showed that the granules appeared when hydrogen sulfide was present and disappeared, oxidised to sulfate, when it was removed. The sulfur was a fuel. Some organisms, he proposed, live on the energy from oxidising inorganic compounds."},
- {p:1,title:'Nitrifiers on silica gel',draw:scW3,text:"Nitrification, the conversion of ammonia to nitrate in soil, was known to be biological, but nobody could isolate the organisms: on gelatin or agar, faster heterotrophs took over. Winogradsky removed all organic matter from the medium, using silica gel to solidify it. On this mineral diet, only organisms that made their own organic matter from CO2 could grow."},
+ {p:1,title:'Nitrifiers on silica gel',draw:scW3,text:"Nitrification, the conversion of ammonia to nitrate in soil, was known to be biological, but nobody could isolate the organisms: on gelatin or agar, faster heterotrophs took over. Winogradsky removed all organic matter from the medium, using silica gel to solidify it. On this mineral diet, only organisms that made their own organic matter from CO₂ could grow."},
  {p:1,title:'Is it chemosynthesis?',chips:'nit',draw:scW4,text:"Could the nitrifiers simply be living on traces of organic contamination? Pick a test to see what each explanation predicts. Winogradsky's decisive measurement was the carbon balance: new organic matter appeared in proportion to the ammonia oxidised."},
  {p:2,title:'Elective culture',draw:scW5,text:"The silica-gel trick was a general principle. Instead of a rich medium where anything grows, design conditions in which only the organism with the activity you want can win. Winogradsky and, independently, Beijerinck used it to isolate nitrogen fixers, sulfur oxidisers and sulfate reducers."},
  {p:2,title:'The Winogradsky column',chips:'col',draw:scW6,text:"A glass cylinder of mud, enriched with cellulose and sulfate and left in the light, sorts itself into coloured bands over a few weeks. Pick a variation to see which communities depend on light, on sulfate and on organic matter."},
