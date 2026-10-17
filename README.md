@@ -14,18 +14,20 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | VI | Repairing DNA | 21 | [`decks/dna-repair/`](decks/dna-repair/) |
 | VII | Anatomy of a Prokaryotic Gene | 15 | [`decks/prokaryotic-gene/`](decks/prokaryotic-gene/) |
 | VIII | Bateson's Epistasis | 15 | [`decks/bateson-epistasis/`](decks/bateson-epistasis/) |
-| IX | Enzyme Kinetics | 23 | [`decks/enzyme-kinetics/`](decks/enzyme-kinetics/) |
-| X | Glycans and Glycosyltransferases | 12 | [`decks/glycans/`](decks/glycans/) |
-| XI | Tools for Molecular Cloning | 21 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
-| XII | How CRISPR–Cas9 Works | 13 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
-| XIII | Next-Generation Sequencing | 15 | [`decks/sequencing/`](decks/sequencing/) |
-| XIV | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
-| XV | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
-| XVI | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
-| XVII | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
-| XVIII | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
-| XIX | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
-| XX | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
-| XXI | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
+| IX | Mutation, Selection and Drift | 11 | [`decks/evolution/`](decks/evolution/) |
+| X | Horizontal Gene Transfer | 11 | [`decks/gene-transfer/`](decks/gene-transfer/) |
+| XI | Enzyme Kinetics | 23 | [`decks/enzyme-kinetics/`](decks/enzyme-kinetics/) |
+| XII | Glycans and Glycosyltransferases | 12 | [`decks/glycans/`](decks/glycans/) |
+| XIII | Tools for Molecular Cloning | 21 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
+| XIV | How CRISPR–Cas9 Works | 13 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
+| XV | Next-Generation Sequencing | 15 | [`decks/sequencing/`](decks/sequencing/) |
+| XVI | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
+| XVII | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
+| XVIII | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
+| XIX | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
+| XX | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
+| XXI | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
+| XXII | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
+| XXIII | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
 
 Historical attributions, dates and figures are rounded for teaching and should be checked against primary sources.

@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horizontal Gene Transfer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+#stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#A4473A"/></marker>
+  <marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#2F5276"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Horizontal gene transfer · an animated primer</p>
+    <h1>How bacteria acquire genes from one another</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · The three routes</button>
+    <button id="part2" type="button">II · Mobile elements</button>
+    <button id="part3" type="button">III · Barriers and consequences</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Gene names and element sizes are representative examples; the details vary between species and between elements of the same family.</p>
+</div>
+<script>
+
+
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== shared translation glyphs ===================== */
+const SSU='#D9C89B', LSU='#BBA27A', TRNA_C='#8FB1CF', AA_C='#4F7A3F', CHAIN=['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#B4766E','#5E7F7A'];
+const GRP={np:['nonpolar','#D6C79F'],po:['polar','#A9C4DC'],ac:['acidic','#E7A99B'],ba:['basic','#B9A0C8']};
+const AAS=[['G','Gly','np'],['A','Ala','np'],['V','Val','np'],['L','Leu','np'],['I','Ile','np'],['P','Pro','np'],['F','Phe','np'],['M','Met','np'],['W','Trp','np'],
+ ['S','Ser','po'],['T','Thr','po'],['C','Cys','po'],['N','Asn','po'],['Q','Gln','po'],['Y','Tyr','po'],['D','Asp','ac'],['E','Glu','ac'],['K','Lys','ba'],['R','Arg','ba'],['H','His','ba']];
+const THREE=Object.fromEntries(AAS.map(a=>[a[0],a[1]]));THREE['*']='Stop';
+const CODE='FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+function tr(c){const o='UCAG';const i=16*o.indexOf(c[0])+4*o.indexOf(c[1])+o.indexOf(c[2]);return CODE[i];}
+function sub(x,y,k){return k;} // placeholder
+
+function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
+  const S=v=>v*k;
+  let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
+  return s+'</g>';
+}
+function chain(x,y,k,n,dir=-1){let s='';for(let i=0;i<n;i++){const xx=x-i*k*6,yy=y-i*k*13;s+=`<circle cx="${xx}" cy="${yy}" r="${k*7}" fill="${CHAIN[i%CHAIN.length]}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}return s;}
+function ribosome(cx,my,k,o={}){
+  const S=v=>v*k, sx={E:cx-S(50),P:cx,A:cx+S(50)};
+  let s='';
+  if(o.large!==false)s+=`<path d="M${cx-S(130)} ${my-S(22)} C ${cx-S(156)} ${my-S(160)}, ${cx+S(156)} ${my-S(160)}, ${cx+S(130)} ${my-S(22)} C ${cx+S(80)} ${my-S(36)}, ${cx-S(80)} ${my-S(36)}, ${cx-S(130)} ${my-S(22)} Z" fill="${LSU}" opacity=".55" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
+  if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
+  if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
+  return s;
+}
+
+function timeline(x,y,ev,wrapN,fs,indent,gap,d0){let s='',yy=y;ev.forEach((e,i)=>{const L=wrap(e[1],wrapN);s+=G('a-fade',(d0+i*.4).toFixed(1),T(x,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(x+indent,yy+j*18,l,'lab start '+fs)).join(''));yy+=L.length*18+gap;});return {s,y:yy};}
+/* ===================== text & layout utilities ===================== */
+const FX=(v,d=1)=>Number(v).toFixed(d);
+const SB=t=>`<tspan baseline-shift="-24%" style="font-size:.72em">${t}</tspan>`;
+const SP=t=>`<tspan baseline-shift="super" style="font-size:.72em">${t}</tspan>`;
+function para(x,y,text,wn,cls='note start f13',lh=17,d=0){const L=wrap(text,wn);return {s:G('a-fade',d,L.map((l,j)=>T(x,y+j*lh,l,cls)).join('')),y:y+L.length*lh};}
+function boxItem(x,y,W,head,body,o={}){
+  const L=wrap(body,Math.floor(W/(o.cw||6.3))), H=34+L.length*16+8;
+  return {s:box(x,y,W,o.H||H,o.fill||'#E7DEC9',4)+(o.num?badge(x+14,y+16,o.num):'')+T(x+(o.num?28:12),y+21,head,'lab start f14')
+    +L.map((l,j)=>T(x+12,y+42+j*16,l,'note start f12')).join(''),h:H};
+}
+function bullets(x,y,items,wrapN,o={}){
+  let s='',yy=y;
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=L.length*17+(o.gap||30);});
+  return {s,y:yy};
+}
+function wtable(n,head,rows,cols,o={}){
+  let y=o.y0||30, s=''; const R2=o.R||(n?350:620);
+  s+=G('a-fade',o.d0||0,head.map((h,i)=>T(cols[i][0],y,h,'cname start '+(n?'f13':'f14'))).join('')+ln(cols[0][0]-4,y+7,R2,y+7));
+  y+=26;
+  rows.forEach((r,i)=>{const W=r.map((c,j)=>wrap(c,cols[j][1])); const L=Math.max(...W.map(w=>w.length)); const h=L*16+10;
+    const hi=o.hi===i;
+    s+=G('a-fade',((o.d0||0)+.1*i).toFixed(2),(hi?`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+        :(i%2?'':`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" fill="#E7DEC9" opacity=".5"/>`))
+      +W.map((w,j)=>w.map((l,k)=>T(cols[j][0],y+k*16,l,(j?'note':'lab')+' start '+(n?'f12':'f13'))).join('')).join(''));
+    y+=h;});
+  return {s,y};
+}
+
+/* ===================== DNA-repair toolkit ===================== */
+const BB='#5A4632', NEW='#3E7FA8', LESU='#A4473A', OXO='#7D4A98', METH='#C17A2C', CPDC='#C99A2E', INV='#C17A2C',
+      E1='#9DB4AE', E2='#B4766E', E3='#D9B85A', E4='#A9C4DC', E5='#A9C49A', E6='#C9A9D6', RECAC='#E3B26B', PAPR='#ECE4D2';
+function segAt(segs,i){for(const s of segs)if(i>=s[0]&&i<s[1])return s[2]||BB;return null;}
+/* ladder: n base pairs from x; top strand at y, bottom at y+g.
+   o.top/o.bot = [[i0,i1,col]] strand segments; o.mk = {i:{t:col,b:col,tx:1,bx:1}} (tx/bx = base missing)
+   o.lab=[{i,s,t,col}]; o.dimer=[i]; o.me=[{i,s,op}]; o.nick=[{i,s}] (gap before index i); o.flip=[{i,s,col}] */
+function lad(x,y,n,o={}){
+  const dx=o.dx||12,g=o.g||24,top=o.top||[[0,n,BB]],bot=o.bot||[[0,n,BB]],mk=o.mk||{};
+  let s='';
+  for(let i=0;i<n;i++){const cx=x+i*dx+dx/2, tc=segAt(top,i), bc=segAt(bot,i), m=mk[i]||{};
+    if(tc&&!m.tx){const c=m.t;s+=`<path d="M${FX(cx)} ${FX(y)} V${FX(y+g/2-1.5)}" stroke="${c||tc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}
+    if(bc&&!m.bx){const c=m.b;s+=`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g/2+1.5)}" stroke="${c||bc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}}
+  const bbp=(segs,yy)=>segs.map(sg=>`<path d="M${FX(x+sg[0]*dx)} ${FX(yy)} H${FX(x+sg[1]*dx)}" stroke="${sg[2]||BB}" stroke-width="2.8"/>`).join('');
+  s+=bbp(top,y)+bbp(bot,y+g);
+  (o.nick||[]).forEach(k=>{const xx=x+k.i*dx, yy=k.s==='b'?y+g:y;s+=`<rect x="${FX(xx-2)}" y="${FX(yy-2.5)}" width="4" height="5" fill="${PAPR}"/>`;});
+  (o.dimer||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2-4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.dimerB||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2+4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.flip||[]).forEach(f=>{const cx=x+f.i*dx+dx/2;s+=f.s==='b'?`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g+12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`
+      :`<path d="M${FX(cx)} ${FX(y)} V${FX(y-12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`;});
+  (o.me||[]).forEach(m=>{const cx=x+m.i*dx+dx/2, yy=m.s==='b'?y+g+6:y-6;s+=`<circle cx="${FX(cx)}" cy="${FX(yy)}" r="3.2" fill="${METH}" stroke="${INK}" stroke-width=".6"${m.op?` opacity="${m.op}"`:''}/>`;});
+  (o.lab||[]).forEach(L=>{const cx=x+L.i*dx+dx/2;s+=Tc(FX(cx+(L.dx||0)),FX(L.s==='b'?y+g+(L.dy||16):y-(L.dy||7)),L.t,L.col||'#3A2E22',L.fs||10,'mono mid','600');});
+  if(o.ends)s+=Tc(x-5,y+4,'5′','#6A5B47',10,'mono end')+Tc(x-5,y+g+4,'3′','#6A5B47',10,'mono end')
+    +Tc(x+n*dx+5,y+4,'3′','#6A5B47',10,'mono start')+Tc(x+n*dx+5,y+g+4,'5′','#6A5B47',10,'mono start');
+  return s;
+}
+function prot(cx,cy,rx,ry,fill,label,o={}){
+  return blob(FX(cx),FX(cy),rx,ry,fill,o.op?`opacity="${o.op}"`:'')+(label?Tc(FX(cx),FX(cy+3.8),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function ring(cx,cy,rx,ry,fill,label,o={}){
+  return `<ellipse cx="${FX(cx)}" cy="${FX(cy)}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity=".55" stroke="${INK}" stroke-width="1.1" class="tint"/>`
+    +(label?Tc(FX(cx+(o.ldx||0)),FX(cy+(o.ldy!==undefined?o.ldy:-ry-5)),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function recaFil(x1,x2,y,o={}){let s='';for(let x=x1;x<=x2-8;x+=9)s+=`<rect x="${FX(x)}" y="${FX(y-6)}" width="8" height="12" rx="3" fill="${o.col||RECAC}" stroke="${INK}" stroke-width=".7"/>`;
+  return s+(o.label?Tc(FX((x1+x2)/2),FX(y-11),o.label,'#8C5A1E',10,'mono mid','600'):'');}
+function ssb(cx,y){return `<circle cx="${FX(cx)}" cy="${FX(y)}" r="5" fill="${E4}" stroke="${INK}" stroke-width=".7"/>`;}
+function arw(x1,y1,x2,y2,o={}){const m=o.red?'ahr':o.blue?'ahb':'ahp', c=o.red?'#A4473A':o.blue?'#2F5276':(o.col||'#6A5B47');
+  return `<path d="M${FX(x1)} ${FX(y1)} ${o.q?`Q${FX(o.q[0])} ${FX(o.q[1])} `:'L'}${FX(x2)} ${FX(y2)}" stroke="${c}" stroke-width="${o.w||1.6}" fill="none" marker-end="url(#${m})"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
+function pairBox(cx,cy,t,b,o={}){const w=o.w||62,h=o.h||46;
+  return box(cx-w/2,cy-h/2,w,h,o.fill||'#EFE6D2',5)+Tc(cx,cy-5,t,o.tc||'#3A2E22',o.fs||13,'mono mid','600')
+    +`<path d="M${cx-10} ${cy+1} h20" stroke="${INK}" stroke-width="1" stroke-dasharray="2 2"/>`+Tc(cx,cy+17,b,o.bc||'#3A2E22',o.fs||13,'mono mid','600');}
+function photon(x1,y1,x2,y2,col='#3E7FA8'){const L=Math.hypot(x2-x1,y2-y1), a=Math.atan2(y2-y1,x2-x1)*180/Math.PI; let d='M0 0';
+  for(let t=0;t<L-12;t+=8)d+=` q2 -5 4 0 q2 5 4 0`;
+  return `<g transform="translate(${FX(x1)} ${FX(y1)}) rotate(${FX(a)})"><path d="${d} L${FX(L-2)} 0" stroke="${col}" stroke-width="1.6" fill="none" marker-end="url(#ahb)"/></g>`;}
+/* left-text / right-drawing steps; d(x,y,w) draws a ladder whose top strand is at y */
+function stepsLad(n,steps,o={}){
+  let s='',y=o.y0||24;
+  const tx=n?16:20;
+  steps.forEach((st,i)=>{const L=wrap(st.t,n?52:(o.wn||36)), th=22+L.length*16, top=st.top||24, dh=st.dh||44, dl=((o.d0||0)+i*.6).toFixed(1);
+    const head=badge(tx+8,y-4,i+1)+T(tx+22,y,st.h,'cname start f14')+L.map((l,j)=>T(tx,y+20+j*16,l,'note start f12')).join('');
+    if(n){const dy=y+th+top;s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(24,dy,312));y=dy+dh+28;}
+    else{const h=Math.max(th,top+dh-8);s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(o.dx0||284,y-14+top,o.dw||330));
+      y+=h+22;if(i<steps.length-1)s+=ln(tx,y-14,620,y-14,'#6A5B47',.5,'2 4');}});
+  return {s,y};
+}
+function cut(cx,y){return Tc(FX(cx),FX(y),'\u25be','#A4473A',15,'mono mid');}
+function oligo(x1,x2,y,dx,dim){let s=`<path d="M${FX(x1)} ${FX(y)} H${FX(x2)}" stroke="${BB}" stroke-width="2.6"/>`;
+  for(let xx=x1+dx/2;xx<x2;xx+=dx)s+=`<path d="M${FX(xx)} ${FX(y)} V${FX(y+10)}" stroke="${BB}" stroke-width="1.8" opacity=".7"/>`;
+  if(dim!==undefined)s+=`<path d="M${FX(x1+dim*dx+dx/2)} ${FX(y)} V${FX(y+10)} M${FX(x1+(dim+1)*dx+dx/2)} ${FX(y)} V${FX(y+10)}" stroke="${CPDC}" stroke-width="4.5"/><path d="M${FX(x1+dim*dx+dx/2)} ${FX(y+7)} h${FX(dx)}" stroke="${CPDC}" stroke-width="3"/>`;
+  return s;}
+function tbox(cx,cy,w,t,o={}){return box(cx-w/2,cy-14,w,28,o.fill||'#EFE6D2',4)+Tc(cx,cy+4,t,o.tc||'#3A2E22',o.fs||12,'mono mid','600');}
+/* ===================== history toolkit ===================== */
+let UID=0;
+const AXC='#6A5B47', GLASSE='#7E8F92', GLASSF='#DCE6E8', BROTH='#EAD9A0', TURB='#C4A86A', DUST='#5A4632', AGAR='#E9DAA8', COLC='#C99A2E',
+      MOUSEC='#D3C8B6', BLOOD='#A4473A', CAPS='#C9A9D6', LEAF='#7FA05A', LEAFD='#C9D58A';
+function rnd(seed){let s=seed;return ()=>{s=(s*9301+49297)%233280;return s/233280;};}
+function microbes(cx,cy,rx,ry,n,seed,col='#5A4632'){const r=rnd(seed);let s='';
+  for(let i=0;i<n;i++){const a=r()*Math.PI*2,d=Math.sqrt(r()),x=cx+Math.cos(a)*rx*d,y=cy+Math.sin(a)*ry*d,an=r()*180;
+    s+=`<rect x="${FX(x-3)}" y="${FX(y-1.2)}" width="6" height="2.4" rx="1.2" fill="${col}" opacity=".75" transform="rotate(${FX(an)} ${FX(x)} ${FX(y)})"/>`;}
+  return s;}
+/* round-bottomed flask; type: straight | swan | broken | sealed | plug */
+function flask(cx,by,type,o={}){
+  const r=o.r||30, t=by-2*r+4, id='fl'+(UID++), lvl=by-r*(o.full||1.05);
+  let s=`<defs><clipPath id="${id}"><circle cx="${cx}" cy="${by-r}" r="${r-1.5}"/></clipPath></defs>`;
+  s+=`<circle cx="${cx}" cy="${by-r}" r="${r}" fill="${GLASSF}" fill-opacity=".55" stroke="${GLASSE}" stroke-width="1.6"/>`;
+  s+=`<rect x="${cx-r}" y="${FX(lvl)}" width="${2*r}" height="${FX(by-lvl)}" fill="${o.turbid?TURB:BROTH}" clip-path="url(#${id})"/>`;
+  if(o.turbid)s+=microbes(cx,by-r*.45,r*.7,r*.32,14,o.seed||7);
+  const tube=(d,w=10)=>`<path d="${d}" stroke="${GLASSE}" stroke-width="${w+3}" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#EEF3F3" stroke-width="${w-1}" fill="none" stroke-linecap="round"/>`;
+  if(type==='straight'||type==='plug')s+=tube(`M${cx} ${t} V${t-34}`);
+  if(type==='plug')s+=`<rect x="${cx-6}" y="${t-44}" width="12" height="16" rx="3" fill="#F4F0E6" stroke="${INK}" stroke-width=".8"/>`;
+  if(type==='sealed')s+=tube(`M${cx} ${t} V${t-28}`)+`<circle cx="${cx}" cy="${t-30}" r="6.5" fill="${GLASSE}"/>`;
+  if(type==='broken')s+=tube(`M${cx} ${t} V${t-10}`)+`<path d="M${cx-6.5} ${t-11} l3 -4 l3 3 l3 -4 l3 4" stroke="${GLASSE}" stroke-width="1.6" fill="none"/>`;
+  if(type==='swan'){const d=`M${cx} ${t} V${t-18} C${cx} ${t-46} ${cx+34} ${t-50} ${cx+44} ${t-26} C${cx+50} ${t-12} ${cx+62} ${t-10} ${cx+68} ${t-24} L${cx+80} ${t-50}`;
+    s+=tube(d);
+    if(o.wet)s+=`<path d="M${cx+46} ${t-21} C${cx+50} ${t-12} ${cx+62} ${t-10} ${cx+66} ${t-19}" stroke="${o.turbid?TURB:BROTH}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+    s+=[[54,-14],[58,-13],[61,-15],[56,-16]].map(p=>`<circle cx="${cx+p[0]}" cy="${t+p[1]}" r="1.6" fill="${DUST}"/>`).join('');}
+  if(o.label)s+=T(cx,by+18,o.label,'note mid f12');
+  return s;
+}
+function colonySet(n,seed,R){const r=rnd(seed),a=[];let k=0;while(a.length<n&&k<500){k++;const ang=r()*Math.PI*2,d=Math.sqrt(r())*R*.82,x=Math.cos(ang)*d,y=Math.sin(ang)*d,rad=2.4+r()*2.6;
+  if(a.every(c=>Math.hypot(c[0]-x,c[1]-y)>c[2]+rad+2))a.push([x,y,rad]);}return a;}
+function dish(cx,cy,R,cols=[],o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${o.agar||AGAR}" stroke="${GLASSE}" stroke-width="1.8"/><circle cx="${cx}" cy="${cy}" r="${R-4}" fill="none" stroke="${GLASSE}" stroke-width=".6" opacity=".7"/>`;
+  cols.forEach(c=>s+=`<circle cx="${FX(cx+c[0])}" cy="${FX(cy+c[1])}" r="${FX(c[2])}" fill="${c[3]||o.col||COLC}" stroke="${INK}" stroke-width=".5"/>`);
+  if(o.mark)s+=`<path d="M${cx} ${cy-R-6} v8" stroke="${INK}" stroke-width="2"/>`;
+  if(o.label)s+=T(cx,cy+R+17,o.label,'note mid f12');
+  return s;}
+function tube(cx,by,o={}){const w=o.w||18,h=o.h||70,top=by-h,lvl=by-h*(o.full||.55);
+  let s=`<path d="M${cx-w/2} ${top} V${by-w/2} a${w/2} ${w/2} 0 0 0 ${w} 0 V${top}" fill="${GLASSF}" fill-opacity=".5" stroke="${GLASSE}" stroke-width="1.5"/>`;
+  s+=`<path d="M${cx-w/2+1.5} ${FX(lvl)} V${by-w/2} a${w/2-1.5} ${w/2-1.5} 0 0 0 ${w-3} 0 V${FX(lvl)} Z" fill="${o.fill||(o.turbid?TURB:BROTH)}"/>`;
+  if(o.turbid)s+=microbes(cx,(lvl+by)/2,w*.3,(by-lvl)*.38,6,o.seed||3);
+  if(o.label)s+=T(cx,by+16,o.label,'note mid f11');
+  return s;}
+function mouse(cx,cy,k=1,o={}){
+  const f=o.dead?'#B8B0A2':MOUSEC;
+  let g=`<path d="M${cx-19*k} ${cy+2*k} q${-14*k} ${-2*k} ${-22*k} ${-12*k}" stroke="${INK}" stroke-width="1.2" fill="none"/>`
+   +`<ellipse cx="${cx}" cy="${cy}" rx="${20*k}" ry="${11*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+19*k}" cy="${cy-3*k}" r="${8.5*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+15*k}" cy="${cy-11*k}" r="${4.2*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+27*k}" cy="${cy-2*k}" r="${1.6*k}" fill="${INK}"/>`;
+  if(o.dead)g+=`<path d="M${cx-10*k} ${cy+10*k} v${5*k} M${cx-3*k} ${cy+11*k} v${5*k} M${cx+5*k} ${cy+11*k} v${5*k} M${cx+12*k} ${cy+9*k} v${5*k}" stroke="${INK}" stroke-width="1.2"/>`
+    +`<path d="M${cx+20*k} ${cy-7*k} l${4*k} ${4*k} m0 ${-4*k} l${-4*k} ${4*k}" stroke="${INK}" stroke-width="1.1"/>`;
+  else g+=`<circle cx="${cx+21*k}" cy="${cy-5*k}" r="${1.4*k}" fill="${INK}"/>`;
+  let s=o.dead?`<g transform="rotate(180 ${cx} ${cy})">${g}</g>`:g;
+  if(o.label)s+=T(cx,cy+(o.ldy||26)*k,o.label,'note mid f12');
+  return s;}
+function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="${FX(cy-w/2)}" width="${l}" height="${w}" rx="${w/2}" fill="${col}" stroke="${INK}" stroke-width=".7" transform="rotate(${ang} ${FX(cx)} ${FX(cy)})"/>`;}
+function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
+  let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
+  return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
+function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
+  let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
+  s+=G('a-fade',0,medallion(mx,my,k,o.name,o.dates,o.glasses));
+  let x=n?16:270, y=n?my+112*k+76:44;
+  s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
+  const Q=wrap(o.q,n?40:40);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
+  s+=G('a-fade',1,T(x,y,'What was believed','mono acc start f12'));
+  const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;
+  if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
+  const H=n?y+12:Math.max(y+14,my+112*k+56);
+  return {vb:n?slim(H):wide(H),s};
+}
+/* hypothesis-testing plate: spec={hyps:[[name,short]],conds:[{n,d,draw(cx,y,n),pred:[...],obs,note}],dh} */
+function predictPlate(n,spec,sel){
+  const c=spec.conds[sel], H=spec.hyps, oc=x=>Array.isArray(x)?x[0]:x, tx=x=>Array.isArray(x)?(x[1]?x[0]+': '+x[1]:x[0]):x, hit=(cc,i)=>oc(cc.pred[i])===oc(cc.obs);
+  let s='', y=14;
+  const dh=n?(spec.dhn||spec.dh||150):(spec.dh||150);
+  s+=G('a-fade',0,c.draw(n?180:320,y,n));
+  y+=dh+8;
+  s+=G('a-fade',.2,T(n?16:24,y,`${sel+1}. ${c.n}`,'cname start f15'));
+  const D=wrap(c.d||'',n?52:92);s+=G('a-fade',.3,D.map((l,i)=>T(n?16:24,y+20+i*16,l,'note start f12')).join(''));y+=20+D.length*16+18;
+  const cx=n?[16,148,338]:[24,300,606];
+  s+=G('a-fade',.5,T(cx[0],y,n?'If it were…':'If the explanation were…','mono acc start f11')+T(cx[1],y,'we would expect','mono acc start f11')+ln(cx[0],y+6,n?346:616,y+6));
+  y+=24;
+  H.forEach((h,i)=>{const A=wrap(h[0],n?20:40),P=wrap(tx(c.pred[i]),n?28:42),L=Math.max(A.length,P.length),ok=hit(c,i);
+    s+=G('a-fade',(.6+i*.2).toFixed(1),A.map((l,j)=>T(cx[0],y+j*16,l,'lab start f13')).join('')+P.map((l,j)=>T(cx[1],y+j*16,l,'note start f13')).join('')+mark(cx[2],y-4,ok,8));
+    y+=L*16+10;});
+  const O=wrap(tx(c.obs),n?28:42);
+  s+=G('a-fade',(.7+H.length*.2).toFixed(1),`<rect x="${cx[0]-6}" y="${y-16}" width="${(n?352:620)-cx[0]}" height="${O.length*16+12}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+    +T(cx[0],y,'Observed','cname start f14')+O.map((l,j)=>T(cx[1],y+j*16,l,'lab start f13')).join(''));
+  y+=O.length*16+28;
+  // running tally
+  const mx=n?160:300, cw=n?32:36;
+  s+=G('a-fade',1.4,T(cx[0],y,'Across all tests','mono acc start f11')+spec.conds.map((cc,j)=>(j===sel?`<rect x="${mx+j*cw-cw/2+2}" y="${y-13}" width="${cw-4}" height="${18+H.length*22}" rx="3" fill="#E7DEC9"/>`:'')+Tc(mx+j*cw,y,j+1,'#2F5276',11,'mono mid','600')).join(''));
+  y+=20;
+  H.forEach((h,i)=>{s+=G('a-fade',(1.5+i*.1).toFixed(1),T(cx[0],y+4,h[1],'note start f12')+spec.conds.map((cc,j)=>mark(mx+j*cw,y,hit(cc,i),6.5)).join(''));y+=22;});
+  if(c.note){const p=para(n?16:24,y+12,c.note,n?50:92,'note start f13',17,1.8);s+=p.s;y=p.y;}
+  return {vb:n?slim(y+10):wide(y+12),s};
+}
+/* generic text-and-picture plate helpers */
+function sideText(n,x,y,items,wn,o={}){return bullets(n?24:x,y,items,n?44:wn,o);}
+/* ===================== shared toolkit: evolution, HGT, plasmids, defence, genomes ===================== */
+const CHR='#5A4632', PLS='#7D4A98', PHG='#A4473A', TNC='#C17A2C', INTC='#2E7D78', RECC='#3E7FA8',
+      CELLF='#DCE2C9', CELLE='#8C7A52', CORE='#2F5276', SHELL='#8FB1CF', CLOUD='#C9BFAB', METC='#C99A2E';
+/* --- xy plot frame; returns mappers --- */
+function xyPlot(x,y,w,h,xr,yr,o={}){
+  const px=v=>x+(v-xr[0])/(xr[1]-xr[0])*w, py=v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h;
+  let s='';
+  if(o.grid){const gx=o.grid[0]||4,gy=o.grid[1]||4;let g='';
+    for(let i=1;i<gx;i++)g+=`M${FX(x+w*i/gx)} ${y} V${y+h} `;
+    for(let i=1;i<gy;i++)g+=`M${x} ${FX(y+h*i/gy)} H${x+w} `;
+    s+=`<path d="${g}" stroke="${AXC}" stroke-width=".5" opacity=".25"/>`;}
+  s+=`<path d="M${x} ${y-4} V${y+h} H${x+w+6}" stroke="${AXC}" stroke-width="1.3" fill="none"/>`;
+  if(o.xlab)s+=T(x+w/2,y+h+(o.xdy||24),o.xlab,'note mid '+(o.fs||'f12'));
+  if(o.ylab)s+=`<text transform="translate(${x-(o.ydx||20)} ${y+h/2}) rotate(-90)" text-anchor="middle" class="note ${o.fs||'f12'}">${o.ylab}</text>`;
+  return {px,py,s,x,y,w,h,xr,yr};}
+function xyCurve(P,f,o={}){
+  const xr=o.xr||P.xr,n=o.n||80;let d='',on=false;
+  for(let i=0;i<=n;i++){const t=xr[0]+(xr[1]-xr[0])*i/n,v=f(t);
+    if(!isFinite(v)||v>P.yr[1]||v<P.yr[0]){on=false;continue;}
+    d+=(on?' L':' M')+FX(P.px(t))+' '+FX(P.py(v));on=true;}
+  return `<path d="${d.trim()}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;}
+function xyPts(P,pts,o={}){return pts.map(p=>`<circle cx="${FX(P.px(p[0]))}" cy="${FX(P.py(p[1]))}" r="${o.r||3.2}" fill="${o.col||CORE}" stroke="${INK}" stroke-width=".6"/>`).join('');}
+function xyLine(P,pts,o={}){let d='';pts.forEach((p,i)=>{d+=(i?' L':'M')+FX(P.px(p[0]))+' '+FX(P.py(p[1]));});
+  return `<path d="${d}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round"/>`;}
+/* --- horizontal bars with labels --- */
+function barRow(x,y,w,items,max,o={}){
+  let s='';items.forEach((it,i)=>{const yy=y+i*(o.rh||26);
+    s+=T(x,yy,it[0],'lab start '+(o.fs||'f12'))+`<rect x="${x+(o.bx||150)}" y="${yy-10}" width="${FX(Math.max(1,it[1]/max*w))}" height="13" rx="2" fill="${it[2]||CORE}" stroke="${INK}" stroke-width=".6"/>`
+      +(it[3]?Tc(x+(o.bx||150)+Math.max(1,it[1]/max*w)+6,yy,it[3],'#6A5B47',10,'mono start','600'):'');});
+  return s;}
+/* --- circular replicon; feats = [{a0,a1,col,lab}] angles in degrees --- */
+function pRing(cx,cy,r,o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${o.col||PLS}" stroke-width="${o.w||3}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  (o.feats||[]).forEach(f=>{const a0=f.a0*Math.PI/180,a1=f.a1*Math.PI/180,rr=r,big=(f.a1-f.a0)>180?1:0;
+    s+=`<path d="M${FX(cx+rr*Math.cos(a0))} ${FX(cy+rr*Math.sin(a0))} A${rr} ${rr} 0 ${big} 1 ${FX(cx+rr*Math.cos(a1))} ${FX(cy+rr*Math.sin(a1))}" stroke="${f.col}" stroke-width="${o.fw||9}" fill="none" stroke-linecap="butt"/>`;
+    if(f.lab){const am=(f.a0+f.a1)/2*Math.PI/180,lr=r+(o.lr||17);
+      s+=Tc(FX(cx+lr*Math.cos(am)),FX(cy+lr*Math.sin(am)+3),f.lab,f.lcol||'#3A2E22',o.lfs||10,'mono '+(Math.cos(am)>.3?'start':Math.cos(am)<-.3?'end':'mid'),'600');}});
+  if(o.label)s+=T(cx,cy+4,o.label,'note mid f11');
+  return s;}
+/* --- phage icon --- */
+function phIcon(cx,cy,k=1,col){const h=11*k,c=col||PHG;
+  return `<path d="M${cx} ${FX(cy-2*h)} l${FX(h*.9)} ${FX(h*.52)} v${FX(h)} l${FX(-h*.9)} ${FX(h*.52)} l${FX(-h*.9)} ${FX(-h*.52)} v${FX(-h)} z" fill="${c}" stroke="${INK}" stroke-width=".9"/>`
+   +`<rect x="${FX(cx-2.2*k)}" y="${cy}" width="${FX(4.4*k)}" height="${FX(12*k)}" fill="#D6CDB8" stroke="${INK}" stroke-width=".7"/>`
+   +`<path d="M${FX(cx-1.8*k)} ${FX(cy+12*k)} l${FX(-6*k)} ${FX(6*k)} M${FX(cx+1.8*k)} ${FX(cy+12*k)} l${FX(6*k)} ${FX(6*k)} M${cx} ${FX(cy+12*k)} v${FX(7*k)}" stroke="${INK}" stroke-width="${FX(1*k)}"/>`;}
+/* --- simple rod / oval cell with optional contents --- */
+function cellRod(cx,cy,L,R,o={}){
+  const x1=cx-L/2,x2=cx+L/2;
+  const d=`M${FX(x1)} ${FX(cy-R)} H${FX(x2)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x2)} ${FX(cy+R)} H${FX(x1)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x1)} ${FX(cy-R)} Z`;
+  let s=`<path d="${d}" fill="${o.fill||CELLF}" stroke="${o.stroke||CELLE}" stroke-width="${o.sw||2}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  if(o.chr)s+=`<ellipse cx="${cx}" cy="${cy}" rx="${FX(L*.26)}" ry="${FX(R*.5)}" fill="none" stroke="${CHR}" stroke-width="1.8"/>`;
+  if(o.label)s+=T(cx,cy+R+(o.ldy||18),o.label,'note mid f11');
+  return s;}
+/* --- gene arrow --- */
+function gArrow(x,y,w,label,fill,o={}){
+  const h=o.h||17;
+  return `<path d="M${x} ${FX(y-h/2)} h${FX(w-7)} l7 ${FX(h/2)} l-7 ${FX(h/2)} h${FX(-(w-7))}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
+   +(label?Tc(FX(x+(w-7)/2),FX(y+4),label,o.tc||'#3A2E22',o.fs||10,'mono mid','600'):'');}
+/* --- a grid of cells for population pictures: states = array of colour-or-null --- */
+function popGrid(x,y,cols,rows,states,o={}){
+  const d=o.d||13,g=o.g||4;let s='';
+  for(let i=0;i<cols*rows;i++){const c=i%cols,r=Math.floor(i/cols),st=states[i];
+    s+=`<rect x="${FX(x+c*(d+g))}" y="${FX(y+r*(d+g))}" width="${d}" height="${d}" rx="${FX(d*.38)}" fill="${st||'#E0DBCB'}" stroke="${INK}" stroke-width=".5" opacity="${st?1:.7}"/>`;}
+  return s;}
+/* --- branching lineage tree; muts = [[gen, lane]] marks --- */
+function lineage(x,y,w,h,gens,lanes,marks,o={}){
+  const dx=w/gens,dy=h/(lanes-1||1);let s='';
+  for(let l=0;l<lanes;l++)s+=`<path d="M${x} ${FX(y+l*dy)} h${w}" stroke="${o.col||'#C9BFAB'}" stroke-width="1.6"/>`;
+  (marks||[]).forEach(m=>{s+=`<circle cx="${FX(x+m[0]*dx)}" cy="${FX(y+m[1]*dy)}" r="${o.r||4}" fill="${m[2]||PHG}" stroke="${INK}" stroke-width=".6"/>`;
+    if(m[3]!==false)s+=`<path d="M${FX(x+m[0]*dx)} ${FX(y+m[1]*dy)} h${FX(w-m[0]*dx)}" stroke="${m[2]||PHG}" stroke-width="2.4"/>`;});
+  return s;}
+/* --- key: colour swatch + label, in columns --- */
+function keyRow(x,y,items,o={}){
+  let s='';items.forEach((it,i)=>{const px=x+(o.cw?i*o.cw:0),py=y+(o.cw?0:i*(o.rh||17));
+    s+=`<rect x="${px}" y="${py-8}" width="12" height="11" rx="2" fill="${it[1]}" stroke="${INK}" stroke-width=".6"/>`+T(px+18,py,it[0],'note start '+(o.fs||'f11'));});
+  return s;}
+/* ===================== Part I · the three routes ===================== */
+const DNAF='#C8A96A';
+/* a short naked DNA fragment */
+function frag(x,y,w,col){return `<path d="M${x} ${y} h${w}" stroke="${col||CHR}" stroke-width="3.4" stroke-linecap="round"/>`
+  +`<path d="M${x} ${FX(y+5)} h${w}" stroke="${col||CHR}" stroke-width="3.4" stroke-linecap="round" opacity=".55"/>`;}
+
+function scH1(n){
+  let s='';
+  const R=[['Transformation','free DNA from the environment',INTC],
+           ['Conjugation','cell-to-cell contact, a dedicated machine',PLS],
+           ['Transduction','a phage particle carries the DNA',PHG]];
+  const pic=(cx,cy,k)=>{
+    if(k===0)return cellRod(cx,cy,56,19,{})+frag(cx-14,cy-34,28,INTC)+arw(cx,cy-22,cx,cy-11,{blue:1});
+    if(k===1)return cellRod(cx-38,cy,46,17,{})+cellRod(cx+38,cy,46,17,{})
+      +`<path d="M${cx-15} ${cy} H${cx+15}" stroke="${PLS}" stroke-width="5"/>`
+      +`<circle cx="${cx-30}" cy="${cy}" r="7" fill="none" stroke="${PLS}" stroke-width="2.4"/>`
+      +`<circle cx="${cx+30}" cy="${cy}" r="7" fill="none" stroke="${PLS}" stroke-width="2.4" stroke-dasharray="3 2"/>`;
+    return cellRod(cx,cy+6,56,19,{})+phIcon(cx,cy-40,.78)+arw(cx,cy-12,cx,cy-2,{blue:1});
+  };
+  if(!n){R.forEach((r,i)=>{const cx=106+i*214;
+    s+=G('a-fade',(i*.5).toFixed(1),pic(cx,96,i)+T(cx,150,r[0],'cname mid f15')
+      +wrap(r[1],26).map((l,j)=>T(cx,170+j*16,l,'note mid f12')).join(''));});}
+  else{R.forEach((r,i)=>{const cy=74+i*118;
+    s+=G('a-fade',(i*.5).toFixed(1),pic(96,cy,i)+T(176,cy-6,r[0],'cname start f14')
+      +wrap(r[1],22).map((l,j)=>T(176,cy+12+j*15,l,'note start f12')).join(''));});}
+  const y=n?74+2*118+70:206;
+  const b=bullets(n?24:30,y,[['One-way, piecemeal, and unrelated to reproduction','None of these is sex. A fragment of DNA moves from a donor to a recipient, the recipient keeps what it can, and no new cell is made in the process.'],
+   ['The element usually decides','Transformation is a property of the recipient; conjugation and transduction are properties of the element or the phage. Asking “how often does this species recombine” and “what moves it” are different questions.'],
+   ['All three end the same way','The incoming DNA must either recombine into the chromosome, or be able to replicate on its own. Otherwise it is diluted out and lost within a few divisions.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scH2(n){
+  let s='', y;
+  if(!n){
+    const my=100;
+    s+=G('a-fade',0,`<rect x="214" y="56" width="392" height="88" rx="10" fill="${CELLF}" stroke="${CELLE}" stroke-width="2"/>`
+      +Tc(232,74,'inside the competent cell','#6A5B47',10,'mono start'));
+    s+=G('a-fade',.3,frag(36,my-2,112,INTC)+T(36,46,'donor double-stranded DNA','note start f11'));
+    s+=G('a-fade',.5,arw(156,my,200,my,{blue:1}));
+    s+=G('a-fade',.7,`<rect x="206" y="${my-20}" width="16" height="40" rx="3" fill="${INTC}" stroke="${INK}"/>`
+      +Tc(214,46,'ComEA / ComEC','#2E7D78',10,'mono mid','600'));
+    s+=G('a-fade',1,`<path d="M232 ${my} H330" stroke="${INTC}" stroke-width="3.4" stroke-linecap="round"/>`
+      +Tc(36,172,'one strand enters; the other is degraded outside','#6A5B47',10,'mono start'));
+    s+=G('a-fade',1.3,prot(372,my,22,14,RECC,'RecA')+arw(336,my,350,my,{blue:1}));
+    s+=G('a-fade',1.6,`<path d="M408 ${my} H586" stroke="${CHR}" stroke-width="3"/>`
+      +`<path d="M470 ${my} h44" stroke="${INTC}" stroke-width="5"/>`
+      +Tc(586,96,'chromosome','#6A5B47',10,'mono end')
+      +Tc(432,172,'recombined in as a patch','#6A5B47',10,'mono start'));
+    y=196;
+  } else {
+    s+=G('a-fade',0,frag(26,54,130,INTC)+T(26,40,'donor dsDNA','note start f11'));
+    s+=G('a-fade',.4,arw(90,70,90,96,{blue:1}));
+    s+=G('a-fade',.6,`<rect x="24" y="106" width="312" height="96" rx="10" fill="${CELLF}" stroke="${CELLE}" stroke-width="2"/>`
+      +`<rect x="82" y="100" width="34" height="14" rx="3" fill="${INTC}" stroke="${INK}"/>`
+      +Tc(124,112,'ComEA / ComEC','#2E7D78',10,'mono start','600'));
+    s+=G('a-fade',1,`<path d="M99 120 V152 H150" stroke="${INTC}" stroke-width="3.2" fill="none"/>`
+      +Tc(26,218,'one strand enters; the other','#6A5B47',10,'mono start')
+      +Tc(26,232,'is degraded outside','#6A5B47',10,'mono start'));
+    s+=G('a-fade',1.3,prot(190,152,20,13,RECC,'RecA'));
+    s+=G('a-fade',1.6,`<path d="M212 152 H330" stroke="${CHR}" stroke-width="3"/>`
+      +`<path d="M250 152 h32" stroke="${INTC}" stroke-width="5"/>`
+      +Tc(330,178,'chromosome','#6A5B47',10,'mono end'));
+    y=256;
+  }
+  s+=G('a-fade',1.6,T(n?16:24,y,'Competence in the pneumococcus','cname start f14'));y+=22;
+  const q=para(n?16:24,y,'Competence is not permanent. The cell exports a small peptide, CSP, encoded by comC; when enough of it accumulates the ComD–ComE two-component system fires, the alternative sigma factor ComX is made, and for about twenty minutes roughly a hundred genes are on and the cell can take up DNA. Then the window closes.',n?50:92,'note start f13',17,1.8);
+  const b=bullets(n?24:30,q.y+12,[['Quorum, but on the cell’s own terms','The same CSP signal also induces fratricide: competent cells kill their non-competent neighbours with CbpD and LytA, releasing exactly the homologous DNA they are best able to take up.'],
+   ['Natural competence is widespread but not universal','Streptococcus, Neisseria, Haemophilus, Bacillus, Vibrio and Acinetobacter are all naturally transformable. E. coli is not, in the laboratory sense — its competence is induced artificially.'],
+   ['Homology is required','The incoming single strand is handed to RecA and recombined into the chromosome. Without an existing similar sequence there is nowhere for it to go, which is why transformation mostly shuffles alleles rather than importing wholly novel genes.']],n?44:88,{d0:2.2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+q.s+b.s};
+}
+
+function scH3(n){
+  let s='';const cy=n?88:96, L=n?118:160, R=n?15:19;
+  const dx=n?84:132, cx=n?180:320;
+  s+=G('a-fade',0,cellRod(cx-dx,cy,L,R,{})+T(cx-dx,cy+R+18,'donor','note mid f11'));
+  s+=G('a-fade',.2,cellRod(cx+dx,cy,L,R,{})+T(cx+dx,cy+R+18,'recipient','note mid f11'));
+  /* plasmid rings */
+  s+=G('a-fade',.4,pRing(cx-dx,cy,13,{col:PLS,w:2.6,feats:[{a0:-30,a1:20,col:TNC,lab:''}]})
+    +Tc(cx-dx,cy-26,'oriT','#7D4A98',10,'mono mid','600'));
+  /* pilus / mating bridge */
+  const bx1=cx-dx+L/2-4, bx2=cx+dx-L/2+4;
+  s+=G('a-fade',.7,`<path d="M${FX(bx1)} ${cy} H${FX(bx2)}" stroke="${PLS}" stroke-width="7" stroke-linecap="round"/>`
+    +`<path d="M${FX(bx1)} ${cy} H${FX(bx2)}" stroke="#E7DEC9" stroke-width="2.6"/>`
+    +Tc((bx1+bx2)/2,cy-16,'T4SS','#7D4A98',11,'mono mid','600')
+    +Tc((bx1+bx2)/2,cy+22,'mating pair','#6A5B47',10,'mono mid'));
+  s+=G('a-fade',1.1,`<path d="M${FX(bx1)} ${FX(cy+1)} H${FX(bx2)}" stroke="${TNC}" stroke-width="2.6" stroke-dasharray="5 3"/>`);
+  s+=G('a-fade',1.4,pRing(cx+dx,cy,13,{col:PLS,w:2.6,dash:'4 3'}));
+  let y=cy+(n?54:62);
+  const steps=[['Relaxase nicks at oriT','A dedicated enzyme cuts one strand at a specific site, the nic site, and stays covalently attached to its 5′ end.'],
+   ['The nucleoprotein is pumped through','The T4SS is a secretion machine; it transfers the relaxase with its single strand, not a naked plasmid, into the recipient.'],
+   ['Both cells fill in the second strand','Rolling-circle replication in the donor and in the recipient, so at the end both cells have a complete plasmid.'],
+   ['The recipient becomes a donor','Which is why a conjugative plasmid can sweep through a dense population in hours.']];
+  if(n){steps.forEach((st,i)=>{const b=boxItem(16,y,332,st[0],st[1],{num:i+1,cw:6.1});s+=G('a-fade',(1.6+i*.3).toFixed(1),b.s);y+=b.h+9;});}
+  else{for(let r=0;r<2;r++){const a=boxItem(24,y,288,steps[2*r][0],steps[2*r][1],{num:2*r+1}),bb=boxItem(328,y,288,steps[2*r+1][0],steps[2*r+1][1],{num:2*r+2}),h=Math.max(a.h,bb.h);
+    s+=G('a-fade',(1.6+r*.4).toFixed(1),boxItem(24,y,288,steps[2*r][0],steps[2*r][1],{num:2*r+1,H:h}).s+boxItem(328,y,288,steps[2*r+1][0],steps[2*r+1][1],{num:2*r+2,H:h}).s);y+=h+11;}}
+  const b2=bullets(n?24:30,y+8,[['Conjugative, mobilizable, or neither','A conjugative element carries both oriT and the whole secretion system. A mobilizable one carries only oriT and a relaxase, and borrows a machine from a co-resident element. Most small resistance plasmids are mobilizable.'],
+   ['Gram-positive conjugation needs no pilus','In Enterococcus and Streptococcus the mating pair forms through aggregation substances and surface adhesins rather than a long pilus, but the oriT–relaxase–T4SS logic is the same.']],n?44:88,{d0:2.6,gap:24});
+  return {vb:n?slim(b2.y-6):wide(b2.y-6),s:s+b2.s};
+}
+
+function scH4(n){
+  const rows=[['Generalized','any part of the host chromosome','A mis-packaging accident: the phage headful machinery grabs host DNA instead of phage DNA. Frequency is low per particle but the lysate samples the whole genome.'],
+   ['Specialized','only genes flanking the prophage site','An imprecise excision of an integrated prophage takes neighbouring host DNA with it. Classic example: λ and the gal and bio operons of E. coli.'],
+   ['Lateral','long stretches downstream of the prophage','The prophage replicates in place before excising, so packaging runs on into hundreds of kilobases of host DNA at very high frequency. Described in Staphylococcus aureus.'],
+   ['Gene transfer agents','random small pieces, by a domesticated phage','A phage-like particle encoded by the host genome that packages host DNA too small to encode itself. Found in Rhodobacter and other alphaproteobacteria.']];
+  const t=n?wtable(n,['Kind','What moves / how it happens'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,13],[118,37]],{y0:30})
+          :wtable(n,['Kind','What moves','How it happens'],rows,[[24,14],[150,20],[330,40]],{y0:30});
+  const b=bullets(n?24:30,t.y+14,[['A transducing particle is a dead end for the phage','It carries no phage genome, so it injects and nothing lyses. For the recipient it is simply a very efficient DNA delivery vehicle.'],
+   ['Transduction does not need competence','Which makes it the main route in species that are not naturally transformable, and the reason phages matter for the spread of resistance and toxin genes.'],
+   ['Phage-inducible chromosomal islands','Elements such as the staphylococcal SaPIs hijack a helper phage’s packaging machinery to spread themselves, redirecting it to small capsids that fit the island but not the phage.']],n?44:88,{d0:1.4,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:t.s+b.s};
+}
+/* ===================== Part II · mobile elements ===================== */
+/* inverted-repeat triangle */
+function irTri(x,w,y,dir,col){const h=13;
+  return dir>0?`<path d="M${x} ${FX(y-h/2)} L${FX(x+w)} ${y} L${x} ${FX(y+h/2)} Z" fill="${col||TNC}" stroke="${INK}" stroke-width=".7"/>`
+    :`<path d="M${FX(x+w)} ${FX(y-h/2)} L${x} ${y} L${FX(x+w)} ${FX(y+h/2)} Z" fill="${col||TNC}" stroke="${INK}" stroke-width=".7"/>`;}
+function dnaLine(x,w,y,col){return `<path d="M${x} ${y} h${w}" stroke="${col||'#C9BFAB'}" stroke-width="5" stroke-linecap="round"/>`;}
+
+function scH5(n){
+  let s='';const x=n?18:40, W=n?324:560, y=n?52:56, rw=14;
+  const row=(yy,label,body)=>{let t=dnaLine(x,W,yy,'#D6CDB8')+T(x,yy-20,label,'note start f11');
+    return t+body(yy);};
+  /* 1: IS element */
+  s+=G('a-fade',0,row(y,'insertion sequence — about 1 kb',yy=>{
+    const a=x+W*.30, b=x+W*.62;
+    return irTri(a,rw,yy,1,TNC)+irTri(b-rw,rw,yy,-1,TNC)+gArrow(a+rw+4,yy,b-a-2*rw-8,'tnp',TNC,{h:15});}));
+  /* 2: composite transposon */
+  const y2=y+(n?76:78);
+  s+=G('a-fade',.5,row(y2,'composite transposon — two IS copies flanking cargo',yy=>{
+    const a=x+W*.12, b=x+W*.88, m1=a+W*.18, m2=b-W*.18;
+    return irTri(a,rw,yy,1,TNC)+gArrow(a+rw+3,yy,m1-a-rw-6,'tnp',TNC,{h:15})
+      +gArrow(m1+4,yy,m2-m1-8,'resistance cargo',METC,{h:15})
+      +gArrow(m2+4,yy,b-rw-m2-7,'tnp',TNC,{h:15})+irTri(b-rw,rw,yy,-1,TNC);}));
+  /* 3: unit transposon Tn3 */
+  const y3=y2+(n?76:78);
+  s+=G('a-fade',1,row(y3,'unit transposon — Tn3 family, one set of inverted repeats',yy=>{
+    const a=x+W*.12, b=x+W*.88;
+    return irTri(a,rw,yy,1,TNC)+gArrow(a+rw+3,yy,W*.22,'tnpA',TNC,{h:15})
+      +gArrow(a+rw+6+W*.22,yy,W*.16,'tnpR',RECC,{h:15})
+      +gArrow(a+rw+9+W*.38,yy,b-rw-(a+rw+9+W*.38)-3,'bla',METC,{h:15})+irTri(b-rw,rw,yy,-1,TNC);}));
+  let yy=y3+(n?46:48);
+  const b=bullets(n?24:30,yy,[['Cut-and-paste or copy-and-paste','Conservative transposition excises the element and moves it, leaving a double-strand break behind. Replicative transposition copies it through a cointegrate that is then resolved by TnpR at the res site — which is why Tn3 carries a resolvase.'],
+   ['Target-site duplication is the fingerprint','The transposase staggers its cut, and filling in the gaps leaves a short direct repeat of host sequence on either side. Finding one in a genome is how you recognise a past insertion.'],
+   ['Insertion sequences are mutagens in their own right','An IS landing in a gene inactivates it; landing upstream it can supply a promoter and switch a silent gene on. Both are common ways that laboratory strains and clinical isolates change phenotype.'],
+   ['Mobile element load varies enormously','Free-living generalists carry dozens of IS copies; recently host-restricted pathogens often carry hundreds, caught mid-way through genome decay; ancient endosymbionts have none left.']],n?44:88,{d0:1.5,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scH6(n){
+  let s='',yy;
+  const title=n?['An integron is a gene-capture platform,','not a mobile element itself']:['An integron is a gene-capture platform, not a mobile element itself'];
+  s+=G('a-fade',0,title.map((l,i)=>T(n?16:24,26+i*17,l,'cname start '+(n?'f13':'f14'))).join(''));
+  if(!n){
+    const x=36, W=570, y=74;
+    s+=G('a-fade',.2,dnaLine(x,W,y,'#D6CDB8'));
+    const w1=W*.22;
+    s+=G('a-fade',.4,gArrow(x+4,y,w1,'intI',RECC,{h:16})
+      +`<rect x="${FX(x+w1+8)}" y="${FX(y-7)}" width="16" height="14" rx="2" fill="${INTC}" stroke="${INK}" stroke-width=".7"/>`
+      +Tc(x+w1+16,y-14,'attI','#2E7D78',10,'mono mid','600')
+      +Tc(x+4,y+26,'Pc — one promoter for everything downstream','#6A5B47',10,'mono start'));
+    const c0=x+w1+30, cw=(W-w1-40)/3;
+    ['cassette 1','cassette 2','cassette 3'].forEach((c,i)=>{
+      s+=G('a-fade',(.8+i*.35).toFixed(2),gArrow(c0+i*cw,y,cw-16,c,METC,{h:16})
+        +`<circle cx="${FX(c0+i*cw+cw-8)}" cy="${y}" r="6" fill="#E7DEC9" stroke="${INTC}" stroke-width="1.6"/>`
+        +Tc(FX(c0+i*cw+cw-8),y-14,'attC','#2E7D78',9,'mono mid','600'));});
+    s+=G('a-fade',2,arw(c0+2*cw+cw/2,y+44,c0+cw/2,y+44,{blue:1})
+      +Tc(c0+cw,y+62,'new cassettes insert at attI, nearest the promoter','#6A5B47',10,'mono mid'));
+    yy=y+90;
+  } else {
+    const x=20, W=320, y=84;
+    s+=G('a-fade',.2,dnaLine(x,W*.62,y,'#D6CDB8'));
+    s+=G('a-fade',.4,gArrow(x+4,y,132,'intI',RECC,{h:16})
+      +`<rect x="146" y="${y-7}" width="16" height="14" rx="2" fill="${INTC}" stroke="${INK}" stroke-width=".7"/>`
+      +Tc(154,y-14,'attI','#2E7D78',10,'mono mid','600')
+      +Tc(186,y+4,'Pc drives all of them','#6A5B47',10,'mono start'));
+    const y2=y+52;
+    s+=G('a-fade',.7,dnaLine(x,W,y2,'#D6CDB8'));
+    ['c1','c2','c3'].forEach((c,i)=>{const cx0=x+4+i*104;
+      s+=G('a-fade',(.9+i*.3).toFixed(2),gArrow(cx0,y2,82,c,METC,{h:16})
+        +`<circle cx="${FX(cx0+92)}" cy="${y2}" r="6" fill="#E7DEC9" stroke="${INTC}" stroke-width="1.6"/>`
+        +Tc(FX(cx0+92),y2-14,'attC','#2E7D78',9,'mono mid','600'));});
+    s+=G('a-fade',1.9,arw(300,y2+26,60,y2+26,{blue:1})
+      +Tc(20,y2+46,'new cassettes insert at attI,','#6A5B47',10,'mono start')
+      +Tc(20,y2+60,'nearest the promoter','#6A5B47',10,'mono start'));
+    yy=y2+86;
+  }
+  const b=bullets(n?24:30,yy,[['A site-specific recombinase plus an array','IntI excises a cassette as a covalently closed circle and inserts it at attI. Cassettes are usually a single promoterless open reading frame with an attC site; expression depends entirely on position in the array.'],
+   ['Order is expression','A cassette that moves to the front is expressed more; one pushed to the back falls silent but is not lost. The array is a reversible archive, which is why integrons can carry resistance genes at no cost until they are needed.'],
+   ['Chromosomal versus mobile','Sedentary chromosomal integrons, such as the superintegron of Vibrio cholerae with its hundreds of cassettes, are ancient. Class 1, 2 and 3 integrons are the clinically important ones: small arrays that have been captured by transposons and plasmids and spread worldwide.'],
+   ['Not self-mobile','An integron moves only when something else carries it. The class 1 integron of resistance plasmids sits inside a Tn402-family transposon, which sits inside a conjugative plasmid — mobility by nesting.']],n?44:88,{d0:2.2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scH7(n){
+  let s='';const cx=n?180:320, cy=n?92:96;
+  const W=n?300:420, x=cx-W/2;
+  /* chromosome with integrated ICE */
+  s+=G('a-fade',0,dnaLine(x,W,cy,'#D6CDB8')
+    +`<rect x="${FX(x+W*.34)}" y="${FX(cy-8)}" width="${FX(W*.32)}" height="16" rx="2" fill="${PLS}" fill-opacity=".45" stroke="${PLS}" stroke-width="1.4"/>`
+    +Tc(cx,cy-18,'ICE, integrated','#7D4A98',11,'mono mid','600')
+    +Tc(x+W*.34,cy+22,'attL','#2E7D78',10,'mono mid','600')+Tc(x+W*.66,cy+22,'attR','#2E7D78',10,'mono mid','600'));
+  const ry=cy+(n?74:72);
+  s+=G('a-fade',.7,arw(cx,cy+32,cx,ry-26,{blue:1})+Tc(cx+10,cy+48,'excision','#6A5B47',10,'mono start'));
+  const lx=cx-(n?74:118), rx2=cx+(n?80:118);
+  s+=G('a-fade',1,pRing(lx,ry,20,{col:PLS,w:3,feats:[{a0:-50,a1:20,col:METC,lab:'cargo'},{a0:160,a1:230,col:TNC,lab:'int'}]})
+    +T(lx,ry+54,'circular intermediate','note mid f11'));
+  s+=G('a-fade',1.4,cellRod(rx2,ry,n?96:124,18,{})
+    +arw(lx+28,ry,rx2-(n?52:66),ry,{blue:1})
+    +`<circle cx="${rx2}" cy="${ry}" r="7" fill="none" stroke="${PLS}" stroke-width="2.4" stroke-dasharray="3 2"/>`
+    +T(rx2,ry+40,'conjugates into a new cell,','note mid f11')
+    +T(rx2,ry+54,'then integrates again','note mid f11'));
+  let y=ry+(n?82:84);
+  const b=bullets(n?24:30,y,[['Integrative and conjugative elements','An ICE spends most of its life quietly integrated in the chromosome, replicating as part of it. On induction it excises, circularises, transfers by its own T4SS, and integrates into the recipient. Plasmid-like in transfer, phage-like in integration.'],
+   ['They are usually the biggest cargo carriers','ICEs run from twenty to several hundred kilobases and routinely carry resistance, metabolic or virulence modules. SXT in Vibrio cholerae and ICEBs1 in Bacillus subtilis are the best-studied.'],
+   ['Tn916 and the streptococci','The Tn916–Tn1545 family are small conjugative transposons of the ICE type. They carry tetM, and in Tn1545 ermB as well, and are the main vehicle of tetracycline and macrolide resistance in Streptococcus pneumoniae, usually embedded in larger composite elements such as Tn2009 and Tn2010.'],
+   ['Integration site tells you the family','Many ICEs integrate into a tRNA gene, restoring it on insertion, which is why tRNA loci are hotspots when you look for genomic islands.']],n?44:88,{d0:2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+/* ===================== Part III · barriers and consequences ===================== */
+function scH8(n){
+  const rows=[['Getting there','a cell must meet the DNA','Physical proximity, a phage with the right receptor, or a mating pair. Most environmental DNA never meets a cell that can use it.'],
+   ['Getting in','uptake specificity','Neisseria and Haemophilus take up DNA efficiently only if it carries a short uptake sequence common in their own genomes — a self-recognition filter. Surface exclusion stops a plasmid entering a cell that already has one like it.'],
+   ['Surviving','restriction–modification, CRISPR, and the rest','Incoming DNA that is not methylated in the host pattern is cut. CRISPR arrays remember previous invaders. Abortive infection systems kill the cell rather than let the element spread.'],
+   ['Being kept','homology, or an origin of replication','Chromosomal integration by RecA needs sequence similarity, roughly a few hundred base pairs with few mismatches; mismatch repair actively aborts recombination between diverged sequences. Anything else must replicate itself or be lost.'],
+   ['Being tolerated','expression and cost','Foreign DNA with unusual codon usage, strong promoters or toxic products is a burden. H-NS silences AT-rich incoming sequence in enterics; genes that are not worth their cost are deleted within a few hundred generations.']];
+  const t=n?wtable(n,['Step','The barrier, and what it does'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,10],[98,41]],{y0:30})
+          :wtable(n,['Step','Barrier','What it does'],rows,[[24,13],[140,22],[340,42]],{y0:30});
+  const p=para(n?16:24,t.y+14,'Every one of these is a filter, and they multiply. That is why the measured rate of transfer in the laboratory is so low and the evidence for transfer in genomes is so abundant: rare events, enormous populations, and very long times.',n?50:92,'note start f13',17,1.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+}
+
+function scH9(n){
+  let s=G('a-fade',0,T(n?16:24,28,'Not all genes move equally well','cname start f14'));
+  const bars=[['Ribosomal proteins',0.6,CORE],['RNA polymerase subunits',0.8,CORE],['tRNA synthetases',2,CORE],
+   ['Central metabolism',5,SHELL],['Transport and uptake',9,SHELL],['Resistance and detoxification',14,PHG],['Restriction–modification',15,PHG]];
+  s+=G('a-fade',.3,barRow(n?16:24,62,n?130:280,bars.map(b=>[b[0],b[1],b[2],'']),16,{bx:n?176:300,rh:n?30:28,fs:n?'f11':'f12'}));
+  let y=62+bars.length*(n?30:28)+(n?10:14);
+  s+=G('a-fade',1.2,Tc(n?16:24,y,'rarely transferred  →  frequently transferred','#6A5B47',11,'mono start'));
+  y+=n?28:30;
+  const b=bullets(n?24:30,y,[['The complexity hypothesis','Genes whose products work alone transfer easily. Genes whose products sit inside a large, co-evolved complex — the ribosome, RNA polymerase — do not, because a foreign subunit will not fit the resident machine. This is why these genes still make usable phylogenetic markers.'],
+   ['Operational versus informational','Metabolism, transport, resistance and defence are the operational genes, and they move constantly. Replication, transcription and translation are informational, and they are the conserved core.'],
+   ['Which is why 16S still works','Woese could build a tree of life from the small-subunit ribosomal RNA precisely because it is one of the least transferable sequences in the cell. The rest of the genome is a much messier record.'],
+   ['And why “the” bacterial tree is a simplification','A core-genome tree and an accessory-gene network describe the same isolates and disagree by design. Both are correct; they answer different questions.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scH10(n){
+  let s='';const y=n?68:62, x=n?18:40, W=n?324:560;
+  s+=G('a-fade',0,T(n?16:24,28,'Mosaic penicillin-binding protein genes','cname start f14'));
+  const seg=(yy,segs)=>segs.map(sg=>`<rect x="${FX(x+sg[0]*W)}" y="${FX(yy-8)}" width="${FX(sg[1]*W)}" height="16" fill="${sg[2]}" stroke="${INK}" stroke-width=".6"/>`).join('');
+  s+=G('a-fade',.3,seg(y,[[0,1,'#D6CDB8']])+T(x,y-18,'pbp2x of a susceptible pneumococcus','note start f11'));
+  s+=G('a-fade',.7,seg(y+52,[[0,1,INTC]])+T(x,y+52-18,'the same gene in a commensal streptococcus','note start f11'));
+  s+=G('a-fade',1.2,seg(y+110,[[0,.18,'#D6CDB8'],[.18,.14,INTC],[.32,.12,'#D6CDB8'],[.44,.22,INTC],[.66,.09,'#D6CDB8'],[.75,.13,INTC],[.88,.12,'#D6CDB8']])
+    +T(x,y+110-18,'a resistant clinical isolate: blocks of each','note start f11'));
+  let yy=y+110+(n?40:44);
+  const b=bullets(n?24:30,yy,[['Resistance assembled, not invented','Low-affinity PBP alleles were built up in Streptococcus pneumoniae by repeated transformation with DNA from oral commensals such as S. mitis, block by block. No single mutation gives high-level β-lactam resistance; a mosaic does.'],
+   ['Capsule switching','Recombination across the cps locus replaces one serotype with another in an otherwise unchanged genetic background. After conjugate vaccines, vaccine-type clones that acquired a non-vaccine capsule expanded — the same clone, a different coat.'],
+   ['Pathogenicity islands','Large blocks with atypical composition, often beside a tRNA gene and flanked by direct repeats, carrying virulence factors as a unit. The LEE of enteropathogenic E. coli and the SPI islands of Salmonella are the textbook cases.'],
+   ['Resistance spreads faster than lineages do','The clinically important fact: the gene, the cassette, the transposon and the plasmid each spread on their own timescale, so tracking the strain and tracking the resistance determinant are two different surveillance problems.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+/* interactive: which route? */
+const ROUTE=[
+ {q:'DNase added to the medium abolishes transfer.',a:'Transformation',t:'Free DNA has to cross the medium, so it is accessible to DNase. Conjugation passes DNA through a sealed junction and transduction protects it inside a capsid; neither is affected.'},
+ {q:'Transfer requires the two strains to be in physical contact, and fails across a membrane filter.',a:'Conjugation',t:'This is the Davis U-tube logic. A filter that lets molecules and phage particles through but not cells abolishes conjugation and nothing else.'},
+ {q:'A cell-free filtrate of the donor culture transfers the marker, and DNase does not stop it.',a:'Transduction',t:'The DNA is inside a protein coat, so it survives DNase and passes a filter. This is exactly how Zinder and Lederberg distinguished it from conjugation in Salmonella in 1952.'},
+ {q:'Transfer happens only during a narrow window of the growth curve and needs no donor cell to be alive.',a:'Transformation',t:'Competence in Streptococcus pneumoniae is induced by CSP at a particular density and lasts about twenty minutes. The donor DNA can come from lysed cells, so the donor need not be viable.'},
+ {q:'The recipient acquires a large block of genes that integrates beside a tRNA gene and can later transfer onward by contact.',a:'Conjugation (an ICE)',t:'Integration at a tRNA locus, a defined size block, and the ability to re-transfer are the signature of an integrative and conjugative element rather than a plasmid or a transduced fragment.'},
+ {q:'Only genes close to one particular chromosomal locus are ever co-transferred.',a:'Transduction (specialized)',t:'A prophage excising imprecisely can only take what is next to it. Generalized transduction, by contrast, samples the whole chromosome in small linked blocks.'},
+ {q:'A resistance gene appears in unrelated species on the same small circular replicon.',a:'Conjugation (a mobilizable plasmid)',t:'The same replicon crossing species boundaries points to a plasmid, usually a small mobilizable one borrowing a conjugation machine. Transduction is largely limited by phage host range, and transformation requires chromosomal homology.'}];
+let rSel=0;
+function scH11(n){
+  const q=ROUTE[rSel];let s='',y=34;
+  const Q=wrap(q.q,n?36:60);
+  s+=G('a-fade',0,Q.map((l,i)=>T(n?16:24,y+i*22,l,'cname start')).join(''));y+=Q.length*22+14;
+  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="28" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +Tc(n?26:38,y+1,q.a,'#2F5276',n?13:14,'mono start','600'));
+  y+=28;
+  const p=para(n?16:24,y,q.t,n?50:92,'note start f13',17,.6);
+  let yy=p.y+16;
+  s+=G('a-fade',1.2,T(n?16:24,yy,'All the observations','mono acc start f11'));
+  yy+=18;
+  ROUTE.forEach((x,i)=>{const L=wrap(x.q,n?42:76);
+    s+=G('a-fade',(1.3+i*.06).toFixed(2),(i===rSel?`<rect x="${n?10:18}" y="${yy-12}" width="${n?342:600}" height="${L.length*15+6}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`:'')
+      +`<circle cx="${n?22:30}" cy="${yy-5}" r="4" fill="${i===rSel?PLS:'#C9BFAB'}" stroke="${INK}" stroke-width=".6"/>`
+      +L.map((l,j)=>T(n?36:44,yy+j*15,l,'note start f12')).join(''));
+    yy+=L.length*15+8;});
+  return {vb:n?slim(yy+8):wide(yy+10),s:s+p.s};
+}
+
+const NAR='Narrator';
+const S=[
+ {p:1,title:'Three ways in',draw:scH1,text:"Bacteria acquire DNA from other cells by three routes. In transformation the cell takes up naked DNA from its surroundings. In conjugation a donor builds a machine and pumps DNA directly into a recipient. In transduction a phage particle delivers it. None of these is reproduction; all of them are one-way and piecemeal."},
+ {p:1,title:'Transformation and competence',draw:scH2,text:"Natural transformation is a programmed state of the recipient, not an accident. In the pneumococcus a secreted peptide signal switches on about a hundred genes for roughly twenty minutes; the cell builds an uptake machine, imports one strand of a DNA fragment, and hands it to RecA. The same signal makes competent cells kill their neighbours to supply the DNA."},
+ {p:1,title:'Conjugation',draw:scH3,text:"Conjugation moves a single strand of DNA, nicked at a specific site and led by the enzyme that nicked it, through a type IV secretion system into a recipient in contact with the donor. Both cells end with a complete copy, and the new recipient can immediately donate in turn. Elements that carry only the origin of transfer borrow a machine from a neighbour."},
+ {p:1,title:'Transduction',draw:scH4,text:"A phage that mis-packages host DNA becomes a delivery vehicle. Generalized transduction samples the whole chromosome; specialized transduction moves only what lies beside the prophage; lateral transduction, found in Staphylococcus aureus, moves very long stretches at remarkably high frequency. None of these needs the recipient to be competent."},
+ {p:2,title:'Insertion sequences and transposons',draw:scH5,text:"The simplest mobile element is an insertion sequence: a transposase flanked by inverted repeats. Put two of them around a cargo and you have a composite transposon that moves resistance genes as a unit. Transposition leaves a short duplication of the target site, which is how past insertions are recognised in a genome."},
+ {p:2,title:'Integrons',draw:scH6,text:"An integron is not itself mobile. It is a recombination platform: an integrase, an insertion site, and a single promoter, capturing promoterless gene cassettes and expressing them according to their position in the array. Class 1 integrons riding inside transposons inside conjugative plasmids are the reason multidrug resistance cassettes travel as sets."},
+ {p:2,title:'Integrative and conjugative elements',draw:scH7,text:"An ICE combines both lifestyles: it sits integrated in the chromosome like a prophage, then excises, circularises and transfers by conjugation using a secretion system it encodes itself. ICEs are the largest routine cargo carriers in bacteria, and the Tn916 family carries much of the tetracycline and macrolide resistance found in streptococci."},
+ {p:3,title:'Why transfer is rare',draw:scH8,text:"Between donor DNA and a stably inherited gene lie five filters: meeting a cell, getting through the envelope, surviving the defence systems, finding either homology or an origin of replication, and being worth its cost. Each is leaky, and their product is very small — which is why laboratory frequencies are low while genomic evidence of transfer is everywhere."},
+ {p:3,title:'What moves and what does not',draw:scH9,text:"Transfer is not uniform across the genome. Genes whose products operate alone move freely; genes whose products are subunits of large co-evolved complexes almost never do, because a foreign part will not fit the resident machine. That is the complexity hypothesis, and it is why ribosomal RNA remains a usable marker for descent."},
+ {p:3,title:'Consequences you can see',draw:scH10,text:"The clearest evidence is in the sequences themselves. Penicillin resistance in the pneumococcus is a mosaic of blocks imported from commensal streptococci; capsule switching replaces the vaccine target while leaving the genome otherwise intact; pathogenicity islands arrive as whole functional modules. Strains and the resistance genes they carry spread on different timescales."},
+ {p:3,title:'Diagnosing the route',chips:'route',draw:scH11,text:"The classical experiments distinguished these mechanisms by simple physical arguments: does DNase abolish it, does a filter abolish it, does a cell-free lysate suffice. Pick an observation to see which route it points to and why. The same reasoning still applies to a modern genome."}];
+const CHIPS={route:{list:ROUTE.map((q,i)=>String(i+1)),get:()=>rSel,set:k=>rSel=k}};
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+const NPARTS=Math.max(...S.map(s=>s.p));
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  for(let k=1;k<=NPARTS;k++)$('part'+k).setAttribute('aria-current',sc.p===k);
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+for(let k=1;k<=NPARTS;k++)$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>
