@@ -7,9 +7,9 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | # | Primer | Plates | Folder |
 |---|---|---|---|
 | I | How DNA Is Copied | 23 | [`decks/dna-replication/`](decks/dna-replication/) |
-| II | How Genes Are Transcribed | 24 | [`decks/transcription/`](decks/transcription/) |
-| III | How Proteins Are Made | 30 | [`decks/translation/`](decks/translation/) |
-| IV | Protein Targeting and Modification | 21 | [`decks/protein-targeting/`](decks/protein-targeting/) |
+| II | How Genes Are Transcribed | 25 | [`decks/transcription/`](decks/transcription/) |
+| III | How Proteins Are Made | 31 | [`decks/translation/`](decks/translation/) |
+| IV | Protein Targeting and Modification | 23 | [`decks/protein-targeting/`](decks/protein-targeting/) |
 | V | How Bacteria Divide | 18 | [`decks/cell-division/`](decks/cell-division/) |
 | VI | Repairing DNA | 21 | [`decks/dna-repair/`](decks/dna-repair/) |
 | VII | Anatomy of a Prokaryotic Gene | 15 | [`decks/prokaryotic-gene/`](decks/prokaryotic-gene/) |

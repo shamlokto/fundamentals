@@ -497,6 +497,42 @@ const READ=[{k:'Wild type',seq:WT,at:-1,text:'Met-Ala-Glu-Gln-Lys-Gly-Phe-Leu, t
  {k:'Nonsense',seq:WT.slice(0,9)+'U'+WT.slice(10),at:9,text:'CAG → UAG is a stop codon. The protein ends after three amino acids.'},
  {k:'Frameshift',seq:WT.slice(0,6)+'A'+WT.slice(6),at:6,text:'One extra A shifts every codon after it. The amino acids that follow are all different, until a stop appears by chance.'}];
 let readSel=0;
+function scVariants(n){
+  const x=n?14:30, W=n?334:580;
+  const rule=(yy)=>`<path d="M${x} ${yy} H${x+W}" stroke="#6A5B47" stroke-width="1"/>`;
+  const rows=[['UGA = Trp','Mycoplasma, Spiroplasma, and most mitochondria','The commonest reassignment of all. A stop codon has become an amino acid independently in many lineages.'],
+   ['UAA, UAG = Gln','ciliates such as Tetrahymena and Paramecium','Two of the three stop codons are read as glutamine, leaving UGA as the only stop.'],
+   ['CUG = Ser','Candida albicans and relatives','A leucine codon reassigned to serine. Expressing a Candida gene in E. coli, or the reverse, gives the wrong protein unless the codons are changed.'],
+   ['AGA, AGG = stop; AUA = Met','vertebrate mitochondria','Mitochondria have small genomes and few tRNAs, and are the most code-divergent compartment known.'],
+   ['UGA = selenocysteine','bacteria, archaea and eukaryotes','Not a reassignment but a recoding: a stem-loop in the message, a dedicated tRNA and a special elongation factor make this one UGA an amino acid. The twenty-first amino acid.'],
+   ['UAG = pyrrolysine','some methanogenic archaea and a few bacteria','The twenty-second amino acid, with its own synthetase and tRNA. This pair is now the workhorse of synthetic genetic code expansion.']];
+  let s=G('a-fade',0,T(x,28,n?'Nearly universal, not quite':'The genetic code is nearly universal — but not quite','cname start '+(n?'f14':'f15')));
+  let y=58;
+  s+=G('a-fade',.2,T(x,y,'Change','cname start '+(n?'f13':'f14'))
+    +T(x+(n?0:W*.30),y,n?'':'Where','cname start f14')
+    +T(x+(n?130:W*.52),y,n?'Where, and what it means':'What it means','cname start '+(n?'f13':'f14'))
+    +rule(y+7));
+  y+=26;
+  rows.forEach((r,i)=>{
+    const c1=wrap(r[0],n?19:16), c2=n?[]:wrap(r[1],20), c3=wrap(n?(r[1]+' — '+r[2]):r[2],n?34:42);
+    const h=Math.max(c1.length,c2.length,c3.length)*15+10;
+    s+=G('a-fade',(.4+i*.18).toFixed(2),(i%2?'':`<rect x="${x-6}" y="${y-14}" width="${W+10}" height="${h}" fill="#E7DEC9" opacity=".5"/>`)
+      +c1.map((l,j)=>T(x,y+j*15,l,'lab start '+(n?'f11':'f12'))).join('')
+      +c2.map((l,j)=>T(x+W*.30,y+j*15,l,'note start f12')).join('')
+      +c3.map((l,j)=>T(x+(n?130:W*.52),y+j*15,l,'note start '+(n?'f11':'f12'))).join(''));
+    y+=h;});
+  y+=14;
+  const notes=[['Reassignment happens where a codon is rare','A codon that has nearly disappeared from a genome can be captured by a new tRNA without wrecking every existing protein. This is why reassignments cluster in small, AT-rich or GC-rich genomes and in mitochondria.'],
+   ['Recoding is different from reassignment','Selenocysteine and pyrrolysine insertion leave the code intact and override it at particular sites, using signals in the message. Programmed frameshifting and stop-codon readthrough do the same thing in a different way, and some phages depend on them.'],
+   ['It matters at the bench','A gene moved between organisms with different codes gives the wrong product. It is also the opening that genetic code expansion exploits: a freed codon, an orthogonal tRNA and synthetase, and an unnatural amino acid goes in at a chosen position.']];
+  notes.forEach((nt,i)=>{const L=wrap(nt[1],n?44:84);
+    s+=G('a-fade',(1.6+i*.3).toFixed(2),badge(x+(n?8:10),y-4,i+1)
+      +T(x+(n?22:26),y,nt[0],'cname start '+(n?'f13':'f14'))
+      +L.map((l,j)=>T(x+(n?22:26),y+17+j*16,l,'note start f12')).join(''));
+    y+=17+L.length*16+16;});
+  return {vb:n?`0 0 360 ${y+10}`:wide(y+12),s};
+}
+
 function scReader(n){
   const m=READ[readSel], seq=m.seq, cods=[];for(let i=0;i+3<=seq.length;i+=3)cods.push(seq.slice(i,i+3));
   const wt=[];for(let i=0;i+3<=WT.length;i+=3)wt.push(WT.slice(i,i+3));
@@ -769,6 +805,8 @@ const S=[
   text:"Sixty-one codons specify amino acids and three, UAA, UAG and UGA, mean stop. AUG codes for methionine and also marks where translation starts. Most amino acids have several codons, which usually differ only in the third base, so many mutations there are silent. With a few exceptions, such as in mitochondria, the same code is used by all life."},
  {p:4,title:'Wobble',draw:scWobble,
   text:"If every codon needed its own tRNA, a cell would need 61. In 1966 Crick proposed that the third codon position pairs loosely with the first anticodon base. A G there can pair with U or C, and inosine, a modified base, can pair with U, C or A. So one tRNA can read several codons, and cells manage with fewer tRNAs."},
+ {p:4,title:'Variants of the code',draw:scVariants,
+  text:"The code is nearly universal, which is why it was long described as frozen — but around thirty variants are now known. Mycoplasma and most mitochondria read UGA as tryptophan; ciliates read two stop codons as glutamine; Candida reads CUG as serine. Selenocysteine and pyrrolysine are different: the code is unchanged and overridden at particular sites by signals in the message. Reassignment happens where a codon has become rare, and the same opening is what genetic code expansion exploits."},
  {p:4,title:'Read the code',chips:'read',draw:scReader,
   text:"Pick a mutation to see how it changes the protein. Notice which kinds of change are harmless, which alter one amino acid, and which wreck everything that follows."},
  {p:5,title:'Starting in eukaryotes',draw:scInitE,
