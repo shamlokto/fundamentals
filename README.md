@@ -14,13 +14,13 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | VI | Repairing DNA | 21 | [`decks/dna-repair/`](decks/dna-repair/) |
 | VII | Anatomy of a Prokaryotic Gene | 15 | [`decks/prokaryotic-gene/`](decks/prokaryotic-gene/) |
 | VIII | Bateson's Epistasis | 15 | [`decks/bateson-epistasis/`](decks/bateson-epistasis/) |
-| IX | Mutation, Selection and Drift | 11 | [`decks/evolution/`](decks/evolution/) |
-| X | Horizontal Gene Transfer | 11 | [`decks/gene-transfer/`](decks/gene-transfer/) |
-| XI | Plasmid Biology | 11 | [`decks/plasmids/`](decks/plasmids/) |
-| XII | Bacterial Defence Systems | 11 | [`decks/defence-systems/`](decks/defence-systems/) |
-| XIII | Genomes and Pangenomes | 11 | [`decks/genomes/`](decks/genomes/) |
-| XIV | Regulation, Signalling and Development | 11 | [`decks/regulation/`](decks/regulation/) |
-| XV | Epigenetics and Heterogeneity | 11 | [`decks/epigenetics/`](decks/epigenetics/) |
+| IX | Regulation, Signalling and Development | 11 | [`decks/regulation/`](decks/regulation/) |
+| X | Epigenetics and Heterogeneity | 11 | [`decks/epigenetics/`](decks/epigenetics/) |
+| XI | Mutation, Selection and Drift | 11 | [`decks/evolution/`](decks/evolution/) |
+| XII | Horizontal Gene Transfer | 11 | [`decks/gene-transfer/`](decks/gene-transfer/) |
+| XIII | Plasmid Biology | 11 | [`decks/plasmids/`](decks/plasmids/) |
+| XIV | Bacterial Defence Systems | 11 | [`decks/defence-systems/`](decks/defence-systems/) |
+| XV | Genomes and Pangenomes | 11 | [`decks/genomes/`](decks/genomes/) |
 | XVI | Enzyme Kinetics | 23 | [`decks/enzyme-kinetics/`](decks/enzyme-kinetics/) |
 | XVII | Glycans and Glycosyltransferases | 12 | [`decks/glycans/`](decks/glycans/) |
 | XVIII | Tools for Molecular Cloning | 21 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
