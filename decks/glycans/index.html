@@ -80,6 +80,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #stage .ax{stroke:#6A5B47;stroke-width:1.4}
 #stage .tint{filter:url(#plate)}
+#stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
 
 /* Motion */
 .a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
@@ -629,14 +630,15 @@ function scG8(n){
 function scG9(n){
   const genes=[['dexB','#D6CDB8'],['cpsA','#B4766E'],['cpsB','#B4766E'],['cpsC','#B4766E'],['cpsD','#B4766E'],['cpsE','#3E7FA8'],['GTs','#7FA05A'],['wzy','#C99A2E'],['wzx','#A9C4DC'],['rmlABCD','#C9A9D6'],['aliA','#D6CDB8']];
   const W=n?[26,26,26,26,26,28,34,26,26,44,26]:[44,44,44,44,44,50,52,46,46,70,44];
-  let s='',x=n?8:16;const y=n?56:66;
-  s+=G('a-fade',0,`<path d="M${x-4} ${y} H${x+W.reduce((a,b)=>a+b+3,0)}" stroke="${BB}" stroke-width="2"/>`);
+  let s='',x=n?8:16;const y=n?92:80;
+  s+=G('a-fade',0,T(n?8:16,n?28:30,'The serotype 2 locus, drawn as the prototype','cname start f14')+T(n?8:16,n?44:48,'gene content and order differ between serotypes','note start f11')
+    +`<path d="M${x-4} ${y} H${x+W.reduce((a,b)=>a+b+3,0)}" stroke="${BB}" stroke-width="2"/>`);
   genes.forEach((g,i)=>{const w=W[i];s+=G('a-fade',(.1+i*.07).toFixed(2),`<path d="M${x} ${y-9} h${w-7} l7 9 l-7 9 h${-(w-7)}z" fill="${g[1]}" stroke="${INK}" stroke-width=".8"/>`+(n?`<text transform="translate(${x+w/2} ${y-15}) rotate(-42)" class="mono start" style="font-size:8.5px;fill:#3A2E22;font-weight:600">${g[0]}</text>`:Tc(x+w/2,y-15,g[0],'#3A2E22',9.5,'mono mid','600')));x+=w+3;});
   const yy=y+(n?46:40);
-  const rows=[['cpsA–D','in every Wzy-type serotype','CpsA (an LCP protein) links capsule to the wall; CpsC–CpsD form a tyrosine-kinase that tunes how much is made; CpsB reverses it.'],
+  const rows=[['cpsA–D','in every Wzy-type serotype','CpsA is one of three LCP ligases, with LytR and Psr, that attach polymers to the wall; CpsC–CpsD form a tyrosine-kinase that sets chain length; CpsB is the phosphatase that reverses it.'],
    ['cpsE','first variable gene in most types','The initiating phosphoglycosyltransferase: puts the first sugar-phosphate on Und-P.'],
    ['GTs','serotype-specific','Add the rest of the repeat unit, one linkage each.'],
-   ['wzy, wzx','serotype-specific','Polymerase and flippase, matched to that repeat unit.'],
+   ['wzy, wzx','serotype-specific','Polymerase (CpsH in serotype 2) and flippase, matched to that repeat unit.'],
    ['rmlABCD etc.','some serotypes','Make unusual nucleotide sugars such as dTDP-rhamnose.']];
   const t=wtable(n,['Genes','Where','Role'],rows,n?[[8,9],[76,13],[170,28]]:[[24,12],[118,24],[300,48]],{y0:yy,d0:1});
   const p=para(n?16:24,t.y+12,'Streptococcus pneumoniae has roughly 100 capsule serotypes, nearly all built by the Wzx/Wzy route from a cps locus sitting between the housekeeping genes dexB and aliA. The flanking genes are shared; the middle varies by serotype. Bentley and colleagues sequenced 90 loci in 2006.',n?50:92,'note start f13',17,1.8);
@@ -659,7 +661,7 @@ function capsuleScene(n,block){
   {st.push(`<rect x="${X[4]+14}" y="${my-5}" width="15" height="34" rx="4" fill="#B4766E" stroke="${INK}"/>`
      +`<path d="M${X[4]+21} ${my-7} V${wy+wh+2}" stroke="#8C5A1E" stroke-width="1.2" stroke-dasharray="3 2" marker-end="url(#ahp)"/>`
      +`<circle cx="${X[4]}" cy="${wy+4}" r="3" fill="#8C5A1E" stroke="${INK}" stroke-width=".7"/>`+sugarChain(X[4],wy-9,RU.concat(['Glc','Rha']),-1,5.5,13)+glink(X[4],wy+4,X[4],wy-9));}
-  const names=['CpsE','GTs','Wzx','Wzy','CpsA'], nx=n?[X[0]+18,X[1]+20,X[2]-16,X[3]+22,X[4]+20]:[X[0]+22,X[1]+30,X[2]-22,X[3]+23,X[4]+22], ncol=['#2F5276','#3E6131','#2F5276','#8C5A1E','#8C5A1E'];
+  const names=['CpsE','GTs','Wzx','CpsH',n?'LCP':'CpsA/LCP'], nx=n?[X[0]+18,X[1]+20,X[2]-16,X[3]+22,X[4]+20]:[X[0]+22,X[1]+30,X[2]-22,X[3]+23,X[4]+22], ncol=['#2F5276','#3E6131','#2F5276','#8C5A1E','#8C5A1E'];
   st.forEach((d,i)=>{const dim=block!==undefined&&i>block;
     s+=G('a-fade',(.3+i*.45).toFixed(1),`<g opacity="${dim?.16:1}">${d}</g>`+Tc(X[i],16+4,String(i+1),'#2F5276',12,'mono mid','600')
       +`<g opacity="${dim?.3:1}">${Tc(nx[i],my+mh+(n?60:62),names[i],ncol[i],n?9.5:10,'mono mid','600')}</g>`);
@@ -677,8 +679,8 @@ function scG10(n){
   const L=[['Initiate','CpsE puts glucose-1-phosphate from UDP-Glc onto Und-P, on the inner face.'],
    ['Build the unit','Serotype-specific GTs add the other sugars — here rhamnose, a glucuronic-acid branch and another rhamnose — one linkage at a time.'],
    ['Flip','Wzx carries the finished repeat unit, still on Und-PP, to the outer face.'],
-   ['Polymerise','Wzy transfers the growing chain onto each new unit; CpsC–CpsD set how much is produced.'],
-   ['Attach','CpsA links the polysaccharide to peptidoglycan and frees the carrier for reuse.']];
+   ['Polymerise','The Wzy polymerase — CpsH in the pneumococcus — transfers the growing chain onto each new unit. CpsC and CpsD set how long the chains get.'],
+   ['Attach','An LCP ligase — CpsA, LytR or Psr — transfers the polymer from the carrier to peptidoglycan, freeing Und-PP for reuse.']];
   const b=bullets(n?24:30,r.y+14,L,n?44:88,{d0:2.6,gap:22});
   const p=para(n?16:24,b.y,'Drawn for a simplified three-sugar repeat unit with a side branch; real serotypes vary in sugars, order and linkages. The principle is general: build inside on the carrier, flip, polymerise outside, attach to the wall.',n?50:92,'note start f12',16,3.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+b.s+p.s};
@@ -689,13 +691,13 @@ const BRK=[
  {n:'a middle GT',b:1,t:'Half-built units pile up on Und-PP. Because that carrier is shared with peptidoglycan synthesis, the cell is starved of it and grows poorly or dies — so these mutants strongly select for a second mutation that blocks capsule earlier, often in cpsE (shown by the Yother laboratory).'},
  {n:'wzx',b:2,t:'Finished units are stranded on the inner face, tying up the carrier with the same lethal consequence and the same pressure for earlier-blocking suppressors.'},
  {n:'wzy',b:3,t:'Units reach the surface but cannot be joined into a chain. The carrier is again sequestered, and suppressors arise.'},
- {n:'cpsD',b:3,t:'The tyrosine-kinase is miscontrolled; capsule amount is dysregulated and usually falls, without the carrier being trapped.'},
- {n:'cpsA',b:4,t:'Capsule is still made but less of it stays anchored to the wall, so more is shed into the surroundings.'}];
+ {n:'cpsD',b:null,lesson:'Chain length is a separate control problem from chain chemistry. The glycosyltransferases decide what the repeat unit is; the kinase system decides how many of them end up in one polymer.',t:'Polymers come out short. CpsD, the tyrosine-kinase of the CpsBCD system, activates the polymerase CpsH (the pneumococcal Wzy), so without it units are joined into only short chains rather than full-length capsule. Chain length is set here, not by the glycosyltransferases (Nakamoto et al., PNAS 2021).'},
+ {n:'cpsA',b:null,lesson:'Redundancy is the other lesson. A step carried out by a single enzyme is a single point of failure; a step shared by a family of them is not, and the phenotype only appears when you remove enough of the family at once.',t:'Not lethal, and the capsule still ends up on the wall. CpsA is only one of three LCP ligases in the pneumococcus, alongside LytR and Psr, and they are semi-redundant: with cpsA gone the other two attach the polymer, and attachment, polymer length and the fraction bound to peptidoglycan all look normal. It is combinations that hurt — cpsA with psr leaves the cell dependent on lytR, and cpsA with walK is synthetically lethal once capsule is induced (Zik et al., mBio 2026).'}];
 let brkSel=0;
 function scG11(n){
-  const B=BRK[brkSel], r=capsuleScene(n,B.b);
+  const B=BRK[brkSel], r=capsuleScene(n,B.b===null?undefined:B.b);
   const p=para(n?16:24,r.y+18,B.t,n?50:92,'note start f13',17,.8);
-  const q=para(n?16:24,p.y+14,'The pattern: a block after the first committed step is worse than making no capsule at all, because it locks up the undecaprenyl carrier the cell needs to build its wall. This is why acapsular revertants arise so readily.',n?50:92,'lab start f13',17,1.2);
+  const q=para(n?16:24,p.y+14,B.lesson||'The pattern: a block in the middle of the pathway is worse than making no capsule at all, because it locks up the undecaprenyl carrier the cell needs to build its wall. This is why acapsular revertants arise so readily.',n?50:92,'lab start f13',17,1.2);
   return {vb:n?slim(q.y+6):wide(q.y+8),s:r.s+p.s+q.s};
 }
 
@@ -724,7 +726,7 @@ const S=[
  {p:2,title:'Working on a lipid carrier',draw:scG7,text:"Surface polysaccharides are made partly inside the membrane and partly outside, so their building blocks ride on a lipid. Undecaprenyl phosphate carries sugars across for peptidoglycan, capsule, O-antigen and teichoic acids alike. Because the pool of carrier is small and shared, these pathways are coupled — and vulnerable at a single point."},
  {p:3,title:'Three ways to build a chain',draw:scG8,text:"Bacteria assemble long surface polysaccharides by three routes: Wzx/Wzy, in which repeat units are flipped and then polymerised; ABC-transporter, in which the finished chain is exported whole; and synthase-dependent, in which one enzyme does everything. All start from the same nucleotide sugars, and differ only in where the chain grows and how it leaves the cell."},
  {p:4,title:'The capsule locus',draw:scG9,text:"The pneumococcal capsule is the organism's chief virulence factor and the example we follow to the end. Its genes lie in one locus, cps, with conserved regulatory and attachment genes at one end and serotype-specific synthesis genes in the middle. Reading the locus predicts the capsule, and the roughly 100 serotypes differ almost entirely within it."},
- {p:4,title:'Building the capsule',draw:scG10,text:"Most pneumococcal capsules are made the Wzx/Wzy way. CpsE starts a repeat unit on the carrier; serotype-specific transferases finish it; Wzx flips it out; Wzy joins units into a long chain while CpsC and CpsD regulate the amount; and CpsA attaches the product to the wall. It is the general scheme of the earlier plate, now with names."},
+ {p:4,title:'Building the capsule',draw:scG10,text:"Most pneumococcal capsules are made the Wzx/Wzy way. CpsE starts a repeat unit on the carrier; serotype-specific transferases finish it; Wzx flips it out; the polymerase CpsH joins units into a chain, with CpsC and CpsD setting how long it grows; and an LCP ligase transfers the finished polymer to peptidoglycan. It is the general scheme of the earlier plate, now with names."},
  {p:4,title:'Break a step',draw:scG11,chips:'brk',text:"The consequences of blocking each step reveal how the pathway is wired. Pick a gene to disrupt. The striking result is that losing an early step is harmless, but blocking a middle step is often lethal — because trapped intermediates sequester the shared lipid carrier the cell needs for its wall."},
  {p:4,title:'Type 3, and why capsules matter',draw:scG12,text:"Not every capsule uses Wzx/Wzy. Type 3 is made by a single synthase that alternates two sugars — the simplest case, and the first reconstituted in a test tube. Whichever route builds it, the capsule is what the immune system sees, what vaccines target, and what the pneumococcus changes, by swapping its cps locus, to slip past them."}];
 const CHIPS={mono:{list:MONO.map(m=>m.sym),get:()=>monoSel,set:k=>monoSel=k},gt:{list:GTS.map(g=>g.n.split(' ')[0]),get:()=>gtSel,set:k=>gtSel=k},brk:{list:BRK.map(b=>b.n),get:()=>brkSel,set:k=>brkSel=k}};
