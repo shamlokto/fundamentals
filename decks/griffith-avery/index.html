@@ -80,6 +80,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #stage .ax{stroke:#6A5B47;stroke-width:1.4}
 #stage .tint{filter:url(#plate)}
+#stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
 
 /* Motion */
 .a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
@@ -508,13 +509,16 @@ function scA8(n){
 }
 
 function scA9(n){
-  const ev=[['1944','DNA is the transforming principle (strain R36A, from D39)'],['1962','R6, derived from R36A, becomes the laboratory workhorse'],['1995','Leiv Håvarstein and colleagues find the competence-stimulating peptide (CSP), the signal that switches on transformation'],
-   ['2006','Stephen Bentley and colleagues sequence the capsule (cps) loci of 90 serotypes'],['today','Pneumococci swap capsule genes by transformation in nature, letting strains escape capsule-based vaccines']];
+  const ev=[['1944','DNA is the transforming principle (strain R36A, from D39)'],['1962','R6, derived from R36A, becomes the standard laboratory strain for the next four decades'],['1995','Leiv Håvarstein and colleagues find the competence-stimulating peptide (CSP), the signal that switches on transformation'],
+   ['2006','Stephen Bentley and colleagues sequence the capsule (cps) loci of 90 serotypes'],
+   ['2007','Lanie, Winkler and colleagues sequence D39 and find that R6 carries 71 point changes, six deletions and four insertions, and has lost the cryptic plasmid pDP1'],
+   ['today','Many laboratories work in D39, or in unencapsulated derivatives made from it, rather than in R6']];
   const t=n?timeline(14,30,ev,42,'f13',56,10,0):timeline(24,32,ev,60,'f13',60,12,0);
   let s=t.s;
   if(!n)s+=G('a-fade',2.2,pneumo(540,90,2,true)+T(540,140,'Griffith’s observation,','note mid f12')+T(540,156,'still happening','note mid f12'));
   const p=para(n?16:24,Math.max(t.y,170)+8,'The experiment that identified the genetic material was done on the organism’s most important virulence factor. Capsule switching by natural transformation is Griffith’s mouse experiment, happening in the human nasopharynx.',n?50:92,'note start f13',17,2.6);
-  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+  const q=para(n?16:24,p.y+14,'A caution about strains: R6 is not simply D39 without a capsule. Its mutations fall in regulatory, metabolic and virulence genes, so a phenotype seen in R6 may not hold in a strain with an intact background.',n?50:92,'lab start f13',17,3);
+  return {vb:n?slim(q.y+6):wide(q.y+8),s:s+p.s+q.s};
 }
 
 const NAR='Narrator';
@@ -527,7 +531,7 @@ const S=[
  {p:2,title:'What is it made of?',draw:scA6,text:"Every chemical and physical test pointed the same way. The ratio of nitrogen to phosphorus matched DNA; the test for deoxyribose was strongly positive; protein and RNA were barely detectable; the material behaved as a single, very large molecule."},
  {p:2,title:'Which enzyme destroys it?',chips:'enz',draw:scA7,text:"The decisive test was biological. If the active substance is a particular kind of molecule, only the enzyme that destroys that molecule should abolish activity. Pick an enzyme to see what each hypothesis predicts."},
  {p:3,title:'Doubters, and the blender',draw:scA8,text:"The 1944 paper was careful and its conclusion modest, but many were not convinced, and Avery never received a Nobel Prize. In 1952 Alfred Hershey and Martha Chase labelled phage protein and phage DNA separately and showed that it is the DNA that enters the cell. Watson and Crick's structure followed the next year."},
- {p:3,title:'The pneumococcus today',draw:scA9,text:"Avery's strains are still in use: R6, the standard laboratory pneumococcus, descends from R36A. Natural transformation is now understood as a regulated process switched on by a secreted peptide, and capsule genes move between strains in the wild, which is how pneumococci escape vaccines that target particular capsules."}];
+ {p:3,title:'The pneumococcus today',draw:scA9,text:"Avery's lineage is still in use, but with a correction. R6, descended from R36A, served as the standard laboratory strain for forty years, until Lanie, Winkler and colleagues sequenced D39 in 2007 and showed that R6 differs from it by far more than the loss of its capsule: dozens of mutations in regulatory, metabolic and virulence genes, and a missing plasmid. Many laboratories now work in D39 itself, or in unencapsulated mutants made directly from it, so that the only difference from the virulent parent is the one they made on purpose. Meanwhile transformation is understood as a regulated process switched on by a secreted peptide, and capsule genes move between strains in the wild, which is how pneumococci escape vaccines aimed at particular capsules."}];
 const CHIPS={grif:{list:GRIF.conds.map((c,i)=>(i+1)+'. '+c.n),get:()=>grSel,set:k=>grSel=k},enz:{list:ENZ.conds.map(c=>c.n),get:()=>enzSel,set:k=>enzSel=k}};
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
