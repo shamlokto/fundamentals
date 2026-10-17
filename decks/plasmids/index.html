@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plasmid Biology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+#stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#A4473A"/></marker>
+  <marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#2F5276"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Plasmids · an animated primer</p>
+    <h1>Replicons that are not the chromosome</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · Replicons</button>
+    <button id="part2" type="button">II · Staying put</button>
+    <button id="part3" type="button">III · Cost and consequence</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Copy numbers, sizes and incompatibility groups are typical values; individual plasmids and host backgrounds vary widely.</p>
+</div>
+<script>
+
+
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== shared translation glyphs ===================== */
+const SSU='#D9C89B', LSU='#BBA27A', TRNA_C='#8FB1CF', AA_C='#4F7A3F', CHAIN=['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#B4766E','#5E7F7A'];
+const GRP={np:['nonpolar','#D6C79F'],po:['polar','#A9C4DC'],ac:['acidic','#E7A99B'],ba:['basic','#B9A0C8']};
+const AAS=[['G','Gly','np'],['A','Ala','np'],['V','Val','np'],['L','Leu','np'],['I','Ile','np'],['P','Pro','np'],['F','Phe','np'],['M','Met','np'],['W','Trp','np'],
+ ['S','Ser','po'],['T','Thr','po'],['C','Cys','po'],['N','Asn','po'],['Q','Gln','po'],['Y','Tyr','po'],['D','Asp','ac'],['E','Glu','ac'],['K','Lys','ba'],['R','Arg','ba'],['H','His','ba']];
+const THREE=Object.fromEntries(AAS.map(a=>[a[0],a[1]]));THREE['*']='Stop';
+const CODE='FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+function tr(c){const o='UCAG';const i=16*o.indexOf(c[0])+4*o.indexOf(c[1])+o.indexOf(c[2]);return CODE[i];}
+function sub(x,y,k){return k;} // placeholder
+
+function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
+  const S=v=>v*k;
+  let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
+  return s+'</g>';
+}
+function chain(x,y,k,n,dir=-1){let s='';for(let i=0;i<n;i++){const xx=x-i*k*6,yy=y-i*k*13;s+=`<circle cx="${xx}" cy="${yy}" r="${k*7}" fill="${CHAIN[i%CHAIN.length]}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}return s;}
+function ribosome(cx,my,k,o={}){
+  const S=v=>v*k, sx={E:cx-S(50),P:cx,A:cx+S(50)};
+  let s='';
+  if(o.large!==false)s+=`<path d="M${cx-S(130)} ${my-S(22)} C ${cx-S(156)} ${my-S(160)}, ${cx+S(156)} ${my-S(160)}, ${cx+S(130)} ${my-S(22)} C ${cx+S(80)} ${my-S(36)}, ${cx-S(80)} ${my-S(36)}, ${cx-S(130)} ${my-S(22)} Z" fill="${LSU}" opacity=".55" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
+  if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
+  if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
+  return s;
+}
+
+function timeline(x,y,ev,wrapN,fs,indent,gap,d0){let s='',yy=y;ev.forEach((e,i)=>{const L=wrap(e[1],wrapN);s+=G('a-fade',(d0+i*.4).toFixed(1),T(x,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(x+indent,yy+j*18,l,'lab start '+fs)).join(''));yy+=L.length*18+gap;});return {s,y:yy};}
+/* ===================== text & layout utilities ===================== */
+const FX=(v,d=1)=>Number(v).toFixed(d);
+const SB=t=>`<tspan baseline-shift="-24%" style="font-size:.72em">${t}</tspan>`;
+const SP=t=>`<tspan baseline-shift="super" style="font-size:.72em">${t}</tspan>`;
+function para(x,y,text,wn,cls='note start f13',lh=17,d=0){const L=wrap(text,wn);return {s:G('a-fade',d,L.map((l,j)=>T(x,y+j*lh,l,cls)).join('')),y:y+L.length*lh};}
+function boxItem(x,y,W,head,body,o={}){
+  const L=wrap(body,Math.floor(W/(o.cw||6.3))), H=34+L.length*16+8;
+  return {s:box(x,y,W,o.H||H,o.fill||'#E7DEC9',4)+(o.num?badge(x+14,y+16,o.num):'')+T(x+(o.num?28:12),y+21,head,'lab start f14')
+    +L.map((l,j)=>T(x+12,y+42+j*16,l,'note start f12')).join(''),h:H};
+}
+function bullets(x,y,items,wrapN,o={}){
+  let s='',yy=y;
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=L.length*17+(o.gap||30);});
+  return {s,y:yy};
+}
+function wtable(n,head,rows,cols,o={}){
+  let y=o.y0||30, s=''; const R2=o.R||(n?350:620);
+  s+=G('a-fade',o.d0||0,head.map((h,i)=>T(cols[i][0],y,h,'cname start '+(n?'f13':'f14'))).join('')+ln(cols[0][0]-4,y+7,R2,y+7));
+  y+=26;
+  rows.forEach((r,i)=>{const W=r.map((c,j)=>wrap(c,cols[j][1])); const L=Math.max(...W.map(w=>w.length)); const h=L*16+10;
+    const hi=o.hi===i;
+    s+=G('a-fade',((o.d0||0)+.1*i).toFixed(2),(hi?`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+        :(i%2?'':`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" fill="#E7DEC9" opacity=".5"/>`))
+      +W.map((w,j)=>w.map((l,k)=>T(cols[j][0],y+k*16,l,(j?'note':'lab')+' start '+(n?'f12':'f13'))).join('')).join(''));
+    y+=h;});
+  return {s,y};
+}
+
+/* ===================== DNA-repair toolkit ===================== */
+const BB='#5A4632', NEW='#3E7FA8', LESU='#A4473A', OXO='#7D4A98', METH='#C17A2C', CPDC='#C99A2E', INV='#C17A2C',
+      E1='#9DB4AE', E2='#B4766E', E3='#D9B85A', E4='#A9C4DC', E5='#A9C49A', E6='#C9A9D6', RECAC='#E3B26B', PAPR='#ECE4D2';
+function segAt(segs,i){for(const s of segs)if(i>=s[0]&&i<s[1])return s[2]||BB;return null;}
+/* ladder: n base pairs from x; top strand at y, bottom at y+g.
+   o.top/o.bot = [[i0,i1,col]] strand segments; o.mk = {i:{t:col,b:col,tx:1,bx:1}} (tx/bx = base missing)
+   o.lab=[{i,s,t,col}]; o.dimer=[i]; o.me=[{i,s,op}]; o.nick=[{i,s}] (gap before index i); o.flip=[{i,s,col}] */
+function lad(x,y,n,o={}){
+  const dx=o.dx||12,g=o.g||24,top=o.top||[[0,n,BB]],bot=o.bot||[[0,n,BB]],mk=o.mk||{};
+  let s='';
+  for(let i=0;i<n;i++){const cx=x+i*dx+dx/2, tc=segAt(top,i), bc=segAt(bot,i), m=mk[i]||{};
+    if(tc&&!m.tx){const c=m.t;s+=`<path d="M${FX(cx)} ${FX(y)} V${FX(y+g/2-1.5)}" stroke="${c||tc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}
+    if(bc&&!m.bx){const c=m.b;s+=`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g/2+1.5)}" stroke="${c||bc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}}
+  const bbp=(segs,yy)=>segs.map(sg=>`<path d="M${FX(x+sg[0]*dx)} ${FX(yy)} H${FX(x+sg[1]*dx)}" stroke="${sg[2]||BB}" stroke-width="2.8"/>`).join('');
+  s+=bbp(top,y)+bbp(bot,y+g);
+  (o.nick||[]).forEach(k=>{const xx=x+k.i*dx, yy=k.s==='b'?y+g:y;s+=`<rect x="${FX(xx-2)}" y="${FX(yy-2.5)}" width="4" height="5" fill="${PAPR}"/>`;});
+  (o.dimer||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2-4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.dimerB||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2+4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.flip||[]).forEach(f=>{const cx=x+f.i*dx+dx/2;s+=f.s==='b'?`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g+12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`
+      :`<path d="M${FX(cx)} ${FX(y)} V${FX(y-12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`;});
+  (o.me||[]).forEach(m=>{const cx=x+m.i*dx+dx/2, yy=m.s==='b'?y+g+6:y-6;s+=`<circle cx="${FX(cx)}" cy="${FX(yy)}" r="3.2" fill="${METH}" stroke="${INK}" stroke-width=".6"${m.op?` opacity="${m.op}"`:''}/>`;});
+  (o.lab||[]).forEach(L=>{const cx=x+L.i*dx+dx/2;s+=Tc(FX(cx+(L.dx||0)),FX(L.s==='b'?y+g+(L.dy||16):y-(L.dy||7)),L.t,L.col||'#3A2E22',L.fs||10,'mono mid','600');});
+  if(o.ends)s+=Tc(x-5,y+4,'5′','#6A5B47',10,'mono end')+Tc(x-5,y+g+4,'3′','#6A5B47',10,'mono end')
+    +Tc(x+n*dx+5,y+4,'3′','#6A5B47',10,'mono start')+Tc(x+n*dx+5,y+g+4,'5′','#6A5B47',10,'mono start');
+  return s;
+}
+function prot(cx,cy,rx,ry,fill,label,o={}){
+  return blob(FX(cx),FX(cy),rx,ry,fill,o.op?`opacity="${o.op}"`:'')+(label?Tc(FX(cx),FX(cy+3.8),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function ring(cx,cy,rx,ry,fill,label,o={}){
+  return `<ellipse cx="${FX(cx)}" cy="${FX(cy)}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity=".55" stroke="${INK}" stroke-width="1.1" class="tint"/>`
+    +(label?Tc(FX(cx+(o.ldx||0)),FX(cy+(o.ldy!==undefined?o.ldy:-ry-5)),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function recaFil(x1,x2,y,o={}){let s='';for(let x=x1;x<=x2-8;x+=9)s+=`<rect x="${FX(x)}" y="${FX(y-6)}" width="8" height="12" rx="3" fill="${o.col||RECAC}" stroke="${INK}" stroke-width=".7"/>`;
+  return s+(o.label?Tc(FX((x1+x2)/2),FX(y-11),o.label,'#8C5A1E',10,'mono mid','600'):'');}
+function ssb(cx,y){return `<circle cx="${FX(cx)}" cy="${FX(y)}" r="5" fill="${E4}" stroke="${INK}" stroke-width=".7"/>`;}
+function arw(x1,y1,x2,y2,o={}){const m=o.red?'ahr':o.blue?'ahb':'ahp', c=o.red?'#A4473A':o.blue?'#2F5276':(o.col||'#6A5B47');
+  return `<path d="M${FX(x1)} ${FX(y1)} ${o.q?`Q${FX(o.q[0])} ${FX(o.q[1])} `:'L'}${FX(x2)} ${FX(y2)}" stroke="${c}" stroke-width="${o.w||1.6}" fill="none" marker-end="url(#${m})"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
+function pairBox(cx,cy,t,b,o={}){const w=o.w||62,h=o.h||46;
+  return box(cx-w/2,cy-h/2,w,h,o.fill||'#EFE6D2',5)+Tc(cx,cy-5,t,o.tc||'#3A2E22',o.fs||13,'mono mid','600')
+    +`<path d="M${cx-10} ${cy+1} h20" stroke="${INK}" stroke-width="1" stroke-dasharray="2 2"/>`+Tc(cx,cy+17,b,o.bc||'#3A2E22',o.fs||13,'mono mid','600');}
+function photon(x1,y1,x2,y2,col='#3E7FA8'){const L=Math.hypot(x2-x1,y2-y1), a=Math.atan2(y2-y1,x2-x1)*180/Math.PI; let d='M0 0';
+  for(let t=0;t<L-12;t+=8)d+=` q2 -5 4 0 q2 5 4 0`;
+  return `<g transform="translate(${FX(x1)} ${FX(y1)}) rotate(${FX(a)})"><path d="${d} L${FX(L-2)} 0" stroke="${col}" stroke-width="1.6" fill="none" marker-end="url(#ahb)"/></g>`;}
+/* left-text / right-drawing steps; d(x,y,w) draws a ladder whose top strand is at y */
+function stepsLad(n,steps,o={}){
+  let s='',y=o.y0||24;
+  const tx=n?16:20;
+  steps.forEach((st,i)=>{const L=wrap(st.t,n?52:(o.wn||36)), th=22+L.length*16, top=st.top||24, dh=st.dh||44, dl=((o.d0||0)+i*.6).toFixed(1);
+    const head=badge(tx+8,y-4,i+1)+T(tx+22,y,st.h,'cname start f14')+L.map((l,j)=>T(tx,y+20+j*16,l,'note start f12')).join('');
+    if(n){const dy=y+th+top;s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(24,dy,312));y=dy+dh+28;}
+    else{const h=Math.max(th,top+dh-8);s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(o.dx0||284,y-14+top,o.dw||330));
+      y+=h+22;if(i<steps.length-1)s+=ln(tx,y-14,620,y-14,'#6A5B47',.5,'2 4');}});
+  return {s,y};
+}
+function cut(cx,y){return Tc(FX(cx),FX(y),'\u25be','#A4473A',15,'mono mid');}
+function oligo(x1,x2,y,dx,dim){let s=`<path d="M${FX(x1)} ${FX(y)} H${FX(x2)}" stroke="${BB}" stroke-width="2.6"/>`;
+  for(let xx=x1+dx/2;xx<x2;xx+=dx)s+=`<path d="M${FX(xx)} ${FX(y)} V${FX(y+10)}" stroke="${BB}" stroke-width="1.8" opacity=".7"/>`;
+  if(dim!==undefined)s+=`<path d="M${FX(x1+dim*dx+dx/2)} ${FX(y)} V${FX(y+10)} M${FX(x1+(dim+1)*dx+dx/2)} ${FX(y)} V${FX(y+10)}" stroke="${CPDC}" stroke-width="4.5"/><path d="M${FX(x1+dim*dx+dx/2)} ${FX(y+7)} h${FX(dx)}" stroke="${CPDC}" stroke-width="3"/>`;
+  return s;}
+function tbox(cx,cy,w,t,o={}){return box(cx-w/2,cy-14,w,28,o.fill||'#EFE6D2',4)+Tc(cx,cy+4,t,o.tc||'#3A2E22',o.fs||12,'mono mid','600');}
+/* ===================== history toolkit ===================== */
+let UID=0;
+const AXC='#6A5B47', GLASSE='#7E8F92', GLASSF='#DCE6E8', BROTH='#EAD9A0', TURB='#C4A86A', DUST='#5A4632', AGAR='#E9DAA8', COLC='#C99A2E',
+      MOUSEC='#D3C8B6', BLOOD='#A4473A', CAPS='#C9A9D6', LEAF='#7FA05A', LEAFD='#C9D58A';
+function rnd(seed){let s=seed;return ()=>{s=(s*9301+49297)%233280;return s/233280;};}
+function microbes(cx,cy,rx,ry,n,seed,col='#5A4632'){const r=rnd(seed);let s='';
+  for(let i=0;i<n;i++){const a=r()*Math.PI*2,d=Math.sqrt(r()),x=cx+Math.cos(a)*rx*d,y=cy+Math.sin(a)*ry*d,an=r()*180;
+    s+=`<rect x="${FX(x-3)}" y="${FX(y-1.2)}" width="6" height="2.4" rx="1.2" fill="${col}" opacity=".75" transform="rotate(${FX(an)} ${FX(x)} ${FX(y)})"/>`;}
+  return s;}
+/* round-bottomed flask; type: straight | swan | broken | sealed | plug */
+function flask(cx,by,type,o={}){
+  const r=o.r||30, t=by-2*r+4, id='fl'+(UID++), lvl=by-r*(o.full||1.05);
+  let s=`<defs><clipPath id="${id}"><circle cx="${cx}" cy="${by-r}" r="${r-1.5}"/></clipPath></defs>`;
+  s+=`<circle cx="${cx}" cy="${by-r}" r="${r}" fill="${GLASSF}" fill-opacity=".55" stroke="${GLASSE}" stroke-width="1.6"/>`;
+  s+=`<rect x="${cx-r}" y="${FX(lvl)}" width="${2*r}" height="${FX(by-lvl)}" fill="${o.turbid?TURB:BROTH}" clip-path="url(#${id})"/>`;
+  if(o.turbid)s+=microbes(cx,by-r*.45,r*.7,r*.32,14,o.seed||7);
+  const tube=(d,w=10)=>`<path d="${d}" stroke="${GLASSE}" stroke-width="${w+3}" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#EEF3F3" stroke-width="${w-1}" fill="none" stroke-linecap="round"/>`;
+  if(type==='straight'||type==='plug')s+=tube(`M${cx} ${t} V${t-34}`);
+  if(type==='plug')s+=`<rect x="${cx-6}" y="${t-44}" width="12" height="16" rx="3" fill="#F4F0E6" stroke="${INK}" stroke-width=".8"/>`;
+  if(type==='sealed')s+=tube(`M${cx} ${t} V${t-28}`)+`<circle cx="${cx}" cy="${t-30}" r="6.5" fill="${GLASSE}"/>`;
+  if(type==='broken')s+=tube(`M${cx} ${t} V${t-10}`)+`<path d="M${cx-6.5} ${t-11} l3 -4 l3 3 l3 -4 l3 4" stroke="${GLASSE}" stroke-width="1.6" fill="none"/>`;
+  if(type==='swan'){const d=`M${cx} ${t} V${t-18} C${cx} ${t-46} ${cx+34} ${t-50} ${cx+44} ${t-26} C${cx+50} ${t-12} ${cx+62} ${t-10} ${cx+68} ${t-24} L${cx+80} ${t-50}`;
+    s+=tube(d);
+    if(o.wet)s+=`<path d="M${cx+46} ${t-21} C${cx+50} ${t-12} ${cx+62} ${t-10} ${cx+66} ${t-19}" stroke="${o.turbid?TURB:BROTH}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+    s+=[[54,-14],[58,-13],[61,-15],[56,-16]].map(p=>`<circle cx="${cx+p[0]}" cy="${t+p[1]}" r="1.6" fill="${DUST}"/>`).join('');}
+  if(o.label)s+=T(cx,by+18,o.label,'note mid f12');
+  return s;
+}
+function colonySet(n,seed,R){const r=rnd(seed),a=[];let k=0;while(a.length<n&&k<500){k++;const ang=r()*Math.PI*2,d=Math.sqrt(r())*R*.82,x=Math.cos(ang)*d,y=Math.sin(ang)*d,rad=2.4+r()*2.6;
+  if(a.every(c=>Math.hypot(c[0]-x,c[1]-y)>c[2]+rad+2))a.push([x,y,rad]);}return a;}
+function dish(cx,cy,R,cols=[],o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${o.agar||AGAR}" stroke="${GLASSE}" stroke-width="1.8"/><circle cx="${cx}" cy="${cy}" r="${R-4}" fill="none" stroke="${GLASSE}" stroke-width=".6" opacity=".7"/>`;
+  cols.forEach(c=>s+=`<circle cx="${FX(cx+c[0])}" cy="${FX(cy+c[1])}" r="${FX(c[2])}" fill="${c[3]||o.col||COLC}" stroke="${INK}" stroke-width=".5"/>`);
+  if(o.mark)s+=`<path d="M${cx} ${cy-R-6} v8" stroke="${INK}" stroke-width="2"/>`;
+  if(o.label)s+=T(cx,cy+R+17,o.label,'note mid f12');
+  return s;}
+function tube(cx,by,o={}){const w=o.w||18,h=o.h||70,top=by-h,lvl=by-h*(o.full||.55);
+  let s=`<path d="M${cx-w/2} ${top} V${by-w/2} a${w/2} ${w/2} 0 0 0 ${w} 0 V${top}" fill="${GLASSF}" fill-opacity=".5" stroke="${GLASSE}" stroke-width="1.5"/>`;
+  s+=`<path d="M${cx-w/2+1.5} ${FX(lvl)} V${by-w/2} a${w/2-1.5} ${w/2-1.5} 0 0 0 ${w-3} 0 V${FX(lvl)} Z" fill="${o.fill||(o.turbid?TURB:BROTH)}"/>`;
+  if(o.turbid)s+=microbes(cx,(lvl+by)/2,w*.3,(by-lvl)*.38,6,o.seed||3);
+  if(o.label)s+=T(cx,by+16,o.label,'note mid f11');
+  return s;}
+function mouse(cx,cy,k=1,o={}){
+  const f=o.dead?'#B8B0A2':MOUSEC;
+  let g=`<path d="M${cx-19*k} ${cy+2*k} q${-14*k} ${-2*k} ${-22*k} ${-12*k}" stroke="${INK}" stroke-width="1.2" fill="none"/>`
+   +`<ellipse cx="${cx}" cy="${cy}" rx="${20*k}" ry="${11*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+19*k}" cy="${cy-3*k}" r="${8.5*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+15*k}" cy="${cy-11*k}" r="${4.2*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+27*k}" cy="${cy-2*k}" r="${1.6*k}" fill="${INK}"/>`;
+  if(o.dead)g+=`<path d="M${cx-10*k} ${cy+10*k} v${5*k} M${cx-3*k} ${cy+11*k} v${5*k} M${cx+5*k} ${cy+11*k} v${5*k} M${cx+12*k} ${cy+9*k} v${5*k}" stroke="${INK}" stroke-width="1.2"/>`
+    +`<path d="M${cx+20*k} ${cy-7*k} l${4*k} ${4*k} m0 ${-4*k} l${-4*k} ${4*k}" stroke="${INK}" stroke-width="1.1"/>`;
+  else g+=`<circle cx="${cx+21*k}" cy="${cy-5*k}" r="${1.4*k}" fill="${INK}"/>`;
+  let s=o.dead?`<g transform="rotate(180 ${cx} ${cy})">${g}</g>`:g;
+  if(o.label)s+=T(cx,cy+(o.ldy||26)*k,o.label,'note mid f12');
+  return s;}
+function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="${FX(cy-w/2)}" width="${l}" height="${w}" rx="${w/2}" fill="${col}" stroke="${INK}" stroke-width=".7" transform="rotate(${ang} ${FX(cx)} ${FX(cy)})"/>`;}
+function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
+  let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
+  return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
+function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
+function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
+  let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
+  s+=G('a-fade',0,medallion(mx,my,k,o.name,o.dates,o.glasses));
+  let x=n?16:270, y=n?my+112*k+76:44;
+  s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
+  const Q=wrap(o.q,n?40:40);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
+  s+=G('a-fade',1,T(x,y,'What was believed','mono acc start f12'));
+  const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;
+  if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
+  const H=n?y+12:Math.max(y+14,my+112*k+56);
+  return {vb:n?slim(H):wide(H),s};
+}
+/* hypothesis-testing plate: spec={hyps:[[name,short]],conds:[{n,d,draw(cx,y,n),pred:[...],obs,note}],dh} */
+function predictPlate(n,spec,sel){
+  const c=spec.conds[sel], H=spec.hyps, oc=x=>Array.isArray(x)?x[0]:x, tx=x=>Array.isArray(x)?(x[1]?x[0]+': '+x[1]:x[0]):x, hit=(cc,i)=>oc(cc.pred[i])===oc(cc.obs);
+  let s='', y=14;
+  const dh=n?(spec.dhn||spec.dh||150):(spec.dh||150);
+  s+=G('a-fade',0,c.draw(n?180:320,y,n));
+  y+=dh+8;
+  s+=G('a-fade',.2,T(n?16:24,y,`${sel+1}. ${c.n}`,'cname start f15'));
+  const D=wrap(c.d||'',n?52:92);s+=G('a-fade',.3,D.map((l,i)=>T(n?16:24,y+20+i*16,l,'note start f12')).join(''));y+=20+D.length*16+18;
+  const cx=n?[16,148,338]:[24,300,606];
+  s+=G('a-fade',.5,T(cx[0],y,n?'If it were…':'If the explanation were…','mono acc start f11')+T(cx[1],y,'we would expect','mono acc start f11')+ln(cx[0],y+6,n?346:616,y+6));
+  y+=24;
+  H.forEach((h,i)=>{const A=wrap(h[0],n?20:40),P=wrap(tx(c.pred[i]),n?28:42),L=Math.max(A.length,P.length),ok=hit(c,i);
+    s+=G('a-fade',(.6+i*.2).toFixed(1),A.map((l,j)=>T(cx[0],y+j*16,l,'lab start f13')).join('')+P.map((l,j)=>T(cx[1],y+j*16,l,'note start f13')).join('')+mark(cx[2],y-4,ok,8));
+    y+=L*16+10;});
+  const O=wrap(tx(c.obs),n?28:42);
+  s+=G('a-fade',(.7+H.length*.2).toFixed(1),`<rect x="${cx[0]-6}" y="${y-16}" width="${(n?352:620)-cx[0]}" height="${O.length*16+12}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+    +T(cx[0],y,'Observed','cname start f14')+O.map((l,j)=>T(cx[1],y+j*16,l,'lab start f13')).join(''));
+  y+=O.length*16+28;
+  // running tally
+  const mx=n?160:300, cw=n?32:36;
+  s+=G('a-fade',1.4,T(cx[0],y,'Across all tests','mono acc start f11')+spec.conds.map((cc,j)=>(j===sel?`<rect x="${mx+j*cw-cw/2+2}" y="${y-13}" width="${cw-4}" height="${18+H.length*22}" rx="3" fill="#E7DEC9"/>`:'')+Tc(mx+j*cw,y,j+1,'#2F5276',11,'mono mid','600')).join(''));
+  y+=20;
+  H.forEach((h,i)=>{s+=G('a-fade',(1.5+i*.1).toFixed(1),T(cx[0],y+4,h[1],'note start f12')+spec.conds.map((cc,j)=>mark(mx+j*cw,y,hit(cc,i),6.5)).join(''));y+=22;});
+  if(c.note){const p=para(n?16:24,y+12,c.note,n?50:92,'note start f13',17,1.8);s+=p.s;y=p.y;}
+  return {vb:n?slim(y+10):wide(y+12),s};
+}
+/* generic text-and-picture plate helpers */
+function sideText(n,x,y,items,wn,o={}){return bullets(n?24:x,y,items,n?44:wn,o);}
+/* ===================== shared toolkit: evolution, HGT, plasmids, defence, genomes ===================== */
+const CHR='#5A4632', PLS='#7D4A98', PHG='#A4473A', TNC='#C17A2C', INTC='#2E7D78', RECC='#3E7FA8',
+      CELLF='#DCE2C9', CELLE='#8C7A52', CORE='#2F5276', SHELL='#8FB1CF', CLOUD='#C9BFAB', METC='#C99A2E';
+/* --- xy plot frame; returns mappers --- */
+function xyPlot(x,y,w,h,xr,yr,o={}){
+  const px=v=>x+(v-xr[0])/(xr[1]-xr[0])*w, py=v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h;
+  let s='';
+  if(o.grid){const gx=o.grid[0]||4,gy=o.grid[1]||4;let g='';
+    for(let i=1;i<gx;i++)g+=`M${FX(x+w*i/gx)} ${y} V${y+h} `;
+    for(let i=1;i<gy;i++)g+=`M${x} ${FX(y+h*i/gy)} H${x+w} `;
+    s+=`<path d="${g}" stroke="${AXC}" stroke-width=".5" opacity=".25"/>`;}
+  s+=`<path d="M${x} ${y-4} V${y+h} H${x+w+6}" stroke="${AXC}" stroke-width="1.3" fill="none"/>`;
+  if(o.xlab)s+=T(x+w/2,y+h+(o.xdy||24),o.xlab,'note mid '+(o.fs||'f12'));
+  if(o.ylab)s+=`<text transform="translate(${x-(o.ydx||20)} ${y+h/2}) rotate(-90)" text-anchor="middle" class="note ${o.fs||'f12'}">${o.ylab}</text>`;
+  return {px,py,s,x,y,w,h,xr,yr};}
+function xyCurve(P,f,o={}){
+  const xr=o.xr||P.xr,n=o.n||80;let d='',on=false;
+  for(let i=0;i<=n;i++){const t=xr[0]+(xr[1]-xr[0])*i/n,v=f(t);
+    if(!isFinite(v)||v>P.yr[1]||v<P.yr[0]){on=false;continue;}
+    d+=(on?' L':' M')+FX(P.px(t))+' '+FX(P.py(v));on=true;}
+  return `<path d="${d.trim()}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;}
+function xyPts(P,pts,o={}){return pts.map(p=>`<circle cx="${FX(P.px(p[0]))}" cy="${FX(P.py(p[1]))}" r="${o.r||3.2}" fill="${o.col||CORE}" stroke="${INK}" stroke-width=".6"/>`).join('');}
+function xyLine(P,pts,o={}){let d='';pts.forEach((p,i)=>{d+=(i?' L':'M')+FX(P.px(p[0]))+' '+FX(P.py(p[1]));});
+  return `<path d="${d}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round"/>`;}
+/* --- horizontal bars with labels --- */
+function barRow(x,y,w,items,max,o={}){
+  let s='';items.forEach((it,i)=>{const yy=y+i*(o.rh||26);
+    s+=T(x,yy,it[0],'lab start '+(o.fs||'f12'))+`<rect x="${x+(o.bx||150)}" y="${yy-10}" width="${FX(Math.max(1,it[1]/max*w))}" height="13" rx="2" fill="${it[2]||CORE}" stroke="${INK}" stroke-width=".6"/>`
+      +(it[3]?Tc(x+(o.bx||150)+Math.max(1,it[1]/max*w)+6,yy,it[3],'#6A5B47',10,'mono start','600'):'');});
+  return s;}
+/* --- circular replicon; feats = [{a0,a1,col,lab}] angles in degrees --- */
+function pRing(cx,cy,r,o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${o.col||PLS}" stroke-width="${o.w||3}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  (o.feats||[]).forEach(f=>{const a0=f.a0*Math.PI/180,a1=f.a1*Math.PI/180,rr=r,big=(f.a1-f.a0)>180?1:0;
+    s+=`<path d="M${FX(cx+rr*Math.cos(a0))} ${FX(cy+rr*Math.sin(a0))} A${rr} ${rr} 0 ${big} 1 ${FX(cx+rr*Math.cos(a1))} ${FX(cy+rr*Math.sin(a1))}" stroke="${f.col}" stroke-width="${o.fw||9}" fill="none" stroke-linecap="butt"/>`;
+    if(f.lab){const am=(f.a0+f.a1)/2*Math.PI/180,lr=r+(o.lr||17);
+      s+=Tc(FX(cx+lr*Math.cos(am)),FX(cy+lr*Math.sin(am)+3),f.lab,f.lcol||'#3A2E22',o.lfs||10,'mono '+(Math.cos(am)>.3?'start':Math.cos(am)<-.3?'end':'mid'),'600');}});
+  if(o.label)s+=T(cx,cy+4,o.label,'note mid f11');
+  return s;}
+/* --- phage icon --- */
+function phIcon(cx,cy,k=1,col){const h=11*k,c=col||PHG;
+  return `<path d="M${cx} ${FX(cy-2*h)} l${FX(h*.9)} ${FX(h*.52)} v${FX(h)} l${FX(-h*.9)} ${FX(h*.52)} l${FX(-h*.9)} ${FX(-h*.52)} v${FX(-h)} z" fill="${c}" stroke="${INK}" stroke-width=".9"/>`
+   +`<rect x="${FX(cx-2.2*k)}" y="${cy}" width="${FX(4.4*k)}" height="${FX(12*k)}" fill="#D6CDB8" stroke="${INK}" stroke-width=".7"/>`
+   +`<path d="M${FX(cx-1.8*k)} ${FX(cy+12*k)} l${FX(-6*k)} ${FX(6*k)} M${FX(cx+1.8*k)} ${FX(cy+12*k)} l${FX(6*k)} ${FX(6*k)} M${cx} ${FX(cy+12*k)} v${FX(7*k)}" stroke="${INK}" stroke-width="${FX(1*k)}"/>`;}
+/* --- simple rod / oval cell with optional contents --- */
+function cellRod(cx,cy,L,R,o={}){
+  const x1=cx-L/2,x2=cx+L/2;
+  const d=`M${FX(x1)} ${FX(cy-R)} H${FX(x2)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x2)} ${FX(cy+R)} H${FX(x1)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x1)} ${FX(cy-R)} Z`;
+  let s=`<path d="${d}" fill="${o.fill||CELLF}" stroke="${o.stroke||CELLE}" stroke-width="${o.sw||2}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  if(o.chr)s+=`<ellipse cx="${cx}" cy="${cy}" rx="${FX(L*.26)}" ry="${FX(R*.5)}" fill="none" stroke="${CHR}" stroke-width="1.8"/>`;
+  if(o.label)s+=T(cx,cy+R+(o.ldy||18),o.label,'note mid f11');
+  return s;}
+/* --- gene arrow --- */
+function gArrow(x,y,w,label,fill,o={}){
+  const h=o.h||17;
+  return `<path d="M${x} ${FX(y-h/2)} h${FX(w-7)} l7 ${FX(h/2)} l-7 ${FX(h/2)} h${FX(-(w-7))}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
+   +(label?Tc(FX(x+(w-7)/2),FX(y+4),label,o.tc||'#3A2E22',o.fs||10,'mono mid','600'):'');}
+/* --- a grid of cells for population pictures: states = array of colour-or-null --- */
+function popGrid(x,y,cols,rows,states,o={}){
+  const d=o.d||13,g=o.g||4;let s='';
+  for(let i=0;i<cols*rows;i++){const c=i%cols,r=Math.floor(i/cols),st=states[i];
+    s+=`<rect x="${FX(x+c*(d+g))}" y="${FX(y+r*(d+g))}" width="${d}" height="${d}" rx="${FX(d*.38)}" fill="${st||'#E0DBCB'}" stroke="${INK}" stroke-width=".5" opacity="${st?1:.7}"/>`;}
+  return s;}
+/* --- branching lineage tree; muts = [[gen, lane]] marks --- */
+function lineage(x,y,w,h,gens,lanes,marks,o={}){
+  const dx=w/gens,dy=h/(lanes-1||1);let s='';
+  for(let l=0;l<lanes;l++)s+=`<path d="M${x} ${FX(y+l*dy)} h${w}" stroke="${o.col||'#C9BFAB'}" stroke-width="1.6"/>`;
+  (marks||[]).forEach(m=>{s+=`<circle cx="${FX(x+m[0]*dx)}" cy="${FX(y+m[1]*dy)}" r="${o.r||4}" fill="${m[2]||PHG}" stroke="${INK}" stroke-width=".6"/>`;
+    if(m[3]!==false)s+=`<path d="M${FX(x+m[0]*dx)} ${FX(y+m[1]*dy)} h${FX(w-m[0]*dx)}" stroke="${m[2]||PHG}" stroke-width="2.4"/>`;});
+  return s;}
+/* --- key: colour swatch + label, in columns --- */
+function keyRow(x,y,items,o={}){
+  let s='';items.forEach((it,i)=>{const px=x+(o.cw?i*o.cw:0),py=y+(o.cw?0:i*(o.rh||17));
+    s+=`<rect x="${px}" y="${py-8}" width="12" height="11" rx="2" fill="${it[1]}" stroke="${INK}" stroke-width=".6"/>`+T(px+18,py,it[0],'note start '+(o.fs||'f11'));});
+  return s;}
+/* ===================== Part I · replicons ===================== */
+const pLine=(x,w,y,col,sw)=>`<path d="M${x} ${y} h${w}" stroke="${col||'#D6CDB8'}" stroke-width="${sw||5}" stroke-linecap="round"/>`;
+
+function scP1(n){
+  let s='';
+  const cx=n?180:300, cy=n?96:102;
+  s+=G('a-fade',0,cellRod(cx,cy,n?290:420,n?62:72,{}));
+  s+=G('a-fade',.3,`<ellipse cx="${cx-(n?60:100)}" cy="${cy}" rx="${n?62:92}" ry="${n?30:34}" fill="none" stroke="${CHR}" stroke-width="2.6"/>`
+    +Tc(cx-(n?60:100),cy+(n?46:50),'chromosome','#5A4632',10,'mono mid','600'));
+  [[0,-16,13,'high copy'],[34,14,13,''],[62,-6,13,''],[28,-30,13,'']].forEach((p,i)=>{
+    s+=G('a-fade',(.6+i*.2).toFixed(1),pRing(cx+(n?52:96)+p[0]*(n?.6:1),cy+p[1],p[2]*(n?.8:1),{col:PLS,w:2.4}));});
+  s+=G('a-fade',1.4,pRing(cx+(n?8:20),cy+(n?18:26),n?15:20,{col:METC,w:3})
+    +Tc(cx+(n?60:20),cy+(n?78:58),'a large, low-copy plasmid','#6A5B47',10,'mono mid'));
+  let y=cy+(n?92:100);
+  s+=G('a-fade',1.8,T(n?16:24,y,'A plasmid is defined by its replicon, not its cargo','cname start f14'));
+  y+=22;
+  const q=para(n?16:24,y,'The replicon is the origin of replication plus whatever protein and RNA elements control initiation from it. Everything else a plasmid carries — resistance, virulence, metabolism, nothing at all — is cargo. Two plasmids with the same replicon cannot be stably co-inherited; two with different replicons can, which is why a single cell routinely carries several.',n?50:92,'note start f13',17,2);
+  const rows=[['Small, high copy','1–10 kb, 15–500 copies','Cloning vectors, small resistance plasmids. Usually rolling-circle or ColE1-type, and segregated by sheer numbers.'],
+   ['Medium','10–60 kb, 1–20 copies','Most natural resistance plasmids. Often conjugative or mobilizable, with partition and addiction systems.'],
+   ['Large','60 kb to >1 Mb, 1–2 copies','Megaplasmids and second chromosomes: symbiosis plasmids of Rhizobium, the virulence plasmids of Shigella and Bacillus anthracis.']];
+  const t=wtable(n,['Size class','Typical numbers','What lives there'],rows,n?[[10,13],[118,15],[230,20]]:[[24,16],[180,20],[370,40]],{y0:q.y+22,d0:2.4});
+  return {vb:n?slim(t.y+8):wide(t.y+10),s:s+q.s+t.s};
+}
+
+function scP2(n){
+  let s='';const y=n?60:66;
+  const cols=n?1:3, R=n?26:30;
+  const modes=[['Theta','#2F5276'],['Rolling circle','#A4473A'],['Strand displacement','#2E7D78']];
+  const pics=[
+    (cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
+      +`<path d="M${cx-R} ${cy} a${R} ${R*.55} 0 0 1 ${2*R} 0" fill="none" stroke="${CORE}" stroke-width="2.6"/>`
+      +`<circle cx="${cx-R}" cy="${cy}" r="3.4" fill="${CORE}"/><circle cx="${cx+R}" cy="${cy}" r="3.4" fill="${CORE}"/>`,
+    (cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="${R*.8}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
+      +`<path d="M${cx+R*.8} ${cy} q${R*.7} ${-R*.5} ${R*1.1} ${R*.1} q${R*.3} ${R*.4} ${R*.1} ${R*.7}" fill="none" stroke="${PHG}" stroke-width="2.6"/>`
+      +`<circle cx="${cx+R*.8}" cy="${cy}" r="3.4" fill="${PHG}"/>`,
+    (cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
+      +`<path d="M${cx-R*.1} ${cy-R} a${R} ${R} 0 0 1 ${R*.9} ${R}" fill="none" stroke="${INTC}" stroke-width="2.6"/>`
+      +`<path d="M${cx-R*.3} ${cy+R*.95} a${R} ${R} 0 0 1 ${-R*.65} ${-R*.75}" fill="none" stroke="${INTC}" stroke-width="2.6" stroke-dasharray="4 3"/>`];
+  const txt=['Bidirectional or unidirectional from a single origin, through a theta-shaped intermediate. Needs host DnaA or a plasmid Rep protein to melt the origin, then host Pol III. The mode of most medium and large plasmids, and of the chromosome.',
+   'A Rep protein nicks one strand at the double-strand origin and stays attached; the free 3′ end is extended round the circle, displacing the old strand as a single-stranded circle that is converted back to double-stranded from a separate single-strand origin. Common in small Gram-positive plasmids, and the source of their characteristic single-stranded intermediates and structural instability.',
+   'Neither strand is ever made into a fork. Replication starts at separate origins on each strand and displaces the other. Used by the broad-host-range IncQ plasmids such as RSF1010, which carry their own primase and so replicate in an enormous range of hosts.'];
+  if(!n){modes.forEach((m,i)=>{const cx=112+i*206;
+    s+=G('a-fade',(i*.4).toFixed(1),pics[i](cx,y+R+4)+T(cx,y+2*R+26,m[0],'cname mid f14'));});
+    let yy=y+2*R+44;
+    modes.forEach((m,i)=>{const L=wrap(txt[i],32);
+      s+=G('a-fade',(.6+i*.3).toFixed(1),L.map((l,j)=>T(112+i*206,yy+j*16,l,'note mid f12')).join(''));});
+    const maxL=Math.max(...txt.map(t2=>wrap(t2,32).length));
+    yy+=maxL*16+22;
+    const p=para(24,yy,'All three end with two complete circles, but the intermediates differ — and the intermediates are what make a plasmid easy or hard to work with. Rolling-circle plasmids generate single-stranded DNA, recombine with themselves and become unstable above about ten kilobases, which is why larger Gram-positive vectors use theta replicons.',92,'note start f13',17,1.8);
+    return {vb:wide(p.y+8),s:s+p.s};}
+  let yy=y;
+  modes.forEach((m,i)=>{const L=wrap(txt[i],46);
+    s+=G('a-fade',(i*.4).toFixed(1),pics[i](46,yy+R-4)+T(86,yy-2,m[0],'cname start f14')
+      +L.map((l,j)=>T(16,yy+2*R+6+j*15,l,'note start f12')).join(''));
+    yy+=2*R+10+L.length*15+16;});
+  const p=para(16,yy,'All three end with two complete circles, but the intermediates differ — and the intermediates are what make a plasmid easy or hard to work with. Rolling-circle plasmids generate single-stranded DNA, recombine with themselves and become unstable above about ten kilobases, which is why larger Gram-positive vectors use theta replicons.',50,'note start f13',17,1.8);
+  return {vb:slim(p.y+8),s:s+p.s};
+}
+
+function scP3(n){
+  let s='';const y=n?56:60;
+  s+=G('a-fade',0,T(n?16:24,28,'Copy number is set by negative feedback on initiation','cname start '+(n?'f13':'f14')));
+  /* iteron handcuffing picture (left) and antisense RNA (right) */
+  const A=(x0,yy)=>{
+    let t=pLine(x0,n?150:200,yy,'#D6CDB8',5);
+    [0,1,2,3].forEach(i=>{t+=`<path d="M${FX(x0+16+i*((n?110:150)/4))} ${FX(yy-7)} l9 7 l-9 7 z" fill="${RECC}" stroke="${INK}" stroke-width=".6"/>`;});
+    t+=Tc(x0,yy-20,'iterons','#3E7FA8',10,'mono start','600');
+    return t;};
+  if(!n){
+    s+=G('a-fade',.3,A(30,y+20)+A(30,y+72)
+      +[0,1,2,3].map(i=>`<path d="M${FX(46+i*37.5)} ${y+27} V${y+65}" stroke="${RECC}" stroke-width="1.6" stroke-dasharray="3 2"/>`).join('')
+      +Tc(30,y+96,'handcuffing: two copies pair through their iterons','#6A5B47',10,'mono start')
+      +Tc(30,y+110,'and initiation is blocked','#6A5B47',10,'mono start'));
+    s+=G('a-fade',.9,pLine(340,246,y+28,'#D6CDB8',5)
+      +gArrow(346,y+28,96,'RNA II',CORE,{h:15})+gArrow(460,y+28,70,'RNA I',PHG,{h:15})
+      +Tc(340,y+8,'ColE1: two overlapping transcripts','#6A5B47',10,'mono start')
+      +`<path d="M390 ${y+58} q24 -14 48 0" fill="none" stroke="${PHG}" stroke-width="2.4"/>`
+      +Tc(340,y+82,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
+      +Tc(340,y+96,'and stops it maturing; Rom makes','#6A5B47',10,'mono start')
+      +Tc(340,y+110,'the pairing faster — delete rom','#6A5B47',10,'mono start')
+      +Tc(340,y+124,'and the copy number rises','#6A5B47',10,'mono start'));
+  } else {
+    s+=G('a-fade',.3,A(20,y+22)+A(20,y+66)
+      +[0,1,2,3].map(i=>`<path d="M${FX(36+i*27.5)} ${y+29} V${y+59}" stroke="${RECC}" stroke-width="1.6" stroke-dasharray="3 2"/>`).join('')
+      +Tc(20,y+90,'handcuffing: two copies pair','#6A5B47',10,'mono start')
+      +Tc(20,y+104,'and initiation is blocked','#6A5B47',10,'mono start'));
+    s+=G('a-fade',.9,pLine(20,318,y+136,'#D6CDB8',5)
+      +gArrow(24,y+136,150,'RNA II',CORE,{h:15})+gArrow(196,y+136,110,'RNA I',PHG,{h:15})
+      +Tc(20,y+120,'ColE1: two overlapping transcripts','#6A5B47',10,'mono start')
+      +Tc(20,y+168,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
+      +Tc(20,y+182,'and stops it maturing; Rom speeds','#6A5B47',10,'mono start')
+      +Tc(20,y+196,'that up — delete rom, copies rise','#6A5B47',10,'mono start'));
+  }
+  let yy=n?y+226:y+148;
+  const b=bullets(n?24:30,yy,[['The inhibitor is counted, not the plasmid','In every system the cell measures the concentration of something made in proportion to plasmid number — an antisense RNA, a Rep protein, a set of binding sites — and shuts initiation down above a threshold. Copy number is the steady state of that loop.'],
+   ['Randomly, then corrected','Which copy fires is random, so copy number drifts; the feedback pulls it back. That is why runaway mutants are easy to isolate: break the inhibitor and the plasmid replicates until it kills the host.'],
+   ['Copy number is a design parameter','High copy gives yield and strong expression but a heavy burden and more recombination between repeats. Low copy gives stability and faithful representation of a library. Choosing a vector is mostly choosing a replicon.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scP4(n){
+  let s='';const y=n?54:58;
+  const cell=(cx,cy,a,b2,lab,k)=>cellRod(cx,cy,n?116:150,n?26:30,{})
+    +pRing(cx-(n?24:32),cy,n?11:13,{col:a,w:2.4})+(b2?pRing(cx+(n?24:32),cy,n?11:13,{col:b2,w:2.4}):'')
+    +T(cx,cy+(n?34:40),lab,'note mid f11');
+  if(!n){
+    s+=G('a-fade',0,cell(170,y+34,PLS,INTC,'different replicons')+cell(470,y+34,PLS,PLS,'the same replicon'));
+    s+=G('a-fade',.8,arw(170,y+84,170,y+106,{blue:1})+arw(470,y+84,470,y+106,{blue:1}));
+    s+=G('a-fade',1.2,cell(170,y+140,PLS,INTC,'both daughters keep both')+cell(470,y+140,PLS,null,'one is lost at random'));
+  } else {
+    s+=G('a-fade',0,cell(90,y+30,PLS,INTC,'different replicons')+cell(268,y+30,PLS,PLS,'the same replicon'));
+    s+=G('a-fade',.8,arw(90,y+78,90,y+100,{blue:1})+arw(268,y+78,268,y+100,{blue:1}));
+    s+=G('a-fade',1.2,cell(90,y+132,PLS,INTC,'both kept')+cell(268,y+132,PLS,null,'one is lost'));
+  }
+  let yy=y+(n?196:214);
+  const b=bullets(n?24:30,yy,[['Incompatibility is a consequence of shared control','Two plasmids with the same replication control system are counted together. The cell holds the total at the set point, so each is replicated half as often as it should be, and random partition quickly separates them into different daughters. Nothing actively expels anything.'],
+   ['Inc groups are an operational classification','Historically defined by testing whether two plasmids could be maintained together; now assigned by typing the replicon sequence. IncF, IncI, IncN, IncX and IncH dominate the Enterobacteriaceae; IncP and IncQ are the broad-host-range workhorses.'],
+   ['It is why multireplicon plasmids exist','A plasmid carrying two different replicons can coexist with plasmids of either group, and some large resistance plasmids carry three. Replicon typing then gives an ambiguous answer, which is a real problem in surveillance.'],
+   ['And why your two vectors fight','Most common cloning vectors are ColE1-derived. Put two in the same cell and you will lose one unless you select for both continuously — the practical face of incompatibility.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+/* ===================== Part II · staying put ===================== */
+function scP5(n){
+  let s='';const y=n?54:58;
+  /* par picture: cell with two plasmids pushed apart */
+  const cx=n?180:320;
+  s+=G('a-fade',0,cellRod(cx,y+34,n?310:460,n?30:34,{}));
+  s+=G('a-fade',.3,pRing(cx-(n?92:150),y+34,n?12:14,{col:PLS,w:2.4})+pRing(cx+(n?92:150),y+34,n?12:14,{col:PLS,w:2.4}));
+  s+=G('a-fade',.7,`<path d="M${cx-(n?72:128)} ${y+34} H${cx+(n?72:128)}" stroke="${RECC}" stroke-width="3.2" stroke-dasharray="6 4"/>`
+    +Tc(cx,y+16,'ParM filament, or ParA gradient','#3E7FA8',10,'mono mid','600')
+    +arw(cx-(n?60:110),y+34,cx-(n?78:134),y+34,{blue:1})+arw(cx+(n?60:110),y+34,cx+(n?78:134),y+34,{blue:1}));
+  s+=G('a-fade',1.1,Tc(cx,y+(n?82:90),'parS sites on each copy, bound by ParB','#6A5B47',10,'mono mid'));
+  let yy=y+(n?104:114);
+  const rows=[['Type I','ParA, a Walker-box ATPase','ParB binds parS and forms a large nucleoprotein complex; ParA on the nucleoid is depleted locally, and the complex chases the remaining gradient to the cell pole. The commonest type, and the same system the chromosome uses.'],
+   ['Type II','ParM, an actin homologue','ParR bound at parC caps a filament that elongates between two plasmid copies and pushes them apart — an insertional ratchet. The R1 plasmid system; the first cytoskeleton described in bacteria.'],
+   ['Type III','TubZ, a tubulin homologue','A treadmilling filament tows the plasmid along. Found on large Bacillus virulence plasmids such as pXO1 and pBtoxis.']];
+  const t=wtable(n,['Type','Motor','How it works'],rows,n?[[10,8],[72,16],[186,23]]:[[24,10],[110,22],[320,44]],{y0:yy,d0:1.4});
+  const b=bullets(n?24:30,t.y+14,[['Only low-copy plasmids need this','With forty copies, the chance that a daughter gets none by random partition is vanishingly small. With one or two, it is close to a quarter per division — so every low-copy plasmid carries an active partition system, and losing it is lethal to the plasmid within tens of generations.'],
+   ['Partition explains the “second chromosome” problem','Megaplasmids use the same machinery and the same replication control as chromosomes. Whether to call a large replicon a chromosome or a plasmid is largely a question of whether it carries essential genes, not of mechanism.']],n?44:88,{d0:2.2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
+}
+
+function scP6(n){
+  let s='';const y=n?58:62, cx=n?180:320;
+  const R=n?22:26;
+  s+=G('a-fade',0,pRing(cx-(n?100:170),y+R,R,{col:PLS,w:2.6})+T(cx-(n?100:170),y+2*R+22,'two monomers','note mid f11'));
+  s+=G('a-fade',.4,arw(cx-(n?64:122),y+R,cx-(n?40:86),y+R,{blue:1})
+    +`<ellipse cx="${cx+(n?0:6)}" cy="${y+R}" rx="${R*1.5}" ry="${R*.85}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
+    +T(cx+(n?0:6),y+2*R+22,n?'a dimer':'a dimer: one replicon, half the copies','note mid f11'));
+  s+=G('a-fade',.9,arw(cx+(n?46:60),y+R,cx+(n?70:98),y+R,{blue:1})
+    +pRing(cx+(n?104:170),y+R,R,{col:PLS,w:2.6,feats:[{a0:-26,a1:26,col:INTC,lab:'cer'}]})
+    +T(cx+(n?104:170),y+2*R+22,n?'resolved':'XerCD resolves it','note mid f11'));
+  if(n)s+=G('a-fade',1.2,Tc(20,y+2*R+44,'a dimer is one replicon with half the','#6A5B47',10,'mono start')
+    +Tc(20,y+2*R+58,'copies; XerCD at cer resolves it','#6A5B47',10,'mono start'));
+  let yy=y+2*R+(n?84:50);
+  const b=bullets(n?24:30,yy,[['Recombination between copies makes dimers','Homologous recombination between two identical circles produces one circle of twice the size. It replicates as a single unit, so the cell has the same mass of plasmid DNA but half as many independently segregating objects.'],
+   ['The dimer catastrophe','Dimers replicate slightly faster per origin and accumulate, so the number of segregating units falls and plasmid-free cells appear. A high-copy plasmid can be lost through this alone, without any change in replication control.'],
+   ['Site-specific resolution is the fix','ColE1 carries cer, a site at which the host XerC and XerD recombinases, with ArgR and PepA, convert dimers back to monomers. Larger plasmids often carry their own resolvase and res site instead.'],
+   ['Which is why recA strains are cloning strains','DH5α, Stbl3 and their relatives are recA to stop plasmid multimerisation and rearrangement between repeats. If a construct with direct repeats keeps coming back wrong, this is usually why.']],n?44:88,{d0:1.4,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scP7(n){
+  let s='';const y=n?52:56;
+  const cx=n?180:320;
+  /* mother cell loses plasmid -> toxin outlives antitoxin */
+  const step=(x,yy,hasP,dead,lab1,lab2)=>cellRod(x,yy,n?96:130,n?24:28,{fill:dead?'#E0D3C4':CELLF,dash:dead?'4 3':''})
+    +(hasP?pRing(x,yy,n?10:12,{col:PLS,w:2.2}):'')
+    +T(x,yy+(n?34:40),lab1,'note mid f11')+(lab2?T(x,yy+(n?48:54),lab2,'note mid f11'):'');
+  if(!n){
+    s+=G('a-fade',0,step(120,y+30,true,false,'plasmid present','toxin + antitoxin made'));
+    s+=G('a-fade',.5,arw(196,y+30,250,y+30,{blue:1})+step(320,y+30,false,false,'plasmid lost at division','no new antitoxin'));
+    s+=G('a-fade',1,arw(396,y+30,450,y+30,{blue:1})+step(520,y+30,false,true,'antitoxin decays first','the toxin kills the cell'));
+  } else {
+    s+=G('a-fade',0,step(90,y+26,true,false,'plasmid present','toxin + antitoxin'));
+    s+=G('a-fade',.5,step(268,y+26,false,false,'plasmid lost','no new antitoxin'));
+    s+=G('a-fade',1,arw(180,y+96,180,y+112,{blue:1})+step(180,y+146,false,true,'antitoxin decays first','the toxin kills the cell'));
+  }
+  let yy=n?y+204:y+100;
+  const rows=[['I','antisense RNA','small RNA blocks translation of the toxin mRNA','hok/sok of R1'],
+   ['II','protein–protein','a labile antitoxin protein binds and neutralises the toxin','ccdAB of F, relBE, mazEF'],
+   ['III','RNA–protein','an RNA pseudoknot array sequesters the toxin protein','toxIN of Pectobacterium'],
+   ['IV','protein–target','the antitoxin protects the target instead of binding the toxin','cbtA/cbeA'],
+   ['V','antitoxin RNase','the antitoxin cuts the toxin mRNA','ghoST'],
+   ['VI','adaptor to protease','the antitoxin delivers the toxin to a host protease','socAB']];
+  const t=wtable(n,['Type','Pairing','Mechanism','Example'],rows,n?[[10,5],[52,12],[140,20],[272,10]]:[[24,6],[80,16],[230,40],[520,16]],{y0:yy,d0:1.4});
+  const b=bullets(n?24:30,t.y+14,[['Post-segregational killing, not maintenance','A toxin–antitoxin system does not help the plasmid replicate or segregate. It kills the cells that lose it, so the population appears to keep the plasmid. From the host’s point of view it is addiction.'],
+   [n?'Gyrase poisons and mRNA cutters':'The toxins are mostly ribosome-dependent RNases or gyrase poisons','CcdB and ParE jam DNA gyrase; RelE, MazF, HigB and YoeB cleave mRNA. The same families appear in chromosomes, where their function is argued over — persistence, phage defence, or simply parasitic elements of their own.'],
+   ['They are a practical problem and a practical tool','They are why curing a clinical plasmid is hard. They are also why the ccdB gene is used for counter-selection in Gateway cloning, and why TA pairs are used to keep plasmids without antibiotics in production strains.']],n?44:88,{d0:2.2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
+}
+/* ===================== Part III · cost and consequence ===================== */
+function scP8(n){
+  const P=n?xyPlot(44,46,286,140,[0,400],[0,1.02],{xlab:'generations without selection',ylab:'fraction carrying',xdy:24,ydx:14})
+          :xyPlot(62,52,300,160,[0,400],[0,1.02],{xlab:'generations without selection',ylab:'fraction of cells carrying the plasmid',xdy:24,ydx:16});
+  const loss=(c,seg)=>t=>Math.exp(-c*t)*(1-seg)+seg*Math.exp(-c*t*.1);
+  let s=G('a-fade',0,P.s);
+  s+=G('a-fade',.4,xyCurve(P,t=>Math.exp(-0.02*t),{col:PHG,n:120}));
+  s+=G('a-fade',.8,xyCurve(P,t=>Math.exp(-0.004*t),{col:TNC,n:120,dash:'6 4'}));
+  s+=G('a-fade',1.2,xyCurve(P,t=>Math.max(.86,Math.exp(-0.02*t)+.86*(1-Math.exp(-0.02*t))),{col:CORE,n:120}));
+  s+=G('a-fade',1.5,keyRow(n?24:P.x+8,P.y+P.h+(n?44:46),[['costly plasmid, no addiction system',PHG],['same plasmid with a TA system',TNC],['after compensatory mutation',CORE]],{rh:16,fs:'f11'}));
+  let y=P.y+P.h+(n?110:112);
+  const b=bullets(n?24:30,y,[['Plasmids are usually costly at first','Replication, partition, and above all the expression of cargo genes consume ribosomes and precursors. A newly acquired resistance plasmid often costs a few percent of growth rate, enough to be lost in a few hundred generations without selection.'],
+   ['And then they stop being costly','Compensatory mutations appear quickly — in the plasmid, in the chromosome, or in a regulator that damps plasmid gene expression. After a few hundred generations the cost can be nearly zero, and the plasmid is then effectively permanent even if the antibiotic is withdrawn.'],
+   ['The plasmid paradox','Costly, imperfectly segregated elements should be lost; conjugation alone is usually too slow to maintain them. Compensatory evolution, addiction systems, occasional selection, and the fact that useful cargo is sometimes recombined into the chromosome between them resolve it.'],
+   [n?'Why stopping an antibiotic does not help':'Which is why stopping an antibiotic does not reverse resistance quickly','This is the central practical consequence, and it is a population-level argument, not a claim about any single strain.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scP9(n){
+  const rows=[['IncF','E. coli, Klebsiella','Narrow, enterobacterial. The F plasmid’s family; multireplicon, large, and the vehicle of CTX-M extended-spectrum β-lactamases in the pandemic ST131 lineage.'],
+   ['IncX3','Enterobacteriaceae','Small, highly conjugative, and the main carrier of blaNDM carbapenemases across species.'],
+   ['IncHI2','Salmonella, E. coli','Large, temperature-sensitive for transfer, carrying multidrug resistance regions and often mcr colistin resistance.'],
+   ['IncP (IncP-1)','very broad','Transfers to and replicates in almost all Gram-negative bacteria. RP4 and RK2 are the laboratory standards and the basis of most mobilisable vector systems.'],
+   ['IncQ','very broad','Small, mobilisable but not self-transmissible, strand-displacement replication with its own primase. RSF1010 is the archetype.'],
+   ['Rep_3, Inc18','Gram-positive','The pAMβ1 and pIP501 families of Enterococcus and Streptococcus: broad-host-range, conjugative, and the route by which vanA reached Staphylococcus aureus.']];
+  const t=n?wtable(n,['Family','Host range, and why it matters'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,10],[98,41]],{y0:30})
+          :wtable(n,['Family','Host range','Why it matters'],rows,[[24,12],[130,18],[300,46]],{y0:30});
+  const b=bullets(n?24:30,t.y+14,[[n?'Self-transmissible or mobilizable':'Self-transmissible, mobilizable, or neither','A conjugative plasmid encodes the whole apparatus and is usually large. A mobilizable one carries only oriT and a relaxase and borrows the rest — small, and therefore far more common. A non-mobilizable plasmid moves only by transformation or transduction, which is what makes a cloning vector safe to use.'],
+   [n?'Host range is set by replication':'Host range is set by replication, not by transfer','Conjugation delivers DNA to a much wider range of species than the plasmid can replicate in. Broad-host-range plasmids are broad because their replication is independent of host-specific initiation factors — IncQ carries its own primase, IncP its own Rep and a trans-acting control system.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:t.s+b.s};
+}
+
+function scP10(n){
+  let s='';const y=n?56:62, x=n?18:36, W=n?322:568;
+  s+=G('a-fade',0,T(n?16:24,28,'What is actually on a cloning vector','cname start f14'));
+  s+=G('a-fade',.2,`<path d="M${x} ${y} h${W}" stroke="#D6CDB8" stroke-width="5" stroke-linecap="round"/>`);
+  const parts=[['ori',RECC,.00,.16],['marker',METC,.18,.22],['MCS',INTC,.42,.14],[n?'prom':'promoter',TNC,.58,.18],[n?'mob':'mob / oriT',PLS,.78,.22]];
+  parts.forEach((p,i)=>{s+=G('a-fade',(.4+i*.25).toFixed(2),gArrow(x+p[2]*W,y,p[3]*W-6,p[0],p[1],{h:17}));});
+  s+=G('a-fade',1.8,Tc(x,y+30,'and the choices behind each one','#6A5B47',10,'mono start'));
+  let yy=y+(n?52:56);
+  const rows=[['Origin','sets copy number and host range','ColE1/pUC for high copy in E. coli; p15A or pSC101 when two vectors must coexist; pAMβ1 or pWV01 theta replicons for streptococci; pE194-type rolling-circle replicons for small Gram-positive constructs.'],
+   ['Marker','selects the cells that have it','Choose one the host is not already resistant to, and remember that β-lactamase is secreted, so satellite colonies appear. In the pneumococcus spectinomycin, erythromycin, kanamycin and chloramphenicol cassettes are the usual set.'],
+   ['Replicating or integrating','two different experiments','A replicating vector gives extra copies and is lost without selection. An integrating vector, or a suicide vector with a counter-selectable marker, puts a single copy at a defined site — essential for clean complementation and for allelic exchange.'],
+   ['Mobility','how it gets in, and whether it can leave','oriT lets a plasmid be conjugated from a donor strain, which is the standard route into species that are hard to transform. Leaving oriT out is a containment decision as much as a technical one.']];
+  const t=n?wtable(n,['Element','What it decides, and what to watch'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,10],[98,41]],{y0:yy,d0:2})
+          :wtable(n,['Element','What it decides','Notes'],rows,[[24,12],[130,20],[320,44]],{y0:yy,d0:2});
+  const p=para(n?16:24,t.y+14,'A vector is a replicon with accessories. Almost every frustrating cloning result — instability, low yield, loss without selection, a construct that cannot be moved into the real host — is a property of the replicon that was chosen at the start rather than of the insert.',n?50:92,'note start f13',17,2.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
+}
+
+const PLOSS=[
+ {q:'A 60 kb plasmid with one or two copies per cell is lost from about a quarter of daughter cells each division.',a:'No partition system',t:'Random partition of one or two objects leaves a daughter with none surprisingly often. Every stably maintained low-copy plasmid carries an active par locus; delete it and this is exactly the loss rate you see.'},
+ {q:'A high-copy plasmid is lost slowly, and gel electrophoresis shows a ladder of larger forms.',a:'Multimerisation',t:'Homologous recombination between identical copies makes dimers and higher multimers. These replicate as single units, so the number of segregating objects falls even though the DNA mass does not. Use a recA host, or a vector with cer.'},
+ {q:'Plasmid-free cells appear in the culture, but they stop growing and lyse.',a:'A toxin–antitoxin system is working',t:'Post-segregational killing. The cells do lose the plasmid; they are then killed by the toxin that outlives its unstable antitoxin, so the surviving population looks stable. This is maintenance by selection, not by segregation.'},
+ {q:'Two compatible-looking vectors are co-transformed, but after overnight growth only one is recovered.',a:'Shared replication control',t:'Most common vectors are ColE1 derivatives, so they are counted together by the same RNA I inhibitor. Choose replicons from different incompatibility groups — p15A with ColE1, for instance — and select for both.'},
+ {q:'A plasmid is stable in the laboratory strain and lost in a clinical isolate of a different species.',a:'Host range, not stability',t:'Replication initiation depends on host factors. A plasmid can be delivered efficiently by conjugation and still fail to replicate; and a par or TA system from one host may not function in another.'},
+ {q:'A resistance plasmid persists for years in a population even where the antibiotic is no longer used.',a:'Compensatory evolution',t:'The initial fitness cost is usually removed within a few hundred generations by mutations in the plasmid or the chromosome. Once the cost is near zero, withdrawing the antibiotic no longer selects against carriage.'},
+ {q:'A construct with two direct repeats keeps coming back with one repeat deleted.',a:'Recombination, not instability of the replicon',t:'RecA-mediated recombination between repeats deletes the intervening sequence, and the smaller plasmid replicates faster. Use a recA strain, break the repeat with synonymous changes, or move to a low-copy vector.'}];
+let plSel=0;
+function scP11(n){
+  const q=PLOSS[plSel];let s='',y=34;
+  const Q=wrap(q.q,n?36:60);
+  s+=G('a-fade',0,Q.map((l,i)=>T(n?16:24,y+i*22,l,'cname start')).join(''));y+=Q.length*22+14;
+  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="28" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +Tc(n?26:38,y+1,q.a,'#2F5276',n?13:14,'mono start','600'));
+  y+=28;
+  const p=para(n?16:24,y,q.t,n?50:92,'note start f13',17,.6);
+  let yy=p.y+16;
+  s+=G('a-fade',1.2,T(n?16:24,yy,'All the symptoms','mono acc start f11'));
+  yy+=18;
+  PLOSS.forEach((x,i)=>{const L=wrap(x.q,n?42:76);
+    s+=G('a-fade',(1.3+i*.06).toFixed(2),(i===plSel?`<rect x="${n?10:18}" y="${yy-12}" width="${n?342:600}" height="${L.length*15+6}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`:'')
+      +`<circle cx="${n?22:30}" cy="${yy-5}" r="4" fill="${i===plSel?PLS:'#C9BFAB'}" stroke="${INK}" stroke-width=".6"/>`
+      +L.map((l,j)=>T(n?36:44,yy+j*15,l,'note start f12')).join(''));
+    yy+=L.length*15+8;});
+  return {vb:n?slim(yy+8):wide(yy+10),s:s+p.s};
+}
+
+const NAR='Narrator';
+const S=[
+ {p:1,title:'What a plasmid is',draw:scP1,text:"A plasmid is a replicon that is not the chromosome: an origin plus the machinery that decides how often to fire it. Everything else it carries is cargo, and a cell routinely holds several plasmids of different sizes and copy numbers at once. Size and copy number together determine almost everything else about how one behaves."},
+ {p:1,title:'Three ways to copy a circle',draw:scP2,text:"Plasmids replicate by one of three mechanisms. Theta replication proceeds through a conventional fork; rolling-circle replication nicks one strand and spools the circle out, leaving single-stranded intermediates; strand displacement avoids forks altogether. The mechanism explains why small Gram-positive vectors become unstable above about ten kilobases."},
+ {p:1,title:'Controlling copy number',draw:scP3,text:"Copy number is a steady state, not a setting. The plasmid makes an inhibitor in proportion to its own number — an antisense RNA, a Rep protein, an array of binding sites — and initiation stops above a threshold. Break the inhibitor and you get a runaway plasmid that kills its host."},
+ {p:1,title:'Incompatibility',draw:scP4,text:"Two plasmids that share a replication control system are counted as one pool. Each is then under-replicated, and random partition quickly separates them into different daughter cells. Nothing actively expels anything: incompatibility is simply what shared control looks like after a few divisions. Inc typing is built on this observation."},
+ {p:2,title:'Partition',draw:scP5,text:"A plasmid present in one or two copies cannot rely on chance to reach both daughters. Low-copy plasmids therefore carry active partition systems — a centromere-like site, a binding protein, and a motor that is either a Walker ATPase, an actin homologue or a tubulin homologue. These were the first cytoskeletal elements found in bacteria."},
+ {p:2,title:'Dimers and how they are resolved',draw:scP6,text:"Recombination between identical copies fuses two circles into one. The DNA mass is unchanged but the number of independently segregating objects halves, and because dimers replicate preferentially they accumulate. Site-specific resolution systems such as cer and XerCD undo this, and recA cloning strains avoid it altogether."},
+ {p:2,title:'Addiction systems',draw:scP7,text:"A toxin–antitoxin pair does not help a plasmid segregate; it kills the cells that lose it. The antitoxin is unstable and the toxin is not, so a daughter that inherits no plasmid runs out of antitoxin first. Six mechanistic types are known, and the same families are scattered through chromosomes, where their role is still argued over."},
+ {p:3,title:'What a plasmid costs',draw:scP8,text:"Carrying a plasmid usually slows growth at first, mostly through the expression of its cargo. Compensatory mutations appear within a few hundred generations and can remove almost all of that cost, after which the plasmid persists whether or not the antibiotic is still being used. That is the central reason resistance does not simply fade away."},
+ {p:3,title:'The families that matter',draw:scP9,text:"A handful of plasmid families carry most of the clinically important resistance. IncF plasmids carry extended-spectrum β-lactamases in E. coli; IncX3 carries carbapenemases across species; the Inc18 family of the enterococci delivered vancomycin resistance to Staphylococcus aureus. Host range is set by replication, not by how widely the plasmid can be transferred."},
+ {p:3,title:'Plasmids in the laboratory',draw:scP10,text:"A cloning vector is a replicon with accessories: an origin that sets copy number and host range, a selectable marker, a site to clone into, usually a promoter, and sometimes an origin of transfer. Most frustrating cloning results are properties of the replicon chosen at the beginning rather than of the insert."},
+ {p:3,title:'Why is my plasmid being lost?',chips:'ploss',draw:scP11,text:"Plasmid loss has a small number of causes, and they can be told apart from the pattern of loss. Pick a symptom to see the likely explanation and what to do about it. Most of them are decisions made when the vector was chosen rather than accidents at the bench."}];
+const CHIPS={ploss:{list:PLOSS.map((q,i)=>String(i+1)),get:()=>plSel,set:k=>plSel=k}};
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+const NPARTS=Math.max(...S.map(s=>s.p));
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  for(let k=1;k<=NPARTS;k++)$('part'+k).setAttribute('aria-current',sc.p===k);
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+for(let k=1;k<=NPARTS;k++)$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>
