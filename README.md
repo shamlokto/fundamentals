@@ -37,13 +37,16 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | XXIX | How CRISPR–Cas9 Works | 13 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
 | XXX | Next-Generation Sequencing | 15 | [`decks/sequencing/`](decks/sequencing/) |
 | XXXI | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
-| XXXII | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
-| XXXIII | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
-| XXXIV | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
-| XXXV | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
-| XXXVI | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
-| XXXVII | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
-| XXXVIII | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
+| XXXII | Statistics for Microbiologists | 9 | [`decks/statistics/`](decks/statistics/) |
+| XXXIII | Models of Growth and Spread | 8 | [`decks/modelling/`](decks/modelling/) |
+| XXXIV | Biosafety, Ethics and Good Practice | 9 | [`decks/biosafety-ethics/`](decks/biosafety-ethics/) |
+| XXXV | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
+| XXXVI | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
+| XXXVII | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
+| XXXVIII | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
+| XXXIX | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
+| XL | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
+| XLI | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
 
 Historical attributions, dates and figures are rounded for teaching and should be checked against primary sources.
 

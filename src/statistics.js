@@ -10,7 +10,7 @@ const POW=[{k:'d = 0.5',d:.5,t:'Half a standard deviation: a subtle phenotype, s
  {k:'d = 1.2',d:1.2,t:'A clear shift, for example a mutant that grows noticeably more slowly.'},
  {k:'d = 2',d:2,t:'A big, clean effect, such as a knockout that abolishes a function. Small n suffices only for effects this large.'}];
 let powSel=1;
-const PRI=[{k:'Flat prior',a:1,b:1,t:'Beta(1, 1): every prevalence equally plausible beforehand. The posterior follows the data.'},
+const PRI=[{k:'Flat prior',a:1,b:1,t:'Beta(1, 1): every prevalence equally plausible beforehand, so the posterior has the shape of the likelihood and hides it.'},
  {k:'Sceptical prior',a:1,b:9,t:'Beta(1, 9): we expected the gene to be rare, around 10%. The posterior is pulled down.'},
  {k:'Earlier survey',a:30,b:70,t:'Beta(30, 70): a previous survey of 100 isolates found about 30%. The prior dominates 20 new isolates.'}];
 let priSel=0;
@@ -20,7 +20,7 @@ function stBell(cx,cy,w,h,cut){const sd=w/6, f=x=>cy-h*Math.exp(-((x-cx)**2)/(2*
 function scS1(n){return introPlate(n,{q:'How do we tell a real effect from the noise of biology?',
   belief:'Cultures, animals and sequencing runs all vary. Statistics does not remove that variation; it measures it, so that a claim about a mutant, a drug or a community can be stated with an honest degree of uncertainty. Most of the work is done before any data exist, in the design.',
   items:['Controls, randomisation and blocking','Biological and technical replicates','Power and sample size','Tests, assumptions and p-values','Multiple testing','Regression and mixed models','Bayesian basics','Compositional sequencing data'],
-  art:(cx,cy)=>stBell(cx,cy+30,200,100,cx+36)+T(cx+56,cy+10,'p','mono start f13')+arw(cx+60,cy+14,cx+52,cy+24,{w:1})+T(cx,cy+50,'the null distribution','note mid f11'),artH:150});}
+  art:(cx,cy)=>stBell(cx,cy+30,200,100,cx+36)+T(cx+84,cy-2,'p','mono start f13')+arw(cx+82,cy+2,cx+58,cy+22,{w:1})+T(cx,cy+50,'the null distribution','note mid f11'),artH:150});}
 function scS2(n){
   const art=(cx,cy)=>{let s='';const pat=[[1,0,0,1],[0,1,1,0],[1,0,1,0]];
     pat.forEach((r,b)=>{const y=cy-120+b*76;s+=`<rect x="${cx-125}" y="${y}" width="250" height="68" rx="8" fill="none" stroke="#6A5B47" stroke-dasharray="4 3"/>`+T(cx-112,y+40,'day '+(b+1),'note start f12');
@@ -46,12 +46,12 @@ function scS4(n){
   let s=A.s+ln(A.x,FX(A.py(.8)),A.x+A.w,FX(A.py(.8)),'#A4473A',1,'4 3');
   s+=G('a-fade',.2,POW.map((p,i)=>i===powSel?'':curve(A,x=>stPower(p.d,x),{col:'#9A8F7C',w:1.2,dash:'3 3'})).join(''));
   s+=G('a-fade',.4,curve(A,x=>stPower(c.d,x),{col:'#2F5276',w:2.6})+`<circle cx="${FX(A.px(need))}" cy="${FX(A.py(.8))}" r="4.5" fill="#A4473A"/>`
-    +T(FX(A.px(need)+(need>50?-8:8)),FX(A.py(.8)+18),'n ≈ '+need,'mono f12 halo '+(need>50?'end':'start')));
+    +T(FX(A.px(need)+(need>50?-8:8)),FX(A.py(.8)+(need>50?-10:18)),'n ≈ '+need,'mono f12 halo '+(need>50?'end':'start')));
   const bx=n?16:410, by=n?A.y+A.h+60:52;
   let t=G('a-fade',.6,T(bx,by,c.k+': about '+need+' per group','cname start f15'));
   const p=para(bx,by+22,c.t,n?50:30,'lab start f13',17,.7);
   const q=n?bullets(24,p.y+28,[['Power','The probability of detecting an effect of a given size if it is real. Aim for at least 80%.'],['Effect size d','The difference in means divided by the standard deviation. Take the SD from pilot data or earlier work.'],['Do it first','Underpowered studies miss real effects, and the significant results they do find overstate the effect.']],44,{d0:1,gap:18})
-    :bullets(bx+6,p.y+30,[['Power','The chance of detecting an effect of a given size if it is real. Aim for 80% or more.'],['Effect size d','Difference in means divided by the SD, from pilot data or earlier work.'],['Do it first','Small studies miss real effects, and the hits they find overstate them.']],28,{d0:1,gap:16});
+    :bullets(bx+6,p.y+30,[['Power','The chance of detecting an effect of a given size if it is real. Aim for 80% or more.'],['Effect size d','Difference in means divided by the SD, from pilot data or earlier work.'],['Do it first','Small studies miss real effects, and the hits they find overstate them.']],28,{d0:1,gap:24});
   const foot=para(n?16:24,Math.max(q.y,A.y+A.h+48)+(n?0:6),'Two-sided two-sample t-test, α = 0.05. Grey dashed lines: the other effect sizes.',n?50:92,'note start f12',16,1.2);
   return {vb:n?slim(foot.y+6):wide(foot.y+8),s:s+t+p.s+q.s+foot.s};
 }
@@ -81,19 +81,19 @@ function scS6(n){
   const ly=A.y+A.h+52;
   s+=G('a-fade',.7,lg.map((L,i)=>{const x=n?(i%2?190:24):A.x-40+(i%2)*170, y=ly+(n?Math.floor(i/2)*18:Math.floor(i/2)*18);return `<circle cx="${x}" cy="${y-4}" r="4" fill="${L[0]}" stroke="${INK}" stroke-width=".6"/>`+T(x+10,y,L[1],'note start f11');}).join(''));
   const b=n?bullets(24,ly+56,[['Why correct','Test 4,000 genes with no real differences at α = 0.05 and about 200 come out “significant”.'],['Bonferroni','Divide α by the number of tests. It controls the chance of even one false positive (the family-wise error rate) and is conservative.'],['Benjamini–Hochberg','Rank the p-values and compare the i-th with i × α/m. It controls the false discovery rate, the expected share of false positives among the hits: the usual choice for RNA-seq and screens.']],44,{d0:1,gap:18})
-    :bullets(410,52,[['Why correct','Test 4,000 genes with no real differences at α = 0.05 and about 200 come out “significant”.'],['Bonferroni','Divide α by the number of tests. Controls the chance of any false positive; conservative.'],['Benjamini–Hochberg','Compare the i-th smallest p with i × α/m. Controls the false discovery rate, the expected share of false hits: the usual choice for RNA-seq and screens.']],28,{d0:1,gap:18});
+    :bullets(410,52,[['Why correct','Test 4,000 genes with no real differences at α = 0.05 and about 200 come out “significant”.'],['Bonferroni','Divide α by the number of tests. Controls the chance of any false positive; conservative.'],['Benjamini–Hochberg','Compare the i-th smallest p with i × α/m. Controls the false discovery rate, the expected share of false hits: the usual choice for RNA-seq and screens.']],28,{d0:1,gap:22});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,ly+46)),s:s+b.s};
 }
 function scS7(n){
   const A=n?axes(50,30,268,170,{xr:[0,4],yr:[0,1.2],xt:[[0,'0'],[1,'1'],[2,'2'],[3,'3'],[4,'4']],yt:[[0,'0'],[.4,'0.4'],[.8,'0.8'],[1.2,'1.2']],xlab:'drug (µg/mL)',ylab:'growth rate (per h)'})
     :axes(70,36,300,200,{xr:[0,4],yr:[0,1.2],xt:[[0,'0'],[1,'1'],[2,'2'],[3,'3'],[4,'4']],yt:[[0,'0'],[.4,'0.4'],[.8,'0.8'],[1.2,'1.2']],xlab:'drug (µg/mL)',ylab:'growth rate (per h)'});
-  const reps=[[1.02,'#2F5276'],[.86,'#4F7A3F'],[.7,'#C17A2C']], sl=-.16, jit=[.03,-.02,.04,-.03,.01,-.04,.02,.0,-.01];
+  const reps=[[1.02,'#2F5276'],[.92,'#4F7A3F'],[.64,'#C17A2C']], sl=-.16, jit=[.03,-.02,.04,-.03,.01,-.04,.02,.0,-.01];
   let s=A.s;
   reps.forEach((r,k)=>{s+=G('a-fade',(.2+k*.2).toFixed(1),curve(A,x=>r[0]+sl*x,{col:r[1],w:1.4})+[0,1,2,3,4].map((x,i)=>`<circle cx="${FX(A.px(x))}" cy="${FX(A.py(r[0]+sl*x+jit[(i+k*3)%9]))}" r="3.6" fill="${r[1]}" stroke="${INK}" stroke-width=".5"/>`).join('')
     +T(FX(A.px(4)+6),FX(A.py(r[0]+sl*4)+4),'rep '+(k+1),'note start f11'));});
   s+=G('a-fade',.9,curve(A,x=>.86+sl*x,{col:INK,w:2.6,dash:'6 4'})+T(FX(A.px(.15)),FX(A.py(1.17)),'dashed: fixed effect of drug','note start f11 halo'));
   const items=[['Regression','Fits y = a + b·x + error. Assumes a straight-line relation, independent errors and constant spread. Generalised linear models extend it to counts and proportions.'],['Fixed effects','Factors you set and want to estimate: drug dose, genotype, medium. Here, the common slope.'],['Random effects','Units sampled from a larger population: replicate culture, day, mouse, cage. Each replicate gets its own intercept, drawn from a distribution.'],['A mixed model','In R’s lme4: rate ~ dose + (1 | replicate). It uses every measurement without pseudoreplication.']];
-  const b=n?bullets(24,A.y+A.h+60,items,44,{d0:1.1,gap:18}):bullets(418,52,items,27,{d0:1.1,gap:14});
+  const b=n?bullets(24,A.y+A.h+60,items,44,{d0:1.1,gap:18}):bullets(418,52,items,27,{d0:1.1,gap:22});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,A.y+A.h+50)),s:s+b.s};
 }
 function scS8(n){
@@ -127,8 +127,8 @@ function scS9(n){
     return G('a-fade',d,o+T(x+bw/2,base+16,lab,'note mid f11'));};
   s+=bar(xs[0],sam[0],k,'sample 1',0,.2)+bar(xs[1],sam[1],k,'sample 2',0,.4)+bar(xs[2],sam[0],k,'sample 1',1,.7)+bar(xs[3],sam[1],k,'sample 2',1,.9);
   s+=G('a-fade',1.1,arw(xs[1]+bw+10,140,xs[2]-10,140,{w:1.4})+T((xs[1]+bw+xs[2])/2,130,'sequence','note mid f11 halo'));
-  const items=[['Closure','Reads add up to the sequencing depth, so only proportions are seen. C bloomed; A and B did not change, yet their share halved.'],['Log-ratios survive','The ratio A/B is 1 in both samples, in cells and in reads. Aitchison built compositional statistics on such ratios.'],['CLR','The centred log-ratio, clr(xᵢ) = log(xᵢ / g(x)) with g the geometric mean of all taxa, moves data to a space where ordinary methods behave. Zeros need a pseudocount or a model.'],['Absolute numbers','Spike-in standards, qPCR or flow cytometry recover total load. Tools such as ALDEx2 and ANCOM-BC test differential abundance with compositions in mind.']];
-  const b=n?bullets(24,base+50,items,44,{d0:1.3,gap:18}):bullets(400,52,items,30,{d0:1.3,gap:14});
+  const items=[['Closure','Reads add up to the sequencing depth, so only proportions are seen. C bloomed; A and B did not change, yet their share halved.'],['Log-ratios survive','The ratio A/B is 1 in both samples, in cells and in reads. Aitchison built compositional statistics on such ratios.'],['CLR','The centred log-ratio takes the log of each count divided by the geometric mean of all taxa in that sample. Ordinary methods then behave better. Zeros need a pseudocount or a model.'],['Absolute numbers','Spike-in standards, qPCR or flow cytometry recover total load. Tools such as ALDEx2 and ANCOM-BC test differential abundance with compositions in mind.']];
+  const b=n?bullets(24,base+50,items,44,{d0:1.3,gap:18}):bullets(400,52,items,30,{d0:1.3,gap:22});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,base+30)),s:s+b.s};
 }
 const S=[

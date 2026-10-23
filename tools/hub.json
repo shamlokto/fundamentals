@@ -265,6 +265,33 @@
   ]
  },
  {
+  "name": "Quantitative and professional",
+  "desc": "Statistics, models, and working safely and openly.",
+  "decks": [
+   {
+    "slug": "statistics",
+    "psub": "Statistics",
+    "title": "Statistics for Microbiologists",
+    "sub": "Reading the numbers honestly",
+    "blurb": "Replicates, power, p-values, multiple testing, mixed models, Bayes and compositional sequencing data."
+   },
+   {
+    "slug": "modelling",
+    "psub": "Modelling",
+    "title": "Models of Growth and Spread",
+    "sub": "Turning biology into equations",
+    "blurb": "Exponential, logistic and Monod growth, predator–prey cycles, flux balance analysis and SIR epidemics, and the limits of models."
+   },
+   {
+    "slug": "biosafety-ethics",
+    "psub": "Good practice",
+    "title": "Biosafety, Ethics and Good Practice",
+    "sub": "Working safely, securely, honestly and openly",
+    "blurb": "Biosafety levels and cabinets, select agents and dual-use oversight, IBC/IACUC/IRB, authorship and misconduct, reproducibility and FAIR data."
+   }
+  ]
+ },
+ {
   "name": "History",
   "desc": "Classic experiments, and the logic that made them decisive.",
   "decks": [
