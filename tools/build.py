@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""Build decks/<slug>/index.html from src/<slug>.js.
+
+Each source starts with a metadata block:
+/*META
+{"title": "...", "eyebrow": "...", "h1": "...", "parts": ["...", ...], "foot": "...", "description": "..."}
+META*/
+followed by plain JavaScript that defines the scene functions, `const S=[...]` and `const CHIPS={...}`.
+The output is a single self-contained page that shares the look and runtime of the hand-built decks.
+"""
+import json, re, sys, html, pathlib
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+T = ROOT / 'tools'
+
+def build(slug):
+    src = (ROOT / 'src' / f'{slug}.js').read_text()
+    m = re.match(r'\s*/\*META\s*(\{.*?\})\s*META\*/', src, re.S)
+    meta = json.loads(m.group(1)); body = src[m.end():]
+    head = (T / 'base_head.html').read_text()
+    head = re.sub(r'<title>.*?</title>', f'<title>{html.escape(meta["title"])}</title>', head)
+    if meta.get('description'):
+        head = head.replace('<link rel="preconnect"', f'<meta name="description" content="{html.escape(meta["description"])}">\n<link rel="preconnect"', 1)
+    parts = '\n'.join(f'    <button id="part{i+1}" type="button">{roman(i+1)} · {html.escape(p)}</button>' for i, p in enumerate(meta['parts']))
+    wrap = f'''<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">{html.escape(meta["eyebrow"])}</p>
+    <h1>{html.escape(meta["h1"])}</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+{parts}
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">{html.escape(meta["foot"])}</p>
+</div>
+<script>
+'''
+    out = head + wrap + (T / 'base_helpers.js').read_text() + '\n' + (T / 'lib.js').read_text() + '\n/* ===================== deck ===================== */\n' + body.strip() + "\nconst NAR='Narrator';\n" + (T / 'base_runtime.html').read_text()
+    d = ROOT / 'decks' / slug; d.mkdir(parents=True, exist_ok=True)
+    (d / 'index.html').write_text(out)
+
+def roman(n):
+    r = ''
+    for s, v in [('X', 10), ('IX', 9), ('V', 5), ('IV', 4), ('I', 1)]:
+        while n >= v: r += s; n -= v
+    return r
+
+if __name__ == '__main__':
+    for slug in (sys.argv[1:] or [p.stem for p in (ROOT / 'src').glob('*.js')]):
+        build(slug); print('built', slug)
