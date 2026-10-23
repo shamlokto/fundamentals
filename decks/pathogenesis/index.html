@@ -684,7 +684,7 @@ function scP3(n){
    ['Invasins','effectors that trigger uptake','force entry into non-phagocytic cells'],
    ['Enzymes','hyaluronidase, collagenase, proteases','spread through tissue; degrade antibody (IgA proteases)'],
    ['Biofilm','extracellular matrix','tolerance to antibiotics and immunity, on devices and tissues']];
-  const t=wtable(n,['Factor','Examples','What it buys the microbe'],rows,
+  const t=wtable(n,[n?'Factor':'Factor','Examples',n?'What it buys':'What it buys the microbe'],rows,
     n?[[10,10],[96,14],[210,15]]:[[24,14],[170,20],[350,30]],{y0:30,R:n?354:620});
   const p=para(n?16:24,t.y+14,'Virulence factors are the tools that turn a microbe into a pathogen. Many are clustered on pathogenicity islands acquired by horizontal transfer, which is how a harmless strain can suddenly become dangerous. Iron is so limited in the host that its acquisition is a decisive battleground.',n?50:92,'note start f13',17,.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
@@ -730,7 +730,7 @@ function scP5(n){
     +eff(b-6,Y.bc+38)+eff(b+10,Y.bc+44)+eff(b,Y.pp+8)+eff(b,Y.out+22)+eff(b-20,Y.hc+12)+eff(b-36,Y.hc+26);
   t4+=arw(b-3,Y.hm-2,b-15,Y.hc+16,{blue:1,w:1.3});
   t4+=n?tl(b,y0-8,'T4SS','mid')
-       :tl(b+22,Y.out+20,'pilus','start')+tl(b+20,Y.pp+8,'core complex','start')+tl(b,y0-10,'type IV (Dot/Icm, Cag)','mid');
+       :tl(b+22,Y.out+20,'pilus','start')+tl(b+24,Y.pp+3,'core complex','start halo')+tl(b,y0-10,'type IV (Dot/Icm, Cag)','mid');
   let s=G('a-fade',0,st.s)+G('a-fade',.3,t3)+G('a-fade',.6,t4);
   const yn=Y.end+18;
   const pn=para(n?16:24,yn,'Effector proteins (gold) cross both bacterial membranes and the host membrane in one step. For Legionella the host membrane is the membrane of the vacuole it lives in.',n?52:96,'note start f13',17,.8);
@@ -755,14 +755,14 @@ function scP7(n){
   const N=n?{he:{x:180,y:36,w:230,t:'healthy microbiota|(colonization resistance)',f:PAL.green},
      ab:{x:180,y:128,w:200,t:'broad antibiotics',f:PAL.rose},
      dy:{x:180,y:206,w:200,t:'dysbiosis: niches open',f:PAL.gold},
-     cd:{x:88,y:290,w:150,t:'C. difficile|overgrows',f:PAL.lilac},
-     ft:{x:272,y:290,w:160,t:'faecal transplant|restores community',f:PAL.green}}
-   :{he:{x:140,y:60,w:180,t:'healthy microbiota|colonization resistance',f:PAL.green},
+     cd:{x:76,y:290,w:126,t:'C. difficile|overgrows',f:PAL.lilac},
+     ft:{x:266,y:290,w:172,t:'faecal transplant|restores community',f:PAL.green}}
+   :{he:{x:128,y:60,w:212,t:'healthy microbiota|colonization resistance',f:PAL.green},
      ab:{x:360,y:60,w:160,t:'broad-spectrum|antibiotics',f:PAL.rose},
      dy:{x:560,y:60,w:150,t:'dysbiosis:|niches open',f:PAL.gold},
      cd:{x:420,y:190,w:160,t:'C. difficile|overgrows, colitis',f:PAL.lilac},
      ft:{x:180,y:190,w:180,t:'faecal transplant|restores resistance',f:PAL.green}};
-  const E=n?[['he','ab',''],['ab','dy',''],['dy','cd','',{side:-1}],['cd','ft','treat',{side:1}]]
+  const E=n?[['he','ab',''],['ab','dy',''],['dy','cd','',{side:-1}],['cd','ft','treat',{side:-1}]]
     :[['he','ab',''],['ab','dy',''],['dy','cd','',{side:1}],['cd','ft','treat',{side:1}]];
   let s=G('a-fade',0,flow(N,E));
   const b=bullets(n?24:30,n?360:290,[
@@ -798,7 +798,7 @@ function scP9(n){
    ['Case-fatality','proportion of cases who die','severity; distinct from mortality rate'],
    ['Koch / molecular','isolate, reinoculate, re-isolate; or inactivate and restore a gene','establishes that a microbe (or gene) causes a disease']];
   const t=wtable(n,['Measure','Definition','Use'],rows,
-    n?[[10,9],[76,13],[200,15]]:[[24,10],[120,24],[380,28]],{y0:30,R:n?354:620});
+    n?[[10,13],[104,14],[226,15]]:[[24,14],[150,30],[410,28]],{y0:30,R:n?354:620});
   const p=para(n?16:24,t.y+14,'Epidemiology measures disease in populations. R0 is an intrinsic property of a pathogen in a setting; vaccination, treatment and behaviour lower it to Re. Koch’s postulates, and their molecular revision by Falkow (inactivate a gene, lose virulence; restore it, regain it), connect a single cause to a disease; they are covered in full in the koch primer.',n?50:92,'note start f13',17,.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }

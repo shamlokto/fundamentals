@@ -42,7 +42,7 @@ function scG3(n){
   const t=T(x,ex.y+18,'Typical doubling times (log scale)','note start f12');
   const h=hbars(n,n?6:24,ex.y+30,n?344:560,items,{max:3.3,lw:n?150:200,vw:56});
   const bx=(n?6:24)+(n?150:200), bw=(n?344:560)-(n?150:200)-56, ay=h.y+2, tx=v=>FX(bx+bw*v/3.3);
-  const ax=G('a-fade',.9,ln(bx,ay,bx+bw,ay,'#6A5B47',1)+[[1,'10 min'],[Math.log10(60),'1 h'],[Math.log10(600),'10 h'],[Math.log10(1440),'1 day']].map(([v,l])=>ln(tx(v),ay,tx(v),ay+4,'#6A5B47',1)+(n&&(l==='1 h'||l==='10 h')?'':T(tx(v),ay+17,l,'mono mid f12'))).join(''));
+  const ax=G('a-fade',.9,ln(bx,ay,bx+bw,ay,'#6A5B47',1)+[[1,'10 min'],[Math.log10(60),'1 h'],[Math.log10(600),'10 h'],[Math.log10(1440),'1 day']].map(([v,l])=>ln(tx(v),ay,tx(v),ay+4,'#6A5B47',1)+(n&&(l==='1 h'||l==='10 h')?'':T(l==='10 h'?tx(v)+8:l==='1 day'?tx(v)-4:tx(v),ay+17,l,'mono '+(l==='10 h'?'end':l==='1 day'?'start':'mid')+' f12'))).join(''));
   h.y+=26;
   return {vb:n?slim(h.y+4):wide(h.y+6),s:s+t+h.s+ax};
 }
@@ -95,9 +95,9 @@ function scG5(n){
   const by=n?A.y+A.h+80:A.y+A.h+60;
   const rows=ss.wash?[['Steady state','none: cells are washed out faster than they can divide'],['Residual substrate','S rises to the feed concentration, 200 mg/L'],['Critical D',(n?'':'μmax·S_R/(Ks+S_R) ')+'≈ 0.95 per hour']]
     :[['Growth rate',(n?'μ = D = ':'μ = D = ')+c.D.toFixed(1)+' per h ('+Math.round(60*Math.LN2/c.D)+' min doubling)'],['Residual substrate',(n?'S* = ':'S* = Ks·D/(μmax − D) = ')+FX(ss.S,1)+' mg/L'],['Biomass',(n?'X* = ':'X* = Y(S_R − S*) = ')+FX(ss.X,0)+' mg/L'],['Productivity','D·X* = '+FX(ss.P,0)+' mg/L per h']];
-  let yy=by;const kx=n?16:24, vx2=n?122:190;
+  let yy=by;const kx=n?16:24, vx2=n?140:190;
   s+=G('a-fade',.5,T(kx,yy-22,'Steady state at '+c.k.replace(': washout',''),'cname start f15'));
-  rows.forEach((r,i)=>{const L=wrap(r[1],n?29:56);s+=G('a-fade',(.6+i*.08).toFixed(2),T(kx,yy,r[0],'lab start f13')+L.map((l,j)=>T(vx2,yy+j*16,l,'mono start f12')).join(''));yy+=L.length*16+8;});
+  rows.forEach((r,i)=>{const L=wrap(r[1],n?25:56);s+=G('a-fade',(.6+i*.08).toFixed(2),T(kx,yy,r[0],'lab start f13')+L.map((l,j)=>T(vx2,yy+j*16,l,'mono start f12')).join(''));yy+=L.length*16+8;});
   const p=para(kx,yy+8,'Illustrative values: μmax 1.0 per h, Ks 10 mg/L, feed S_R 200 mg/L, yield 0.5. In a chemostat the dilution rate D = F/V, not the medium, sets the growth rate: if cells grow faster than D they consume substrate until μ falls back to D.',n?50:92,'note start f13',17,.9);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }

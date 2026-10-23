@@ -175,7 +175,7 @@ const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
 const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
 const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
 function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
-function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if(L[L.length-1]&&(L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
 function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
 function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
 function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
@@ -235,10 +235,10 @@ function boxItem(x,y,W,head,body,o={}){
 }
 function bullets(x,y,items,wrapN,o={}){
   let s='',yy=y;
-  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
-    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
-      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
-    yy+=L.length*17+(o.gap||30);});
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN),H=wrap(it[0],o.hw||wrapN),hh=(H.length-1)*19;
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+H.map((h,k)=>T(x+(o.nonum?0:16),yy+k*19,h,'cname start '+(o.hfs||'f14'))).join('')
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+hh+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=hh+L.length*17+(o.gap||30);});
   return {s,y:yy};
 }
 function wtable(n,head,rows,cols,o={}){
@@ -726,9 +726,10 @@ function scD11(n){
   const q=DEFQ[dSel];let s='',y=34;
   const Q=wrap(q.q,n?36:60);
   s+=G('a-fade',0,Q.map((l,i)=>T(n?16:24,y+i*22,l,'cname start')).join(''));y+=Q.length*22+14;
-  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="28" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
-    +Tc(n?26:38,y+1,q.a,'#2F5276',n?11.5:14,'mono start','600'));
-  y+=28;
+  const A=wrap(q.a,n?38:56);
+  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="${10+A.length*18}" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +A.map((l,i)=>Tc(n?26:38,y+1+i*18,l,'#2F5276',n?11.5:14,'mono start','600')).join(''));
+  y+=28+(A.length-1)*18;
   const p=para(n?16:24,y,q.t,n?50:92,'note start f13',17,.6);
   let yy=p.y+16;
   s+=G('a-fade',1.2,T(n?16:24,yy,'All the observations','mono acc start f11'));

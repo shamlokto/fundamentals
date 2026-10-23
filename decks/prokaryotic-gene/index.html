@@ -286,7 +286,7 @@ function scTerm(n){
   s+=G('a-fade',.5,wave(A.ox+10,hx,A.dy-30,MR,2.4)+hairpin(hx,A.dy-30,n?40:50,14)+`<path d="M${hx+14} ${A.dy-30} H${hx+37}" stroke="${MR}" stroke-width="2.4"/>`+Tc(hx+38,A.dy-28,'UUUUUUU',MR,n?11:12,'mono start','600'));
   s+=G('a-fade',.8,T(hx-8,A.dy-(n?58:64),'GC-rich hairpin','note end f12')+T(hx+(n?78:84),A.dy-42,'U-tract','note mid f12'));
   s+=G('a-out',1.6,rnap(hx+(n?110:110),A.dy-4,n?.8:.9,false),'--dx:30px;--dy:-30px');
-  s+=G('a-fade',2.2,T(A.ox,A.dy+34,n?'Hairpin pulls RNA from the weak rU–dA hybrid':'Hairpin + weak rU–dA hybrid: RNA and polymerase release','note start f12'));
+  s+=G('a-fade',2.2,(n?T(A.ox,A.dy+34,'Hairpin pulls RNA from the weak rU–dA hybrid','note start f12'):T(A.ox,A.dy+34,'Hairpin + weak rU–dA hybrid:','note start f12')+T(A.ox,A.dy+50,'RNA and polymerase release','note start f12')));
   const B=n?{ox:14,oy:200,dy:300,x2:346}:{ox:340,oy:28,dy:150,x2:620};
   s+=G('a-fade',.3,panel(B.ox,B.oy,0,'Rho-dependent')+dsDNA(B.ox,B.x2,B.dy,INK,8));
   const rx1=B.ox+(n?20:16), rnapx=B.x2-(n?40:44);
@@ -294,8 +294,8 @@ function scTerm(n){
   s+=G('a-pop',1.0,rnap(rnapx,B.dy-4,n?.8:.9,false));
   s+=G('a-slow',1.3,rho(rnapx-40,B.dy-30,1.1),`--dx:${-(rnapx-40-(rx1+(n?65:60)))}px`);
   s+=G('a-pop',3.8,mark(rnapx,B.dy-44,false,9));
-  s+=G('a-fade',3.9,T(B.ox,B.dy+34,n?'Rho chases the RNA 5′→3′ and dislodges RNAP':'Rho helicase loads on bare RNA, runs 5′→3′, dislodges RNAP','note start f12'));
-  return {vb:n?slim(350):wide(210),s};
+  s+=G('a-fade',3.9,(n?T(B.ox,B.dy+34,'Rho chases the RNA 5′→3′ and dislodges RNAP','note start f12'):T(B.ox,B.dy+34,'Rho helicase loads on bare RNA,','note start f12')+T(B.ox,B.dy+50,'runs 5′→3′, dislodges RNAP','note start f12')));
+  return {vb:n?slim(350):wide(226),s};
 }
 
 /* ===== Part II · Operons ===== */
@@ -326,7 +326,7 @@ function scOperon(n){
 function scCoupled(n){
   const y=n?190:200, x1=n?10:20, x2=n?350:620, px=n?296:540;
   let s=G('a-fade',0,dsDNA(x1,x2,y,INK,8)+bend(x1+20,y-6,16,12));
-  s+=G('a-fade',.3,`<path d="M${x1+40} ${y-34} C ${x1+60} ${y-120}, ${px-120} ${y-130}, ${px-26} ${y-12}" stroke="${MR}" stroke-width="2.6" fill="none"/>`+T(x1+34,y-30,'5′','mono end f12')+T(x1+2,y-74,'mRNA','note start'));
+  s+=G('a-fade',.3,`<path d="M${x1+40} ${y-34} C ${x1+60} ${y-120}, ${px-120} ${y-130}, ${px-26} ${y-12}" stroke="${MR}" stroke-width="2.6" fill="none"/>`+T(x1+34,y-30,'5′','mono end f12')+T(x1+2,y-(n?108:74),'mRNA','note start'));
   s+=G('a-move',.2,rnap(px,y+4,n?.95:1.1,false),`--dx:${-(px-x1-60)}px`);
   const t=[.14,.34,.54,.74,.9];
   const bez=(tt)=>{const p0=[x1+40,y-34],p1=[x1+60,y-120],p2=[px-120,y-130],p3=[px-26,y-12];const u=1-tt;return [0,1].map(k=>u*u*u*p0[k]+3*u*u*tt*p1[k]+3*u*tt*tt*p2[k]+tt*tt*tt*p3[k]);};
@@ -334,8 +334,8 @@ function scCoupled(n){
   const [lx,ly]=bez(.9);
   s+=G('a-fade',2.4,`<path d="M${lx-(n?44:52)} ${ly+30} L${lx-14} ${ly+6}" class="arrow"/>`+T(lx-(n?48:56),ly+36,'leading ribosome','note end f12'));
   s+=G('a-fade',2.8,T(n?180:320,y+(n?42:46),n?'Translation begins before transcription ends':'No nucleus: ribosomes load while RNA polymerase is still transcribing','lab mid')
-    +T(n?180:320,y+(n?62:68),n?'The leading ribosome covers the RNA, shielding it from Rho':'The leading ribosome covers the new RNA, keeping Rho off','note mid'));
-  return {vb:n?slim(y+76):wide(y+84),s};
+    +(n?T(180,y+62,'The leading ribosome covers the RNA,','note mid')+T(180,y+80,'shielding it from Rho','note mid'):T(320,y+68,'The leading ribosome covers the new RNA, keeping Rho off','note mid')));
+  return {vb:n?slim(y+94):wide(y+84),s};
 }
 
 /* ===== Part III · Polar effects ===== */
@@ -499,7 +499,7 @@ function scAntisense(n){
   let rungs='';for(let x=x1+30;x<x2-30;x+=8)rungs+=`M${x} ${y3+3} v6`;
   s+=G('a-fade',2.8,T(x1,y3-24,'RNA duplex','cname start')+wave(x1+20,x2-20,y3,MR,2.4,2.5)+`<path d="${rungs}" stroke="${INK}" stroke-width=".8" opacity=".55"/>`+wave(x1+20,x2-20,y3+12,RHO,2.4,2.5)
     +T(x2-20,y3-10,n?'A mRNA':'gene A mRNA','note end f12')+T(x2-20,y3+32,'antisense RNA','note end f12')
-    +T(x1+16,y3+4,'5′','mono end f12')+T(x2-16,y3+4,'3′','mono start f12')+T(x1+16,y3+16,'3′','mono end f12')+T(x2-16,y3+16,'5′','mono start f12'));
+    +T(x1+16,y3+2,'5′','mono end f12')+T(x2-16,y3+2,'3′','mono start f12')+T(x1+16,y3+20,'3′','mono end f12')+T(x2-16,y3+20,'5′','mono start f12'));
   s+=G('a-pop',3.3,`<text x="${meet}" y="${y3+12}" class="mid" style="fill:${STOPC};font-size:18px">✂</text>`+T(meet,y3+(n?52:52),n?'RNase III cuts; RBS masked':'RNase III cuts the duplex, or the antisense masks the RBS','note mid f12'));
   const top=y3+(n?92:94), base=top+(n?88:96);
   s+=exprBars(n,[30,'disrupted',75],top,base,3.6);

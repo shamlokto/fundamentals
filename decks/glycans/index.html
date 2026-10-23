@@ -549,11 +549,11 @@ function scG4(n){
 /* ===================== Part II · the enzymes ===================== */
 function scG5(n){
   let s='';const y=58, x0=n?16:40;
-  const piece=(x,yy,lab,col,w=66)=>`<rect x="${x}" y="${yy-14}" width="${w}" height="28" rx="5" fill="${col}" stroke="${INK}"/>`+Tc(x+w/2,yy+4,lab,'#3A2E22',11,'mono mid','600');
-  s+=G('a-fade',0,piece(x0,y,'UDP–Glc','#C9DCEB')+Tc(x0+80,y+4,'+','#3A2E22',16,'mono mid','600')+piece(x0+94,y,'acceptor','#E3D7B8'));
-  s+=G('a-fade',.5,arw(x0+168,y,x0+(n?214:230),y)+Tc(x0+(n?191:199),y-11,'GT','#2F5276',12,'mono mid','600'));
-  if(!n)s+=G('a-fade',.8,piece(x0+246,y,'Glc–acceptor','#C9DCEB',96)+Tc(x0+356,y+4,'+','#3A2E22',16,'mono mid','600')+piece(x0+372,y,'UDP','#E3D7B8',50));
-  else s+=G('a-fade',.8,piece(x0,y+42,'Glc–acceptor','#C9DCEB',96)+Tc(x0+110,y+46,'+','#3A2E22',16,'mono mid','600')+piece(x0+126,y+42,'UDP','#E3D7B8',50));
+  const piece=(x,yy,lab,col,w=78)=>`<rect x="${x}" y="${yy-14}" width="${w}" height="28" rx="5" fill="${col}" stroke="${INK}"/>`+Tc(x+w/2,yy+4,lab,'#3A2E22',11,'mono mid','600');
+  s+=G('a-fade',0,piece(x0,y,'UDP–Glc','#C9DCEB')+Tc(x0+92,y+4,'+','#3A2E22',16,'mono mid','600')+piece(x0+106,y,'acceptor','#E3D7B8',82));
+  s+=G('a-fade',.5,arw(x0+196,y,x0+(n?240:250),y)+Tc(x0+(n?218:223),y-11,'GT','#2F5276',12,'mono mid','600'));
+  if(!n)s+=G('a-fade',.8,piece(x0+262,y,'Glc–acceptor','#C9DCEB',112)+Tc(x0+388,y+4,'+','#3A2E22',16,'mono mid','600')+piece(x0+402,y,'UDP','#E3D7B8',54));
+  else s+=G('a-fade',.8,piece(x0,y+42,'Glc–acceptor','#C9DCEB',112)+Tc(x0+126,y+46,'+','#3A2E22',16,'mono mid','600')+piece(x0+140,y+42,'UDP','#E3D7B8',54));
   let yy=n?y+86:y+54;
   const C=[['Inverting','The acceptor hydroxyl attacks C1 from the face opposite the departing UDP, in a single step helped by a catalytic base. An α-linked donor therefore gives a β product.'],
    ['Retaining','The product keeps the donor’s configuration. How — two inversions through a covalent intermediate, or a same-face attack — differs between enzymes and is still debated.']];
@@ -577,7 +577,7 @@ function scG6(n){
   const g=GTS[gtSel];let s='';
   const rows=[['Fold',g.fold],['Mechanism',g.mech],['CAZy family',g.fam],['Reaction',g.rx]];
   let y=34;s+=G('a-fade',0,T(n?16:24,y,g.n,'cname start')+ln(n?16:24,y+10,n?344:616,y+10));y+=34;
-  rows.forEach((r,i)=>{const L=wrap(r[1],n?34:60);s+=G('a-fade',(.2+i*.2).toFixed(1),T(n?16:24,y,r[0],'lab start f13')+L.map((l,j)=>T(n?124:184,y+j*17,l,'note start f13')).join(''));y+=L.length*17+12;});
+  rows.forEach((r,i)=>{const L=wrap(r[1],n?29:60);s+=G('a-fade',(.2+i*.2).toFixed(1),T(n?16:24,y,r[0],'lab start f13')+L.map((l,j)=>T(n?124:184,y+j*17,l,'note start f13')).join(''));y+=L.length*17+12;});
   const p=para(n?16:24,y+4,g.t,n?50:92,'note start f13',17,1);
   const f=para(n?16:24,p.y+18,'Most soluble GTs fold one of two ways. GT-A has a single Rossmann-like domain and usually a DxD motif gripping a metal ion on the donor’s diphosphate; GT-B has two such domains with the site between them and needs no metal. GT-C enzymes are membrane-embedded and use lipid-linked donors. The CAZy database sorts GTs into more than a hundred sequence families.',n?50:92,'lab start f12',16,1.3);
   return {vb:n?slim(f.y+6):wide(f.y+8),s:s+p.s+f.s};
@@ -586,19 +586,19 @@ function scG6(n){
 function scG7(n){
   let s='';
   const x1=n?8:20, x2=n?352:620, my=n?108:112, h=24, X=n?[48,114,180,246,312]:[82,190,298,406,514];
-  s+=G('a-fade',0,memb(x1,x2,my,h)+T(x1+2,my-8,n?'outside':'outside the membrane','note start f11')+T(x1+2,my+h+14,n?'cyto.':'cytoplasm','note start f11'));
-  const names=n?['Und-P','+ sugar-P','+ sugars','flipped','Und-PP left']:['undecaprenyl-P','+ sugar-1-P','+ more sugars','flipped out','Und-PP released'];
-  const who=n?['','PGT','GTs','Wzx','polymerase']:['','PGT: WbaP, MraY, CpsE','GTs, nucleotide sugars','Wzx or MurJ','Wzy or a synthase'];
+  s+=G('a-fade',0,memb(x1,x2,my,h)+T(x1+2,my-8,n?'outside':'outside the membrane','note start f11')+T(x2-2,my+h+14,n?'cyto.':'cytoplasm','note end f11'));
+  const names=n?['Und-P','+ sugar-P','+ sugars','flipped','Und-PP left']:['Und-P','+ sugar-1-P','+ more sugars','flipped out','Und-PP released'];
+  const who=n?['','PGT','GTs','Wzx','polymerase']:['the carrier','PGT: WbaP,|MraY, CpsE','GTs, nucleotide|sugars','Wzx or MurJ','Wzy or a synthase'];
   const st=[];
   {const L=undp(X[0],my,h,'in',1);st.push(L.s);}
   {const L=undp(X[1],my,h,'in',2);st.push(L.s+snfg('Glc',X[1],L.end+7,6.5));}
   {const L=undp(X[2],my,h,'in',2);st.push(L.s+sugarChain(X[2],L.end+7,['Glc','Rha','GlcA'],1,6,13));}
   {const L=undp(X[3],my,h,'out',2);st.push(L.s+sugarChain(X[3],L.end-7,['Glc','Rha','GlcA'],-1,6,13));}
   {const L=undp(X[4],my,h,'out',2);st.push(L.s);}
-  st.forEach((d,i)=>{s+=G('a-fade',(.3+i*.35).toFixed(2),d+T(i?X[i]:X[0]-4,my+h+(n?74:78),names[i],'lab '+(i?'mid ':'start ')+(n?'f10':'f11'))+(who[i]?T(X[i],my+h+(n?88:93),who[i],'note mid '+(n?'f9':'f10')):''));
+  st.forEach((d,i)=>{s+=G('a-fade',(.3+i*.35).toFixed(2),d+T(i?X[i]:X[0]-4,my+h+(n?74:78),names[i],'lab '+(i?'mid ':'start ')+(n?'f10':'f11'))+(who[i]?who[i].split('|').map((l,j)=>T(i?X[i]:X[0]-4,my+h+(n?88:93)+j*14,l,'note '+(i?'mid ':'start ')+(n?'f9':'f10'))).join(''):''));
     if(i<4)s+=G('a-fade',(.5+i*.35).toFixed(2),arw(X[i]+(n?16:22),my-66,X[i+1]-(n?16:22),my-66,{w:1.2}));});
   /* recycling: Und-PP is dephosphorylated and returns to the inner face */
-  const ry=my+h+(n?112:118);
+  const ry=my+h+(n?112:134);
   s+=G('a-fade',2.2,`<path d="M${X[4]} ${my+h+(n?98:104)} V${ry} H${X[0]-(n?9:14)} V${my+h+6} H${X[0]-7}" stroke="#6A5B47" stroke-width="1.3" fill="none" stroke-dasharray="4 3" marker-end="url(#ahp)"/>`
     +T((X[0]+X[4])/2,ry+14,n?'phosphatase, then flipped back: Und-P again':'a phosphatase removes one phosphate and the carrier flips back: Und-P again, ready for the next round','note mid '+(n?'f10':'f11'))
     +Tc((X[1]+X[2])/2,ry-6,'bacitracin ⊣ this step','#A4473A',n?10:11,'mono mid','600'));
@@ -615,8 +615,8 @@ function scG8(n){
    ['Synthase','A single processive enzyme both polymerises the chain and threads it through the membrane.','cellulose; pneumococcal type 3']];
   let s='';
   const draw=(i,cx,my)=>{let d=memb(cx-78,cx+78,my,22);
-    if(i===0)d+=`<rect x="${cx-44}" y="${my-6}" width="16" height="34" rx="4" fill="${E2}" stroke="${INK}"/><rect x="${cx+24}" y="${my-6}" width="20" height="34" rx="4" fill="${E5}" stroke="${INK}"/>`
-      +[0,1,2].map(j=>snfg(['Glc','Rha','GlcA'][j],cx-62,my+32+j*13,5)).join('')+[0,1,2,3,4,5].map(j=>snfg(['Glc','Rha','GlcA','Glc','Rha','GlcA'][j],cx+34,my-14-j*12,5)).join('')+Tc(cx-36,my+15,'Wzx','#3A2E22',8,'mono mid')+Tc(cx+34,my+15,'Wzy','#3A2E22',8,'mono mid');
+    if(i===0)d+=`<rect x="${cx-51}" y="${my-6}" width="30" height="34" rx="4" fill="${E2}" stroke="${INK}"/><rect x="${cx+20}" y="${my-6}" width="30" height="34" rx="4" fill="${E5}" stroke="${INK}"/>`
+      +[0,1,2].map(j=>snfg(['Glc','Rha','GlcA'][j],cx-62,my+32+j*13,5)).join('')+[0,1,2,3,4,5].map(j=>snfg(['Glc','Rha','GlcA','Glc','Rha','GlcA'][j],cx+34,my-14-j*12,5)).join('')+Tc(cx-36,my+15,'Wzx','#3A2E22',8,'mono mid')+Tc(cx+35,my+15,'Wzy','#3A2E22',8,'mono mid');
     if(i===1)d+=`<rect x="${cx-14}" y="${my-6}" width="28" height="34" rx="4" fill="${E4}" stroke="${INK}"/>`+[0,1,2,3,4].map(j=>snfg('Man',cx,my-14-j*12,5)).join('')+Tc(cx,my+15,'ABC',"#3A2E22",8,'mono mid');
     if(i===2)d+=`<rect x="${cx-16}" y="${my-6}" width="32" height="34" rx="6" fill="${E6}" stroke="${INK}"/>`+[0,1,2,3,4,5].map(j=>snfg(j%2?'GlcA':'Glc',cx,my-14-j*12,5)).join('')+snfg('Glc',cx+16,my+42,5)+snfg('GlcA',cx+42,my+42,5);
     d+=T(cx-78,my-8,'outside','note start f12')+(i===0?T(cx+78,my+42,'cytoplasm','note end f12'):i===1?T(cx+78,my+42,'cytoplasm','note end f12'):T(cx-78,my+42,'cytoplasm','note start f12'));
@@ -642,7 +642,7 @@ function scG9(n){
    ['GTs','serotype-specific','Add the rest of the repeat unit, one linkage each.'],
    ['wzy, wzx','serotype-specific','Polymerase (CpsH in serotype 2) and flippase, matched to that repeat unit.'],
    ['rmlABCD etc.','some serotypes','Make unusual nucleotide sugars such as dTDP-rhamnose.']];
-  const t=wtable(n,['Genes','Where','Role'],rows,n?[[8,9],[76,13],[170,28]]:[[24,12],[118,24],[300,48]],{y0:yy,d0:1});
+  const t=wtable(n,['Genes','Where','Role'],rows,n?[[8,9],[74,17],[184,25]]:[[24,12],[118,24],[300,48]],{y0:yy,d0:1});
   const p=para(n?16:24,t.y+12,'Streptococcus pneumoniae has roughly 100 capsule serotypes, nearly all built by the Wzx/Wzy route from a cps locus sitting between the housekeeping genes dexB and aliA. The flanking genes are shared; the middle varies by serotype. Bentley and colleagues sequenced 90 loci in 2006.',n?50:92,'note start f13',17,1.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
 }
@@ -663,7 +663,7 @@ function capsuleScene(n,block,short){
   {st.push(`<rect x="${X[4]+14}" y="${my-5}" width="15" height="34" rx="4" fill="#B4766E" stroke="${INK}"/>`
      +`<path d="M${X[4]+21} ${my-7} V${wy+wh+2}" stroke="#8C5A1E" stroke-width="1.2" stroke-dasharray="3 2" marker-end="url(#ahp)"/>`
      +`<circle cx="${X[4]}" cy="${wy+4}" r="3" fill="#8C5A1E" stroke="${INK}" stroke-width=".7"/>`+sugarChain(X[4],wy-9,short?['Glc','Rha']:RU.concat(['Glc','Rha']),-1,5.5,13)+glink(X[4],wy+4,X[4],wy-9));}
-  const names=['CpsE','GTs','Wzx','CpsH',n?'LCP':'CpsA/LCP'], nx=n?[X[0]+18,X[1]+20,X[2]-16,X[3]+22,X[4]+20]:[X[0]+22,X[1]+30,X[2]-22,X[3]+23,X[4]+22], ncol=['#2F5276','#3E6131','#2F5276','#8C5A1E','#8C5A1E'];
+  const names=['CpsE','GTs','Wzx','CpsH',n?'LCP':'CpsA/LCP'], nx=n?[X[0]+18,X[1]+28,X[2]-6,X[3]+22,X[4]+20]:[X[0]+22,X[1]+30,X[2]-22,X[3]+23,X[4]+22], ncol=['#2F5276','#3E6131','#2F5276','#8C5A1E','#8C5A1E'];
   st.forEach((d,i)=>{const dim=block!==undefined&&i>=block;
     s+=G('a-fade',(.3+i*.45).toFixed(1),`<g opacity="${dim?.16:1}">${d}</g>`+Tc(X[i],16+4,String(i+1),'#2F5276',12,'mono mid','600')
       +`<g opacity="${dim&&i>block?.3:1}">${Tc(nx[i],my+mh+(n?60:62),names[i],ncol[i],n?9.5:10,'mono mid','600')}</g>`);
@@ -672,7 +672,7 @@ function capsuleScene(n,block,short){
   s+=G('a-fade',1.9,`<g opacity="${block!==undefined&&3>block?.3:1}">${Tc(X[3]-(n?26:27),my+mh+(n?60:62),'CpsC/D','#8C5A1E',n?9:9.5,'mono mid','600')}</g>`);
   /* point out the capsule on the extracellular side */
   const cdim=block!==undefined&&block<=3;
-  s+=G('a-fade',2.4,`<g opacity="${cdim?.3:1}">${T(lx,52,n?'capsule, outside':'capsule, outside the wall','lab start '+(n?'f11':'f12'))+arw(lx+(n?96:150),56,X[3]-14,72,{w:1.2})+(n?'':T(lx,66,'the chain grows out through the peptidoglycan','note start f10'))}</g>`);
+  s+=G('a-fade',2.4,`<g opacity="${cdim?.3:1}">${T(lx,52,n?'capsule, outside':'capsule, outside the wall','lab start '+(n?'f11':'f12'))+arw(lx+(n?96:234),62,X[3]-14,72,{w:1.2})+(n?'':T(lx,66,'the chain grows out through the peptidoglycan','note start f10'))}</g>`);
   if(short)s+=G('a-fade',2.6,Tc((X[3]+X[4])/2,wy-30,'short chains','#A4473A',n?10:12,'mono mid','600'));
   if(block!==undefined)s+=G('a-fade',.6,mark(X[block]-(n?14:20),16,false,8)+Tc(nx[block],my+mh+(n?74:78),'deleted','#A4473A',n?9.5:11,'mono mid','600'));
   return {s,y:my+mh+(n?72:76)};
@@ -699,14 +699,14 @@ const BRK=[
 let brkSel=0;
 function scG11(n){
   const B=BRK[brkSel], r=capsuleScene(n,B.b===null?undefined:B.b,B.n==='cpsD');
-  const p=para(n?16:24,r.y+18,B.t,n?50:92,'note start f13',17,.8);
+  const p=para(n?16:24,r.y+(B.b===null?18:30),B.t,n?50:92,'note start f13',17,.8);
   const q=para(n?16:24,p.y+14,B.lesson||'The pattern: a block in the middle of the pathway is worse than making no capsule at all, because it locks up the undecaprenyl carrier the cell needs to build its wall. This is why acapsular revertants arise so readily.',n?50:92,'lab start f13',17,1.2);
   return {vb:n?slim(q.y+6):wide(q.y+8),s:r.s+p.s+q.s};
 }
 
 function scG12(n){
   let s='';const cx=n?110:150, my=n?84:96;
-  s+=G('a-fade',0,memb(cx-86,cx+86,my,22)+`<rect x="${cx-18}" y="${my-9}" width="36" height="40" rx="8" fill="${E6}" stroke="${INK}"/>`+Tc(cx,my+15,'Cps3S','#3A2E22',9.5,'mono mid','600')
+  s+=G('a-fade',0,memb(cx-86,cx+86,my,22)+`<rect x="${cx-25}" y="${my-9}" width="50" height="40" rx="8" fill="${E6}" stroke="${INK}"/>`+Tc(cx,my+15,'Cps3S','#3A2E22',9.5,'mono mid','600')
     +[0,1,2,3,4].map(j=>snfg(j%2?'Glc':'GlcA',cx,my-20-j*13,6)).join('')+snfg('Glc',cx-42,my+48,6,{label:'UDP-Glc'})+snfg('GlcA',cx+42,my+48,6,{label:'UDP-GlcA'})
     +arw(cx-34,my+42,cx-10,my+30,{blue:1})+arw(cx+34,my+42,cx+10,my+30,{blue:1}));
   const b=n?bullets(24,my+92,[['One enzyme, two sugars','Type 3 capsule is made by a single synthase, Cps3S, that alternately adds glucose and glucuronic acid, giving the repeat [→3)-β-GlcA-(1→4)-β-Glc-(1→]. No Wzx or Wzy is needed.'],

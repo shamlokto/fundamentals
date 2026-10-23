@@ -175,7 +175,7 @@ const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
 const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
 const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
 function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
-function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if(L[L.length-1]&&(L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
 function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
 function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
 function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
@@ -235,10 +235,10 @@ function boxItem(x,y,W,head,body,o={}){
 }
 function bullets(x,y,items,wrapN,o={}){
   let s='',yy=y;
-  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
-    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
-      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
-    yy+=L.length*17+(o.gap||30);});
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN),H=wrap(it[0],o.hw||wrapN),hh=(H.length-1)*19;
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+H.map((h,k)=>T(x+(o.nonum?0:16),yy+k*19,h,'cname start '+(o.hfs||'f14'))).join('')
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+hh+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=hh+L.length*17+(o.gap||30);});
   return {s,y:yy};
 }
 function wtable(n,head,rows,cols,o={}){
@@ -544,7 +544,7 @@ function scG3(n){
   s+=G('a-fade',1,`<circle cx="${FX(P.px(0))}" cy="${FX(P.py(0))}" r="4" fill="${METC}" stroke="${INK}"/>`
     +`<circle cx="${FX(P.px(52))}" cy="${FX(P.py(1))}" r="4" fill="${CLOUD}" stroke="${INK}"/>`
     +`<circle cx="${FX(P.px(100))}" cy="${FX(P.py(0))}" r="4" fill="${METC}" stroke="${INK}"/>`
-    +Tc(FX(P.px(0)+8),FX(P.py(0))+18,'oriC','#3A2E22',10,'mono start','600')+Tc(FX(P.px(100)-8),FX(P.py(0))+18,'oriC','#3A2E22',10,'mono end','600')
+    +Tc(FX(P.px(0)+8),FX(P.py(0)+18),'oriC','#3A2E22',10,'mono start','600')+Tc(FX(P.px(100)-8),FX(P.py(0)+18),'oriC','#3A2E22',10,'mono end','600')
     +Tc(FX(P.px(52)),P.py(1)-10,'ter','#3A2E22',10,'mono mid','600'));
   let y=P.y+P.h+(n?52:56);
   const b=bullets(n?24:30,y,[['What is being counted','Along each strand, count G and C in a sliding window and plot (G − C)/(G + C). The leading strand is enriched in G and depleted in C; the lagging strand is the reverse. Plotting the running total from the origin gives a single peak: the minimum marks the origin and the maximum the terminus.'],
@@ -582,8 +582,8 @@ function scG5(n){
   let y=cy+R+(n?30:34);
   if(!n){labs.forEach((l,i)=>{const x=40+i*200;
     s+=G('a-fade',(1.4+i*.3).toFixed(1),`<rect x="${x}" y="${y-10}" width="12" height="11" rx="2" fill="${l[3]}" stroke="${INK}" stroke-width=".6"/>`
-      +T(x+18,y,l[0],'cname start f13')+T(x+18,y+16,l[1],'note start f11')+T(x+18,y+30,l[2],'note start f11'));});
-    y+=50;}
+      +T(x+18,y,l[0],'cname start f13')+[...wrap(l[1],28),...wrap(l[2],28)].map((m,j)=>T(x+18,y+16+j*14,m,'note start f11')).join(''));});
+    y+=22+14*Math.max(...labs.map(l=>wrap(l[1],28).length+wrap(l[2],28).length));}
   else{labs.forEach((l,i)=>{s+=G('a-fade',(1.4+i*.3).toFixed(1),`<rect x="20" y="${y-10}" width="12" height="11" rx="2" fill="${l[3]}" stroke="${INK}" stroke-width=".6"/>`
       +T(38,y,l[0],'cname start f13')+T(38,y+15,l[1],'note start f11')+T(38,y+29,l[2],'note start f11'));y+=50;});}
   const b=bullets(n?24:30,y+6,[['A species is not one genome','Each Streptococcus pneumoniae genome has about 2,000 genes; only about 1,100 to 1,500 are core to the species, and two isolates typically differ in several hundred. The pangenome — every gene found in any isolate — runs to five thousand or more families and keeps growing as more genomes are added.'],
@@ -615,10 +615,10 @@ function scG7(n){
   s+=G('a-fade',.2,`<path d="M${x} ${y} h${W}" stroke="#D6CDB8" stroke-width="12" stroke-linecap="round"/>`);
   const f=[[.06,.09,PHG,'prophage'],[.22,.07,PLS,'ICE'],[.38,.05,TNC,'IS'],[.50,.10,METC,'island'],[.68,.04,TNC,'IS'],[.78,.08,PHG,'prophage']];
   f.forEach((p,i)=>{s+=G('a-fade',(.4+i*.2).toFixed(2),`<rect x="${FX(x+p[0]*W)}" y="${FX(y-6)}" width="${FX(p[1]*W)}" height="12" fill="${p[2]}" stroke="${INK}" stroke-width=".6"/>`
-    +Tc(FX(x+(p[0]+p[1]/2)*W),y-14,p[3],'#3A2E22',n?8:9,'mono mid','600'));});
-  s+=G('a-fade',1.7,Tc(x,y+26,'often beside tRNA genes, flanked by direct repeats,','#6A5B47',10,'mono start')
-    +Tc(x,y+40,'and differing in GC content from the rest','#6A5B47',10,'mono start'));
-  let yy=y+(n?64:68);
+    +Tc(FX(x+(p[0]+p[1]/2)*W),n&&i%2?y+22:y-14,p[3],'#3A2E22',n?8:9,'mono mid','600'));});
+  const AL=n?wrap('often beside tRNA genes, flanked by direct repeats, and differing in GC content from the rest',42):['often beside tRNA genes, flanked by direct repeats,','and differing in GC content from the rest'];
+  s+=G('a-fade',1.7,AL.map((l,j)=>Tc(x,y+(n?42:26)+j*14,l,'#6A5B47',10,'mono start')).join(''));
+  let yy=y+(n?94:68);
   const rows=[['Prophages','Integrated temperate phages, often several per genome, together making up a few percent of it. Many are defective. They carry toxins and defence systems, and they are the most variable part of many genomes.'],
    ['ICEs and plasmids','Large and self-mobile: ICEs integrate, usually beside a tRNA gene, while plasmids replicate on their own. These carry the biggest accessory cargoes, including most transferable resistance.'],
    ['IS elements','Short, repeated, and the main cause of assembly breaks in short-read data. Their copy number is a good indicator of a genome’s recent history: expansion during host restriction, then loss during reduction.'],
@@ -694,9 +694,10 @@ function scG11(n){
   const q=GENQ[gSel];let s='',y=34;
   const Q=wrap(q.q,n?36:60);
   s+=G('a-fade',0,Q.map((l,i)=>T(n?16:24,y+i*22,l,'cname start')).join(''));y+=Q.length*22+14;
-  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="28" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
-    +Tc(n?26:38,y+1,q.a,'#2F5276',n?11.5:14,'mono start','600'));
-  y+=28;
+  const A=wrap(q.a,n?38:56);
+  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="${10+A.length*18}" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +A.map((l,i)=>Tc(n?26:38,y+1+i*18,l,'#2F5276',n?11.5:14,'mono start','600')).join(''));
+  y+=28+(A.length-1)*18;
   const p=para(n?16:24,y,q.t,n?50:92,'note start f13',17,.6);
   let yy=p.y+16;
   s+=G('a-fade',1.2,T(n?16:24,yy,'All the observations','mono acc start f11'));

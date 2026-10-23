@@ -240,17 +240,17 @@ function gel(x,y,w,h,lanes){
     (ln.b||[]).forEach(b=>s+=`<rect x="${lx-lw*.3}" y="${y+h*b[0]}" width="${lw*.6}" height="${b[1]||5}" rx="2" fill="#2C2318" opacity="${b[2]||.85}"/>`);
     if(ln.t)s+=Tc(lx,y+h+14,ln.t,'#6A5B47',10,'mono mid');});
   return s;}
-function stepBoxes(n,items,x,y,W,H,gap,dl){
+function stepBoxes(n,items,x,y,W,H,gap,dl,k0=0){
   if(gap<22){W-=(22-gap)*(items.length-1)/items.length;gap=22;}
   let s='';items.forEach((it,i)=>{const bx=x+i*(W+gap);
-    s+=G('a-fade',(dl+i*.5).toFixed(1),box(bx,y,W,H,'#E7DEC9',4)+badge(bx+14,y+14,i+1)+T(bx+28,y+19,it[0],'lab start f14')
-      +wrap(it[1],Math.floor(W/6.2)).map((l,j)=>T(bx+14,y+40+j*16,l,'note start f12')).join('')+(it[2]?it[2](bx,y,W,H):''));
+    s+=G('a-fade',(dl+i*.5).toFixed(1),box(bx,y,W,H,'#E7DEC9',4)+badge(bx+14,y+14,k0+i+1)+T(bx+28,y+19,it[0],'lab start f14')
+      +wrap(it[1],Math.floor((W-22)/6.6)).map((l,j)=>T(bx+14,y+40+j*17,l,'note start f12')).join('')+(it[2]?it[2](bx,y,W,H):''));
     if(i<items.length-1)s+=G('a-fade',(dl+i*.5+.3).toFixed(1),`<path d="M${bx+W+3} ${y+H/2} h${gap-9}" class="arrow"/>`);});
   return s;}
 function stepRows(n,items,x,y,W,H,gap,dl){
   let s='';items.forEach((it,i)=>{const by=y+i*(H+gap);
     s+=G('a-fade',(dl+i*.5).toFixed(1),box(x,by,W,H,'#E7DEC9',4)+badge(x+14,by+14,i+1)+T(x+28,by+19,it[0],'lab start f14')
-      +wrap(it[1],Math.floor(W/5.6)).map((l,j)=>T(x+14,by+40+j*16,l,'note start f12')).join('')+(it[2]?it[2](x,by,W,H):''));});
+      +wrap(it[1],Math.floor((W-24)/7)).map((l,j)=>T(x+14,by+40+j*17,l,'note start f12')).join('')+(it[2]?it[2](x,by,W,H):''));});
   return s;}
 function cmpRows(n,head,rows,o={}){
   const c=n?(o.nc||[10,120,240]):(o.wc||[24,180,360,520]), y0=n?40:44, dy=n?28:28;
@@ -272,7 +272,7 @@ function scProblem(n){
   else s+=G('a-fade',1,T(P.vx+r+34,P.vy+6,'+','lab mid f16')+`<path d="M${P.gx+96} ${P.gy} h40" class="arrow"/>`+T(P.gx+116,P.gy-10,'join','note mid f12'));
   s+=G('a-pop',1.6,plasmid(P.cx,P.cy,r,[[0,.18,AMP,'marker'],[.28,.4,ORI,'ori'],[.52,.84,INS,'gene',28]],{name:'construct',fs:n?10:11}));
   const ty=(n?P.cy+r+36:P.cy+r+56);
-  const L=wrap('Then put it into a cell that will copy it, keep it, and express what it encodes. Everything that follows is a different way of doing the joining.',n?46:88);
+  const L=wrap('Then put it into a cell that will copy it, keep it, and express what it encodes. Everything that follows is a different way of doing the joining.',n?46:78);
   s+=G('a-fade',2.2,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20+12):wide(ty+L.length*20+14),s};
 }
@@ -303,10 +303,10 @@ function scFirst(n){
     s+=G('a-pop',1.6,plasmid(hx,y+r+90,r+8,[[0,.18,AMP,'tet'],[.42,.6,'#9C7FB0','kan']],{name:'hybrid',fs:10,nfs:12}));
     s+=G('a-fade',2,T(180,y+r+90+r+62,'resistant to both','note mid f12'));}
   else{s+=G('a-fade',1,`<path d="M${bx+r+16} ${y} h${hx-r-16-(bx+r+16)}" class="arrow"/>`
-      +T((bx+r+hx-r)/2,y-16,'cut both with EcoRI','note mid f12')+T((bx+r+hx-r)/2,y+22,'then ligate','note mid f12'));
+      +T((bx+r+hx-r)/2,y-34,'cut both','note mid f12')+T((bx+r+hx-r)/2,y-16,'with EcoRI','note mid f12')+T((bx+r+hx-r)/2,y+22,'then ligate','note mid f12'));
     s+=G('a-pop',1.6,plasmid(hx,y,r+8,[[0,.18,AMP,'tet'],[.42,.6,'#9C7FB0','kan']],{name:'hybrid',fs:10,nfs:12}));
-    s+=G('a-fade',2,T(hx,y+r+42,'resistant to both','note mid f12'));}
-  const ty=n?y+r+90+r+92:y+r+74;
+    s+=G('a-fade',2,T(hx,y+r+58,'resistant to both','note mid f12'));}
+  const ty=n?y+r+90+r+92:y+r+92;
   const ev=[['1972','Paul Berg joins SV40 and λ DNA in a tube: the first recombinant DNA molecule'],['1973','Stanley Cohen and Herbert Boyer put a recombinant plasmid into E. coli, where it replicated and worked'],['1975','The Asilomar conference sets the first safety guidelines for the new methods'],['1980','Nobel Prize to Berg']];
   let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:76);s+=G('a-fade',(2.2+i*.4).toFixed(1),T(n?14:30,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(n?70:110,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+10;});
   return {vb:n?slim(yy+8):wide(yy+10),s};
@@ -318,9 +318,9 @@ function scVector(n){
   let s=G('a-fade',0,plasmid(cx,cy,r,feats,{name:'pUC-type',sub:'~2.7 kb',fs:n?10:12}));
   const items=[['ori','how many copies per cell; which hosts'],['selection','antibiotic resistance, or a nutrient'],['promoter','how strongly, and when, the gene is read'],['MCS','a cluster of unique restriction sites'],['tags','His₆, FLAG, GFP — added in frame'],['terminator','stops transcription running on']];
   const tx=n?14:350, ty=n?cy+r+40:40;
-  items.forEach((it,i)=>{const yy=ty+i*(n?34:36);s+=G('a-fade',(.4+i*.2).toFixed(1),Tc(tx,yy,it[0],'#2F5276',13,'mono start','600')+wrap(it[1],n?40:30).map((l,j)=>T(tx+(n?92:100),yy+j*16,l,'lab start '+(n?'f13':'f14'))).join(''));});
-  const yb=ty+6*(n?34:36)+(n?0:16);
-  const SL=wrap(n?'Shuttle vectors carry two oris, for E. coli and the host':'A shuttle vector carries two oris: one for E. coli, one for the organism you study',n?44:32);
+  let vy=ty;items.forEach((it,i)=>{const yy=vy, VL=wrap(it[1],n?32:23);s+=G('a-fade',(.4+i*.2).toFixed(1),Tc(tx,yy,it[0],'#2F5276',13,'mono start','600')+VL.map((l,j)=>T(tx+(n?100:118),yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));vy+=(VL.length-1)*18+(n?30:28);});
+  const yb=vy+(n?0:16);
+  const SL=wrap(n?'Shuttle vectors carry two oris, for E. coli and the host':'A shuttle vector carries two oris: one for E. coli, one for the organism you study',n?44:36);
   s+=G('a-fade',1.8,SL.map((l,i)=>T(n?14:350,yb+i*18,l,'note start '+(n?'f12':''))).join(''));
   return {vb:n?slim(yb+SL.length*18+10):wide(Math.max(cy+r+30,yb+SL.length*18+10)),s};
 }
@@ -344,7 +344,7 @@ function scCutPaste(n){
     +Tc(x+(n?66:92)+3*dx,y2-8,'ligase + ATP','#4F7A3F',11,'mono mid','600'));
   const y3=y2+(n?98:102);
   const rows=[['Sticky ends','4-nt overhangs anneal; efficient, and directional if you use two different enzymes'],['Blunt ends','any end joins any end; inefficient, and gives no control over orientation'],['Scar','the recognition sequence stays in the product, between vector and insert']];
-  let yy=y3;rows.forEach((r,i)=>{const L=wrap(r[1],n?44:66);
+  let yy=y3;rows.forEach((r,i)=>{const L=wrap(r[1],n?44:46);
     s+=G('a-fade',(2.4+i*.3).toFixed(1),T(n?14:150,yy,r[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T(n?14:300,yy+(n?18:0)+j*17,l,'note start f12')).join(''));
     yy+=(n?18:0)+L.length*17+(n?14:12);});
   return {vb:n?slim(yy+10):wide(yy+12),s};
@@ -355,12 +355,12 @@ function scProblems(n){
    ['Wrong orientation','Use two different enzymes, one at each end, so the insert can only go in one way.'],
    ['Nothing cuts','The site is methylated by Dam or Dcm, or the enzyme needs more flanking bases at the end of a PCR product.'],
    ['No site where you need one','The classic limit: you can only cut where sites happen to be, and your insert may contain them.']];
-  const W=n?340:300, H=n?108:104;
+  const W=n?340:300, H=n?108:118;
   let s='';
   items.forEach((it,i)=>{const x=n?10:10+(i%2)*312, y=n?10+i*(H+10):20+Math.floor(i/2)*(H+14);
     s+=G('a-fade',(i*.5).toFixed(1),box(x,y,W,H,'#E7DEC9',4)+mark(x+W-22,y+22,false,10)+T(x+16,y+26,it[0],'cname start '+(n?'f15':''))
-      +wrap(it[1],n?44:44).map((l,j)=>T(x+16,y+50+j*17,l,'note start f13')).join(''));});
-  const yb=n?10+4*(H+10):20+2*(H+14)+8;
+      +wrap(it[1],n?42:37).map((l,j)=>T(x+16,y+50+j*17,l,'note start f13')).join(''));});
+  const yb=n?10+4*(H+10)+14:20+2*(H+14)+12;
   s+=G('a-fade',2.4,T(n?180:320,yb,n?'Every later method dodges one of these':'These four annoyances are exactly what the newer methods were invented to avoid','lab mid'));
   return {vb:n?slim(yb+14):wide(yb+16),s};
 }
@@ -379,7 +379,7 @@ function scTransform(n){
 }
 
 function scCheck(n){
-  const gx=n?20:60, gy=n?44:50, gw=n?120:150, gh=n?120:140;
+  const gx=n?120:60, gy=n?44:50, gw=n?120:150, gh=n?120:140;
   let s=G('a-fade',0,gel(gx,gy,gw,gh,[{t:'L',b:[[.12,5],[.26,5],[.42,5],[.62,5],[.82,5]]},{t:'1',b:[[.3,6]]},{t:'2',b:[]},{t:'3',b:[[.3,6]]}])+T(gx+gw/2,gy-14,'colony PCR','lab mid f14'));
   s+=G('a-fade',.6,T(gx+gw/2,gy+gh+30,'lanes 1 and 3: insert, right way round','note mid f12')+T(gx+gw/2,gy+gh+46,'lane 2: no band (empty or reversed)','note mid f12'));
   const items=[['Colony PCR','One primer in the vector, one in the insert: it tests size and orientation at once.'],
@@ -410,7 +410,7 @@ function scPCRends(n){
 }
 
 function scGibson(n){
-  const W=n?340:148, H=n?118:168;
+  const W=n?340:148, H=n?140:212;
   const draw=(i)=>(bx,by,w,h)=>{const cy=by+h-(n?34:40), x1=bx+14, x2=bx+w-14, m=(x1+x2)/2;
     if(i===0)return duplex(x1,m-4,cy,{col:VEC})+duplex(m+4,x2,cy,{col:INS})+T(m,cy+26,'shared ends','note mid f10');
     if(i===1)return `<path d="M${x1} ${cy} H${m+10}" stroke="${VEC}" stroke-width="2.6"/><path d="M${x1+8} ${cy+9} H${m-14}" stroke="${VEC}" stroke-width="2.6"/>`
@@ -424,19 +424,19 @@ function scGibson(n){
    ['Fill and seal','Phusion fills the gaps, Taq ligase seals the nicks. One tube, 50 °C, 15–60 min.',draw(3)]];
   let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,10,0);
   const yb=n?10+4*(H+10)+10:20+H+28;
-  const BL=wrap(n?'Daniel Gibson and colleagues, 2009. Scarless, and it joins several fragments at once, but it needs long matching ends and dislikes repeats.':'Daniel Gibson and colleagues at the J. Craig Venter Institute, 2009. The join is scarless and several fragments go together at once; the costs are long overlapping primers and trouble with repeated sequences.',n?46:88);
+  const BL=wrap(n?'Daniel Gibson and colleagues, 2009. Scarless, and it joins several fragments at once, but it needs long matching ends and dislikes repeats.':'Daniel Gibson and colleagues at the J. Craig Venter Institute, 2009. The join is scarless and several fragments go together at once; the costs are long overlapping primers and trouble with repeated sequences.',n?46:78);
   s+=G('a-fade',2.4,BL.map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(yb+BL.length*20+14):wide(yb+BL.length*20+14),s};
 }
 
 function scGolden(n){
-  const dx=n?16:21, x=n?34:110, y=n?92:100;
+  const dx=n?16:21, x=n?34:110, y=n?106:114;
   let s=G('a-fade',0,T(n?180:320,n?32:38,'A Type IIS enzyme cuts away from its own site','lab mid '+(n?'f14':'')));
   s+=G('a-fade',.4,seqPair(x,y,'GGTCTCNNNNN','CCAGAGNNNNN',dx,{fs:n?13:15,hi2:[0,1,2,3,4,5]})
     +Tc(x-14,y,"5′",'#6A5B47',10,'mono end')+Tc(x-14,y+22,"3′",'#6A5B47',10,'mono end'));
   s+=G('a-pop',1.0,cutMark(x+7*dx,y-14,y+4)+cutMark(x+11*dx,y+16,y+36)
     +T(x+3*dx,y-22,'recognition site','mono mid f11')
-    +`<path d="M${x+6.2*dx} ${y-28} h${4.4*dx}" stroke="${RED2}" stroke-width="1.4" marker-end="url(#ahp)"/>`+T(x+9*dx,y-34,'cuts 1 nt away','note mid f11'));
+    +`<path d="M${x+6.2*dx} ${y-42} h${4.4*dx}" stroke="${RED2}" stroke-width="1.4" marker-end="url(#ahp)"/>`+T(x+9*dx,y-48,'cuts 1 nt away','note mid f11'));
   s+=G('a-fade',1.6,T(x+9*dx,y+(n?56:60),'leaving a 4-nt overhang whose sequence is yours to choose','note mid f12'));
   const y2=y+(n?92:98);
   s+=G('a-fade',2,T(n?14:110,y2,'So put the sites at the ends of each part, facing inwards:','note start '+(n?'f12':'f13')));
@@ -467,7 +467,7 @@ function scGoldenPot(n){
   let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:56);
     s+=G('a-fade',(1+i*.4).toFixed(1),(i===2?mark(tx+8,yy-4,true,9):mark(tx+8,yy-4,false,9))+T(tx+24,yy,it[0],'cname start '+(n?'f14':''))
       +L.map((l,j)=>T(tx+24,yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+34;});
-  const L2=wrap(n?'Every cycle removes more of the wrong products and locks in the right one, so a whole assembly builds up in an hour. Order comes from the overhangs: give every junction a different 4-nt sequence and the parts can only line up one way.':'Each cycle destroys more of the wrong products and locks in the right ones, so a complete assembly accumulates in about an hour. Order comes from the overhangs alone: give every junction a different four-base sequence and the parts can only line up one way. Engler and Marillonnet, 2008.',n?46:88);
+  const L2=wrap(n?'Every cycle removes more of the wrong products and locks in the right one, so a whole assembly builds up in an hour. Order comes from the overhangs: give every junction a different 4-nt sequence and the parts can only line up one way.':'Each cycle destroys more of the wrong products and locks in the right ones, so a complete assembly accumulates in about an hour. Order comes from the overhangs alone: give every junction a different four-base sequence and the parts can only line up one way. Engler and Marillonnet, 2008.',n?46:78);
   s+=G('a-fade',2.4,L2.map((l,i)=>T(n?14:30,yy+i*20,l,'lab start '+(n?'f13':''))).join(''));
   const yb=yy+L2.length*20+(n?10:12);
   const L3=wrap(n?'Enzymes: BsaI, BsmBI (Esp3I), BbsI, SapI, PaqCI':'Common enzymes: BsaI, BsmBI (Esp3I), BbsI, SapI, PaqCI. Remove any internal sites from your parts first — “domestication”.',n?46:80);
@@ -478,7 +478,7 @@ function scGoldenPot(n){
 function scMoClo(n){
   const x=n?14:30;
   let s=G('a-fade',0,T(x,n?30:36,'The trouble with one round of assembly','cname start '+(n?'f14':''))
-    +wrap('If every junction needs its own overhang, a big construct needs a long list of them, and each part must be free of the enzyme’s sites. MoClo solves both by building in levels.',n?46:88).map((l,i)=>T(x,(n?52:58)+i*19,l,'note start '+(n?'f12':'f13'))).join(''));
+    +wrap('If every junction needs its own overhang, a big construct needs a long list of them, and each part must be free of the enzyme’s sites. MoClo solves both by building in levels.',n?46:78).map((l,i)=>T(x,(n?52:58)+i*19,l,'note start '+(n?'f12':'f13'))).join(''));
   const y0=n?118:122, W=n?340:188, H=n?106:118;
   const lv=[['Level 0','a single part: promoter, RBS, coding sequence or terminator','BpiI','into a part vector'],
    ['Level 1','one transcription unit, built from four Level 0 parts','BsaI','position tags set the order'],
@@ -493,7 +493,7 @@ function scMoClo(n){
     s+=G('a-fade',(.6+i*.5).toFixed(1),g);
     if(i<2)s+=G('a-fade',(.8+i*.5).toFixed(1),n?`<path d="M180 ${by+H+1} v9" class="arrow"/>`:`<path d="M${bx+W+2} ${by+H/2} h7" class="arrow"/>`);});
   const yb=n?y0+3*(H+12)+12:y0+H+30;
-  const L=wrap(n?'The two enzymes alternate, so each round cuts out the sites the round before left behind. Standard overhangs mean a promoter from one lab drops into another lab’s build: MoClo, GoldenBraid, and bacterial kits such as CIDAR.':'The two enzymes alternate, so each round removes the sites that the previous round left behind, and the product of one level is a clean substrate for the next. Because the overhangs are agreed in advance, a promoter made in one lab drops straight into another lab’s build: MoClo, GoldenBraid, and bacterial kits such as CIDAR.',n?46:88);
+  const L=wrap(n?'The two enzymes alternate, so each round cuts out the sites the round before left behind. Standard overhangs mean a promoter from one lab drops into another lab’s build: MoClo, GoldenBraid, and bacterial kits such as CIDAR.':'The two enzymes alternate, so each round removes the sites that the previous round left behind, and the product of one level is a clean substrate for the next. Because the overhangs are agreed in advance, a promoter made in one lab drops straight into another lab’s build: MoClo, GoldenBraid, and bacterial kits such as CIDAR.',n?46:78);
   s+=G('a-fade',2.4,L.map((l,i)=>T(x,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(yb+L.length*20+14):wide(yb+L.length*20+16),s};
 }
@@ -526,7 +526,7 @@ function scTopo(n){
       +T(590,y+56,'insert sealed in','note mid f12')+T(590,y+72,'5 min, room temp.','note mid f12'));var y3=y2;}
   const y2b=y3;
   const ty=y2b+(n?20:30);
-  const TL0=wrap(n?'Vaccinia topoisomerase I cuts at CCCTT and stays attached to the DNA, storing the bond’s energy. When your insert’s end base-pairs, the enzyme reverses the reaction and seals the join, then lets go. No ligase, no ATP.':'Vaccinia virus topoisomerase I cuts at CCCTT and stays joined to the DNA through a phosphotyrosine bond, holding the energy of the broken bond. When your insert anneals, the enzyme simply runs the reaction backwards, seals the join and releases. No ligase and no ATP are needed, which is why it takes five minutes.',n?46:88);
+  const TL0=wrap(n?'Vaccinia topoisomerase I cuts at CCCTT and stays attached to the DNA, storing the bond’s energy. When your insert’s end base-pairs, the enzyme reverses the reaction and seals the join, then lets go. No ligase, no ATP.':'Vaccinia virus topoisomerase I cuts at CCCTT and stays joined to the DNA through a phosphotyrosine bond, holding the energy of the broken bond. When your insert anneals, the enzyme simply runs the reaction backwards, seals the join and releases. No ligase and no ATP are needed, which is why it takes five minutes.',n?46:78);
   s+=G('a-fade',2.4,TL0.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   const yb=ty+TL0.length*20+(n?6:10);
   const rows=[['TOPO-TA','Taq leaves a 3′-A; the vector offers a 3′-T'],['Blunt TOPO','for proofreading polymerases, which leave blunt ends'],['Directional','add CACC to one primer; it pairs with the vector’s GTGG']];
@@ -535,7 +535,7 @@ function scTopo(n){
 }
 
 function scMutagenesis(n){
-  const W=n?340:190, H=n?178:214;
+  const W=n?340:190, H=n?196:250;
   /* small drawings: methylated template with back-to-back primers; linear unmethylated product and the DpnI-cut template; closed mutant plasmid */
   const ART=(bx,by,W,H)=>({cx:bx+W/2, cy:by+H-(n?56:64)});
   const meth=(cx,cy,r)=>[0,.25,.5,.75].map(f=>{const a=-Math.PI/2+(f+.12)*2*Math.PI;return `<circle cx="${F(cx+r*Math.cos(a))}" cy="${F(cy+r*Math.sin(a))}" r="3.6" fill="${AMP}" stroke="${INK}" stroke-width=".5"/>`;}).join('');
@@ -543,7 +543,7 @@ function scMutagenesis(n){
   const art1=(bx,by,W,H)=>{const {cx,cy}=ART(bx,by,W,H), r=30, R=r+9;
     const pa=(a0,a1)=>`<path d="${arcP(cx,cy,R,a0,a1)}" stroke="${RED2}" stroke-width="1.8" fill="none" marker-end="url(#ahp)"/>`;
     return plasmid(cx,cy,r,[],{col:VEC,w:2.6})+meth(cx,cy,r)+pa(-Math.PI/2+.12,-Math.PI/2+1.0)+`<path d="${arcP(cx,cy,R,-Math.PI/2-1.0,-Math.PI/2-.12)}" stroke="${RED2}" stroke-width="1.8" fill="none" marker-start="url(#ahp)"/>`
-      +star(cx+R*Math.cos(-Math.PI/2+.16),cy+R*Math.sin(-Math.PI/2+.16)-2)
+      +star(cx+(R+9)*Math.cos(-Math.PI/2+.16),cy+(R+9)*Math.sin(-Math.PI/2+.16)-2)
       +T(cx,cy+r+18,'methylated template (gold)','note mid f12');};
   const art2=(bx,by,W,H)=>{const {cx,cy}=ART(bx,by,W,H), hw=n?70:66;
     return duplex(cx-hw,cx+hw,cy-26,{col:INS})+star(cx-hw+4,cy-34)+T(cx,cy-36,'PCR product','note mid f12')
@@ -556,7 +556,7 @@ function scMutagenesis(n){
    ['Close the circle','Kinase and ligase, or a short overlap, join the ends. Transform and sequence.',art3]];
   let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,12,0);
   const yb=n?10+3*(H+10)+10:20+H+28;
-  const QL=wrap(n?'The same trick inserts, deletes or swaps a promoter: change what the primer tails carry. Round-the-horn, KLD and QuikChange are versions of this.':'The same layout inserts, deletes or swaps a promoter: it depends only on what the primer tails carry. QuikChange, round-the-horn and the KLD kits are variations. DpnI selection is what makes it work.',n?46:88);
+  const QL=wrap(n?'The same trick inserts, deletes or swaps a promoter: change what the primer tails carry. Round-the-horn, KLD and QuikChange are versions of this.':'The same layout inserts, deletes or swaps a promoter: it depends only on what the primer tails carry. QuikChange, round-the-horn and the KLD kits are variations. DpnI selection is what makes it work.',n?46:78);
   s+=G('a-fade',1.8,QL.map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(yb+QL.length*20+14):wide(yb+QL.length*20+14),s};
 }
@@ -574,32 +574,32 @@ let pickSel=0;
 function scPick(n){
   const m=PICK[pickSel];
   let s=G('a-fade',0,T(n?14:30,n?30:36,'You want to…','note start f12')+T(n?14:30,n?54:62,m.k,'cname start '+(n?'':'')));
-  const by=n?76:86;
-  s+=G('a-pop',.3,box(n?10:24,by,n?340:400,n?62:64,'#E7DEC9',4)+T(n?24:40,by+26,'Use','note start f12')+T(n?60:84,by+27,m.best,'cname start acc '+(n?(m.best.length>30?'f12':'f15'):(m.best.length>34?'f15':'')))
-    +(m.alt?T(n?24:40,by+48,m.alt,'note start f12'):''));
-  const ty=by+(n?80:84);
-  s+=G('a-fade',.6,wrap(m.why,n?46:84).map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f14':''))).join(''));
-  const L=wrap(m.why,n?46:84);
+  const by=n?76:86, BL=n?wrap(m.best,26):[m.best], bh=(BL.length-1)*20+(m.alt?(n?62:64):(n?46:48));
+  s+=G('a-pop',.3,box(n?10:24,by,n?340:600,bh,'#E7DEC9',4)+T(n?24:40,by+26,'Use','note start f12')+BL.map((l,i)=>T(n?60:84,by+27+i*20,l,'cname start acc '+(n?'f15':''))).join('')
+    +(m.alt?T(n?24:40,by+48+(BL.length-1)*20,m.alt,'note start f12'):''));
+  const ty=by+bh+(n?18:20);
+  s+=G('a-fade',.6,wrap(m.why,n?46:78).map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f14':''))).join(''));
+  const L=wrap(m.why,n?46:78);
   return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
 }
 
 /* ===================== Part IV · into the chromosome ===================== */
 function scAllelic(n){
-  const y=n?80:88, x1=n?20:60, x2=n?340:600, w=x2-x1;
+  const y=n?80:88, x1=n?20:60, x2=n?340:600, w=x2-x1, g0=n?.35:.38, gw=n?.3:.24;
   const chrom=(yy)=>`<path d="M${x1} ${yy} H${x2}" stroke="${VEC}" stroke-width="3"/>`;
-  let s=G('a-fade',0,chrom(y)+`<rect x="${x1+w*.38}" y="${y-8}" width="${w*.24}" height="16" rx="3" fill="${INS}" stroke="${INK}"/>`+Tc(x1+w*.5,y+4,'target gene','#F3EDE0',11,'mono mid','600')
-    +`<rect x="${x1+w*.2}" y="${y-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/><rect x="${x1+w*.62}" y="${y-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/>`
-    +T(x1+w*.29,y+30,'left flank','note mid f11')+T(x1+w*.71,y+30,'right flank','note mid f11'));
+  let s=G('a-fade',0,chrom(y)+`<rect x="${x1+w*g0}" y="${y-8}" width="${w*gw}" height="16" rx="3" fill="${INS}" stroke="${INK}"/>`+Tc(x1+w*.5,y+4,'target gene','#F3EDE0',11,'mono mid','600')
+    +`<rect x="${x1+w*(g0-.18)}" y="${y-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/><rect x="${x1+w*(g0+gw)}" y="${y-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/>`
+    +T(x1+w*(g0-.09),y+30,'left flank','note mid f11')+T(x1+w*(g0+gw+.09),y+30,'right flank','note mid f11'));
   const py=y+(n?96:104);
-  s+=G('a-pop',.8,plasmid(n?180:320,py+(n?48:54),n?40:46,[[.08,.3,'#D9CDB2','L'],[.32,.56,AMP,'marker'],[.58,.8,'#D9CDB2','R']],{name:'suicide',sub:'no ori here',fw:8,fs:10}));
+  s+=G('a-pop',.8,plasmid(n?180:320,py+(n?54:56),n?48:54,[[.08,.3,'#D9CDB2','L'],[.32,.56,AMP,'marker'],[.58,.8,'#D9CDB2','R']],{name:'suicide',sub:'no ori here',fw:8,fs:10}));
   s+=G('a-fade',1.4,`<path d="M${(n?180:320)} ${py-6} v${-18}" class="arrow"/>`);
-  const y3=py+(n?118:130);
-  s+=G('a-fade',2,chrom(y3)+`<rect x="${x1+w*.38}" y="${y3-8}" width="${w*.24}" height="16" rx="3" fill="${AMP}" stroke="${INK}"/>`+Tc(x1+w*.5,y3+4,'marker','#3A2E22',11,'mono mid','600')
-    +`<rect x="${x1+w*.2}" y="${y3-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/><rect x="${x1+w*.62}" y="${y3-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/>`
-    +`<path d="M${x1+w*.29} ${py+(n?92:100)} L${x1+w*.33} ${y3-14} M${x1+w*.71} ${py+(n?92:100)} L${x1+w*.67} ${y3-14}" stroke="${RED2}" stroke-width="1.6" stroke-dasharray="4 3"/>`
+  const y3=py+(n?150:156);
+  s+=G('a-fade',2,chrom(y3)+`<rect x="${x1+w*g0}" y="${y3-8}" width="${w*gw}" height="16" rx="3" fill="${AMP}" stroke="${INK}"/>`+Tc(x1+w*.5,y3+4,'marker','#3A2E22',11,'mono mid','600')
+    +`<rect x="${x1+w*(g0-.18)}" y="${y3-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/><rect x="${x1+w*(g0+gw)}" y="${y3-8}" width="${w*.18}" height="16" rx="3" fill="#D9CDB2" stroke="${INK}"/>`
+    +`<path d="M${x1+w*.23} ${py+(n?92:100)} L${x1+w*.3} ${y3-14} M${x1+w*.77} ${py+(n?92:100)} L${x1+w*.7} ${y3-14}" stroke="${RED2}" stroke-width="1.6" stroke-dasharray="4 3"/>`
     +T(x1+w*.5,y3+30,'double crossover: the gene is replaced','lab mid '+(n?'f13':'')));
   const ty=y3+(n?54:58);
-  const AL=wrap(n?'A single crossover inserts the whole plasmid; a counterselection marker such as sacB (sucrose-sensitive) or pheS* then forces the second crossover, which leaves a clean, markerless deletion.':'A single crossover integrates the whole plasmid. A counterselection marker — sacB, which makes cells sucrose-sensitive, or a mutant pheS — then forces the second crossover, giving a clean markerless deletion. This two-step logic underlies most bacterial gene replacement.',n?46:88);
+  const AL=wrap(n?'A single crossover inserts the whole plasmid; a counterselection marker such as sacB (sucrose-sensitive) or pheS* then forces the second crossover, which leaves a clean, markerless deletion.':'A single crossover integrates the whole plasmid. A counterselection marker — sacB, which makes cells sucrose-sensitive, or a mutant pheS — then forces the second crossover, giving a clean markerless deletion. This two-step logic underlies most bacterial gene replacement.',n?46:78);
   s+=G('a-fade',2.6,AL.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+AL.length*20+14):wide(ty+AL.length*20+14),s};
 }
@@ -616,17 +616,17 @@ function scRecomb(n){
       +L.map((l,j)=>T(x+(n?58:68),yy+j*17,l,'note start f13')).join(''));yy+=L.length*17+(n?16:14);});
   const dy=yy+(n?14:16);
   s+=G('a-fade',1.6,T(x,dy,'Why it beats classical recombination','cname start '+(n?'f14':'')));
-  const L2=wrap(n?'RecA needs hundreds of base pairs of homology. Beta needs only 40–50, which fits on the tail of an ordinary PCR primer — so the targeting DNA costs nothing more than two oligos.':'Homologous recombination through RecA needs hundreds of base pairs of homology. Beta needs only 40–50 nucleotides, which fits comfortably on the tail of an ordinary PCR primer. That is the whole trick: the targeting homology costs nothing more than two oligos.',n?46:88);
+  const L2=wrap(n?'RecA needs hundreds of base pairs of homology. Beta needs only 40–50, which fits on the tail of an ordinary PCR primer — so the targeting DNA costs nothing more than two oligos.':'Homologous recombination through RecA needs hundreds of base pairs of homology. Beta needs only 40–50 nucleotides, which fits comfortably on the tail of an ordinary PCR primer. That is the whole trick: the targeting homology costs nothing more than two oligos.',n?46:78);
   s+=G('a-fade',1.9,L2.map((l,i)=>T(x,dy+(n?24:26)+i*20,l,'note start '+(n?'f12':'f13'))).join(''));
   const py=dy+(n?24:26)+L2.length*20+(n?16:18);
-  const W=n?340:148, H=n?104:140;
+  const W=n?340:301, H=n?104:104;
   const items=[['Arm the cell','pKD46 carries the three genes under an arabinose promoter, so you induce them only when needed.'],
    ['Make the cassette','PCR a resistance gene flanked by FRT sites, with 40–50 nt of chromosomal homology added as primer tails.'],
    ['Electroporate','Red recombines the linear product into the chromosome; select for the resistance.'],
    ['Excise marker','pCP20 supplies FLP, which recombines the two FRT sites and excises the marker, leaving an 80 bp scar.']];
-  s+=n?stepRows(n,items,10,py,W,H,10,2.2):stepBoxes(n,items,10,py,W,H,10,2.2);
-  const yb=n?py+4*(H+10)+10:py+H+26;
-  const L3=wrap(n?'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way.':'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way. Supplying Beta alone with a single-stranded oligo can change one base, with no marker and no scar at all.',n?46:88);
+  s+=n?stepRows(n,items,10,py,W,H,10,2.2):stepBoxes(n,items.slice(0,2),10,py,W,H,18,2.2)+stepBoxes(n,items.slice(2),10,py+H+12,W,H,18,3.2,2);
+  const yb=n?py+4*(H+10)+10:py+2*H+12+26;
+  const L3=wrap(n?'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way.':'Datsenko and Wanner, 2000. The Keio collection of E. coli single-gene knockouts was built this way. Supplying Beta alone with a single-stranded oligo can change one base, with no marker and no scar at all.',n?46:78);
   s+=G('a-fade',4,L3.map((l,i)=>T(x,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(yb+L3.length*20+14):wide(yb+L3.length*20+16),s};
 }
@@ -639,20 +639,20 @@ function scNatural(n){
     +`<path d="M${cx} ${cy-(n?30:36)} v${n?26:30}" stroke="${INS}" stroke-width="2.6"/>`+T(cx,cy+(n?16:20),'ssDNA','mono mid f11')+T(cx,cy+(n?54:62),'competent pneumococcus','note mid f12'));
   const bx=n?14:300, by=n?190:46;
   const items=[['Add CSP','competence-stimulating peptide switches on ComX and the uptake machinery'],['Add DNA','a PCR product with ~1 kb flanks is enough; one strand enters and RecA pairs it'],['Select','the Janus cassette carries kan and a wild-type rpsL; in a streptomycin-resistant strain it makes cells sensitive again'],['Swap it out','replace Janus with your edit and select on streptomycin: markerless, scarless']];
-  let yy=by;items.forEach((it,i)=>{const L=wrap(it[1],n?44:44);s+=G('a-fade',(.6+i*.4).toFixed(1),badge((n?20:bx+8),yy-4,i+1)+T((n?36:bx+24),yy,it[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T((n?36:bx+24),yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+34;});
-  const NL=wrap(n?'Sung and Morrison, 2001. Griffith’s transformation, turned into a cloning tool.':'Sung, Morrison and colleagues, 2001. Griffith’s 1928 transforming principle, turned into a routine editing tool. Bacillus subtilis, Haemophilus, Neisseria and Acinetobacter are also naturally competent.',n?46:44);
+  let yy=by;items.forEach((it,i)=>{const L=wrap(it[1],n?44:39);s+=G('a-fade',(.6+i*.4).toFixed(1),badge((n?20:bx+8),yy-4,i+1)+T((n?36:bx+24),yy,it[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T((n?36:bx+24),yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+34;});
+  const NL=wrap(n?'Sung and Morrison, 2001. Griffith’s transformation, turned into a cloning tool.':'Sung, Morrison and colleagues, 2001. Griffith’s 1928 transforming principle, turned into a routine editing tool. Bacillus subtilis, Haemophilus, Neisseria and Acinetobacter are also naturally competent.',n?46:38);
   s+=G('a-fade',2.4,NL.map((l,i)=>T(n?14:bx,yy+i*19,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(yy+NL.length*19+14):wide(Math.max(cy+90,yy+NL.length*19+14)),s};
 }
 
 function scCRISPRedit(n){
-  const W=n?340:190, H=n?108:140;
+  const W=n?340:200, H=n?108:140;
   const items=[['Edit by recombineering','A template oligo or PCR product carries the change, but most cells keep the wild-type sequence.'],
    ['Cut the survivors','Cas9 with a guide against the wild-type sequence kills every cell that was not edited.'],
    ['Escape the cut','The edited allele has lost the guide match or its PAM, so it survives: selection without a marker.']];
-  let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,12,0);
+  let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,10,0);
   const yb=n?10+3*(H+10)+8:20+H+26;
-  const EL=wrap(n?'Jiang and Marraffini, 2013. Many bacteria repair breaks poorly, which is exactly why an unrepaired cut is lethal and makes such a clean counterselection. Base editors (dCas9–deaminase) change C·G to T·A with no break at all.':'Jiang, Marraffini and colleagues, 2013. Most bacteria lack efficient non-homologous end joining, so an unrepaired double-strand break is lethal — which is precisely what makes Cas9 such a clean counterselection. Base editors, a nicking Cas9 fused to a cytidine deaminase, change C·G to T·A with no break at all.',n?46:88);
+  const EL=wrap(n?'Jiang and Marraffini, 2013. Many bacteria repair breaks poorly, which is exactly why an unrepaired cut is lethal and makes such a clean counterselection. Base editors (dCas9–deaminase) change C·G to T·A with no break at all.':'Jiang, Marraffini and colleagues, 2013. Most bacteria lack efficient non-homologous end joining, so an unrepaired double-strand break is lethal — which is precisely what makes Cas9 such a clean counterselection. Base editors, a nicking Cas9 fused to a cytidine deaminase, change C·G to T·A with no break at all.',n?46:78);
   s+=G('a-fade',1.8,EL.map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(yb+EL.length*20+14):wide(yb+EL.length*20+14),s};
 }
@@ -671,13 +671,13 @@ let planSel=0;
 function scPlan(n){
   const m=PLANS[planSel];
   let s=G('a-fade',0,T(n?14:30,n?30:36,'Goal','note start f12')+T(n?14:30,n?54:62,m.k,'cname start'));
-  const y0=n?78:86, W=n?340:146, H=n?86:118;
-  m.steps.forEach((st,i)=>{const x=n?10:10+i*155, y=n?y0+i*(H+8):y0;
+  const y0=n?78:86, W=n?340:296, H=n?86:86;
+  m.steps.forEach((st,i)=>{const x=n?10:10+(i%2)*324, y=n?y0+i*(H+8):y0+Math.floor(i/2)*(H+10);
     s+=G('a-fade',(.3+i*.3).toFixed(1),box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,st[0],'lab start f14')
-      +wrap(st[1],n?42:24).map((l,j)=>T(x+14,y+40+j*16,l,'note start f12')).join(''));
-    if(!n&&i<m.steps.length-1)s+=G('a-fade',(.4+i*.3).toFixed(1),`<path d="M${x+W+2} ${y+H/2} h5" class="arrow"/>`);});
-  const ty=n?y0+4*(H+8)+12:y0+H+28;
-  const L=wrap(m.note,n?46:88);
+      +wrap(st[1],n?44:38).map((l,j)=>T(x+14,y+40+j*17,l,'note start f12')).join(''));
+    if(!n&&i%2===0)s+=G('a-fade',(.4+i*.3).toFixed(1),`<path d="M${x+W+3} ${y+H/2} h21" class="arrow"/>`);});
+  const ty=n?y0+4*(H+8)+12:y0+2*H+10+28;
+  const L=wrap(m.note,n?46:78);
   s+=G('a-fade',1.6,`<rect x="${n?10:24}" y="${ty-18}" width="${n?340:600}" height="${L.length*20+14}" rx="4" fill="#E7DEC9" opacity=".7"/>`
     +L.map((l,i)=>T(n?22:38,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};

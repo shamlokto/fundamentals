@@ -20,15 +20,15 @@ function scC2(n){
 }
 function scC3(n){
   const rows=[['glucose-6-P','glycolysis','polysaccharides, wall'],['fructose-6-P','glycolysis','amino sugars, peptidoglycan'],['ribose-5-P','pentose phosphate','nucleotides, histidine'],['erythrose-4-P','pentose phosphate','aromatic amino acids'],['triose-P','glycolysis','lipids (glycerol)'],['3-phosphoglycerate','glycolysis','serine, glycine, cysteine'],['phosphoenolpyruvate','glycolysis','aromatics; sugar uptake (PTS)'],['pyruvate','glycolysis','alanine, valine, leucine'],['acetyl-CoA','pyruvate dehydrogenase','fatty acids'],['2-oxoglutarate','TCA','glutamate family; nitrogen assimilation'],['succinyl-CoA','TCA','haem, lysine, methionine'],['oxaloacetate','TCA','aspartate family, pyrimidines']];
-  const t=wtable(n,['Precursor','From','Builds'],rows,n?[[10,16],[118,14],[220,18]]:[[24,22],[220,22],[400,34]],{y0:30,R:n?354:620});
+  const t=wtable(n,['Precursor','From','Builds'],rows,n?[[8,19],[140,11],[232,19]]:[[24,22],[220,22],[400,34]],{y0:30,R:n?354:620});
   const p=para(n?16:24,t.y+12,'Twelve precursor metabolites, drawn from glycolysis, the pentose phosphate pathway and the TCA cycle, are the starting points for every building block of the cell (Neidhardt’s scheme). Linking amino acids into protein costs about 4 ATP each; making them needs much NADPH.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scC4(n){
-  const cx=n?180:204, cy=n?200:214, R=n?118:142;
-  const items=n?[{t:'citrate|6C',w:62,fs:10},{t:'isocitrate|6C',w:74,fs:10},{t:'2-oxo-|glutarate 5C',w:80,fs:10,f:PAL.gold},{t:'succinyl-|CoA 4C',w:66,fs:10,f:PAL.gold},{t:'succinate|4C',w:70,fs:10},{t:'fumarate|4C',w:64,fs:10},{t:'malate|4C',w:54,fs:10},{t:'oxalo-|acetate 4C',w:72,fs:10,f:PAL.gold}]
-    :[{t:'citrate (6C)',w:110},{t:'isocitrate (6C)',w:126},{t:'2-oxoglutarate (5C)',w:150,f:PAL.gold},{t:'succinyl-CoA (4C)',w:140,f:PAL.gold},{t:'succinate (4C)',w:118},{t:'fumarate (4C)',w:112},{t:'malate (4C)',w:96},{t:'oxaloacetate (4C)',w:140,f:PAL.gold}];
-  const labs=n?['','NADH|CO₂','NADH|CO₂','ATP or|GTP','QH₂|(via FAD)','','NADH','+ acetyl-|CoA (2C)']:['','NADH, CO₂','NADH, CO₂','ATP (GTP in some)','QH₂ (via FAD, complex II)','','NADH','+ acetyl-CoA (2C)'];
+  const cx=n?180:204, cy=n?200:214, R=n?128:142;
+  const items=n?[{t:'citrate|6C',w:62,fs:10},{t:'isocitrate|6C',w:84,fs:10},{t:'2-oxo-|glutarate 5C',w:96,fs:10,f:PAL.gold},{t:'succinyl-|CoA 4C',w:76,fs:10,f:PAL.gold},{t:'succinate|4C',w:80,fs:10},{t:'fumarate|4C',w:74,fs:10},{t:'malate|4C',w:54,fs:10},{t:'oxalo-|acetate 4C',w:86,fs:10,f:PAL.gold}]
+    :[{t:'citrate (6C)',w:110},{t:'isocitrate (6C)',w:126},{t:'2-oxoglutarate (5C)',w:162,f:PAL.gold},{t:'succinyl-CoA (4C)',w:148,f:PAL.gold},{t:'succinate (4C)',w:118},{t:'fumarate (4C)',w:112},{t:'malate (4C)',w:96},{t:'oxaloacetate (4C)',w:150,f:PAL.gold}];
+  const labs=n?['','NADH|CO₂','NADH|CO₂','ATP or|GTP','QH₂|(via FAD)','','NADH','+ acetyl-|CoA (2C)']:['','NADH, CO₂','NADH, CO₂','ATP (GTP in some)','QH₂ (via FAD,|complex II)','','NADH','+ acetyl-CoA (2C)'];
   let s=G('a-fade',0,cycle(cx,cy,R,items,{labs,lr:n?22:26}));
   const b=n?bullets(24,cy+R+64,[['Per acetyl-CoA','3 NADH, 1 reduced quinone (QH₂, via the FAD of succinate dehydrogenase), 1 ATP or GTP, 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave for biosynthesis and must be replaced.'],['Variants','Anaerobic E. coli runs it as a branched pathway; many bacteria have a glyoxylate shunt.']],44,{d0:1,gap:20})
     :bullets(452,52,[['Per acetyl-CoA','3 NADH, 1 reduced quinone from succinate dehydrogenase (complex II), 1 GTP or ATP, and 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave the cycle for biosynthesis, so it must be refilled.'],['Variants','Without oxygen, E. coli runs a branched pathway: an oxidative arm to 2-oxoglutarate and a reductive arm to succinate. Many organisms lack 2-oxoglutarate dehydrogenase.'],['Run backwards','The reductive TCA cycle fixes CO₂ in Chlorobium and Aquifex.']],23,{d0:1,gap:20});

@@ -375,7 +375,7 @@ function scZring(n){
   let ring='';for(let i=0;i<16;i++){const a=i/16*2*Math.PI;ring+=`<rect x="${FX(dx+Math.cos(a)*(dr-7)-4)}" y="${FX(dy+Math.sin(a)*(dr-7)-4)}" width="8" height="8" rx="2" fill="${ZC}" stroke="${INK}" stroke-width=".5" transform="rotate(${FX(a*180/Math.PI)} ${FX(dx+Math.cos(a)*(dr-7))} ${FX(dy+Math.sin(a)*(dr-7))})"/>`;}
   s+=G('a-pop',1.8,ring+T(dx,dy+dr+(n?24:26),'seen end-on','note mid f11'));
   const ty=n?dy+dr+46:cy+R+70;
-  const L2=wrap(n?'FtsZ is a GTPase and a distant relative of tubulin. It polymerises into short filaments that gather into a discontinuous ring, which arrives first and recruits everything else.':'FtsZ is a GTPase and a distant structural relative of tubulin. It polymerises into short protofilaments that gather into a patchy, discontinuous ring at midcell. The ring arrives before any other division protein, and everything else is recruited to it, which is why it is called the Z ring.',n?46:88);
+  const L2=wrap(n?'FtsZ is a GTPase and a distant relative of tubulin. It polymerises into short filaments that gather into a discontinuous ring, which arrives first and recruits everything else.':'FtsZ is a GTPase and a distant structural relative of tubulin. It polymerises into short protofilaments that gather into a patchy, discontinuous ring at midcell. The ring arrives before any other division protein, and everything else is recruited to it, which is why it is called the Z ring.',n?46:80);
   s+=G('a-fade',2.2,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L2.length*20+14):wide(ty+L2.length*20+16),s};
 }
@@ -396,7 +396,7 @@ function scDivisome(n){
   const y4=y3+h+(n?22:24);
   s+=G('a-fade',1.9,T(n?14:30,y4,'late: bring in the enzymes that build the wall','note start f12'));
   const ty=y4+(n?26:28);
-  const L=wrap(n?'In E. coli more than a dozen proteins arrive in a set order, each needing the one before it. FtsN is the last, and its arrival is the signal to start making septal wall.':'In E. coli more than a dozen proteins arrive in a defined order, each depending on the ones before it — a hierarchy mapped by depletion experiments. FtsN arrives last, and its arrival is the signal that switches on septal wall synthesis. Gram-positive bacteria use a smaller, overlapping set: there is no ZipA, and FtsA and SepF do the tethering.',n?46:88);
+  const L=wrap(n?'In E. coli more than a dozen proteins arrive in a set order, each needing the one before it. FtsN is the last, and its arrival is the signal to start making septal wall.':'In E. coli more than a dozen proteins arrive in a defined order, each depending on the ones before it — a hierarchy mapped by depletion experiments. FtsN arrives last, and its arrival is the signal that switches on septal wall synthesis. Gram-positive bacteria use a smaller, overlapping set: there is no ZipA, and FtsA and SepF do the tethering.',n?46:80);
   s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
 }
@@ -428,7 +428,7 @@ function scMin(n){
     +`<path d="M${cx} ${my+R+2} V${py}" stroke="${ZC}" stroke-width="1" stroke-dasharray="3 3"/>`
     +T(cx+L*.2,py-ph*.8,'time-averaged MinC','note mid f12 halo')+T(x1,py+16,'pole','note mid f12')+T(cx,py+16,'midcell','note mid f12')+T(x2,py+16,'pole','note mid f12'));
   const ty=py+(n?44:46);
-  const L2=wrap(n?'MinC blocks FtsZ. Because MinCD oscillate from pole to pole, their average concentration is lowest exactly at midcell, so that is the only place a ring can form. Seen by Raskin and de Boer, 1999.':'MinC inhibits FtsZ assembly. Because MinC and MinD oscillate from pole to pole roughly once a minute, driven by MinE, their time-averaged concentration is highest at the poles and lowest exactly at midcell — so midcell is the only place a ring can form. The oscillation was seen by David Raskin and Piet de Boer in 1999. Bacillus subtilis has no oscillation: MinCD are held at the poles by DivIVA.',n?46:88);
+  const L2=wrap(n?'MinC blocks FtsZ. Because MinCD oscillate from pole to pole, their average concentration is lowest exactly at midcell, so that is the only place a ring can form. Seen by Raskin and de Boer, 1999.':'MinC inhibits FtsZ assembly. Because MinC and MinD oscillate from pole to pole roughly once a minute, driven by MinE, their time-averaged concentration is highest at the poles and lowest exactly at midcell — so midcell is the only place a ring can form. The oscillation was seen by David Raskin and Piet de Boer in 1999. Bacillus subtilis has no oscillation: MinCD are held at the poles by DivIVA.',n?46:80);
   s+=G('a-fade',2.6,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L2.length*20+14):wide(ty+L2.length*20+16),s};
 }
@@ -444,16 +444,16 @@ function scNoc(n){
   s+=G('a-fade',1,rodCell(cx,y2,L,R,0)+nucleoid(cx-L*.26,y2,L*.19,R*.55,{seed:9})+nucleoid(cx+L*.26,y2,L*.19,R*.55,{seed:13})
     +zring(cx,y2,R-4,{n:6,w:6})+T(cx,y2-R-14,'DNA has moved aside: the ring can form','note mid f12')+mark(cx+L*.42,y2,true,9));
   const ty=y2+R+(n?40:44);
-  const L2=wrap(n?'Nucleoid occlusion stops a septum closing on unsegregated DNA. SlmA does it in E. coli, Noc in B. subtilis — both bind sites on the chromosome and keep FtsZ off.':'Nucleoid occlusion is the second safeguard: it stops a septum closing across unsegregated DNA. SlmA in E. coli and Noc in Bacillus subtilis bind specific chromosomal sites and keep FtsZ from assembling over them. Notably, neither site is present near the replication terminus, so the region that leaves midcell last is also the last to release the block.',n?46:88);
+  const L2=wrap(n?'Nucleoid occlusion stops a septum closing on unsegregated DNA. SlmA does it in E. coli, Noc in B. subtilis — both bind sites on the chromosome and keep FtsZ off.':'Nucleoid occlusion is the second safeguard: it stops a septum closing across unsegregated DNA. SlmA in E. coli and Noc in Bacillus subtilis bind specific chromosomal sites and keep FtsZ from assembling over them. Notably, neither site is present near the replication terminus, so the region that leaves midcell last is also the last to release the block.',n?46:80);
   s+=G('a-fade',1.8,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   const yb=ty+L2.length*20+(n?12:14);
-  const FL=wrap(n?'Delete both Min and nucleoid occlusion and cells still divide — something else also positions the ring.':'Delete both systems and cells still divide, if poorly: something else also helps place the ring, and the search for it continues.',n?46:88);
+  const FL=wrap(n?'Delete both Min and nucleoid occlusion and cells still divide — something else also positions the ring.':'Delete both systems and cells still divide, if poorly: something else also helps place the ring, and the search for it continues.',n?46:80);
   s+=G('a-fade',2.4,FL.map((l,i)=>T(n?14:30,yb+i*18,l,'note start '+(n?'f12':'f13'))).join(''));
   return {vb:n?slim(yb+FL.length*18+14):wide(yb+FL.length*18+16),s};
 }
 
 function scOvo(n){
-  const W=n?92:110, H=n?48:56, y=n?120:124;
+  const W=n?92:110, H=n?48:56, y=n?132:124;
   const xs=n?[70,180,290]:[120,320,520];
   let s='';
   const Ws=[W*.82,W*1.05,W*1.28];
@@ -468,9 +468,9 @@ function scOvo(n){
   });
   s+=G('a-fade',1.6,`<rect x="${xs[2]+12}" y="${y+H*.75+6}" width="10" height="5" fill="${ZC}"/>`+T(xs[2]+26,y+H*.75+12,'FtsZ','note start f12'));
   s+=G('a-fade',1.8,T(n?180:320,n?44:48,'MapZ rings mark the site before FtsZ arrives','lab mid '+(n?'f14':''))
-    +Tc(xs[0]+(n?10:14),y-(n?20:24),'MapZ',MAPZ,12,'mono start','600'));
+    +Tc(xs[0],y-H-(n?8:10),'MapZ',MAPZ,12,'mono mid','600'));
   const ty=y+H+(n?52:60);
-  const L=wrap(n?'The pneumococcus is an ovococcus: it has no Min system and no MreB. MapZ (also called LocZ) forms a ring at the equator, splits in two as the cell grows, and the two daughter rings mark the next division sites. Fleurie and colleagues; Holečková and colleagues, 2014.':'Streptococcus pneumoniae is an ovococcus. It has no Min system, and although it keeps an elongasome it has no MreB, so neither of the E. coli positioning systems applies. Instead MapZ, also called LocZ, forms a ring at the equator early, binds peptidoglycan through its extracellular domain, splits into two rings as the cell grows, and those rings mark where the next divisions will happen. It guides FtsZ rather than inhibiting it elsewhere. Described independently by Fleurie and colleagues and by Holečková and colleagues in 2014.',n?46:88);
+  const L=wrap(n?'The pneumococcus is an ovococcus: it has no Min system and no MreB. MapZ (also called LocZ) forms a ring at the equator, splits in two as the cell grows, and the two daughter rings mark the next division sites. Fleurie and colleagues; Holečková and colleagues, 2014.':'Streptococcus pneumoniae is an ovococcus. It has no Min system, and although it keeps an elongasome it has no MreB, so neither of the E. coli positioning systems applies. Instead MapZ, also called LocZ, forms a ring at the equator early, binds peptidoglycan through its extracellular domain, splits into two rings as the cell grows, and those rings mark where the next divisions will happen. It guides FtsZ rather than inhibiting it elsewhere. Described independently by Fleurie and colleagues and by Holečková and colleagues in 2014.',n?46:80);
   s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
 }
@@ -481,16 +481,16 @@ function scSegregate(n){
   let s=G('a-fade',0,rodCell(cx,y1,L,R,0)+nucleoid(cx,y1,L*.3,R*.6,{seed:5})
     +[0,1].map(k=>`<circle cx="${cx+(k?10:-10)}" cy="${y1}" r="6" fill="${PARB}" stroke="${INK}" stroke-width=".6"/>`).join('')
     +T(cx,y1-R-12,'two origins, side by side','note mid f12'));
-  const y2=n?180:186;
+  const y2=n?190:196;
   s+=G('a-fade',.8,rodCell(cx,y2,L,R,0)+nucleoid(cx-L*.24,y2,L*.2,R*.55,{seed:9})+nucleoid(cx+L*.24,y2,L*.2,R*.55,{seed:13})
     +[0,1].map(k=>`<circle cx="${cx+(k?1:-1)*L*.38}" cy="${y2}" r="6" fill="${PARB}" stroke="${INK}" stroke-width=".6"/>`).join('')
     +T(cx,y2-R-12,'ParABS pushes them to opposite ends','note mid f12'));
-  const y3=n?286:292;
+  const y3=n?306:312;
   s+=G('a-fade',1.6,rodCell(cx,y3,L,R,.5)+tmProt(cx,y3-R+4,2*R-8,14,'#9C7FB0','',{})+Tc(cx+(n?26:30),y3,'FtsK','#3A2E22',11,'mono start','600')
     +`<path d="M${cx-54} ${y3+R-14} H${cx+54}" stroke="${DNAC}" stroke-width="2" fill="none"/>`
     +[-1,1].map(d=>`<path d="M${cx+d*10} ${y3+R-22} h${d*30}" stroke="${INK}" stroke-width="1.4" fill="none" marker-end="url(#ahp)"/>`).join('')
     +T(cx,y3+R+(n?22:24),'FtsK pumps any trapped DNA out of the closing septum','note mid f12'));
-  const ty=y3+R+(n?46:50);
+  const ty=y3+R+(n?54:58);
   const items=[['ParABS','ParB coats parS sites near the origin; ParA, an ATPase on the nucleoid, moves the complex to the far pole. Most bacteria have it; E. coli does not.'],
    ['SMC / MukBEF','condenses each chromosome and helps keep the two apart'],
    ['FtsK / SpoIIIE','a DNA translocase in the septum; its motor reads KOPS sequences and pumps the terminus region out of the way, and it also activates XerCD at dif']];
@@ -509,13 +509,13 @@ function scTreadmill(n){
     let f='';
     for(let i=0;i<12;i++){const live=i>=ri&&i<ri+9;
       f+=`<rect x="${x+i*(w+1)}" y="${yy}" width="${w}" height="${n?13:15}" rx="2.5" fill="${live?(i<ri+2?'#B59BC9':ZC):'none'}" stroke="${live?INK:'#C9BFAB'}" stroke-width="${live?.7:.5}" ${live?'':'stroke-dasharray="2 2"'}/>`;}
-    s+=G('a-fade',(.3+ri*.4).toFixed(1),f+T(x-8,yy+(n?11:13),r[0],'mono end f11')+(ri===0?T(x,yy-7,'GDP: leaves','note start f12')+T(x+9*(w+1)-2,yy-7,'GTP: adds','note end f12'):''));});
+    s+=G('a-fade',(.3+ri*.4).toFixed(1),f+T(x-8,yy+(n?11:13),r[0],'mono end f11')+(ri===0?T(x,yy-7,'GDP: leaves','note start f12')+(n?T(x+8*(w+1)-4,yy-7,'GTP: adds','note start f12'):T(x+9*(w+1)-2,yy-7,'GTP: adds','note end f12')):''));});
   const ay=y+3*(n?48:52);
   s+=G('a-fade',1.6,T(x,ay+(n?6:8),'GTP-bound subunits add at one end','note start f12')+T(x,ay+(n?24:26),'GDP subunits fall off the other','note start f12')
     +`<path d="M${x+10*(w+1)} ${ay-(n?30:34)} h${n?26:30}" stroke="${PBPC}" stroke-width="2" marker-end="url(#ahp)"/>`
     +T(x+(n?11.6:12)*(w+1)+(n?10:14),ay-(n?34:38),'net movement','note start f11'));
   const ty=ay+(n?52:58);
-  const L=wrap(n?'The filament itself does not slide. Subunits join at one end and leave at the other, so the filament appears to travel. In 2017 two groups showed FtsZ filaments treadmill around the ring, carrying the wall-building enzymes with them and setting how fast the septum is built.':'The filament itself does not slide. Subunits add at one end and dissociate from the other, so it appears to travel: treadmilling. In 2017 the Xiao and Garner groups showed that FtsZ filaments treadmill around the division site, and that they carry the wall-building enzymes with them. The speed of treadmilling sets how evenly, and in some species how fast, the septum is built.',n?46:88);
+  const L=wrap(n?'The filament itself does not slide. Subunits join at one end and leave at the other, so the filament appears to travel. In 2017 two groups showed FtsZ filaments treadmill around the ring, carrying the wall-building enzymes with them and setting how fast the septum is built.':'The filament itself does not slide. Subunits add at one end and dissociate from the other, so it appears to travel: treadmilling. In 2017 the Xiao and Garner groups showed that FtsZ filaments treadmill around the division site, and that they carry the wall-building enzymes with them. The speed of treadmilling sets how evenly, and in some species how fast, the septum is built.',n?46:80);
   s+=G('a-fade',2.2,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
 }
@@ -528,7 +528,7 @@ function scAnchor(n){
   /* FtsA is peripheral: a cytoplasmic protein whose amphipathic helix dips into the inner leaflet */
   const fa=zx-(n?40:48), za=zx+(n?36:44), fz=y+(n?48:52);
   s+=G('a-pop',.9,`<path d="M${fa} ${y+20} V${y+9}" stroke="${FTSA}" stroke-width="3" stroke-linecap="round"/>`+blob(fa,y+27,n?12:14,8,FTSA)
-    +`<path d="M${fa} ${y+35} V${fz}" stroke="${FTSA}" stroke-width="2.6"/>`+Tc(fa-(n?16:19),y+31,'FtsA','#3A2E22',10,'mono end','600'));
+    +`<path d="M${fa} ${y+35} V${fz}" stroke="${FTSA}" stroke-width="2.6"/>`+Tc(fa-(n?19:23),y+31,'FtsA','#3A2E22',10,'mono end','600'));
   /* ZipA crosses the membrane once and reaches FtsZ through a long cytoplasmic linker */
   s+=G('a-pop',1.3,tmProt(za,y,16,8,'#D9B85A','',{})+`<path d="M${za} ${y+16} V${fz}" stroke="#D9B85A" stroke-width="2.6"/>`+Tc(za+(n?8:10),y+31,'ZipA','#3A2E22',10,'mono start','600'));
   s+=G('a-pop',1.7,tmProt(zx,y,16,22,'#7FA59B','FtsEX',{dy:14}));
@@ -538,7 +538,7 @@ function scAnchor(n){
    ['FtsEX','an ABC-transporter-like complex that spans the membrane and, later, switches on the wall hydrolases that split the septum.']];
   let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:76);
     s+=G('a-fade',(2+i*.3).toFixed(1),T(n?14:30,yy,it[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T(n?14:30,yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+32;});
-  const L2=wrap(n?'The Z ring has no motor. It is a scaffold held just under the membrane, and the force that closes the septum comes mostly from building new wall.':'The Z ring is not a motor in the way a muscle is. It is a scaffold held just under the membrane, and the force that closes the septum comes largely from the new wall being built behind it.',n?46:88);
+  const L2=wrap(n?'The Z ring has no motor. It is a scaffold held just under the membrane, and the force that closes the septum comes mostly from building new wall.':'The Z ring is not a motor in the way a muscle is. It is a scaffold held just under the membrane, and the force that closes the septum comes largely from the new wall being built behind it.',n?46:80);
   s+=G('a-fade',3.2,L2.map((l,i)=>T(n?14:30,yy+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(yy+L2.length*20+14):wide(yy+L2.length*20+16),s};
 }
@@ -549,16 +549,16 @@ function scSwitch(n){
     let g=box(x,y,W,H,'#E7DEC9',4)+T(x+16,y+26,on?'ON':'OFF','cname start '+(n?'f15':''))+Tc(n?x+16:x+W-16,n?y+46:y+26,on?'septum builds':'nothing happens',on?'#4F7A3F':'#A4473A',11,n?'mono start':'mono end','600');
     const my=y+H-(n?44:48), cx=x+W/2;
     g+=bilayer(x+14,x+W-14,my,14);
-    g+=tmProt(cx-(n?30:44),my,14,(n?26:34),SEDS,'',{})+Tc(cx-(n?30:44),my+(n?26:28),'FtsQLB','#3A2E22',9,'mono mid','600');
-    g+=tmProt(cx+(n?14:22),my,14,(n?22:28),PBPC,'',{})+Tc(cx+(n?14:22),my+(n?26:28),'FtsWI','#3A2E22',9,'mono mid','600');
+    g+=tmProt(cx-(n?42:44),my,14,(n?26:34),SEDS,'',{})+Tc(cx-(n?42:44),my+(n?26:28),'FtsQLB','#3A2E22',9,'mono mid','600');
+    g+=tmProt(cx+(n?6:22),my,14,(n?22:28),PBPC,'',{})+Tc(cx+(n?6:22),my+(n?26:28),'FtsWI','#3A2E22',9,'mono mid','600');
     if(on){g+=tmProt(cx+(n?46:72),my,14,12,'#B4766E','',{})+Tc(cx+(n?46:72),my+(n?26:28),'FtsN','#3A2E22',9,'mono mid','600');
       g+=pgStrand(x+20,x+W-20,my-(n?16:18),PBPC,{w:3,dir:-5})+Tc(cx,my-(n?26:30),'new wall','#4F7A3F',10,'mono mid','600');}
-    else g+=Tc(cx-(n?8:11),my-8,'⊣','#A4473A',16,'mono mid','600')+Tc(cx-(n?8:11),my-26,n?'holds off':'holds FtsWI off','#A4473A',11,'mono mid','600');
+    else g+=Tc(cx-(n?18:11),my-8,'⊣','#A4473A',16,'mono mid','600')+Tc(cx-(n?18:11),my-26,n?'holds off':'holds FtsWI off','#A4473A',11,'mono mid','600');
     return g;};
   let s=G('a-fade',0,panel(n?8:22,0))+G('a-fade',.8,panel(n?190:330,1));
   if(!n)s+=G('a-fade',1.2,`<path d="M${22+W+4} ${y+H/2} h${330-22-W-8}" class="arrow"/>`);
   const ty=y+H+(n?26:30);
-  const L=wrap(n?'FtsQ, FtsL and FtsB form a sensor that keeps the wall-building pair FtsW and FtsI switched off until the whole divisome is present. FtsN arrives last and flips the switch, so the septum is only built once everything is ready.':'FtsQ, FtsL and FtsB form a complex that sits between the early and late proteins and keeps the wall-building pair, FtsW and FtsI, switched off. FtsN arrives last, and its arrival relieves the block. The point of this arrangement is timing: septal wall synthesis cannot begin until the whole divisome has assembled, and mutations in FtsL or FtsB that bypass the requirement for FtsN make cells divide too early.',n?46:88);
+  const L=wrap(n?'FtsQ, FtsL and FtsB form a sensor that keeps the wall-building pair FtsW and FtsI switched off until the whole divisome is present. FtsN arrives last and flips the switch, so the septum is only built once everything is ready.':'FtsQ, FtsL and FtsB form a complex that sits between the early and late proteins and keeps the wall-building pair, FtsW and FtsI, switched off. FtsN arrives last, and its arrival relieves the block. The point of this arrangement is timing: septal wall synthesis cannot begin until the whole divisome has assembled, and mutations in FtsL or FtsB that bypass the requirement for FtsN make cells divide too early.',n?46:80);
   s+=G('a-fade',1.8,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
 }
@@ -570,10 +570,10 @@ function scTwoMachines(n){
   let s=t.s;
   const dy=t.y+(n?18:24), L=n?120:150, R=n?30:34;
   s+=G('a-fade',1.4,rodCell(n?92:170,dy+R+6,L,R,0)+[0,1,2,3,4].map(i=>{const mx=(n?92:170)-L*.32+i*L*.16, my=dy+6+(i%2?R*1.05:R*.35);return `<path d="M${FX(mx)} ${FX(my)} l${FX(R*.12)} ${FX(R*.55)}" stroke="#C17A2C" stroke-width="3.2" stroke-linecap="round" opacity=".85"/>`;}).join('')+T(n?92:170,dy-4,'short MreB filaments','note mid f11')
-    +T(n?92:170,dy+2*R+(n?18:22),'elongation','note mid f12'));
-  s+=G('a-fade',1.8,rodCell(n?258:430,dy+R+6,L,R,.35)+zring(n?258:430,dy+R+6,R-6,{n:5,w:6})+T(n?258:430,dy+2*R+(n?18:22),'division','note mid f12'));
-  const ty=dy+2*R+(n?44:50);
-  const L2=wrap(n?'Both use the same chemistry: a SEDS glycosyltransferase paired with a class B PBP. The pneumococcus has no MreB but keeps the rest of the elongasome (RodA–PBP2b, MreCD, RodZ), which works at midcell beside the divisome and lengthens the cell before the septum closes.':'Both machines use the same chemistry: a SEDS-family glycosyltransferase paired with a class B penicillin-binding protein that cross-links. In rods they work in different places. The pneumococcus has no MreB but keeps the rest of the elongasome (RodA with PBP2b, MreC, MreD and RodZ); without MreB to spread it along the side wall, it works at midcell beside the divisome, making peripheral wall that lengthens the cell while the septum forms. That is how ovococci get their oval shape. Spherical cocci such as Staphylococcus aureus grow mainly by septal synthesis.',n?46:88);
+    +T(n?92:170,dy+2*R+(n?24:28),'elongation','note mid f12'));
+  s+=G('a-fade',1.8,rodCell(n?258:430,dy+R+6,L,R,.35)+zring(n?258:430,dy+R+6,R-6,{n:5,w:6})+T(n?258:430,dy+2*R+(n?24:28),'division','note mid f12'));
+  const ty=dy+2*R+(n?50:56);
+  const L2=wrap(n?'Both use the same chemistry: a SEDS glycosyltransferase paired with a class B PBP. The pneumococcus has no MreB but keeps the rest of the elongasome (RodA–PBP2b, MreCD, RodZ), which works at midcell beside the divisome and lengthens the cell before the septum closes.':'Both machines use the same chemistry: a SEDS-family glycosyltransferase paired with a class B penicillin-binding protein that cross-links. In rods they work in different places. The pneumococcus has no MreB but keeps the rest of the elongasome (RodA with PBP2b, MreC, MreD and RodZ); without MreB to spread it along the side wall, it works at midcell beside the divisome, making peripheral wall that lengthens the cell while the septum forms. That is how ovococci get their oval shape. Spherical cocci such as Staphylococcus aureus grow mainly by septal synthesis.',n?46:80);
   s+=G('a-fade',2.4,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L2.length*20+14):wide(ty+L2.length*20+16),s};
 }
@@ -586,9 +586,9 @@ function scPG(n){
   s+=G('a-pop',.8,`<path d="M${lx} ${y+14} v-14" stroke="#E0B84A" stroke-width="3"/>`+`<rect x="${lx-7}" y="${y-13}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`
     +T(lx,y-(n?26:24),n?'lipid II, flipped out':'lipid II, flipped out','note mid f11'));
   const mx=n?180:320;
-  s+=G('a-pop',1.3,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx-(n?40:60),y-(n?12:14),'FtsW polymerises','#2E7D78',10,'mono mid','600'));
+  s+=G('a-pop',1.3,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(n?mx:mx-60,n?y+40:y-14,'FtsW polymerises','#2E7D78',10,'mono mid','600'));
   const px=n?268:450;
-  s+=G('a-pop',1.8,tmProt(px,y,16,14,PBPC,'',{})+`<path d="M${px} ${y} v-${n?22:26}" stroke="${PBPC}" stroke-width="3"/>`+blob(px,y-(n?30:34),n?14:16,n?10:11,PBPC)+Tc(px,y-(n?27:31),'PBP3','#F3EDE0',9,'mono mid','600'));
+  s+=G('a-pop',1.8,tmProt(px,y,16,14,PBPC,'',{})+`<path d="M${px} ${y} v-${n?22:26}" stroke="${PBPC}" stroke-width="3"/>`+blob(px,y-(n?30:34),n?18:21,n?10:12,PBPC)+Tc(px,y-(n?27:31),'PBP3','#F3EDE0',9,'mono mid','600'));
   s+=G('a-fade',2.2,pgStrand(mx+(n?16:20),x2-10,y-(n?8:10),WALLE,{w:3,dir:-6})
     +[0,1,2].map(i=>`<path d="M${px-(n?30:40)+i*(n?22:28)} ${y-(n?8:10)} v-6" stroke="${PBPC}" stroke-width="2"/>`).join(''));
   const ty=y+(n?76:82);
@@ -601,13 +601,13 @@ function scPG(n){
 }
 
 function scSplit(n){
-  const W=n?162:196, H=n?132:150, y=n?52:58;
+  const W=n?162:196, H=n?140:158, y=n?52:58;
   const xs=n?[8,190]:[12,218,424];
   const panel=(x,i)=>{
     let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1);
     const t=['Septum complete','Amidases cut','Daughters part'][i];
     g+=T(x+28,y+19,t,'lab start f14');
-    const cy=y+H-(n?46:52), cx=x+W/2, cw=n?58:70, R=n?26:30;
+    const cy=y+H-(n?54:60), cx=x+W/2, cw=n?58:70, R=n?26:30;
     const two=(cx,cy,cw,R)=>{const cr=R*.62,L=cw-28;return rodCell(cx-L/2-cr-4,cy,L,R,0)+rodCell(cx+L/2+cr+4,cy,L,R,0);};
     g+=i===2?two(cx,cy,cw,R):rodCell(cx,cy,cw*2,R,1);
     if(i===0)g+=`<rect x="${cx-5}" y="${cy-R+3}" width="10" height="${2*R-6}" fill="${WALL}" stroke="${WALLE}" stroke-width="1"/>`+Tc(cx,cy+R+(n?16:18),'shared wall','#6A5B47',10,'mono mid');
@@ -621,7 +621,7 @@ function scSplit(n){
     s=G('a-fade',0,panel(8,0))+G('a-fade',.6,panel(190,1));
     const y2=y+H+12;
     s+=G('a-fade',1.2,box(8,y2,W,H,'#E7DEC9',4)+badge(22,y2+14,3)+T(36,y2+19,'Daughters part','lab start f14')
-      +rodCell(8+W/2-15-16-4,y2+H-46,30,26,0)+rodCell(8+W/2+15+16+4,y2+H-46,30,26,0)+Tc(8+W/2,y2+H-46+42,'new poles','#6A5B47',10,'mono mid'));
+      +rodCell(8+W/2-15-16-4,y2+H-54,30,26,0)+rodCell(8+W/2+15+16+4,y2+H-54,30,26,0)+Tc(8+W/2,y2+H-54+42,'new poles','#6A5B47',10,'mono mid'));
   } else s=G('a-fade',0,panel(xs[0],0))+G('a-fade',.6,panel(xs[1],1))+G('a-fade',1.2,panel(xs[2],2));
   const ty=n?y+2*(H+12)+14:y+H+28;
   const items=[['Amidases','AmiA, AmiB and AmiC in E. coli cut the peptide cross-links in the shared septal wall. They are kept off until FtsEX and their LytM activators switch them on, so the wall is never weakened early.'],
@@ -663,16 +663,16 @@ function scDrugs(n){
   const y=n?92:100, x1=n?20:60, x2=n?344:600;
   let s=G('a-fade',0,bilayer(x1,x2,y,16)+T(x1,y-8,'outside','note start f11')+T(x1,y+42,'cytoplasm','note start f11'));
   const lx=n?84:130, mx=n?160:280, px=n?232:410, zx=n?300:520;
-  s+=G('a-pop',.1,`<path d="M${lx} ${y+14} v-14" stroke="#E0B84A" stroke-width="3"/><rect x="${lx-7}" y="${y-13}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`+T(lx+12,y-16,'lipid II','note start f12'));
+  s+=G('a-pop',.1,`<path d="M${lx} ${y+14} v-14" stroke="#E0B84A" stroke-width="3"/><rect x="${lx-7}" y="${y-13}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`+T(lx+(n?24:28),y-16,'lipid II','note start f12'));
   s+=G('a-pop',.1,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx,y+(n?34:36),'FtsW','#3A2E22',10,'mono mid','600'));
   s+=G('a-pop',.1,tmProt(px,y,16,14,PBPC,'',{})+`<path d="M${px} ${y} v-${n?18:21}" stroke="${PBPC}" stroke-width="3"/>`+blob(px,y-(n?26:30),n?13:15,n?9:10,PBPC)+Tc(px,y-(n?23:27),'PBP','#F3EDE0',9,'mono mid','600'));
   s+=G('a-pop',.1,filament(zx-(n?34:40),y+(n?22:24),5,[ZC],{w:n?12:14,h:10})+T(n?zx-4:zx,y+(n?64:68),n?'FtsZ':'FtsZ, under the membrane','mono mid f11'));
-  s+=G('a-pop',.1,blob(n?64:130,y+(n?80:82),n?14:16,n?10:11,'#C9BFAB')+Tc(n?64:130,y+(n?83:85),'MurA','#3A2E22',9,'mono mid','600'));
+  s+=G('a-pop',.1,blob(n?64:130,y+(n?80:82),n?21:21,n?10:12,'#C9BFAB')+Tc(n?64:130,y+(n?83:85),'MurA','#3A2E22',9,'mono mid','600'));
   const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?27:29)],cyto:[n?64:130,y+(n?80:82)],sub:[lx,y-7]}[m.at];
   s+=G('a-pop',.4,`<circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?17:20}" fill="${AMI}" opacity=".3"/><circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?22:26}" fill="none" stroke="${AMI}" stroke-width="2" stroke-dasharray="4 3"/>`);
-  const ty=y+(n?124:128);
+  const ty=y+(n?132:138);
   s+=G('a-fade',.6,T(n?14:30,ty,m.d,'cname start')+T(n?14:30,ty+20,'target: '+m.t,'note start '+(n?'f12':'f13')));
-  const L=wrap(m.text,n?46:88);
+  const L=wrap(m.text,n?46:80);
   s+=G('a-fade',.8,L.map((l,i)=>T(n?14:30,ty+46+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+46+L.length*20+10):wide(ty+46+L.length*20+12),s};
 }
@@ -701,7 +701,7 @@ function scBreak(n){
   } else if(k==='minCDE'){
     const cm=cx+(n?22:44);
     s+=G('a-fade',0,rodCell(cm,y,L,R,0)+nucleoid(cm,y,L*.3,R*.6,{seed:5})+zring(cm-L*.44,y,R-8,{n:4,w:5})+zring(cm,y,R-6,{n:5,w:6}));
-    s+=G('a-pop',.8,`<circle cx="${cm-L*.62}" cy="${y}" r="${R*.5}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`+T(cm-L*.62,y+R*.5+(n?16:18),'minicell','note mid f11'));
+    s+=G('a-pop',.8,`<circle cx="${cm-L*.62}" cy="${y}" r="${R*.5}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`+T(cm-L*.62,y+R+(n?16:18),'minicell','note mid f11'));
     s+=G('a-fade',1,T(cm+L*.2,y+R+(n?22:24),'rings at the poles too','note mid f12'));
   } else if(k==='slmA / noc'){
     s+=G('a-fade',0,rodCell(cx,y,L,R,.7)+nucleoid(cx,y,L*.26,R*.55,{seed:5})
@@ -712,11 +712,12 @@ function scBreak(n){
     s+=G('a-fade',1,T(cx,y+R+(n?22:24),'a chain of joined cells','note mid f12'));
   }
   const ty=y+R+(n?48:54);
-  s+=G('a-fade',.4,`<rect x="${n?14:30}" y="${ty-18}" width="${Math.max(n?130:150,m.cls.length*7+20)}" height="24" rx="12" fill="${m.col}"/>`+Tc((n?14:30)+Math.max(n?130:150,m.cls.length*7+20)/2,ty-1,m.cls,'#F3EDE0',11,'mono mid','600')
-    +T((n?14:30)+Math.max(n?130:150,m.cls.length*7+20)+(n?8:12),ty-1,m.g+' — '+m.p,'lab start '+(n?'f13':'')));
-  const L2=wrap(m.text,n?46:88);
-  s+=G('a-fade',.7,L2.map((l,i)=>T(n?14:30,ty+28+i*20,l,'lab start '+(n?'f13':'f14'))).join(''));
-  return {vb:n?slim(ty+28+L2.length*20+10):wide(ty+28+L2.length*20+12),s};
+  const pw=Math.max(n?130:150,m.cls.length*8+24), inl=!n||pw+8+(m.g.length+m.p.length+3)*7.4<346, dy=inl?0:24;
+  s+=G('a-fade',.4,`<rect x="${n?14:30}" y="${ty-18}" width="${pw}" height="24" rx="12" fill="${m.col}"/>`+Tc((n?14:30)+pw/2,ty-1,m.cls,'#F3EDE0',11,'mono mid','600')
+    +(inl?T((n?14:30)+pw+(n?8:12),ty-1,m.g+' — '+m.p,'lab start '+(n?'f13':'')):T(14,ty+22,m.g+' — '+m.p,'lab start f13')));
+  const L2=wrap(m.text,n?46:80);
+  s+=G('a-fade',.7,L2.map((l,i)=>T(n?14:30,ty+dy+28+i*20,l,'lab start '+(n?'f13':'f14'))).join(''));
+  return {vb:n?slim(ty+dy+28+L2.length*20+10):wide(ty+28+L2.length*20+12),s};
 }
 
 /* ===================== Part V · shapes ===================== */
@@ -741,7 +742,7 @@ function scShapes(n){
     else g+=wrap(c[2],26).map((l,j)=>T(x+16,y+62+j*15,l,'note start f11')).join('');
     s+=G('a-fade',(i*.4).toFixed(1),g);});
   const yb=n?10+5*(H+8)+12:20+2*(H+16)+10;
-  const L=wrap(n?'The same core proteins are arranged differently in each. Shape is not decoration: it sets how a cell swims, sticks, is eaten by phagocytes, and how it is seen on a Gram stain.':'The same core proteins — FtsZ, a SEDS protein, a class B PBP — are arranged differently in each. Shape is not decoration: it determines how a cell swims and sticks, whether phagocytes can engulf it, and what you see down the microscope on a Gram stain.',n?46:88);
+  const L=wrap(n?'The same core proteins are arranged differently in each. Shape is not decoration: it sets how a cell swims, sticks, is eaten by phagocytes, and how it is seen on a Gram stain.':'The same core proteins — FtsZ, a SEDS protein, a class B PBP — are arranged differently in each. Shape is not decoration: it determines how a cell swims and sticks, whether phagocytes can engulf it, and what you see down the microscope on a Gram stain.',n?46:80);
   s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(yb+L.length*20+14):wide(yb+L.length*20+16),s};
 }

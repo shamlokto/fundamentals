@@ -44,7 +44,7 @@ function scB3(n){
 }
 function scB4(n){
   const N=n?{d:{x:80,y:60,w:140,t:'NADH, succinate,|formate, H₂'},q:{x:80,y:250,w:120,t:'quinone|pool',f:PAL.gold},o2:{x:268,y:130,w:150,t:'O₂ oxidases|bo₃, bd',f:PAL.blue},n3:{x:268,y:210,w:150,t:'nitrate|reductase',f:PAL.rose},f:{x:268,y:290,w:150,t:'fumarate|reductase',f:PAL.green},t:{x:268,y:370,w:150,t:'TMAO, DMSO|reductases',f:PAL.lilac}}
-   :{d:{x:100,y:150,w:160,t:'NADH, succinate,|formate, H₂, lactate'},q:{x:316,y:150,w:130,t:'quinone pool|(UQ, MK)',f:PAL.gold},o2:{x:500,y:40,w:150,t:'O₂: bo₃ or bd|oxidase',f:PAL.blue},n3:{x:500,y:120,w:150,t:'nitrate|reductase',f:PAL.rose},f:{x:500,y:200,w:150,t:'fumarate|reductase',f:PAL.green},t:{x:500,y:280,w:150,t:'TMAO, DMSO|reductases',f:PAL.lilac}};
+   :{d:{x:96,y:150,w:176,t:'NADH, succinate,|formate, H₂, lactate'},q:{x:326,y:150,w:130,t:'quinone pool|(UQ, MK)',f:PAL.gold},o2:{x:500,y:40,w:150,t:'O₂: bo₃ or bd|oxidase',f:PAL.blue},n3:{x:500,y:120,w:150,t:'nitrate|reductase',f:PAL.rose},f:{x:500,y:200,w:150,t:'fumarate|reductase',f:PAL.green},t:{x:500,y:280,w:150,t:'TMAO, DMSO|reductases',f:PAL.lilac}};
   const E=[['d','q',n?'':'dehydro-|genases',{side:-1}],['q','o2',''],['q','n3',''],['q','f',''],['q','t','']];
   let s=G('a-fade',0,flow(N,E));
   const by=n?420:340;

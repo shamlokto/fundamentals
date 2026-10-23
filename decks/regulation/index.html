@@ -175,7 +175,7 @@ const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
 const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
 const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
 function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
-function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if(L[L.length-1]&&(L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
 function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
 function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
 function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
@@ -235,10 +235,10 @@ function boxItem(x,y,W,head,body,o={}){
 }
 function bullets(x,y,items,wrapN,o={}){
   let s='',yy=y;
-  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
-    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
-      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
-    yy+=L.length*17+(o.gap||30);});
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN),H=wrap(it[0],o.hw||wrapN),hh=(H.length-1)*19;
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+H.map((h,k)=>T(x+(o.nonum?0:16),yy+k*19,h,'cname start '+(o.hfs||'f14'))).join('')
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+hh+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=hh+L.length*17+(o.gap||30);});
   return {s,y:yy};
 }
 function wtable(n,head,rows,cols,o={}){
@@ -536,7 +536,7 @@ function operonDraw(cx,y,w,on,capOn){
   /* lacI (own promoter) · CAP site · promoter · operator · lacZ lacY lacA; RNAP drawn under the promoter, mRNA under the genes */
   const x1=cx-w/2;let s=dsDNA(x1,x1+w,y,DNA,8);
   const seg=(a,b,f,t)=>box(x1+w*a,y-14,w*(b-a),36,f,3)+Tc(x1+w*(a+b)/2,y+8,t,'#3A2E22',12,'mono mid','600');
-  s+=seg(.0,.11,'#D9C6E2','lacI')+seg(.15,.23,'#E0C88A','CAP')+seg(.23,.31,'#EFE6D2','P')+seg(.31,.38,'#C9A9D6','O')+seg(.39,.62,'#A9C4DC','lacZ')+seg(.62,.8,'#A9C4DC','lacY')+seg(.8,.95,'#A9C4DC','lacA');
+  s+=seg(.0,.12,'#D9C6E2','lacI')+seg(.14,.24,'#E0C88A','CAP')+seg(.24,.31,'#EFE6D2','P')+seg(.31,.38,'#C9A9D6','O')+seg(.39,.62,'#A9C4DC','lacZ')+seg(.62,.8,'#A9C4DC','lacY')+seg(.8,.95,'#A9C4DC','lacA');
   if(!on)s+=blob(x1+w*.345,y-26,18,11,'#7D4A98')+T(x1+w*.345,y-42,'LacI','mono mid f12');
   else s+=T(x1+w*.345,y-26,'LacI + allolactose: off','note start f12');
   if(capOn)s+=blob(x1+w*.19,y-26,17,11,'#C99A2E')+T(x1+w*.19,y-42,'CAP–cAMP','mono mid f12');
@@ -544,7 +544,7 @@ function operonDraw(cx,y,w,on,capOn){
   s+=`<ellipse cx="${FX(px)}" cy="${FX(y+36)}" rx="${FX(w*.06)}" ry="12" fill="#9DB4AE" stroke="${INK}" stroke-width="1" ${on?'':'opacity=".55"'} class="tint"/>`+Tc(FX(px),FX(y+40),'RNAP','#3A2E22',12,'mono mid','600');
   if(on){const xe=x1+w*.95;s+=`<g opacity="${full?1:.45}">`+wave(x1+w*.39,xe-8,y+40,'#C17A2C',full?2.6:1.6)+arw(xe-10,y+40,xe+2,y+40,{col:'#C17A2C'})+`</g>`
     +T(x1+w*.67,y+64,full?'lacZYA mRNA: abundant':'lacZYA mRNA: little','note mid f12');}
-  else s+=T(x1+w*.67,y+52,'LacI on the operator blocks RNAP: no mRNA','note mid f12');
+  else s+=w<400?T(x1+w*.67,y+48,'LacI on the operator','note mid f12')+T(x1+w*.67,y+64,'blocks RNAP: no mRNA','note mid f12'):T(x1+w*.67,y+52,'LacI on the operator blocks RNAP: no mRNA','note mid f12');
   return s;}
 function scLac(n){
   const c=LAC[lacSel], on=c.r==='repressor released', cap=c.c.includes('on');
@@ -579,7 +579,7 @@ function scR2(n){
     +`<rect x="${rx}" y="${ry-11}" width="30" height="22" rx="6" fill="${RECC}" fill-opacity=".3" stroke="${INK}"/>`
     +`<circle cx="${rx-16}" cy="${ry-19}" r="7" fill="${METC}" stroke="${INK}" stroke-width=".7"/>`+Tc(rx-16,ry-15,'P','#3A2E22',10,'mono mid','600')
     +T(rx+36,ry-16,n?'regulator':'response regulator','note start f12'));
-  s+=G('a-fade',.6,arw(hx+30,my+24,rx-36,ry-6,{blue:1})+T((hx+rx)/2-6,my+(n?14:16),'His~P → Asp~P','mono mid f12 acc'));
+  s+=G('a-fade',.6,arw(hx+30,my+24,rx-36,ry-6,{blue:1})+T(n?hx+26:(hx+rx)/2-6,my+(n?62:16),'His~P → Asp~P','mono '+(n?'start':'mid')+' f12 acc'));
   /* DNA and target genes: phosphorylated RR binds the promoter */
   const dy=my+(n?98:96);
   s+=G('a-fade',1.3,dsDNA(n?40:150,R-10,dy-4,DNA,8)+`<rect x="${rx-10}" y="${dy-9}" width="26" height="18" rx="3" fill="#EFE6D2" stroke="${INK}" stroke-width=".8"/>`
@@ -668,17 +668,17 @@ function scR5(n){
   /* ComE~P */
   const ex=+X(450), ey=my+64;
   s+=G('a-fade',1.1,arw(dx+(n?12:15),my+22,ex-(n?20:26),ey-6,{blue:1})+T(FX((dx+ex)/2+(n?14:22)),my+30,'~P','mono mid f12 acc')
-    +blob(ex,ey,n?25:28,12,RECC)+Tc(ex,ey+4,'ComE~P','#3A2E22',12,'mono mid','600'));
+    +blob(ex,ey,n?31:36,12,RECC)+Tc(ex,ey+4,'ComE~P','#3A2E22',12,'mono mid','600'));
   /* chromosome with three ComE-activated loci */
   const g=[[60,'comAB',INTC],[220,'comCDE',RECC],[420,'comX',PHG]], gw=n?54:100;
   let dna=dsDNA(+X(40),+X(600),dy-4,DNA,8);
   g.forEach(([gx,t,f])=>{dna+=gArrow(+X(gx),dy,gw,'',f,{h:18})+T(FX(+X(gx)+gw/2-3),dy+28,t,'note mid f12');});
   s+=G('a-fade',1.4,dna+T(X(600),dy-18,'chromosome','note end f12'));
   let fb='';g.forEach(([gx])=>fb+=arw(ex,ey+12,+X(gx)+4,dy-12,{blue:1}));
-  s+=G('a-fade',1.7,fb+T(FX(ex+(n?27:31)),FX(ey+5),n?'feedback':'positive feedback','mono start f12 acc halo'));
+  s+=G('a-fade',1.7,fb+T(FX(ex+(n?8:39)),FX(ey+(n?-16:5)),n?'feedback':'positive feedback','mono start f12 acc halo'));
   /* comC product goes to ComAB; comX to late genes */
   s+=G('a-fade',2.0,`<path d="M${FX(+X(220)+gw*.6)} ${dy-12} Q${FX(+X(190))} ${my+62} ${FX(+X(140)+(n?8:13))} ${my+30}" stroke="${AXC}" stroke-width="1.2" stroke-dasharray="4 3" fill="none" marker-end="url(#ahp)"/>`
-    +T(FX(+X(150)),my+(n?84:70),'pre-CSP','note start f12 halo')
+    +T(FX(+X(140)-4),my+(n?62:64),'pre-CSP','note end f12 halo')
     +T(n?16:30,dy+62,n?'ComX (σX) → about 80 late genes:':'ComX (σX) → about 80 late genes: DNA uptake, RecA, DprA, and CbpD for fratricide','note start f12')
     +(n?T(16,dy+78,'DNA uptake, RecA, DprA, CbpD','note start f12'):''));
   const chain=[];
@@ -693,17 +693,17 @@ function scR5(n){
 function scR6(n){
   let s='';const y=n?48:54, cx=n?180:320;
   /* stalled ribosome with uncharged tRNA in the A site; RelA bound to it makes (p)ppGpp; ppGpp (with DksA, on RNAP) inhibits rRNA promoters */
-  const P=n?{r:46,ra:84,pp:186,rr:300}:{r:80,ra:124,pp:330,rr:520}, yc=y+40;
+  const P=n?{r:46,ra:84,pp:196,rr:310}:{r:80,ra:124,pp:320,rr:540}, yc=y+40;
   s+=G('a-fade',0,ribo(P.r,yc,n?1.5:1.8)+T(P.r,yc-(n?30:34),n?'uncharged tRNA':'uncharged tRNA in the A site','note mid f12')
     +T(P.r,yc+(n?34:38),'stalled ribosome','note mid f12'));
   s+=G('a-fade',.4,prot(P.ra,yc-2,n?20:24,n?12:14,RECC,'RelA',{fs:12}));
   s+=G('a-fade',.9,arw(P.ra+(n?22:28),yc-2,P.pp-(n?24:26),yc-2,{blue:1})
-    +T((P.ra+P.pp)/2+(n?2:0),yc-12,n?'GDP + ATP':'GTP or GDP + ATP','note mid f12')
+    +T((P.ra+P.pp)/2+(n?-2:2),yc-12,n?'GDP + ATP':'GTP or GDP + ATP','note mid f12')
     +`<circle cx="${P.pp}" cy="${yc-2}" r="${n?21:23}" fill="${METC}" fill-opacity=".7" stroke="${INK}"/>`
     +Tc(P.pp,yc+2,'ppGpp','#3A2E22',12,'mono mid','600')+T(P.pp,yc+(n?34:38),'the alarmone','note mid f12'));
-  s+=G('a-fade',1.3,ln(P.pp+(n?23:25),yc-2,P.rr-(n?44:58),yc-2,'#A4473A',2)+ln(P.rr-(n?44:58),yc-11,P.rr-(n?44:58),yc+7,'#A4473A',2.4)
-    +box(P.rr-(n?40:54),yc-16,n?84:108,28,'#EFE6D2',4)+Tc(P.rr+(n?2:0),yc+3,n?'rRNA':'rRNA promoters','#3A2E22',12,'mono mid','600')
-    +T((P.pp+P.rr)/2-(n?6:4),yc-12,n?'+ DksA':'with DksA, on RNAP','note mid f12'));
+  s+=G('a-fade',1.3,ln(P.pp+(n?23:25),yc-2,P.rr-(n?34:58),yc-2,'#A4473A',2)+ln(P.rr-(n?34:58),yc-11,P.rr-(n?34:58),yc+7,'#A4473A',2.4)
+    +box(P.rr-(n?30:54),yc-16,n?60:122,28,'#EFE6D2',4)+Tc(P.rr+(n?0:7),yc+3,n?'rRNA':'rRNA promoters','#3A2E22',12,'mono mid','600')
+    +T((P.pp+P.rr)/2-(n?6:17),yc-12,n?'+ DksA':'with DksA, on RNAP','note mid f12'));
   let yy=y+(n?98:104);
   const rows=[['Down','rRNA and tRNA synthesis','ppGpp with DksA binds RNA polymerase and destabilises open complexes at promoters with a GC-rich discriminator — which is exactly what ribosomal RNA promoters have. Ribosome synthesis stops within seconds.'],
    ['Down','replication initiation, and elongation','In E. coli ppGpp blocks new rounds of initiation at oriC; in Bacillus (p)ppGpp inhibits the primase DnaG, which stalls replication forks.'],
@@ -723,7 +723,7 @@ function scR7(n){
     +[0,1,2].map(i=>`<path d="M${FX(cx-(n?84:130)-L/2-4)} ${FX(y+30+i*6)} q-10 -4 -18 2" stroke="${INK}" stroke-width="1.4" fill="none"/>`).join('')
     +T(cx-(n?84:130),y+(n?70:76),'motile, single cells','note mid f11'));
   s+=G('a-fade',.6,arw(cx-(n?18:40),y+36,cx+(n?18:40),y+36,{blue:1})
-    +Tc(cx,y+24,'c-di-GMP','#2F5276',n?10:11,'mono mid','600'));
+    +Tc(cx,y+(n?12:24),'c-di-GMP','#2F5276',n?10:11,'mono mid','600'));
   s+=G('a-fade',1,[[0,0],[1,0],[0,1],[1,1],[2,0]].map((g,i)=>cellRod(cx+(n?64:110)+g[0]*(n?26:34),y+26+g[1]*(n?16:20),n?22:28,n?6:7,{})).join('')
     +`<path d="M${cx+(n?48:92)} ${y+52} q${n?40:60} 10 ${n?80:120} 0" stroke="${METC}" stroke-width="4" fill="none" opacity=".6"/>`
     +T(cx+(n?84:130),y+(n?70:76),'sessile, matrix, biofilm','note mid f11'));
@@ -776,7 +776,7 @@ function scR9(n){
    ['Streptomyces','hyphae, aerial growth, spore chains','A mycelium grows, then raises aerial hyphae that septate into chains of spores; antibiotics are made as part of the same programme, under bld and whi gene control. Development and secondary metabolism are one regulatory problem.'],
    ['Biofilms','a structured community','Matrix production, channels, and distinct subpopulations with different expression. Not a programme in the sporulation sense, but it is coordinated, spatially organised and developmentally staged, with dispersal as a regulated final step.']];
   const t=n?wtable(n,['Organism','The programme'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,13],[118,38]],{y0:30})
-         :wtable(n,['Organism','Programme','What is interesting about it'],rows,[[24,16],[190,20],[370,42]],{y0:30});
+         :wtable(n,['Organism','Programme','What is interesting about it'],rows,[[24,16],[190,20],[370,39]],{y0:30});
   const b=bullets(n?24:30,t.y+14,[['Development is not a eukaryotic invention','Cell-type differentiation, irreversible commitment, spatial patterning and programmed lysis are all present in bacteria, and in several unrelated lineages. What is absent is a germ line and the long developmental cascades of animals.'],
    ['Proteolysis is as important as transcription','ClpXP and its adaptors set the timing in Caulobacter, in sporulation, and in the heat-shock response. A programme that must be fast and irreversible usually ends in regulated destruction of a protein rather than in a change of promoter activity.']],n?44:88,{d0:1.8,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:t.s+b.s};
@@ -813,9 +813,10 @@ function scR11(n){
   const q=REGQ[rSel2];let s='',y=34;
   const Q=wrap(q.q,n?36:60);
   s+=G('a-fade',0,Q.map((l,i)=>T(n?16:24,y+i*22,l,'cname start')).join(''));y+=Q.length*22+14;
-  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="28" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
-    +Tc(n?26:38,y+1,q.a,'#2F5276',n?13:14,'mono start','600'));
-  y+=28;
+  const A=wrap(q.a,n?33:56);
+  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="${10+A.length*18}" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +A.map((l,i)=>Tc(n?26:38,y+1+i*18,l,'#2F5276',n?13:14,'mono start','600')).join(''));
+  y+=28+(A.length-1)*18;
   const p=para(n?16:24,y,q.t,n?50:92,'note start f13',17,.6);
   let yy=p.y+16;
   s+=G('a-fade',1.2,T(n?16:24,yy,'All the observations','mono acc start f11'));

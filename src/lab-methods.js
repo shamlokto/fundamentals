@@ -55,7 +55,7 @@ function scL4(n){
 }
 function scL5(n){
   const N=n?{s:{x:90,y:36,w:150,t:'environmental|sample'},e:{x:270,y:36,w:150,t:'enrichment|culture',f:PAL.green},i:{x:270,y:116,w:150,t:'isolation|on plates',f:PAL.gold},p:{x:90,y:116,w:150,t:'pure culture',f:PAL.blue},d:{x:90,y:196,w:150,t:'identify|(MALDI-TOF, 16S)',f:PAL.lilac}}
-    :{s:{x:72,y:44,w:110,t:'environmental|sample'},e:{x:196,y:44,w:100,t:'enrichment|culture',f:PAL.green},i:{x:320,y:44,w:100,t:'isolation|on plates',f:PAL.gold},p:{x:444,y:44,w:100,t:'pure|culture',f:PAL.blue},d:{x:568,y:44,w:110,t:'identify|(MALDI, 16S)',f:PAL.lilac}};
+    :{s:{x:74,y:44,w:124,t:'environmental|sample'},e:{x:202,y:44,w:100,t:'enrichment|culture',f:PAL.green},i:{x:322,y:44,w:100,t:'isolation|on plates',f:PAL.gold},p:{x:442,y:44,w:100,t:'pure|culture',f:PAL.blue},d:{x:566,y:44,w:120,t:'identify|(MALDI, 16S)',f:PAL.lilac}};
   let s=G('a-fade',0,flow(N,[['s','e',''],['e','i',''],['i','p',''],['p','d','']]));
   const b=bullets(n?24:30,n?254:110,[['Enrichment','Beijerinck and Winogradsky’s idea: choose conditions, such as no fixed nitrogen or one unusual carbon source, that let a rare organism outgrow the rest, then isolate it.'],['The great plate count anomaly','Staley and Konopka named it in 1985: microscopic counts of environmental samples exceed colony counts by a hundred- to ten-thousand-fold. Often under 1% of cells form colonies on standard media.'],['Why cells do not grow','Slow growth, dependence on partners, dormancy, unknown nutrients, or media that are too rich. Dilution to extinction in natural seawater gave the first SAR11 isolate (2002); diffusion chambers such as the iChip grow cells in their own soil.'],['Culturomics','Jean-Christophe Lagier, Didier Raoult and colleagues cultured gut samples in hundreds of conditions and identified colonies by MALDI-TOF, isolating over a thousand gut species, hundreds of them new.']],n?44:88,{d0:.8,gap:18});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
@@ -77,9 +77,9 @@ function scL6(n){
 }
 function scL7(n){
   const o=OMX[omxSel];
-  const art=(cx,cy)=>{const w=n?66:120, dx=n?86:150, N={};o.steps.forEach((t,i)=>{N['n'+i]={x:cx+(i-1.5)*dx,y:cy,w,t,fs:n?10:12,f:i===3?PAL.blue:'#EFE6D2'};});
+  const art=(cx,cy)=>{const w=n?130:120, dx=n?162:150, N={};o.steps.forEach((t,i)=>{N['n'+i]=n?{x:cx+(i%2?1:-1)*dx/2,y:cy+(i<2?-34:34),w,t,fs:10,f:i===3?PAL.blue:'#EFE6D2'}:{x:cx+(i-1.5)*dx,y:cy,w,t,fs:12,f:i===3?PAL.blue:'#EFE6D2'};});
     return flow(N,[['n0','n1',''],['n1','n2',''],['n2','n3','']]);};
-  return explorer(n,{h:o.k,rows:[['Measures',o.meas],['Quantification',o.quant],['Pitfalls',o.pit]],note:o.note,art,artH:54},{y:20});
+  return explorer(n,{h:o.k,rows:[['Measures',o.meas],['Quantification',o.quant],['Pitfalls',o.pit]],note:o.note,art,artH:n?128:70},{y:20});
 }
 function scL8(n){
   const mm=(cx,cy)=>{let s=`<rect x="${cx-70}" y="${cy+12}" width="140" height="12" fill="#A9C4DC" opacity=".6"/>`;
@@ -106,7 +106,7 @@ function scL9(n){
     :axes(70,40,280,160,{xr:[0,90],yr:[0,90],xt:[[0,'0'],[30,'30'],[60,'60'],[90,'90 min']],yt:[],xlab:'time after promoter turns on',ylab:'signal'});
   const mat=tau=>t=>t-tau*(1-Math.exp(-t/tau));
   let s=A.s+G('a-fade',.3,curve(A,t=>t,{col:'#6A5B47',w:1.4,dash:'4 3'})+curve(A,mat(8),{col:'#4F7A3F'})+curve(A,mat(40),{col:'#A4473A'}));
-  s+=G('a-fade',.8,T(FX(A.px(60)),FX(A.py(78)),'protein made','note end f11 halo')+T(FX(A.px(89)),FX(A.py(57)),'fast-maturing','note end f11 halo')+T(FX(A.px(88)),FX(A.py(26)),'slow-maturing','note end f11 halo'));
+  s+=G('a-fade',.8,[['protein made','#6A5B47','4 3',88],['fast-maturing','#4F7A3F','',76],['slow-maturing','#A4473A','',64]].map(([t,c,d,v])=>`<path d="M${FX(A.px(3))} ${FX(A.py(v)-4)} h22" stroke="${c}" stroke-width="2"${d?` stroke-dasharray="${d}"`:''}/>`+T(FX(A.px(3)+28),FX(A.py(v)),t,'note start f11')).join(''));
   const right=[['lacZ','β-galactosidase is assayed in lysates with ONPG, which turns yellow (Miller units, 1972), or on plates with X-gal, which turns colonies blue.'],['Luciferase (lux)','The luxCDABE operon, from Photorhabdus or Vibrio, makes both enzyme and substrate, so cells glow with no additions. Light needs O₂ and reducing power, so it also reports metabolic activity.']];
   const low=[['GFP','From the jellyfish Aequorea victoria; Chalfie used it as a reporter in 1994. The chromophore forms by itself but needs O₂ and time: fast variants such as superfolder GFP mature in minutes, some red proteins take an hour or more.'],['Tuning the reporter','GFP is very stable, so it reports accumulated, not current, expression; degradation tags (ssrA variants) make short-lived versions. Under anoxia, flavin-binding or FAST tags replace GFP.']];
   let b;

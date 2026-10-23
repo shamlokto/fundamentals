@@ -155,10 +155,10 @@ function geneA(x,y,w,h,fill,label){return `<path d="M${x} ${y} h${w-10} l10 ${h/
 function mark(x,y,ok){return ok?`<circle cx="${x}" cy="${y}" r="11" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="11" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
 function cellO(cx,cy,rx,ry,extra=''){return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#DCE2C9" stroke="${INK}" stroke-width="1.4" class="tint"/>${extra}`;}
 // Himar1 mariner transposon: two inward inverted repeats around a resistance marker
-function transposon(x,y,w,h,k=1){
+function transposon(x,y,w,h,k=1,lab=true){
   const ir=12*k;
   return `<g class="tint"><path d="M${x} ${y} l${ir} ${h/2} l${-ir} ${h/2} z" fill="${TN}" stroke="${INK}"/>`
-    +box(x+ir,y,w-2*ir,h,MARK)+T(x+w/2,y+h/2+4,'marker','gl mid')
+    +box(x+ir,y,w-2*ir,h,MARK)+(lab?T(x+w/2,y+h/2+4,'marker','gl mid'):'')
     +`<path d="M${x+w} ${y} l${-ir} ${h/2} l${ir} ${h/2} z" fill="${TN}" stroke="${INK}"/></g>`;}
 
 /* ---- synthetic genome + insertions ---- */
@@ -234,10 +234,10 @@ function scTransposon(n){
 }
 
 function scInsert(n){
-  const P=n?{cx:180,cy:120,rx:150,ry:84,gy:120,g1:60,g2:300,H:300}:{cx:320,cy:130,rx:250,ry:96,gy:130,g1:110,g2:530,H:310};
+  const P=n?{cx:180,cy:120,rx:160,ry:84,gy:112,g1:34,g2:326,H:300}:{cx:320,cy:130,rx:250,ry:96,gy:130,g1:110,g2:530,H:310};
   const g=trackGeom(n);
   let s=G('a-fade',0,cellO(P.cx,P.cy,P.rx,P.ry)+dsDNA(P.g1,P.g2,P.gy,INK,8));
-  const gy2=P.gy-7;let gb='';GENES.forEach(ge=>{const x=P.g1+(ge.s/WIN)*(P.g2-P.g1),w=((ge.e-ge.s)/WIN)*(P.g2-P.g1);gb+=box(x,gy2,w,14,GREY)+T(x+w/2,gy2+11,ge.name,'gl mid');});
+  const gy2=P.gy-7;let gb='';GENES.forEach(ge=>{const x=P.g1+(ge.s/WIN)*(P.g2-P.g1),w=((ge.e-ge.s)/WIN)*(P.g2-P.g1);gb+=box(x,gy2,w,14,GREY)+(n?T(x+w/2,gy2+36+(GENES.indexOf(ge)%2)*16,ge.name,'mono mid f11'):T(x+w/2,gy2+11,ge.name,'gl mid'));});
   s+=G('a-fade',.3,gb);
   const hit=GENES[1],hx=P.g1+((hit.s+hit.e)/2/WIN)*(P.g2-P.g1);
   s+=G('a-drop',1.0,transposon(hx-54,P.cy- P.ry-4,108,22,.7))+G('a-fade',1.4,`<path d="M${hx} ${P.cy-P.ry+18} V${gy2-4}" class="arrow"/>`);
@@ -248,12 +248,12 @@ function scInsert(n){
 }
 
 function scLibrary(n){
-  const cols=n?2:4, rows=n?3:2, cw=n?168:150, ch=n?92:120, x0=n?12:28, y0=28, gx=n?6:10, gy=12;
+  const cols=n?2:4, rows=n?3:2, cw=n?168:150, ch=n?92:120, x0=n?12:14, y0=28, gx=n?6:6, gy=12;
   const pos=[8,40,66,90,20,54];
   let s='';
   for(let i=0;i<cols*rows;i++){const c=i%cols,r=Math.floor(i/cols),x=x0+c*(cw+gx),y=y0+r*(ch+gy);
     const gl=x+16,gr=x+cw-16,gyy=y+ch/2;const p=pos[i%pos.length];const tx=gl+(p/WIN)*(gr-gl);
-    s+=G('a-pop',(.15*i).toFixed(2),cellO(x+cw/2,y+ch/2,cw/2-6,ch/2-6)+dsDNA(gl,gr,gyy,INK,6)+transposon(tx-18,gyy-20,36,10,.7)+`<path d="M${tx} ${gyy-9} v12" stroke="${RED}" stroke-width="1.6"/>`);}
+    s+=G('a-pop',(.15*i).toFixed(2),cellO(x+cw/2,y+ch/2,cw/2-6,ch/2-6)+dsDNA(gl,gr,gyy,INK,6)+transposon(tx-18,gyy-20,36,10,.7,false)+`<path d="M${tx} ${gyy-9} v12" stroke="${RED}" stroke-width="1.6"/>`);}
   s+=G('a-fade',(.15*cols*rows+.3).toFixed(2),T(n?180:320,y0+rows*(ch+gy)+(n?8:14),n?'~10⁵–10⁶ mutants, each hit once':'A pool of 10⁵–10⁶ mutants — together, insertions in almost every gene','lab mid'));
   return {vb:n?slim(y0+rows*(ch+gy)+28):wide(y0+rows*(ch+gy)+30),s};
 }
@@ -302,15 +302,15 @@ function scEssential(n){
   const t=drawTrack(n,'rich',true),g=t.g;
   let s=t.s;
   const ess=GENES.filter(x=>x.cls==='ess'),dsp=GENES.filter(x=>x.cls!=='ess');
-  s+=G('a-fade',1.8,T((g.x0+g.x1)/2,g.ly+(n?2:4),n?'Gaps = essential. Dense = dispensable.':'A gene with no insertions is essential; a gene peppered with them is dispensable','lab mid'));
+  s+=G('a-fade',1.8,T((g.x0+g.x1)/2,g.ly+(n?8:12),n?'Gaps = essential. Dense = dispensable.':'A gene with no insertions is essential; a gene peppered with them is dispensable','lab mid'));
   const le=ess[0],x=px(le.s,g);
   s+=G('a-pop',2.2,`<path d="M${x} ${g.ay-g.mh-6} h${(px(le.e,g)-x).toFixed(1)}" stroke="${RED}" stroke-width="2"/>`+T(Math.max((x+px(le.e,g))/2,n?70:0),g.ay-g.mh-(n?22:10),'no insertions tolerated','note mid f12'));
-  return {vb:n?slim(g.ly+(n?20:28)):wide(g.ly+30),s};
+  return {vb:n?slim(g.ly+(n?28:36)):wide(g.ly+38),s};
 }
 
 function scFitness(n){
   const data=[{n:'spxB',lfc:-0.2},{n:'comD',lfc:0.3},{n:'cps2E',lfc:-3.2},{n:'manL',lfc:-1.9},{n:'adcA',lfc:-1.4}];
-  const P=n?{lblX:16,zx:300,rowH:40,y0:58,sc:56,mid:180}:{lblX:44,zx:540,rowH:46,y0:64,sc:100,mid:330};
+  const P=n?{lblX:16,zx:300,rowH:40,y0:74,sc:56,mid:180}:{lblX:44,zx:540,rowH:46,y0:64,sc:100,mid:330};
   const bottom=P.y0+data.length*P.rowH;
   let s=T(P.mid,26,'Fitness in human serum vs rich medium','lab mid');
   s+=`<line x1="${P.zx}" y1="${P.y0-16}" x2="${P.zx}" y2="${bottom-8}" class="ax"/>`+T(P.zx,P.y0-22,'log₂ fold-change','note mid f12')+T(P.zx+6,P.y0-6,'0','mono start f10');
@@ -340,16 +340,16 @@ function scExplore(n){
   const gx=mapx(ge.s),gw=mapx(ge.e)-mapx(ge.s);
   s+=box(gx,g.ay+8,gw,n?24:28,geneFill(ge.cls))+T(gx+gw/2,g.ay+(n?24:26),ge.name,'gl mid');
   const idx=taIn?Math.round(hits/taIn*100):0;
-  const verdict=ge.cls==='ess'?['Essential','No insertions tolerated — the cell needs it to grow.',RED]
+  const verdict=ge.cls==='ess'?['Essential',n?'No insertions tolerated: needed to grow.':'No insertions tolerated — the cell needs it to grow.',RED]
     :ge.cls==='cond'?['Conditionally important',n?'Fine in rich medium, lost under serum selection.':'Disrupted freely in rich medium, but lost under serum selection.',COND]
-    :['Dispensable','Riddled with insertions — the cell grows fine without it.',S2];
+    :['Dispensable',n?'Riddled with insertions: not needed.':'Riddled with insertions — the cell grows fine without it.',S2];
   const by=n?(g.ay+60):(g.ay+70);
-  s+=G('a-fade',.2,R(n?16:40,by,n?328:560,n?104:96,'card',8)
+  s+=G('a-fade',.2,R(n?16:40,by,n?328:560,n?122:96,'card',8)
     +`<circle cx="${n?40:66}" cy="${by+26}" r="8" fill="${verdict[2]}"/>`
     +T(n?58:84,by+31,verdict[0],'cname start')
     +T(n?32:58,by+(n?58:60),verdict[1],'note start f13',)
-    +T(n?32:58,by+(n?86:86),`insertion index: ${idx}%  ·  ${hits}/${taIn} TA sites hit`,'mono start f12'));
-  return {vb:n?slim(by+120):wide(by+112),s};
+    +(n?T(32,by+86,`insertion index: ${idx}%`,'mono start f12')+T(32,by+106,`${hits}/${taIn} TA sites hit`,'mono start f12'):T(58,by+86,`insertion index: ${idx}%  ·  ${hits}/${taIn} TA sites hit`,'mono start f12')));
+  return {vb:n?slim(by+138):wide(by+112),s};
 }
 
 const NAR='Narrator';

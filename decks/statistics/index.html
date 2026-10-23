@@ -763,8 +763,8 @@ function scS8(n){
   const lg=[['#C17A2C','prior','5 4'],['#9A8F7C','likelihood (7 of 20)','2 3'],['#2F5276','posterior','']], ly=A.y+A.h+50;
   s+=G('a-fade',.8,lg.map((L,i)=>{const x=n?16+[0,70,0][i]:A.x-20+[0,80,240][i], y=ly+(n&&i==2?0:0)+(n?(i==2?0:0):0);const xx=n?[16,90,250][i]:x;return ln(xx,y-4,xx+20,y-4,L[0],2.4,L[2])+T(xx+26,y,L[1],'note start f11');}).join(''));
   const bx=n?16:410, by=n?ly+36:52;
-  let t=G('a-fade',.9,T(bx,by,c.k,'cname start f15')+T(bx,by+22,'posterior mean '+mean.toFixed(2),'mono start f12')+T(bx,by+40,'95% credible interval '+lo.toFixed(2)+'–'+hi.toFixed(2),'mono start f12'));
-  const p=para(bx,by+64,c.t,n?50:30,'lab start f13',17,1);
+  let t=G('a-fade',.9,T(bx,by,c.k,'cname start f15')+T(bx,by+22,'posterior mean '+mean.toFixed(2),'mono start f12')+T(bx,by+40,'95% credible interval','mono start f12')+T(bx,by+58,lo.toFixed(2)+'–'+hi.toFixed(2),'mono start f12'));
+  const p=para(bx,by+82,c.t,n?50:30,'lab start f13',17,1);
   const q=para(bx,p.y+10,'Posterior ∝ likelihood × prior. A 95% credible interval contains the parameter with 95% probability, given the model and prior; a confidence interval is a statement about the procedure over repeated experiments. With more data the prior matters less.',n?50:30,'note start f12',16,1.2);
   return {vb:n?slim(q.y+6):wide(Math.max(q.y+8,ly+20)),s:s+t+p.s+q.s};
 }

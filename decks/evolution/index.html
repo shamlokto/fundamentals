@@ -175,7 +175,7 @@ const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
 const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
 const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
 function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
-function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if(L[L.length-1]&&(L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
 function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
 function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
 function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
@@ -235,10 +235,10 @@ function boxItem(x,y,W,head,body,o={}){
 }
 function bullets(x,y,items,wrapN,o={}){
   let s='',yy=y;
-  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
-    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
-      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
-    yy+=L.length*17+(o.gap||30);});
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN),H=wrap(it[0],o.hw||wrapN),hh=(H.length-1)*19;
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+H.map((h,k)=>T(x+(o.nonum?0:16),yy+k*19,h,'cname start '+(o.hfs||'f14'))).join('')
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+hh+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=hh+L.length*17+(o.gap||30);});
   return {s,y:yy};
 }
 function wtable(n,head,rows,cols,o={}){
@@ -500,8 +500,8 @@ function scE1(n){
   const maxL=Math.max(...F.map(f=>wrap(f[2],24).length));
   if(!n){F.forEach((f,i)=>{const cx=88+i*156;
     s+=G('a-fade',(i*.4).toFixed(1),`<circle cx="${cx}" cy="70" r="26" fill="${f[3]}" fill-opacity=".25" stroke="${f[3]}" stroke-width="2"/>`
-      +T(cx,108,f[0],'cname mid f15')+T(cx,126,f[1],'mono acc mid f11')+wrap(f[2],24).map((l,j)=>T(cx,148+j*16,l,'note mid f12')).join(''));});
-    y=148+maxL*16+18;}
+      +T(cx,108,f[0],'cname mid f15')+wrap(f[1],12).map((l,j)=>T(cx,126+j*14,l,'mono acc mid f11')).join('')+wrap(f[2],24).map((l,j)=>T(cx,162+j*16,l,'note mid f12')).join(''));});
+    y=162+maxL*16+18;}
   else{y=28;F.forEach((f,i)=>{const L=wrap(f[2],46);
     s+=G('a-fade',(i*.4).toFixed(1),`<circle cx="30" cy="${y+4}" r="13" fill="${f[3]}" fill-opacity=".25" stroke="${f[3]}" stroke-width="1.8"/>`
       +T(52,y,f[0],'cname start f14')+T(52,y+16,f[1],'mono acc start f11')+L.map((l,j)=>T(16,y+38+j*15,l,'note start f12')).join(''));
@@ -527,8 +527,8 @@ function scE2(n){
 }
 
 function scE3(n){
-  const P=n?xyPlot(44,40,290,150,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency',xdy:30,ydx:30})
-           :xyPlot(60,46,280,170,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency of the variant',xdy:32,ydx:34});
+  const P=n?xyPlot(56,40,280,150,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency',xdy:30,ydx:40})
+           :xyPlot(70,46,280,170,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency of the variant',xdy:32,ydx:44});
   const logistic=s=>t=>1/(1+1e6*Math.exp(-s*t));
   let s=G('a-fade',0,P.s+[0,100,200,300].map(v=>`<path d="M${FX(P.px(v))} ${P.y+P.h} v4" stroke="${AXC}"/>`+T(FX(P.px(v)),P.y+P.h+14,v,'mono mid f10')).join('')
     +[0,.5,1].map(v=>`<path d="M${P.x} ${FX(P.py(v))} h-4" stroke="${AXC}"/>`+T(P.x-7,FX(P.py(v)+3),v,'mono end f10')).join(''));
@@ -557,9 +557,9 @@ function scE4(n){
   s+=G('a-fade',1.2,popGrid(gx[2],gy[2],cols,rows,popC,{d:n?13:14,g:n?4:5}));
   const lab=[['Large population','two variants at equal frequency'],['Bottleneck','only a few cells pass'],['Regrown','frequencies have shifted by chance alone']];
   lab.forEach((l,i)=>{const lx=n?24:gx[i], ly=n?gy[i]-26:gy[i]+(n?0:4*19+26);
-    s+=G('a-fade',(.2+i*.6).toFixed(1),T(lx,ly,l[0],'cname start f13')+T(lx,ly+(n?14:16),l[1],'note start f11'));});
+    s+=G('a-fade',(.2+i*.6).toFixed(1),T(lx,ly,l[0],'cname start f13')+(n?[l[1]]:wrap(l[1],24)).map((m,j)=>T(lx,ly+(n?14:16)+j*14,m,'note start f11')).join(''));});
   if(!n)s+=G('a-fade',.9,arw(gx[0]+8*19+6,gy[0]+34,gx[1]-8,gy[1]+34)+arw(gx[1]+14+3*19+6,gy[1]+34,gx[2]-8,gy[2]+34));
-  let y=n?gy[2]+4*19+40:gy[0]+4*19+70;
+  let y=n?gy[2]+4*19+40:gy[0]+4*19+84;
   const b=bullets(n?24:30,y,[['Drift is sampling error','No variant here is fitter. The frequencies changed because only a handful of cells founded the next population, and which ones is luck.'],
    ['Bacteria pass through bottlenecks constantly','Transmission between hosts, colonisation of a new site, a course of antibiotics, a single-colony purification in the laboratory. Each resets diversity.'],
    ['Within-host populations are small','Even in a heavy infection the effective population size can be tiny, so neutral and even mildly harmful variants can reach high frequency. That matters when reading genomes from a chronic infection.']],n?44:88,{d0:1.8,gap:24});
@@ -580,10 +580,10 @@ function scE5(n){
     return t;};
   const treeA=(ox,oy)=>tree(ox,oy,(g,i)=>g===4&&(i===3||i===11),null,1);
   const treeB=(ox,oy)=>tree(ox,oy,(g,i)=>(g===2&&i===1)||(g===3&&(i===2||i===3))||(g===4&&((i>=4&&i<=7)||i===13)),[[2,1],[4,13]]);
-  const ay=n?y+26:y+26, by=n?y+26+h+112:y+26;
+  const ay=n?y+40:y+42, by=n?y+40+h+116:y+42;
   const bx=n?x:x+w+78;
-  s+=G('a-fade',.4,treeA(x,ay)+T(x,ay-20,'If exposure induces resistance','cname start f13')+T(x,ay+h+22,n?'the same small chance at plating;':'the same small chance at plating,','note start f12')+T(x,ay+h+36,n?'no clone behind it':'with no clone behind it','note start f12'));
-  s+=G('a-fade',1,treeB(bx,by)+T(bx,by-20,'If mutations arise at random, before exposure','cname start f13')+T(bx,by+h+22,'one early mutation (◆) leaves a whole','note start f12')+T(bx,by+h+36,'clone of resistant descendants','note start f12'));
+  s+=G('a-fade',.4,treeA(x,ay)+T(x,ay-28,'If exposure induces resistance','cname start f13')+T(x,ay+h+22,n?'the same small chance at plating;':'the same small chance at plating,','note start f12')+T(x,ay+h+36,n?'no clone behind it':'with no clone behind it','note start f12'));
+  s+=G('a-fade',1,treeB(bx,by)+T(bx,by-28,'If mutations arise at random, before exposure','cname start f13')+T(bx,by+h+22,'one early mutation (◆) leaves a whole','note start f12')+T(bx,by+h+36,'clone of resistant descendants','note start f12'));
   let yy=(n?by+h:Math.max(ay,by)+h)+(n?60:62);
   const p=para(n?16:24,yy,'Both produce resistant colonies. They differ in how the number of resistant cells varies from culture to culture — and that is measurable, which is the whole idea.',n?50:92,'note start f13',17,1.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
@@ -608,7 +608,7 @@ function scE6(n){
     +labs.map((l,i)=>T(FX((P1.px(i)+P1.px(i+1))/2),P1.y+P1.h+16,l,'note mid f10')).join(''));
   s+=G('a-fade',.8,P2.s+T(P2.x+P2.w/2,P2.y-14,'What is actually seen','cname mid f13')+histo(P2,SPONT,bins,PHG)
     +labs.map((l,i)=>T(FX((P2.px(i)+P2.px(i+1))/2),P2.y+P2.h+16,l,'note mid f10')).join(''));
-  let y=(n?P2.y+P2.h:P1.y+P1.h)+(n?54:56);
+  let y=(n?P2.y+P2.h:P1.y+P1.h)+(n?66:68);
   const m1=INDUCED.reduce((a,b)=>a+b,0)/INDUCED.length, v1=INDUCED.reduce((a,b)=>a+(b-m1)*(b-m1),0)/(INDUCED.length-1);
   const m2=SPONT.reduce((a,b)=>a+b,0)/SPONT.length, v2=SPONT.reduce((a,b)=>a+(b-m2)*(b-m2),0)/(SPONT.length-1);
   const rows=[[n?'Induced (sim.)':'If induced (simulated)',m1.toFixed(1),v1.toFixed(1),(v1/m1).toFixed(2)],[n?'Spontaneous (sim.)':'Spontaneous (simulated)',m2.toFixed(1),v2.toFixed(0),(v2/m2).toFixed(0)]];
@@ -634,7 +634,7 @@ function scE7(n){
         +Tc(181,y+42,'m = −ln(fraction with no mutants)','#2F5276',11,'mono mid','600')
         +Tc(181,y+62,'μ = m / N','#2F5276',12,'mono mid','600')
       :Tc(320,y+28,'p₀ = e⁻ᵐ   so   m = −ln(fraction of cultures with no mutants)','#2F5276',14,'mono mid','600')));
-  y+=(n?90:58);
+  y+=(n?100:70);
   const b=bullets(n?24:30,y,[['Why not just count mutants in one big culture','Because the answer depends entirely on when the first mutation happened in that one culture. Parallel cultures convert that unknowable timing into a distribution you can fit.'],
    ['Plating efficiency and phenotypic lag','A newly mutated cell may need several generations before it survives selection. Both inflate or deflate the estimate; good protocols control for them.']],n?44:88,{d0:2,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+eq+b.s};
@@ -675,7 +675,7 @@ function scE9(n){
   s+=G('a-fade',.3,bar(y,[[0,1,'#D6CDB8']])+T(x,y-18,'recipient','note start f11'));
   s+=G('a-fade',.6,bar(y+d2,[[.22,.12,'#E6E0CE'],[.34,.16,INTC],[.5,.12,'#E6E0CE']])+T(x,y+d2-18,n?'donor fragment':'donor fragment (ends match the recipient)','note start f11'));
   s+=G('a-fade',1.1,bar(y+d3,[[0,.34,'#D6CDB8'],[.34,.16,INTC],[.5,.5,'#D6CDB8']])
-    +T(x,y+d3-(n?32:18),n?'after recombination: a patch of':'after recombination: a patch of foreign sequence','note start f11')
+    +T(n?x:x+.42*w+12,y+d3-(n?32:18),n?'after recombination: a patch of':'after recombination: a patch of foreign sequence','note start f11')
     +(n?T(x,y+d3-18,'foreign sequence','note start f11'):'')
     +arw(x+.42*w,y+d2+12,x+.42*w,y+d3-(n?46:12),{blue:1}));
   let yy=y+d3+(n?40:44);
@@ -689,10 +689,11 @@ function scE10(n){
   const sp=[['Mycobacterium tuberculosis',0.1,'essentially clonal',CORE],['Staphylococcus aureus',1.5,'',CORE],
    ['Escherichia coli',4,'',SHELL],['Streptococcus pneumoniae',8,'naturally competent',PHG],
    ['Helicobacter pylori',14,'recombination exceeds mutation many times over',PHG]];
-  let s=G('a-fade',0,T(n?16:24,28,'Relative contribution of recombination (r/m), order of magnitude','cname start '+(n?'f13':'f14')));
+  const TL=n?['Relative contribution of recombination','(r/m), order of magnitude']:['Relative contribution of recombination (r/m), order of magnitude'], t0=(TL.length-1)*18;
+  let s=G('a-fade',0,TL.map((l,i)=>T(n?16:24,28+i*18,l,'cname start '+(n?'f13':'f14'))).join(''));
   const bw=n?150:280, bx=n?170:300;
-  s+=G('a-fade',.3,barRow(n?16:24,62,bw,sp.map(x=>[x[0],x[1],x[3],String(x[1])]),15,{bx:bx-(n?16:24),rh:n?34:30,fs:n?'f11':'f12'}));
-  let y=62+sp.length*(n?34:30)+(n?16:18);
+  s+=G('a-fade',.3,barRow(n?16:24,62+t0,bw,sp.map(x=>[x[0],x[1],x[3],String(x[1])]),15,{bx:bx-(n?16:24),rh:n?34:30,fs:n?'f11':'f12'}));
+  let y=62+t0+sp.length*(n?34:30)+(n?16:18);
   s+=G('a-fade',1.2,sp.filter(x=>x[2]).map((x,i)=>'').join(''));
   const b=bullets(n?24:30,y,[['Why it matters for typing','In a highly recombining species two isolates can share most of their genome and still differ at the locus you sequenced. MLST was designed around this; whole-genome approaches must still mask recombinant regions.'],
    ['Why it matters for resistance','Recombination lets a strain acquire a resistant allele from a relative in one step. The mosaic penicillin-binding protein genes of the pneumococcus, assembled from commensal streptococcal DNA, are the classic case.'],

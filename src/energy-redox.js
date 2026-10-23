@@ -62,13 +62,13 @@ function scE3(n){
 function scE4(n){
   let s='';const L=n?16:24;
   s+=G('a-fade',0,T(L,34,'Each redox couple has a standard potential, E°′','cname start'));
-  const hx=n?[90,270]:[170,470];
-  s+=G('a-fade',.3,box(hx[0]-(n?78:120),54,n?156:240,52,'#EFE6D2',4)+Tc(hx[0],76,'NAD⁺ + 2H⁺ + 2e⁻ → NADH + H⁺','#3A2E22',n?9.5:12,'mono mid','600')+T(hx[0],96,'E°′ = −0.32 V: a good donor','note mid f11')
-    +box(hx[1]-(n?78:120),54,n?156:240,52,'#EFE6D2',4)+Tc(hx[1],76,'½O₂ + 2H⁺ + 2e⁻ → H₂O','#3A2E22',n?9.5:12,'mono mid','600')+T(hx[1],96,'E°′ = +0.82 V: a good acceptor','note mid f11'));
-  s+=G('a-fade',.8,`<rect x="${n?8:60}" y="128" width="${n?344:520}" height="${n?72:60}" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
-    +Tc(n?180:320,152,'ΔG°′ = −nF ΔE°′','#2F5276',n?14:16,'mono mid','600')
-    +T(n?180:320,174,n?'= −2 × 96.5 × (0.82 − (−0.32))':'= −2 × 96.5 kJ/(mol·V) × (+0.82 − (−0.32) V) = −220 kJ/mol','note mid f13')+(n?T(180,192,'= −220 kJ/mol','note mid f13'):''));
-  const b=bullets(n?24:30,n?232:222,[['Electrons flow downhill','Electrons move spontaneously from the couple with the more negative potential to the one with the more positive potential. The bigger the gap, the more energy per electron pair.'],
+  const hx=n?[180,180]:[170,470], hy=n?[54,114]:[54,54], bw=n?328:240, dy=n?60:0;
+  s+=G('a-fade',.3,box(hx[0]-bw/2,hy[0],bw,52,'#EFE6D2',4)+Tc(hx[0],hy[0]+22,'NAD⁺ + 2H⁺ + 2e⁻ → NADH + H⁺','#3A2E22',n?9.5:12,'mono mid','600')+T(hx[0],hy[0]+42,'E°′ = −0.32 V: a good donor','note mid f11')
+    +box(hx[1]-bw/2,hy[1],bw,52,'#EFE6D2',4)+Tc(hx[1],hy[1]+22,'½O₂ + 2H⁺ + 2e⁻ → H₂O','#3A2E22',n?9.5:12,'mono mid','600')+T(hx[1],hy[1]+42,'E°′ = +0.82 V: a good acceptor','note mid f11'));
+  s+=G('a-fade',.8,`<rect x="${n?8:60}" y="${128+dy}" width="${n?344:520}" height="${n?72:60}" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +Tc(n?180:320,152+dy,'ΔG°′ = −nF ΔE°′','#2F5276',n?14:16,'mono mid','600')
+    +T(n?180:320,174+dy,n?'= −2 × 96.5 × (0.82 − (−0.32))':'= −2 × 96.5 kJ/(mol·V) × (+0.82 − (−0.32) V) = −220 kJ/mol','note mid f13')+(n?T(180,192+dy,'= −220 kJ/mol','note mid f13'):''));
+  const b=bullets(n?24:30,n?292:222,[['Electrons flow downhill','Electrons move spontaneously from the couple with the more negative potential to the one with the more positive potential. The bigger the gap, the more energy per electron pair.'],
     ['n and F','n is the number of electrons transferred; Faraday’s constant converts volts into kJ per mole. A 0.1 V step with two electrons is worth about 19 kJ/mol.'],
     ['Standard is not actual','E′ shifts with the ratio of oxidised to reduced forms (the Nernst equation), and with pH when protons are involved.']],n?44:88,{d0:1.2,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
@@ -82,7 +82,7 @@ function scE5(n){
   let s=G('a-fade',0,t.s);
   const ax=n?tx-14:tx-14;
   s+=G('a-fade',.4,`<path d="M${tx+(n?9:11)} ${FX(t.ey(D.E)+4)} V${FX(t.ey(A.E)-6)}" stroke="#A4473A" stroke-width="3" marker-end="url(#ahr)" opacity=".85"/>`);
-  const bx=n?16:390, by=n?ty+th+34:60;
+  const bx=n?16:360, by=n?ty+th+34:60;
   s+=G('a-fade',.6,T(bx,by,p[0],'cname start f16')+T(bx,by+22,p[3],'note start f12')
     +T(bx,by+52,'donor','mono acc start f11')+T(bx+70,by+52,`${D.ox}/${D.red}`,'lab start f13')+T(bx,by+70,'acceptor','mono acc start f11')+T(bx+70,by+70,`${A.ox}/${A.red}`,'lab start f13')
     +T(bx,by+100,`ΔE°′ = ${sg(A.E)} − (${sg(D.E)}) = ${dE.toFixed(2)} V`,'mono start f12')

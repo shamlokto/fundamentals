@@ -442,19 +442,19 @@ function tsPic(k,cx,cy,R){
 }
 const TSP=[['Lock and key','Emil Fischer, 1894','The site is a rigid, pre-formed fit for the substrate. It explains specificity, but not catalysis.'],
  ['Induced fit','Daniel Koshland, 1958','The right substrate makes the enzyme close around it, bringing catalytic groups into position.'],
- ['Fit the transition state','Haldane 1930; Pauling 1946–48','The site is most complementary to the transition state, not the substrate, so binding energy is spent where it lowers the barrier.']];
+ ['Fit the transition state','Haldane 1930;|Pauling 1946–48','The site is most complementary to the transition state, not the substrate, so binding energy is spent where it lowers the barrier.']];
 function scTS(n){
   let s='',y;
   if(!n){const cxs=[107,320,533];
     TSP.forEach((p,i)=>{const cx=cxs[i];
       s+=G('a-fade',(i*.5).toFixed(1),T(cx,30,p[0],'cname mid')+tsPic(i,cx,i===1?118:122,i===1?40:44)
-        +T(cx,198,p[1],'mono acc mid f12')+wrap(p[2],30).map((l,j)=>T(cx,220+j*17,l,'note mid f12')).join(''));
-      if(i<2)s+=G('a-fade',(i*.5+.3).toFixed(1),ln(cx+106,40,cx+106,290,'#6A5B47',.6,'2 4'));});
-    y=318;
+        +p[1].split('|').map((l,j)=>T(cx,198+j*17,l,'mono acc mid f12')).join('')+wrap(p[2],30).map((l,j)=>T(cx,237+j*17,l,'note mid f12')).join(''));
+      if(i<2)s+=G('a-fade',(i*.5+.3).toFixed(1),ln(cx+106,40,cx+106,310,'#6A5B47',.6,'2 4'));});
+    y=338;
   }else{y=20;
-    TSP.forEach((p,i)=>{const L=wrap(p[2],30), rh=Math.max(132,52+L.length*16+10);
+    TSP.forEach((p,i)=>{const L=wrap(p[2],30), rh=Math.max(132,(p[1].includes('|')?67:52)+L.length*16+10);
       s+=G('a-fade',(i*.5).toFixed(1),tsPic(i,i===1?70:72,y+(i===1?76:84),i===1?30:36)
-        +T(150,y+20,p[0],'cname start f14')+T(150,y+38,p[1],'mono acc start f11')+L.map((l,j)=>T(150,y+58+j*16,l,'note start f12')).join(''));
+        +T(150,y+20,p[0],'cname start f14')+p[1].split('|').map((l,j)=>T(150,y+38+j*15,l,'mono acc start f11')).join('')+L.map((l,j)=>T(150,y+43+15*p[1].split('|').length+j*16,l,'note start f12')).join(''));
       y+=rh;if(i<2)s+=ln(14,y-8,346,y-8,'#6A5B47',.6,'2 4');});
     y+=10;}
   const p=para(n?16:30,y,'Corollary: a stable molecule shaped like the transition state can bind far more tightly than the substrate does. Transition-state analogues are one route to potent inhibitors.',n?50:88,'note start f13',17,1.8);
@@ -510,7 +510,7 @@ function scTriad(n){
   let s='';
   const tx=n?14:10, ty=n?6:20;
   s+=triad(tx,ty);
-  const x=n?14:338, W=n?332:284, cw=n?6.0:5.8;
+  const x=n?14:338, W=n?332:284, cw=n?6.5:6.6;
   let y=n?ty+262:20;
   TRIAD.forEach((t,i)=>{const b=boxItem(x,y,W,t[0],t[1],{num:i+1,cw});s+=G('a-fade',(1.8+i*.4).toFixed(1),b.s);y+=b.h+8;});
   const p=para(n?16:20,n?y+14:ty+278,'The same serine acyl-enzyme chemistry is used by penicillin-binding proteins and class A β-lactamases. Penicillin exploits it (Part III).',n?50:50,'note start f13',17,3.4);
@@ -576,7 +576,7 @@ function scHyper(n){
   s+=G('a-fade',1.2,gline(P,0,.5,1,.5,{col:'#2F5276'})+gline(P,1,.5,1,0,{col:'#2F5276'})+dot(P,1,.5)
     +plab(P,1.1,.5,VMX+'/2',{dy:16,col:'#2F5276'})+Tc(P.px(1),P.py(0)+14,KM,'#2F5276',12,'mono mid','600'));
   s+=G('a-fade',1.8,gline(P,0,0,.9,.9,{col:SUBC,dash:'5 4'})+plab(P,.95,.9,'slope = '+VMX+'/'+KM,{col:'#8C5A1E',fs:11,dy:-2}));
-  s+=G('a-fade',2.2,plab(P,.3,.07,'first order at low [S]',{fs:11,col:'#6A5B47',a:'start'})+plab(P,9.8,.78,'zero order',{fs:11,col:'#6A5B47',a:'end'}));
+  s+=G('a-fade',2.2,plab(P,1.2,.07,'first order at low [S]',{fs:11,col:'#6A5B47',a:'start'})+plab(P,9.8,.78,'zero order',{fs:11,col:'#6A5B47',a:'end'}));
   const rows=[['0.1 '+KM,'9%'],[KM,'50%'],['4 '+KM,'80%'],['9 '+KM,'90%'],['99 '+KM,'99%']];
   let y;
   if(n){const t0=P.y+P.h+60;s+=G('a-fade',2.6,T(24,t0,'[S]','cname start f13')+T(130,t0,'v / '+VMX,'cname start f13')+ln(20,t0+6,240,t0+6)
@@ -594,7 +594,7 @@ function scKcat(n){
   let s='',y=n?16:18;
   const d1=['Turnover number, '+KCAT,'Substrate molecules converted per active site per second at saturation: kcat = Vmax / [E]T. A typical enzyme manages about 10 per second.'];
   const d2=['Specificity constant, '+KCAT+'/'+KM,'The rate constant for E + S going to product when [S] is low. It compares substrates for one enzyme, and enzymes with each other.'];
-  if(n){const a=boxItem(14,y,332,d1[0],d1[1],{cw:6.1});s+=G('a-fade',0,a.s);y+=a.h+10;const b=boxItem(14,y,332,d2[0],d2[1],{cw:6.1});s+=G('a-fade',.4,b.s);y+=b.h+26;}
+  if(n){const a=boxItem(14,y,332,d1[0],d1[1],{cw:6.1});s+=G('a-fade',0,a.s);y+=a.h+10;const b=boxItem(14,y,332,d2[0],d2[1],{cw:6.1});s+=G('a-fade',.4,b.s);y+=b.h+38;}
   else{const a=boxItem(20,y,292,d1[0],d1[1]),b=boxItem(328,y,292,d2[0],d2[1]),h=Math.max(a.h,b.h);
     s+=G('a-fade',0,a.s.replace(/height="\d+"/,`height="${h}"`))+G('a-fade',.4,b.s.replace(/height="\d+"/,`height="${h}"`));y+=h+30;}
   const x0=n?20:262, x1=n?336:618, X=v=>x0+(Math.log10(v)-3)/7*(x1-x0), rh=n?40:30;
@@ -745,7 +745,7 @@ function scSigmoid(n){
   const P=n?plot(50,30,280,190,[0,10],[0,1.05],{xlab:'[S]  (units of '+KHALF+')',ylab:'fraction of maximum',xdy:70,ydx:16})
            :plot(66,36,330,210,[0,10],[0,1.05],{xlab:'[S]  (units of '+KHALF+')',ylab:'fraction of maximum',xdy:70,ydx:16});
   let s=G('a-fade',0,P.s+gline(P,0,.1,10,.1,{dash:'2 3'})+gline(P,0,.9,10,.9,{dash:'2 3'})+plab(P,10,.9,'90%',{dy:-4,a:'end',fs:10})+plab(P,10,.1,'10%',{dy:-4,a:'end',fs:10}));
-  s+=G('a-fade',.4,curve(P,hillf(1),{col:'#8C7A52',dash:'6 4'})+plab(P,6.5,.72,'hyperbolic, n = 1',{col:'#6A5B47',fs:11}));
+  s+=G('a-fade',.4,curve(P,hillf(1),{col:'#8C7A52',dash:'6 4'})+plab(P,10,.72,'hyperbolic, n = 1',{col:'#6A5B47',fs:11,a:'end'}));
   s+=G('a-fade',1,curve(P,hillf(4),{n:160})+plab(P,2.2,1.06,'sigmoid, n = 4',{col:'#2F5276',fs:11}));
   s+=G('a-fade',1.6,dot(P,1/9,.1,{col:'#8C7A52',r:3})+dot(P,9,.9,{col:'#8C7A52',r:3})+dot(P,Math.pow(1/9,.25),.1,{r:3})+dot(P,Math.pow(9,.25),.9,{r:3}));
   const yb=P.y+P.h;
@@ -840,21 +840,22 @@ function scATCase(n){
 }
 
 function scFeedback(n){
-  const X=n?[60,180,300]:[100,320,540], bw=n?102:126, nb=(x,y,t,d)=>G('a-fade',d,box(x-bw/2,y-15,bw,28,'#E7DEC9',4)+Tc(x,y+4,t,'#3A2E22',n?10:12,'mono mid','600'));
-  const Y=n?[36,156,262]:[40,160,262], fs=n?10:11, w=n?6:6.6;
+  const X=n?[60,180,300]:[100,320,540], bw=n?102:142, bh=n?40:28, nb=(x,y,t,d)=>{const L=t.split('|');return G('a-fade',d,box(x-bw/2,y-bh/2-1,bw,bh,'#E7DEC9',4)+L.map((l,k)=>Tc(x,y+4+(k-(L.length-1)/2)*14,l,'#3A2E22',n?10:12,'mono mid','600')).join(''));};
+  const Y=n?[36,164,284]:[40,172,276], fs=n?10:11, w=n?7.4:8.1;
   const inh=(x,y,t,a='start')=>Tc(x,y,t+' ⊣','#A4473A',fs,'mono '+a,'600');
   const en=(x,y,t,a='start')=>Tc(x,y,t,'#2F5276',fs,'mono '+a,'600');
-  const vA=(x,y1,y2)=>`<path d="M${x} ${y1+15} V${y2-17}" class="arrow"/>`, hA=(x1,x2,y)=>`<path d="M${x1+bw/2+2} ${y} H${x2-bw/2-4}" class="arrow"/>`;
+  const vA=(x,y1,y2)=>`<path d="M${x} ${y1+bh/2+1} V${y2-bh/2-3}" class="arrow"/>`, hA=(x1,x2,y)=>`<path d="M${x1+bw/2+2} ${y} H${x2-bw/2-4}" class="arrow"/>`;
   let s='';const ax=X[0]+10, c2=ax+6*w;
   s+=nb(X[0],Y[0],'aspartate',0)+G('a-fade',.3,vA(X[0],Y[0],Y[1])+en(ax,Y[0]+34,'aspartokinases')
     +inh(ax,Y[0]+50,'Thr')+en(c2,Y[0]+50,'AK I (thrA)')+en(c2,Y[0]+66,'AK II (metL)')+Tc(c2+13*w,Y[0]+66,'repressed by Met','#6A5B47',fs-1,'mono start')
     +inh(ax,Y[0]+82,'Lys')+en(c2,Y[0]+82,'AK III (lysC)'));
-  s+=nb(X[0],Y[1],'Asp semialdehyde',.6);
+  s+=nb(X[0],Y[1],n?'Asp semi-|aldehyde':'Asp semialdehyde',.6);
   s+=G('a-fade',.9,vA(X[0],Y[1],Y[2])+inh(ax,Y[1]+48,'Lys')+en(c2,Y[1]+48,'DapA')+Tc(ax,Y[1]+64,'+ more steps','#6A5B47',fs-1,'mono start'))+nb(X[0],Y[2],'lysine',1.1);
-  s+=G('a-fade',1.3,hA(X[0],X[1],Y[1])+en((X[0]+X[1])/2+(n?40:30),Y[1]-(n?22:10),'HDH I','end')+inh((X[0]+X[1])/2+(n?40:30)-6*w,Y[1]-(n?22:10),'Thr','end'))+nb(X[1],Y[1],'homoserine',1.4);
+  const hx=n?(X[0]+X[1])/2+40:(X[0]+X[1])/2+70, hy=Y[1]-(n?28:10);
+  s+=G('a-fade',1.3,hA(X[0],X[1],Y[1])+(n?en(hx,hy,'HDH I','end')+inh(hx-6*w,hy,'Thr','end'):inh((X[0]+X[1])/2,Y[1]-26,'Thr','mid')+en((X[0]+X[1])/2,Y[1]-10,'HDH I','mid')))+nb(X[1],Y[1],'homoserine',1.4);
   s+=G('a-fade',1.7,vA(X[1],Y[1],Y[2])+en(X[1]+8,Y[1]+48,'several steps'))+nb(X[1],Y[2],'methionine',1.9);
-  s+=G('a-fade',2.1,hA(X[1],X[2],Y[1])+en((X[1]+X[2])/2,Y[1]-(n?22:10),'ThrB, ThrC','mid'))+nb(X[2],Y[1],'threonine',2.3);
-  s+=G('a-fade',2.5,vA(X[2],Y[1],Y[2])+inh(X[2]+8,Y[1]+38,'Ile')+en(X[2]+8,Y[1]+54,'IlvA')+Tc(X[2]+8,Y[1]+70,'+ 4 steps','#6A5B47',fs-1,'mono start')+Tc(X[2]-8,Y[1]+(n?76:50),'Umbarger, 1956','#6A5B47',fs-1,'mono end'))+nb(X[2],Y[2],'isoleucine',2.7);
+  s+=G('a-fade',2.1,hA(X[1],X[2],Y[1])+(n?en((X[1]+X[2])/2,hy,'ThrB, ThrC','mid'):en((X[1]+X[2])/2,Y[1]-26,'ThrB,','mid')+en((X[1]+X[2])/2,Y[1]-10,'ThrC','mid')))+nb(X[2],Y[1],'threonine',2.3);
+  s+=G('a-fade',2.5,vA(X[2],Y[1],Y[2])+inh(X[2]+8,Y[1]+42,'Ile')+en(X[2]+8,Y[1]+58,'IlvA')+(n?Tc(X[2]-8,Y[1]+72,'+ 4 steps','#6A5B47',fs-1,'mono end'):Tc(X[2]+8,Y[1]+74,'+ 4 steps','#6A5B47',fs-1,'mono start'))+Tc(X[2]-8,Y[1]+(n?90:74),'Umbarger, 1956','#6A5B47',fs-1,'mono end'))+nb(X[2],Y[2],'isoleucine',2.7);
   let y=Y[2]+(n?54:52);
   const items=[['Isoenzymes','E. coli makes three aspartokinases, each answering to a different end product, so no one amino acid can starve the others.'],
    ['Concerted inhibition','In some other bacteria a single aspartokinase is shut off only when lysine and threonine are both in excess.'],

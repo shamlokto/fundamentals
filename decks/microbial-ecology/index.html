@@ -662,11 +662,11 @@ function scE1(n){return introPlate(n,{q:'Why does each place have the microbes i
   art:(cx,cy)=>`<circle cx="${cx}" cy="${cy-6}" r="62" fill="#EFE6D2" stroke="${INK}" stroke-width="1"/>`+dotCloud(cx,cy-6,62,[22,12,8,5,3,2],5)+T(cx,cy+76,'one sample, six taxa','note mid f11'),artH:160});}
 function scE2(n){
   let s='';
-  const py=n?96:100, px=n?70:90, lx=n?290:420, rr=n?50:60, lr=n?38:48;
+  const py=n?96:100, px=n?60:90, lx=n?290:420, rr=n?50:60, lr=n?38:48;
   s+=G('a-fade',0,`<circle cx="${px}" cy="${py}" r="${rr}" fill="#EFE6D2" stroke="${INK}"/>`+dotCloud(px,py,rr,n?[8,8,8,8,8,8]:[10,10,10,10,10,10],3)+T(px,py+rr+18,'regional pool','note mid f11'));
-  const fx=n?180:255;
+  const fx=n?188:255;
   s+=G('a-fade',.4,`<path d="M${fx-24} ${py-46} H${fx+24} L${fx+8} ${py+8} V${py+40} H${fx-8} V${py+8} Z" fill="${PAL.gold}" stroke="${INK}" stroke-width="1" class="tint"/>`+T(fx,py+58,'selection','note mid f11')+T(fx,py+71,n?'(filter)':'(environment, partners)','note mid f10'));
-  s+=G('a-fade',.4,arw(px+rr+4,py-10,fx-28,py-10,{w:1.4})+T((px+rr+fx-24)/2,n?py+8:py-18,'dispersal','note mid f11 halo'));
+  s+=G('a-fade',.4,arw(px+rr+4,py-10,fx-28,py-10,{w:1.4})+T((px+rr+fx-24)/2,py-18,'dispersal','note mid f11 halo'));
   s+=G('a-fade',.8,arw(fx+26,py-10,lx-lr-6,py-10,{w:1.4})+`<circle cx="${lx}" cy="${py}" r="${lr}" fill="#EFE6D2" stroke="${INK}"/>`+dotCloud(lx,py,lr,[14,7,0,4,0,1],8)+T(lx,py+lr+18,'local community','note mid f11'));
   s+=G('a-fade',1.1,`<path d="M${FX(lx+lr*.25)} ${FX(py-lr*.97)} a18 18 0 1 1 ${FX(lr*.5)} ${FX(lr*.35)}" stroke="#A4473A" stroke-width="1.4" fill="none" marker-end="url(#ahr)"/>`+T(FX(lx+lr*.45),FX(py-lr-30),'drift','note start f11 halo')
     +`<path d="M${FX(lx-lr*.25)} ${FX(py-lr*.97)} a18 18 0 1 0 ${FX(-lr*.5)} ${FX(lr*.35)}" stroke="#2F5276" stroke-width="1.4" fill="none" marker-end="url(#ahb)"/>`+T(FX(lx-lr*.45),FX(py-lr-30),n?'new types':'diversification','note end f11 halo'));
@@ -711,7 +711,7 @@ function scE3(n){
   s+=G('a-fade',0,`<circle cx="${ax}" cy="${ay}" r="${r}" fill="#EFE6D2" stroke="${INK}"/>`+dotCloud(ax,ay,r,CA,21)+T(ax,ay+r+18,'sample A','cname mid f14')
     +`<circle cx="${bx}" cy="${ay}" r="${r}" fill="#EFE6D2" stroke="${INK}"/>`+dotCloud(bx,ay,r,CB,22)+T(bx,ay+r+18,'sample B','cname mid f14'));
   s+=G('a-fade',.2,T(ax,ay+r+36,'4 taxa, even','note mid f12')+T(bx,ay+r+36,'6 taxa, one dominant','note mid f12'));
-  const tx=n?16:370; let ty=n?ay+r+76:40;
+  const tx=n?16:350; let ty=n?ay+r+76:40;
   s+=G('a-fade',.3,T(tx,ty,d.k,'cname start f16')+T(tx,ty+20,d.ty==='alpha'?'alpha diversity: within one sample':'beta diversity: between samples','mono acc start f12'));
   ty+=46;
   s+=G('a-fade',.45,T(tx,ty,d.f,'mono start '+(n?'f12':(d.f.length>30?'f11':'f12'))));
@@ -749,7 +749,7 @@ function scE5(n){
 }
 function scE6(n){
   const R=n?104:118, cx=n?180:190, cy=n?150:170;
-  const it=[{t:n?'attack|phase':'attack phase:|fast swimmer',w:n?84:124,f:PAL.green},{t:n?'attaches|to prey':'attaches to|Gram-negative prey',w:n?96:140},{t:n?'enters|periplasm':'enters the|periplasm',w:n?96:104,f:PAL.gold},{t:n?'grows as|filament':'in the bdelloplast:|grows as filament',w:n?104:148,f:PAL.gold},{t:n?'divides':'divides into|progeny',w:n?80:104},{t:n?'prey lyses,|release':'prey lyses,|progeny released',w:n?100:134,f:PAL.rose}];
+  const it=[{t:n?'attack|phase':'attack phase:|fast swimmer',w:n?84:124,f:PAL.green},{t:n?'attaches|to prey':'attaches to|Gram-negative prey',w:n?96:158},{t:n?'enters|periplasm':'enters the|periplasm',w:n?96:104,f:PAL.gold},{t:n?'grows as|filament':'in the bdelloplast:|grows as filament',w:n?104:166,f:PAL.gold},{t:n?'divides':'divides into|progeny',w:n?80:104},{t:n?'prey lyses,|release':'prey lyses,|progeny released',w:n?100:150,f:PAL.rose}];
   let s=G('a-fade',0,cycle(cx,cy,R,it,{}));
   s+=G('a-fade',.6,rodCell2(cx,cy,46,12,{fill:'#E4E8D4'})+coccus(cx-12,cy,5,{fill:'#8C6D46'})+T(cx,cy+30,'Bdellovibrio inside','note mid f11')+T(cx,cy+44,'its prey','note mid f11'));
   const items=[['Bdellovibrio','Discovered by Stolp and Petzold in 1962, these small vibrios hunt other Gram-negative bacteria, growing inside the prey’s periplasm. They are being explored as living antibiotics.'],['Protist grazers','Flagellates and ciliates eat a large share of bacterial production in water and soil. They prefer certain sizes, so bacteria escape by forming filaments, aggregates or biofilms, or by being very small or fast.'],['Training grounds','Some bacteria survive being eaten: Legionella multiplies inside amoebae, and the same tricks later let it grow in human macrophages.']];

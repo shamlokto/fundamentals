@@ -660,7 +660,7 @@ const PIPE=[
  {k:'Annotation',id:'ann',in:'contigs or MAGs',out:'genes and functions (GFF3, GenBank, protein FASTA)',tools:'Prodigal, Prokka, Bakta, NCBI PGAP; eggNOG-mapper, InterProScan',chk:'coding density near 85–90%; no broken genes from frameshifts'},
  {k:'Binning',id:'bin',in:'metagenome contigs and their coverage in each sample',out:'metagenome-assembled genomes (MAGs)',tools:'MetaBAT2, CONCOCT, MaxBin2, DAS Tool; CheckM2; GTDB-Tk for taxonomy',chk:'MIMAG completeness, contamination and rRNA/tRNA genes'},
  {k:'Profiling',id:'prof',in:'metagenomic reads (or 16S amplicons)',out:'a table of taxa and their abundances per sample',tools:'Kraken2 with Bracken, MetaPhlAn, mOTUs; DADA2 and QIIME 2 for amplicons',chk:'database coverage of your environment; false positives at low abundance'},
- {k:'Differential abundance',id:'da',in:'a count table and sample metadata',out:'genes or taxa with fold changes and adjusted p-values',tools:'DESeq2, edgeR, limma; ANCOM-BC, ALDEx2, MaAsLin2 for microbiomes',chk:'replicates, batch effects, false discovery rate, compositionality'}];
+ {k:'Differential abundance',id:'da',in:'a count table and sample metadata',out:'genes or taxa with fold changes and adjusted p-values',tools:'DESeq2, edgeR and limma; for microbiomes, ANCOM-BC,\u00a0ALDEx2\u00a0and\u00a0MaAsLin2',chk:'replicates, batch effects, false discovery rate, compositionality'}];
 let pipeSel=0;
 function pipeArt(cx,cy,n){
   const sel=PIPE[pipeSel].id, f=k=>k===sel?PAL.blue:'#EFE6D2', fs=11;
@@ -678,13 +678,13 @@ function scI1(n){return introPlate(n,{q:'How do millions of short reads become a
     return s+T(cx,cy-64,'overlapping reads','note mid f11')+T(cx,cy+66,'contig','note mid f11');},artH:160});}
 function scI2(n){
   const p=PIPE[pipeSel];
-  return explorer(n,{h:p.k,rows:[['Input',p.in],['Output',p.out],['Tools',p.tools],['Check',p.chk]],note:'Arrows show the usual order. Mapping feeds variant calling and, for RNA-seq, gene counts; assembly feeds binning and annotation; profiling skips assembly altogether.',art:(cx,cy)=>pipeArt(cx,cy,n),artH:n?270:150},{y:20});
+  return explorer(n,{h:p.k,rows:[['Input',p.in],['Output',p.out],['Tools',p.tools],['Check',p.chk]],note:'Arrows show the usual order. Mapping feeds variant calling and, for RNA-seq, gene counts; assembly feeds binning and annotation; profiling skips assembly altogether.',art:(cx,cy)=>pipeArt(cx,cy,n),artH:n?290:168},{y:20});
 }
 function scI3(n){
   const x0=n?16:24, y0=40;
   let s=G('a-fade',0,box(x0,y0-22,n?328:290,104,'#EFE6D2',4)+['@read_1 sample=A','GATTTGGGGTTCAAAGCAGT','+','IIIIHHHGG@@@:::555++'].map((l,i)=>T(x0+12,y0+i*20,l,'mono start f13')).join('')
     +T(x0+12,y0+92,'line 4: one character per base','note start f11'));
-  s+=G('a-fade',.3,T(x0+(n?186:200),y0+20,'bases','note start f11')+T(x0+(n?186:200),y0+60,'qualities','note start f11'));
+  s+=G('a-fade',.3,T(x0+(n?250:200),y0+20,'bases','note start f11')+T(x0+(n?250:200),y0+60,'qualities','note start f11'));
   const A=n?axes(54,y0+130,280,120,{xr:[1,150],yr:[0,40],xt:[[1,'1'],[75,'75'],[150,'150']],yt:[[20,'20'],[28,'28'],[40,'40']],xlab:'position in read (bp)',ylab:'Phred'})
     :axes(380,y0-10,230,140,{xr:[1,150],yr:[0,40],xt:[[1,'1'],[75,'75'],[150,'150']],yt:[[20,'20'],[28,'28'],[40,'40']],xlab:'position in read (bp)',ylab:'Phred'});
   const band=(a,b,c)=>`<rect x="${A.x}" y="${FX(A.py(b))}" width="${A.w}" height="${FX(A.py(a)-A.py(b))}" fill="${c}" opacity=".35"/>`;
@@ -720,7 +720,7 @@ function scI5(n){
 }
 function scI6(n){
   const N=n?{c:{x:180,y:30,w:120,t:'contigs'},g:{x:180,y:100,w:200,t:'gene calling|(Prodigal)',f:PAL.gold},h:{x:90,y:180,w:160,t:'homology|BLAST, DIAMOND',f:PAL.blue},m:{x:270,y:180,w:160,t:'profile HMMs|HMMER, Pfam',f:PAL.lilac},a:{x:180,y:260,w:220,t:'annotated genome|(GFF3, GenBank)',f:PAL.green}}
-    :{c:{x:70,y:110,w:100,t:'contigs'},g:{x:220,y:70,w:150,t:'gene calling|(Prodigal)',f:PAL.gold},r:{x:220,y:185,w:150,t:'tRNA, rRNA|(tRNAscan, barrnap)'},h:{x:400,y:40,w:150,t:'homology|BLAST, DIAMOND',f:PAL.blue},m:{x:400,y:110,w:150,t:'profile HMMs|HMMER, Pfam',f:PAL.lilac},a:{x:565,y:110,w:110,t:'annotated|genome',f:PAL.green}};
+    :{c:{x:70,y:110,w:100,t:'contigs'},g:{x:220,y:70,w:150,t:'gene calling|(Prodigal)',f:PAL.gold},r:{x:220,y:185,w:178,t:'tRNA, rRNA|(tRNAscan, barrnap)'},h:{x:404,y:40,w:164,t:'homology|BLAST, DIAMOND',f:PAL.blue},m:{x:404,y:110,w:164,t:'profile HMMs|HMMER, Pfam',f:PAL.lilac},a:{x:569,y:110,w:110,t:'annotated|genome',f:PAL.green}};
   const E=n?[['c','g',''],['g','h',''],['g','m',''],['h','a',''],['m','a','']]:[['c','g',''],['c','r',''],['g','h',''],['g','m',''],['h','a',''],['m','a',''],['r','a','']];
   let s=G('a-fade',0,flow(N,E));
   const b=bullets(n?24:30,n?320:240,[['Finding genes','Prodigal (2010) trains itself on each genome, scoring open reading frames, start codons and ribosome binding sites; bacterial genomes are about 85–90% coding. Prokka (2014) and Bakta (2021) wrap gene callers and databases into one command.'],['BLAST and the E-value','BLAST (Altschul and colleagues, 1990) finds similar sequences; the E-value is how many hits this good you would expect by chance in a database this size. DIAMOND is far faster for millions of proteins.'],['Profile HMMs','A hidden Markov model of a protein family records which positions are conserved, so HMMER and Pfam find distant relatives that pairwise BLAST misses.'],['Hypothetical proteins','Typically a quarter to a third of genes in a new genome get no function, and errors spread when annotations are copied from earlier annotations.']],n?44:88,{d0:1,gap:18});
@@ -757,9 +757,9 @@ function scI8(n){
 }
 function scI9(n){
   const L=[['$ zcat reads.fastq.gz | awk \'NR%4==2\' | wc -l','# count reads'],['$ grep -c \'&gt;\' assembly.fasta','# count contigs'],['$ samtools view -c -q 30 sample.bam','# reads with MAPQ ≥ 30'],['$ snakemake --cores 8 --use-conda','# rerun the whole pipeline']];
-  const x0=n?10:24, w=n?340:592, lh=n?34:22;
+  const x0=n?10:24, w=n?340:592, lh=n?34:36;
   let t=`<rect x="${x0}" y="20" width="${w}" height="${n?L.length*lh+20:L.length*lh+22}" rx="6" fill="#2B2620"/>`;
-  L.forEach(([c,m],i)=>{const y=40+i*lh;t+=n?Tc(x0+10,y,c,'#EFE8D8',10.5,'mono start')+Tc(x0+10,y+14,m,'#A9C49A',10,'mono start'):Tc(x0+12,y,c,'#EFE8D8',12,'mono start')+Tc(x0+380,y,m,'#A9C49A',12,'mono start');});
+  L.forEach(([c,m],i)=>{const y=40+i*lh;t+=n?Tc(x0+10,y,c,'#EFE8D8',10.5,'mono start')+Tc(x0+10,y+14,m,'#A9C49A',10,'mono start'):Tc(x0+12,y,c,'#EFE8D8',12,'mono start')+Tc(x0+40,y+16,m,'#A9C49A',12,'mono start');});
   const top=n?20+L.length*lh+20:20+L.length*lh+22;
   const items=[['Pipes and text tools','Each Unix tool does one job and passes text along a pipe (|): grep finds lines, awk picks columns and computes, sort and uniq count. Most bioinformatic formats are plain text for this reason.'],['Python and R','Python (with Biopython and pandas) for parsing and gluing tools together; R (with Bioconductor, DESeq2, phyloseq, ggplot2) for statistics and figures.'],['Workflow managers','Snakemake (2012) and Nextflow (2017) describe a pipeline as rules with inputs and outputs, rerun only what changed, and run on a laptop, a cluster or the cloud; nf-core shares tested pipelines.'],['Reproducibility','Pin software versions with conda environments or containers, keep code in git, record parameters and random seeds, and deposit raw reads in SRA or ENA.']];
   const c=cards(n,items,{y:top+16,num:1});

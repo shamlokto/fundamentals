@@ -14,7 +14,12 @@ function scA1(n){return introPlate(n,{q:'Where do the carbon and nitrogen in liv
 function scA2(n){const c=CFIX[cfSel];return explorer(n,{h:c.k,rows:c.rows,note:'Six pathways of CO₂ fixation are known in nature; cost and oxygen sensitivity explain where each is found. The reductive glycine pathway is a recently recognised seventh.'});}
 function scA3(n){
   const rows=[['Oxygenic','cyanobacteria, algae, plants','water','two photosystems (PSII + PSI)','O₂'],['Anoxygenic, purple','purple sulfur and non-sulfur bacteria','H₂S, H₂, Fe²⁺, organics','one, quinone-type (type II)','S⁰, no O₂'],['Anoxygenic, green','green sulfur bacteria (Chlorobium)','H₂S, H₂','one, Fe–S type (type I); chlorosomes','S⁰'],['Heliobacteria','Gram-positive heliobacteria','organics','one, type I','—'],['Rhodopsin','many marine bacteria and haloarchaea','—','retinal proton pump, not a reaction centre','—']];
-  const t=wtable(n,['Type','Who','Electron donor','Reaction centres','Product'],rows,n?[[6,13],[70,12],[150,10],[220,12],[310,6]]:[[20,14],[120,20],[270,16],[400,24],[560,8]],{y0:30,R:n?356:624});
+  const t=n?(()=>{let y=30,s='';const K=['who','donor','reaction centre','product'];
+      rows.forEach((r,i)=>{let q=T(16,y,r[0],'cname start f14');y+=20;
+        r.slice(1).forEach((v,j)=>{const L=wrap(v,28);q+=T(24,y,K[j],'mono acc start f11')+L.map((l,k)=>T(150,y+k*16,l,'note start f12')).join('');y+=L.length*16+2;});
+        s+=G('a-fade',(.1*i).toFixed(2),q);y+=12;});
+      return {s,y:y-10};})()
+    :wtable(n,['Type','Who','Electron donor','Reaction centres','Product'],rows,[[20,14],[120,20],[270,16],[400,21],[560,9]],{y0:30,R:624});
   const p=para(n?16:24,t.y+12,'Oxygenic photosynthesis, invented once in the ancestors of cyanobacteria, oxidised the Earth’s surface about 2.4 billion years ago (the Great Oxidation Event). Proteorhodopsin, found in 2000, may let a large share of ocean bacteria harvest light without chlorophyll.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
@@ -29,8 +34,8 @@ function scA4(n){
     +T(190+d,296,'nitratation','note mid f12 halo')+Tc(190+d,354,'NO₃⁻ → NO₂⁻','#A4473A',12,'note mid')
     +Tc(58+d,214,'denitri-','#A4473A',12,'note end')+Tc(58+d,228,'fication','#A4473A',12,'note end')+Tc(n?12:20,388,'red: denitrification, NO₃⁻ → NO₂⁻ → NO → N₂O → N₂','#A4473A',12,'note start'));
   const cy=200, R=170;
-  const b=n?bullets(24,416,[['Fixation','Nitrogenase, N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Oxygen-sensitive.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota), nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both.'],['Denitrification','Nitrate respiration to N₂ via nitrite, NO and N₂O, a potent greenhouse gas.'],['Anammox','NH₄⁺ + NO₂⁻ → N₂ (Planctomycetes), a major sink of fixed nitrogen in oceans.']],44,{d0:1,gap:18})
-    :bullets(400,48,[['Fixation','Nitrogenase: N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Extremely oxygen-sensitive, protected by heterocysts, respiration or root nodules.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota) then nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both (2015).'],['Denitrification','Nitrate respiration, step by step: NO₃⁻ → NO₂⁻ → NO → N₂O → N₂. N₂O is a potent greenhouse gas.'],['Anammox','Anaerobic ammonium oxidation, NH₄⁺ + NO₂⁻ → N₂, by Planctomycetes: a major ocean sink of fixed nitrogen.']],32,{d0:1,gap:18});
+  const b=n?bullets(24,416,[['Fixation','Nitrogenase, N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Oxygen-sensitive.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota), nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both.'],['Denitrification','Nitrate respiration to N₂ via nitrite, NO and N₂O, a potent greenhouse gas.'],['Anammox','NH₄⁺ + NO₂⁻ → N₂ (Planctomycetes), a major sink of fixed nitrogen in oceans.']],44,{d0:1,gap:26})
+    :bullets(400,48,[['Fixation','Nitrogenase: N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Extremely oxygen-sensitive, protected by heterocysts, respiration or root nodules.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota) then nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both (2015).'],['Denitrification','Nitrate respiration, step by step: NO₃⁻ → NO₂⁻ → NO → N₂O → N₂. N₂O is a potent greenhouse gas.'],['Anammox','Anaerobic ammonium oxidation, NH₄⁺ + NO₂⁻ → N₂, by Planctomycetes: a major ocean sink of fixed nitrogen.']],32,{d0:1,gap:26});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,400)),s:s+b.s};
 }
 function scA5(n){
@@ -42,8 +47,8 @@ function scA6(n){
   const cx=n?180:180, cy=n?170:180, R=n?110:120;
   const items=[{t:'SO₄²⁻',w:66},{t:'H₂S',w:56,f:PAL.gold},{t:'S⁰',w:50,f:PAL.gold},{t:'SO₃²⁻',w:66}];
   let s=G('a-fade',0,cycle(cx,cy,R,items,{labs:['dissimilatory|reduction','oxidation','oxidation','oxidation'],lr:n?18:22}));
-  const b=n?bullets(24,cy+R+46,[['Reducers','Desulfovibrio and relatives respire sulfate, making H₂S in anoxic sediments and guts.'],['Oxidisers','Beggiatoa, Thiobacillus, phototrophic sulfur bacteria; cable bacteria conduct electrons over centimetres.'],['Acid mine drainage','Acidithiobacillus oxidises pyrite, releasing sulfuric acid and metals.']],44,{d0:1,gap:18})
-    :bullets(360,48,[['Reducers','Desulfovibrio and relatives respire sulfate, producing H₂S in anoxic sediments, guts and oil wells (souring, corrosion).'],['Oxidisers','Beggiatoa and Thiobacillus oxidise sulfide aerobically; purple and green sulfur bacteria use it in light; cable bacteria conduct electrons over centimetres.'],['Intermediates','Sulfite is the last step before sulfate; thiosulfate, another intermediate, is oxidised by the Sox system or split (disproportionated) into sulfate and sulfide for energy.'],['Acid mine drainage','Acidithiobacillus oxidises pyrite, releasing sulfuric acid and dissolved metals; the same chemistry leaches copper.']],34,{d0:1,gap:18});
+  const b=n?bullets(24,cy+R+46,[['Reducers','Desulfovibrio and relatives respire sulfate, making H₂S in anoxic sediments and guts.'],['Oxidisers','Beggiatoa, Thiobacillus, phototrophic sulfur bacteria; cable bacteria conduct electrons over centimetres.'],['Acid mine drainage','Acidithiobacillus oxidises pyrite, releasing sulfuric acid and metals.']],44,{d0:1,gap:26})
+    :bullets(360,48,[['Reducers','Desulfovibrio and relatives respire sulfate, producing H₂S in anoxic sediments, guts and oil wells (souring, corrosion).'],['Oxidisers','Beggiatoa and Thiobacillus oxidise sulfide aerobically; purple and green sulfur bacteria use it in light; cable bacteria conduct electrons over centimetres.'],['Intermediates','Sulfite is the last step before sulfate; thiosulfate, another intermediate, is oxidised by the Sox system or split (disproportionated) into sulfate and sulfide for energy.'],['Acid mine drainage','Acidithiobacillus oxidises pyrite, releasing sulfuric acid and dissolved metals; the same chemistry leaches copper.']],34,{d0:1,gap:26});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};
 }
 function scA7(n){

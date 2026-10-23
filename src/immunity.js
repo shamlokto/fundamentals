@@ -41,8 +41,8 @@ function scI4(n){
      op:{x:88,y:196,w:150,t:'C3b: opsonisation',f:PAL.blue},
      an:{x:264,y:196,w:150,t:'C3a, C5a:|inflammation',f:PAL.rose},
      mac:{x:180,y:278,w:210,t:'C5–C9: membrane|attack complex',f:PAL.lilac}}
-   :{t:{x:120,y:60,w:170,t:'three triggers:|classical, lectin,|alternative'},
-     c3:{x:330,y:60,w:150,t:'C3 → C5|convertases',f:PAL.gold},
+   :{t:{x:106,y:60,w:170,t:'three triggers:|classical, lectin,|alternative'},
+     c3:{x:345,y:60,w:150,t:'C3 → C5|convertases',f:PAL.gold},
      op:{x:540,y:40,w:150,t:'C3b: opsonisation',f:PAL.blue},
      an:{x:540,y:110,w:160,t:'C3a, C5a:|inflammation',f:PAL.rose},
      mac:{x:540,y:185,w:160,t:'MAC (C5b–C9):|lysis',f:PAL.lilac}};
@@ -124,7 +124,7 @@ function scI8(n){
    ['IgA','dimer at mucosa','guards gut and airway surfaces; in breast milk'],
    ['IgE','on mast cells','parasites and, unhelpfully, allergy'],
    ['IgD','on naive B cells','a receptor; little secreted']];
-  const t=wtable(n,['Isotype','Form','Role'],rows,n?[[10,10],[70,12],[150,16]]:[[270,16],[350,18],[470,22]],{y0:n?ly+78:40,R:n?354:620});
+  const t=wtable(n,['Isotype','Form','Role'],rows,n?[[10,10],[70,12],[150,16]]:[[304,14],[376,16],[484,20]],{y0:n?ly+78:40,R:n?354:620});
   let wb={s:'',y:t.y};
   if(!n)wb=bullets(24,ly+82,[
     ['One site, many jobs','The two Fab arms fix the target; the Fc stem decides what happens: neutralise, flag for phagocytosis, trigger complement.'],
@@ -136,11 +136,11 @@ function scI8(n){
 }
 function scI9(n){
   const AX=n?axes(58,36,268,150,{xr:[1,13],yr:[0,100],xt:[[2,'2'],[6,'6'],[12,'12']],yt:[[0,'0'],[50,'50'],[100,'100%']],xlab:'R0',ylab:'% immune'})
-    :axes(72,40,300,160,{xr:[1,13],yr:[0,100],xt:[[2,'2'],[6,'6'],[12,'12']],yt:[[0,'0'],[50,'50'],[100,'100%']],xlab:'basic reproduction number R0',ylab:'% immune needed (1 − 1/R0)'});
+    :axes(90,40,280,160,{xr:[1,13],yr:[0,100],xt:[[2,'2'],[6,'6'],[12,'12']],yt:[[0,'0'],[50,'50'],[100,'100%']],ydx:48,xlab:'basic reproduction number R0',ylab:'% immune needed (1 − 1/R0)'});
   let s=AX.s+G('a-fade',.3,curve(AX,x=>100*(1-1/x),{col:'#2F5276'}));
   const marks=[[2,'1918 flu'],[3,'SARS-CoV-2 early'],[12,'measles']];
   s+=G('a-fade',.5,marks.map(m=>`<circle cx="${FX(AX.px(m[0]))}" cy="${FX(AX.py(100*(1-1/m[0])))}" r="4" fill="${PAL.rose}" stroke="${INK}" stroke-width="1"/>`
-    +(n?'':T(FX(AX.px(m[0])+6),FX(AX.py(100*(1-1/m[0]))+4),m[1],'note start f10 halo'))).join(''));
+    +(n?'':m[0]===12?T(FX(AX.px(m[0])),FX(AX.py(100*(1-1/m[0]))-10),m[1],'note mid f10 halo'):T(FX(AX.px(m[0])+6),FX(AX.py(100*(1-1/m[0]))+4),m[1],'note start f10 halo'))).join(''));
   const b=bullets(n?24:400,n?AX.y+AX.h+54:52,[
     ['Types of vaccine','Live-attenuated (MMR, BCG, oral polio) give strong, lasting immunity but can rarely revert; inactivated (whole-cell pertussis, injected polio) are safe but weaker; subunit, toxoid (tetanus, diphtheria), conjugate (Hib, pneumococcus) and mRNA or viral-vector (COVID-19) vaccines show just the right piece.'],
     ['Herd immunity','If enough of a population is immune, chains of transmission break and even the unvaccinated are protected. The threshold is 1 − 1/R0: about 50% at R0 of 2, but 92–95% for measles, with R0 of 12–18.'],

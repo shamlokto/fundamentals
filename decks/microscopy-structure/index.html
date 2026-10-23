@@ -699,33 +699,33 @@ function scM2(n){
 }
 function scM3(n){
   const m=MSC[mscSel];
-  const ex=explorer(n,{h:m.k,rows:[['Resolution',m.res],['What it shows',m.shows],['Live cells?',m.live],['Limitations',m.lim]],note:m.note,art:(cx,cy)=>mscArt(m,cx,cy,n?300:320),artH:104},{y:20});
+  const ex=explorer(n,{h:m.k,rows:[['Resolution',m.res],['What it shows',m.shows],['Live cells?',m.live],['Limitations',m.lim]],note:m.note,art:(cx,cy)=>mscArt(m,cx,cy,n?300:320),artH:114},{y:20});
   return ex;
 }
 function scM4(n){
-  let s='';const cy=70, xs=n?[60,180,300]:[110,320,530];
-  s+=G('a-fade',0,`<circle cx="${xs[0]}" cy="${cy}" r="30" fill="#7FD08A" opacity=".35"/><circle cx="${xs[0]}" cy="${cy}" r="30" fill="none" stroke="#A4473A" stroke-width="14" opacity=".55"/><circle cx="${xs[0]}" cy="${cy}" r="7" fill="#4F7A3F"/>`+T(xs[0],cy+52,'STED','lab mid f13')+T(xs[0],cy+68,'donut shrinks the spot','note mid f11'));
+  let s='';const cy=70, xs=n?[60,180,300]:[110,320,530], SUB=(x,t)=>n?t.split('|').map((l,i)=>T(x,cy+68+i*15,l,'note mid f11')).join(''):T(x,cy+68,t.replace('|',' '),'note mid f11');
+  s+=G('a-fade',0,`<circle cx="${xs[0]}" cy="${cy}" r="30" fill="#7FD08A" opacity=".35"/><circle cx="${xs[0]}" cy="${cy}" r="30" fill="none" stroke="#A4473A" stroke-width="14" opacity=".55"/><circle cx="${xs[0]}" cy="${cy}" r="7" fill="#4F7A3F"/>`+T(xs[0],cy+52,'STED','lab mid f13')+SUB(xs[0],'donut shrinks|the spot'));
   let st='';for(let i=-4;i<=4;i++)st+=`<rect x="${FX(xs[1]-36+i*8+32)}" y="${cy-34}" width="4" height="68" fill="#2F5276" opacity=".35"/>`;
-  s+=G('a-fade',.3,`<rect x="${xs[1]-36}" y="${cy-34}" width="72" height="68" fill="#EFE6D2" stroke="${INK}" stroke-width="1"/>`+st+T(xs[1],cy+52,'SIM','lab mid f13')+T(xs[1],cy+68,'striped light, ~2× gain','note mid f11'));
+  s+=G('a-fade',.3,`<rect x="${xs[1]-36}" y="${cy-34}" width="72" height="68" fill="#EFE6D2" stroke="${INK}" stroke-width="1"/>`+st+T(xs[1],cy+52,'SIM','lab mid f13')+SUB(xs[1],'striped light,|~2× gain'));
   let pa=`<rect x="${xs[2]-36}" y="${cy-34}" width="72" height="68" fill="#14181A" stroke="${INK}" stroke-width="1"/>`;
   [[-18,-12],[8,-20],[20,10],[-6,14],[-24,18],[14,-2]].forEach(([dx,dy],i)=>{pa+=i<2?`<circle cx="${xs[2]+dx}" cy="${cy+dy}" r="7" fill="#7FD08A" opacity=".45"/>`:'';pa+=`<circle cx="${xs[2]+dx}" cy="${cy+dy}" r="1.8" fill="#F3EEE2"/>`;});
-  s+=G('a-fade',.6,pa+T(xs[2],cy+52,'PALM / STORM','lab mid f13')+T(xs[2],cy+68,'find each blinking centre','note mid f11'));
+  s+=G('a-fade',.6,pa+T(xs[2],cy+52,'PALM / STORM','lab mid f13')+SUB(xs[2],'find each|blinking centre'));
   const rows=[['STED','a doughnut of depletion light switches off fluorescence except at the centre','~30–80 nm','yes, scanned'],['SIM','patterned light; moiré fringes carry finer detail, recovered by computation','~100–120 nm','yes, fast'],['PALM / STORM','only a few molecules fluoresce at a time; each is localised to its centre over thousands of frames','~20–30 nm','mostly fixed'],['MINFLUX, expansion','localising with a light minimum; or swelling the sample in a gel about fourfold','a few nm to ~70 nm','fixed']];
-  const t=wtable(n,['Method','Principle','Resolution','Live?'],rows,n?[[10,10],[86,22],[230,10],[300,7]]:[[24,14],[140,46],[440,14],[540,12]],{y0:n?170:170,d0:.8,R:n?354:620});
+  const t=wtable(n,['Method','Principle','Resolution','Live?'],rows,n?[[10,10],[86,22],[230,10],[300,7]]:[[24,14],[140,46],[440,14],[540,12]],{y0:n?186:170,d0:.8,R:n?354:620});
   const p=para(n?16:24,t.y+12,'Eric Betzig, Stefan Hell and William Moerner shared the 2014 Nobel Prize in Chemistry. In bacteria these methods showed that the FtsZ division ring is patchy and treadmilling, and mapped the positions of chemoreceptor arrays and chromosome loci.',n?50:92,'note start f13',17,1.2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
 }
 function scM5(n){
   const C1='#EFE6D2', N=n?{
-     fix:{x:90,y:40,w:160,t:'fix, embed in resin,|cut thin sections'},t1:{x:270,y:40,w:160,t:'TEM: inside|cells',f:PAL.blue},
+     fix:{x:90,y:40,w:172,t:'fix, embed|in resin, section'},t1:{x:270,y:40,w:160,t:'TEM: inside|cells',f:PAL.blue},
      neg:{x:90,y:110,w:160,t:'negative stain|(uranyl acetate)'},t2:{x:270,y:110,w:160,t:'TEM: particle|shapes, ~2 nm',f:PAL.blue},
      coat:{x:90,y:180,w:160,t:'dry, coat|with metal'},sem:{x:270,y:180,w:160,t:'SEM: surfaces',f:PAL.gold},
      vit:{x:90,y:290,w:160,t:'plunge-freeze|in vitreous ice',f:PAL.green},spa:{x:270,y:255,w:160,t:'single-particle|cryo-EM',f:PAL.lilac},et:{x:270,y:325,w:160,t:'FIB milling,|cryo-ET',f:PAL.lilac}}
    :{sp:{x:60,y:165,w:96,t:'specimen'},
-     fix:{x:290,y:40,w:170,t:'fix, embed in resin,|cut thin sections'},t1:{x:515,y:40,w:190,t:'TEM: ultrastructure|inside cells',f:PAL.blue},
-     neg:{x:290,y:115,w:170,t:'negative stain|(uranyl acetate)'},t2:{x:515,y:115,w:190,t:'TEM: particle shapes,|~2 nm',f:PAL.blue},
-     coat:{x:290,y:190,w:170,t:'dry, coat with metal'},sem:{x:515,y:190,w:190,t:'SEM: surfaces in 3D|perspective',f:PAL.gold},
-     vit:{x:290,y:290,w:170,t:'plunge-freeze|in vitreous ice',f:PAL.green},spa:{x:515,y:260,w:190,t:'single-particle cryo-EM|(purified complexes)',f:PAL.lilac},et:{x:515,y:325,w:190,t:'FIB milling, then|cryo-ET (cells)',f:PAL.lilac}};
+     fix:{x:296,y:40,w:186,t:'fix, embed in resin,|cut thin sections'},t1:{x:523,y:40,w:214,t:'TEM: ultrastructure|inside cells',f:PAL.blue},
+     neg:{x:296,y:115,w:186,t:'negative stain|(uranyl acetate)'},t2:{x:523,y:115,w:214,t:'TEM: particle shapes,|~2 nm',f:PAL.blue},
+     coat:{x:296,y:190,w:186,t:'dry, coat with metal'},sem:{x:523,y:190,w:214,t:'SEM: surfaces in 3D|perspective',f:PAL.gold},
+     vit:{x:296,y:290,w:186,t:'plunge-freeze|in vitreous ice',f:PAL.green},spa:{x:523,y:260,w:214,t:'single-particle cryo-EM|(purified complexes)',f:PAL.lilac},et:{x:523,y:325,w:214,t:'FIB milling, then|cryo-ET (cells)',f:PAL.lilac}};
   const E=[['fix','t1',''],['neg','t2',''],['coat','sem',''],['vit','spa',''],['vit','et','']];
   if(!n)E.push(['sp','fix',''],['sp','neg',''],['sp','coat',''],['sp','vit','']);
   let s=G('a-fade',0,flow(N,E));
@@ -760,7 +760,7 @@ function scM7(n){
   const R=[[.2,n?'EM':'~0.2 nm: cryo-EM, X-ray',0],[20,n?'super-res':'~20 nm: super-resolution',1],[200,n?'light':'~200 nm: light',0],[1e5,n?'eye':'0.1 mm: eye',1]];
   R.forEach(([v,l,row],i)=>{const X=FX(px(v));s+=G('a-fade',(.8+i*.15).toFixed(2),ln(X,y0-8,X,y0+H,'#A4473A',1.2,'4 3')+T(X,y0-14-row*14,l,`note ${i===3?'end':'mid'} f11 halo`));});
   items.forEach((it,i)=>{const y=y0+i*(bh+gap), w=Math.max(2,px(it[1])-x0);
-    s+=G('a-fade',(i*.12).toFixed(2),T(x0-8,y+bh-4,it[0],'lab end '+(n?'f11':'f12'))+box(x0,y,FX(w),bh,it[2],2)+(n&&i>=4?T(FX(x0+w-6),y+bh-4,it[3],'mono end f10'):T(FX(x0+w+6),y+bh-4,it[3],'mono start f10 halo')));});
+    s+=G('a-fade',(i*.12).toFixed(2),T(x0-8,y+bh-4,it[0],'lab end '+(n?'f11':'f12'))+box(x0,y,FX(w),bh,it[2],2)+((n&&i>=4)||i===5?T(FX(x0+w-6),y+bh-4,it[3],'mono end f10'):T(FX(x0+w+6),y+bh-4,it[3],'mono start f10 halo')));});
   const ay=y0+H+4;
   s+=ln(x0,ay,x1,ay,'#6A5B47',1.2);
   [[.1,'0.1 nm'],[1,'1 nm'],[10,'10'],[100,'100'],[1000,'1 µm'],[1e4,'10'],[1e5,'100 µm']].forEach(([v,l],i)=>{const X=FX(px(v));s+=ln(X,ay,X,ay+4,'#6A5B47',1)+T(X,ay+16,n&&i%2?'':l,`note ${i===6?'end':'mid'} f10`);});
@@ -784,7 +784,7 @@ function scM9(n){
   const band=(a,b,c)=>`<rect x="${A.x}" y="${FX(A.py(b))}" width="${A.w}" height="${FX(A.py(a)-A.py(b))}" fill="${c}" opacity=".35"/>`;
   let s=band(90,100,'#2F5276')+band(70,90,'#8FB1CF')+band(50,70,'#E0C88A')+band(20,50,'#E7A99B')+A.s;
   const f=x=>{const dom=(m,w)=>Math.exp(-(((x-m)/w)**6));return 30+62*Math.max(dom(85,62),dom(225,55))+3*Math.sin(x/7);};
-  s+=G('a-fade',.4,curve(A,f,{col:'#3A2E22',n:200})+T(FX(A.px(85)),FX(A.py(97)),'domain 1','note mid f10 halo')+T(FX(A.px(225)),FX(A.py(97)),'domain 2','note mid f10 halo')+T(FX(A.px(158)),FX(A.py(38)),'linker','note mid f10 halo'));
+  s+=G('a-fade',.4,curve(A,f,{col:'#3A2E22',n:200})+T(FX(A.px(85)),FX(A.py(97)),'domain 1','note mid f10 halo')+T(FX(A.px(225)),FX(A.py(97)),'domain 2','note mid f10 halo')+T(FX(A.px(148)),FX(A.py(22)),'linker','note end f10 halo'));
   const items=[['AlphaFold2 (2020–21)','DeepMind’s network predicted structures close to experimental accuracy at the CASP14 assessment in 2020; the paper and a database with EMBL-EBI followed in 2021, now over 200 million predictions.'],['pLDDT, per residue','0–100. Above 90 very high, 70–90 confident, below 50 usually disordered. It is a confidence score, not a measured quantity.'],['PAE, per pair','Predicted aligned error, in Å: whether the relative position of two domains is trustworthy, even when each domain is.'],['Limitations','One static conformation; ligands, cofactors and the effects of point mutations are often missed; complexes need multimer versions. A prediction is a hypothesis to test.']];
   let b;
   if(n)b=bullets(24,A.y+A.h+60,items,44,{d0:.8,gap:18});

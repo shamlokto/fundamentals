@@ -31,7 +31,7 @@ function scM3(n){
     :axes(84,36,286,190,{xr:[0,10],yr:[0,1.1],xt:[[0,'0'],[1,'Ks'],[5,'5 Ks'],[10,'10 Ks']],yt:[[0,'0'],[.5,'½ μmax'],[1,'μmax']],ydx:52,xlab:'substrate concentration S',ylab:'growth rate μ'});
   let s=A.s+ln(A.x,FX(A.py(1)),A.x+A.w,FX(A.py(1)),'#9A8F7C',1,'4 3');
   s+=G('a-fade',.2,curve(A,x=>x/(1+x),{col:'#2F5276'})+ln(FX(A.px(1)),FX(A.py(.5)),FX(A.px(1)),A.y+A.h,'#A4473A',1,'3 3')+ln(A.x,FX(A.py(.5)),FX(A.px(1)),FX(A.py(.5)),'#A4473A',1,'3 3')+`<circle cx="${FX(A.px(1))}" cy="${FX(A.py(.5))}" r="4" fill="#A4473A"/>`);
-  s+=G('a-fade',.4,T(FX(A.px(5)),FX(A.py(.6)),'μ = μmax · S / (Ks + S)','mono mid f12 halo'));
+  s+=G('a-fade',.4,T(FX(A.px(5.6)),FX(A.py(.52)),'μ = μmax · S / (Ks + S)','mono mid f12 halo'));
   const items=[['Monod (1949)','Growth rate saturates with substrate, like an enzyme. Ks is the concentration giving half the maximum rate; for sugars with high-affinity transporters it is often micromolar.'],['Yield','Biomass made per unit of substrate consumed, Y. Substrate falls as dS/dt = −μX / Y.'],['The chemostat','Fresh medium flows in at dilution rate D. At steady state μ = D, so the experimenter sets the growth rate. If D exceeds μmax the culture washes out.']];
   const b=n?bullets(24,A.y+A.h+60,items,44,{d0:.8,gap:22}):bullets(410,52,items,28,{d0:.8,gap:22});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,A.y+A.h+50)),s:s+b.s};
