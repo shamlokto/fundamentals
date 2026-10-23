@@ -763,7 +763,7 @@ function scI8(n){
   const cx=n?96:120, hy=n?110:116, g=igG(cx,hy);
   const lab=(x,y,t,an)=>T(x,y,t,'note '+an+' f12 halo');
   let s=G('a-fade',0,g.s
-    +lab(g.tx-12,g.ty-4,'antigen','end')
+    +(n?lab(g.tx,g.ty-14,'antigen','mid'):lab(g.tx-12,g.ty-4,'antigen','end'))
     +lab(cx+62,hy-50,'Fab arm','start')+lab(cx+62,hy-36,'(binds antigen)','start')
     +lab(cx+30,hy+10,'hinge (S–S)','start')+lab(cx+24,hy+42,'Fc stem','start')+lab(cx+24,hy+56,'(effector end)','start'));
   const ly=hy+86, lx=n?20:24, sw=(x,y,f,t)=>`<rect x="${x}" y="${y-9}" width="14" height="11" rx="3" fill="${f}" stroke="${INK}" stroke-width=".8" class="tint"/>`+T(x+20,y,t,'note start f12');
