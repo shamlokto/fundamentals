@@ -518,7 +518,7 @@ function scR1(n){
         +L.map((m,j)=>T(18,yy+44+j*15,m,'note start f11')).join(''));
       yy+=44+L.length*15+16;});
   }
-  const b=bullets(n?24:30,yy,[['Global regulators sit on top','A handful of proteins control hundreds of genes each: CRP for carbon, Fnr for oxygen, Fur for iron, LexA for DNA damage, and the nucleoid-associated proteins H-NS and Lrp as general silencers. Roughly half of all transcription units in E. coli respond to one of about seven of them.'],
+  const b=bullets(n?24:30,yy,[['Global regulators sit on top','A handful of proteins control hundreds of genes each: CRP for carbon, Fnr for oxygen, Fur for iron, LexA for DNA damage, and nucleoid-associated proteins such as H-NS, a general silencer. Seven regulators (CRP, FNR, IHF, Fis, ArcA, NarL and Lrp) directly control about half of all E. coli genes.'],
    ['The architecture is a shallow hierarchy, not a chain','Most genes are two or three steps from a sensor. There is no deep cascade in most responses, because a long chain is slow, and bacteria are optimising for speed.'],
    ['Motifs recur','Negative autoregulation speeds up the response and holds the level steady. The coherent feed-forward loop requires a signal to persist before the output comes on, filtering transient noise. The incoherent one makes a pulse. The same few motifs appear across unrelated networks because they do useful things.'],
    ['And regulation is not only transcription','Attenuation, riboswitches, small RNAs, proteolysis, and post-translational modification all act after the promoter. The promoter is simply the easiest layer to measure, which is why it dominates the literature.']],n?44:88,{d0:1.8,gap:24});
@@ -624,7 +624,7 @@ function scR4(n){
     +Tc(16,y+142,'above it, the receptor fires','#6A5B47',10,'mono start'));
   let yy=y+(n?168:148);
   const rows=[['Gram-negative','acyl-homoserine lactones','Made by a LuxI-type synthase, diffuse freely across the membrane, bind a cytoplasmic LuxR-type regulator. Chain length and substitution give specificity between species.'],
-   ['Gram-positive','short peptides','Made as a precursor, cleaved and exported, detected outside by a membrane histidine kinase. The peptide cannot cross the membrane, so a two-component system is required — ComDE and AgrCA are the models.'],
+   ['Gram-positive','short peptides','Made as a precursor, cleaved and exported. Many are detected outside by a membrane histidine kinase (ComDE and AgrCA are the models); others, such as the Phr peptides of Bacillus, are imported by an oligopeptide permease and bind a cytoplasmic receptor.'],
    ['Between species','AI-2, from LuxS','A furanosyl borate diester made by an enzyme in the activated methyl cycle. Whether it is a genuine interspecies signal or largely a metabolic by-product is still argued.'],
    ['Within the host','host signals','Many systems also respond to host molecules — catecholamines, bile, mucin — so the circuit integrates “how many of us” with “where are we”.']];
   const t=n?wtable(n,['Where','Signal, and how it works'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,12],[110,39]],{y0:yy,d0:1.2})
@@ -669,7 +669,7 @@ function scR6(n){
   s+=G('a-fade',1.3,Tc(cx+(n?54:80),y+(n?68:74),'the alarmone','#6A5B47',10,'mono mid'));
   let yy=y+(n?92:100);
   const rows=[['Down','rRNA and tRNA synthesis','ppGpp with DksA binds RNA polymerase and destabilises open complexes at promoters with a GC-rich discriminator — which is exactly what ribosomal RNA promoters have. Ribosome synthesis stops within seconds.'],
-   ['Down','replication initiation, and elongation','In Firmicutes ppGpp also lowers the GTP pool directly, which blocks initiation at oriC and slows the fork.'],
+   ['Down','replication initiation, and elongation','In E. coli ppGpp blocks new rounds of initiation at oriC; in Bacillus (p)ppGpp inhibits the primase DnaG, which stalls replication forks.'],
    ['Up','amino-acid biosynthesis, stress regulons','Sigma factor competition shifts towards σS and the alternative sigmas as σ70 holdings are released, so the general stress response comes on.'],
    ['Up','tolerance and persistence','Slow growth makes most antibiotics less effective. ppGpp is central to antibiotic tolerance and to persister formation, though the simple story that it alone makes persisters has not survived scrutiny.']];
   const t=n?wtable(n,['','What changes'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,5],[52,45]],{y0:yy,d0:1.6})
@@ -701,10 +701,11 @@ function scR7(n){
 function scR8(n){
   let s='';const y=n?46:52, cx=n?180:320;
   /* asymmetric septum picture */
-  const cell=(ox,oy,k)=>{let t=cellRod(ox,oy,n?108:140,n?26:30,{});
-    if(k>=1)t+=`<path d="M${FX(ox-(n?22:28))} ${FX(oy-(n?26:30))} V${FX(oy+(n?26:30))}" stroke="${CELLE}" stroke-width="3"/>`;
-    if(k>=2)t+=`<ellipse cx="${FX(ox-(n?2:0))}" cy="${oy}" rx="${n?22:26}" ry="${n?18:21}" fill="${METC}" fill-opacity=".45" stroke="${METC}" stroke-width="1.6"/>`;
-    if(k>=3)t+=`<ellipse cx="${FX(ox-(n?2:0))}" cy="${oy}" rx="${n?24:28}" ry="${n?20:23}" fill="none" stroke="${TNC}" stroke-width="3"/>`;
+  const cell=(ox,oy,k)=>{const L=n?100:100, R=n?26:30, lt=ox-L/2-R*.62, sx=lt+(L+R*1.24)*.3, fx=(lt+sx)/2+(n?10:12);
+    let t=cellRod(ox,oy,L,R,k>=3?{dash:'4 3',fill:'none'}:{});
+    if(k===0)t+=`<path d="M${FX(sx)} ${FX(oy-R)} V${FX(oy+R)}" stroke="${CELLE}" stroke-width="3"/>`;
+    if(k===1)t+=`<path d="M${FX(sx-6)} ${FX(oy-R)} Q${FX(sx+R*.9)} ${oy} ${FX(sx-6)} ${FX(oy+R)}" stroke="${CELLE}" stroke-width="2.4" fill="none"/><path d="M${FX(sx-10)} ${FX(oy-R+4)} Q${FX(sx+R*.6)} ${oy} ${FX(sx-10)} ${FX(oy+R-4)}" stroke="${CELLE}" stroke-width="1.6" fill="none"/>`;
+    if(k>=2)t+=`<ellipse cx="${FX(fx)}" cy="${oy}" rx="${FX((sx-lt)/2)}" ry="${FX(R*.6)}" fill="${METC}" fill-opacity=".45" stroke="${METC}" stroke-width="1.6"/><ellipse cx="${FX(fx)}" cy="${oy}" rx="${FX((sx-lt)/2+3)}" ry="${FX(R*.6+3)}" fill="none" stroke="${TNC}" stroke-width="3"/>`;
     return t;};
   const labs=['asymmetric septum','engulfment','cortex and coat','mother cell lyses'];
   if(!n){[0,1,2,3].forEach(k=>{const ox=104+k*148;
@@ -725,7 +726,7 @@ function scR8(n){
 
 function scR9(n){
   const rows=[['Caulobacter crescentus','an asymmetric cell cycle','Every division makes a stalked cell and a motile swarmer. Three master regulators — CtrA, GcrA and DnaA — are made and destroyed in sequence, and CtrA is both a transcription factor and a block on replication initiation. The cycle is driven by regulated proteolysis as much as by transcription.'],
-   ['Myxococcus xanthus','multicellular fruiting bodies','On starvation, tens of thousands of cells move together, mound up, and a fraction differentiate into myxospores while the rest lyse. Coordination uses contact-dependent C-signalling and a travelling wave of motility reversals.'],
+   ['Myxococcus xanthus','multicellular fruiting bodies','On starvation, about a hundred thousand cells move together, mound up, and a fraction differentiate into myxospores while the rest lyse. Coordination uses contact-dependent C-signalling and a travelling wave of motility reversals.'],
    ['Streptomyces','hyphae, aerial growth, spore chains','A mycelium grows, then raises aerial hyphae that septate into chains of spores; antibiotics are made as part of the same programme, under bld and whi gene control. Development and secondary metabolism are one regulatory problem.'],
    ['Biofilms','a structured community','Matrix production, channels, and distinct subpopulations with different expression. Not a programme in the sporulation sense, but it is coordinated, spatially organised and developmentally staged, with dispersal as a regulated final step.']];
   const t=n?wtable(n,['Organism','The programme'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,13],[118,38]],{y0:30})
@@ -736,9 +737,10 @@ function scR9(n){
 }
 
 function scR10(n){
-  const P=n?xyPlot(48,46,278,130,[0,10],[0,110],{xlab:'genome size (Mb)',ylab:'regulators (per genome)',xdy:24,ydx:16})
-          :xyPlot(70,52,300,150,[0,10],[0,110],{xlab:'genome size (Mb)',ylab:'transcription regulators (relative)',xdy:24,ydx:18});
+  const P=n?xyPlot(48,46,278,130,[0,10],[0,110],{xlab:'genome size (Mb)',ylab:'regulators (relative)',xdy:30,ydx:16})
+          :xyPlot(70,52,300,150,[0,10],[0,110],{xlab:'genome size (Mb)',ylab:'transcription regulators (relative)',xdy:32,ydx:18});
   let s=G('a-fade',0,P.s);
+  s+=G('a-fade',0,[0,2,4,6,8,10].map(v=>ln(P.px(v),P.y+P.h,P.px(v),P.y+P.h+4,AXC,1)+T(P.px(v),P.y+P.h+14,v,'mono mid f10')).join(''));
   s+=G('a-fade',.4,xyCurve(P,t=>t*t*1.05,{col:CORE,n:120}));
   s+=G('a-fade',.9,xyCurve(P,t=>t*10.5,{col:CLOUD,n:60,dash:'6 4'}));
   s+=G('a-fade',1.3,xyPts(P,[[0.6,0.4],[2.1,4.6],[4.6,22],[6.3,42],[9.1,88]],{col:PHG,r:3.6}));
@@ -753,7 +755,7 @@ function scR10(n){
 
 const REGQ=[
  {q:'A response comes on only if the inducing signal is present for more than about twenty minutes, and switches off immediately when it goes.',a:'A coherent feed-forward loop',t:'The regulator acts both directly and through a slow intermediate, and the target needs both. Persistence is required to turn on, because the intermediate has to accumulate; removal is immediate, because the direct input disappears at once. It is a noise filter.'},
- {q:'A gene is induced by a peptide that cannot cross the membrane.',a:'A two-component system',t:'If the signal stays outside, the sensing must happen outside. A membrane histidine kinase detects it and passes a phosphate to a cytoplasmic response regulator. This is why Gram-positive quorum sensing uses two-component systems while Gram-negative AHL systems do not.'},
+ {q:'A gene is induced by a peptide that cannot cross the membrane.',a:'A two-component system',t:'If the signal stays outside, the sensing must happen outside. A membrane histidine kinase detects it and passes a phosphate to a cytoplasmic response regulator. This is why peptide signals such as CSP and AIP are read by two-component systems, while AHLs, which cross the membrane, are read by cytoplasmic receptors.'},
  {q:'An entire transcriptional programme is replaced within a minute of the stress, with no new protein synthesis needed.',a:'An anti-sigma factor released',t:'The sigma factor was already made and held inactive. Proteolysis of its anti-sigma releases it, and it competes for core polymerase immediately. Requiring new synthesis would take far longer.'},
  {q:'Ribosomal RNA synthesis stops within seconds of amino-acid starvation.',a:'The stringent response',t:'An uncharged tRNA in the ribosomal A site activates RelA, which makes ppGpp. With DksA it destabilises open complexes at rRNA promoters, which have a GC-rich discriminator. Nothing else acts that fast on that specific promoter class.'},
  {q:'Deleting one of fifty diguanylate cyclases in a genome produces a clear and specific biofilm defect.',a:'Local signalling',t:'If c-di-GMP were a single global pool, one of fifty enzymes would barely matter. Specific phenotypes from single deletions are evidence that the enzyme acts locally, delivering the messenger to a particular effector.'},
@@ -786,7 +788,7 @@ const S=[
  {p:1,title:'The lac operon',chips:'lac',draw:scLac,text:"The lac operon reads two inputs. The repressor LacI reports whether lactose is present; CAP bound to cAMP reports whether glucose is scarce. Pick a condition to see how the two combine. Only lactose without glucose gives full expression."},
  {p:1,title:'Two-component systems',draw:scR2,text:"The standard bacterial sensor is a pair: a membrane kinase that autophosphorylates on a histidine, and a response regulator that receives the phosphate on an aspartate and binds DNA. Separating sensing from acting lets the same chemistry be reused for dozens of signals in one genome, with specificity enforced at the interface and by the kinase's own phosphatase activity."},
  {p:1,title:'Sigma factors',draw:scR3,text:"RNA polymerase core cannot recognise a promoter by itself. The sigma factor does that, so exchanging sigma factors replaces an entire programme in a single step. Sigmas compete for a limited pool of core enzyme, are held inactive by anti-sigma factors until needed, and can be arranged in cascades — which is what makes development possible."},
- {p:2,title:'Quorum sensing',draw:scR4,text:"A cell makes a small signal, releases it, and measures how much comes back. Gram-negatives use diffusible acyl-homoserine lactones and a cytoplasmic receptor; Gram-positives use peptides and a membrane kinase. The measurement reports cell density, but equally reports confinement and flow — which is why it is better thought of as asking whether a shared effort is worth starting."},
+ {p:2,title:'Quorum sensing',draw:scR4,text:"A cell makes a small signal, releases it, and measures how much comes back. Gram-negatives use diffusible acyl-homoserine lactones and a cytoplasmic receptor; Gram-positives use peptides, most often read by a membrane kinase. The measurement reports cell density, but equally reports confinement and flow — which is why it is better thought of as asking whether a shared effort is worth starting."},
  {p:2,title:'The pneumococcal competence circuit',draw:scR5,text:"Competence in Streptococcus pneumoniae is a quorum circuit with positive feedback and a timer. The peptide CSP accumulates, ComD and ComE switch on the early genes including the alternative sigma factor ComX, about eighty late genes follow, and the window closes after twenty minutes. The same circuit also triggers fratricide, which supplies the DNA."},
  {p:2,title:'The stringent response',draw:scR6,text:"When an uncharged tRNA enters the ribosomal A site, RelA makes ppGpp. That one molecule stops ribosomal RNA synthesis within seconds, slows replication, shifts the sigma factor balance towards stress regulons, and shifts the cell from growth to survival. It sits upstream of sporulation, virulence, competence and antibiotic tolerance in different species."},
  {p:2,title:'Cyclic nucleotide messengers',draw:scR7,text:"Cyclic di-GMP controls the choice between swimming and settling: high levels mean attachment, matrix and biofilm, low levels mean motility. A genome may encode fifty enzymes that make or destroy it, acting in local pools delivered to specific effectors. In most Gram-positives, cyclic di-AMP plays the dominant role instead, reporting potassium and osmotic state."},

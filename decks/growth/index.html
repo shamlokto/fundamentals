@@ -697,7 +697,7 @@ function scG4(n){
   for(let i=0;i<4;i++)s+=G('a-fade',(i*.15).toFixed(2),tube(x0+i*dx,y+28,{h:58,w:18,turbid:i<2,seed:3+i,label:labs[i]}));
   for(let i=0;i<3;i++)s+=arw(x0+i*dx+12,y-36,x0+(i+1)*dx-12,y-36,{q:[x0+i*dx+dx/2,y-54],w:1.2});
   s+=T(x0+1.5*dx,y-58,n?'0.1 mL into 0.9 mL':'1 mL into 9 mL each step','note mid f11 halo');
-  const cols=colonySet(42,11,n?30:36);
+  const cols=(()=>{const R0=n?30:36,r=rnd(11),a=[];let k=0;while(a.length<42&&k<4000){k++;const ang=r()*Math.PI*2,d=Math.sqrt(r())*R0*.84,x=Math.cos(ang)*d,y=Math.sin(ang)*d,rad=1.8+r()*1.8;if(a.every(c=>Math.hypot(c[0]-x,c[1]-y)>c[2]+rad+1.2))a.push([x,y,rad]);}return a;})();  /* 30–300 countable range */
   const dx1=n?x0+3*dx+50:x0+3*dx+90;
   s+=G('a-fade',.7,arw(x0+3*dx+14,y,dx1-34,y,{w:1.2})+dish(dx1+(n?6:10),y,n?30:36,cols,{label:n?'count':cols.length+' colonies'}));
   if(!n)s+=G('a-fade',.9,T(dx1+60,y-6,'0.1 mL plated from the','note start f11')+T(dx1+60,y+8,'1/1000 tube → '+cols.length+' × 10 × 1000','note start f11')+T(dx1+60,y+22,'= '+(cols.length/10).toFixed(1)+' × 10⁵ CFU per mL','note start f11'));

@@ -716,7 +716,7 @@ function scL6(n){
   s+=G('a-fade',1,T(FX(A.px(14.5)),FX(A.py(.7)),'10⁶','mono end f11')+T(FX(A.px(28)),FX(A.py(.7)),'10⁴ copies','mono start f11')+T(FX(A.px(15.3)),FX(A.py(.03)+0),'Ct','note mid f10 halo'));
   const B=n?axes(54,A.y+A.h+90,280,110,{xr:[2,7],yr:[14,32],xt:[[2,'10²'],[4,'10⁴'],[6,'10⁶']],yt:[[15,'15'],[25,'25']],xlab:'starting copies (log)',ylab:'Ct'})
     :axes(410,40,190,160,{xr:[2,7],yr:[14,32],xt:[[2,'10²'],[4,'10⁴'],[6,'10⁶']],yt:[[15,'15'],[25,'25']],xlab:'starting copies (log)',ylab:'Ct'});
-  const ct=x=>16+3.32*(7-x);
+  const ct=x=>18+3.32*(6-x);
   s+=G('a-fade',1.2,B.s+curve(B,ct,{col:'#6A5B47',w:1.4,from:2,to:7})+[2,3,4,5,6,7].map(x=>`<circle cx="${FX(B.px(x))}" cy="${FX(B.py(ct(x)))}" r="3.2" fill="#2F5276"/>`).join('')+T(FX(B.px(5.6)),FX(B.py(29)),'slope −3.32','note mid f11 halo')+T(FX(B.px(5.6)),FX(B.py(26.5)),'= 100% efficient','note mid f11 halo'));
   const b=bullets(n?24:30,B.y+B.h+62,[['Cycle threshold','Ct is the cycle at which fluorescence crosses a threshold set in the exponential phase. Ten times more template crosses about 3.3 cycles earlier.'],['Efficiency and standard curves','A dilution series plotted as Ct against log copies gives a line; efficiency = 10^(−1/slope) − 1. A slope of −3.32 means perfect doubling; 90–110% is usually accepted.'],['ΔΔCt','Livak and Schmittgen (2001): normalise the target to a reference gene (ΔCt), compare with a control condition (ΔΔCt); fold change ≈ 2^−ΔΔCt, valid only when efficiencies are near 100%.'],['Chemistry','SYBR Green binds any double-stranded DNA, so a melt curve checks for a single product; TaqMan probes add sequence specificity. RT-qPCR measures RNA after reverse transcription.']],n?44:88,{d0:1.4,gap:18});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
@@ -742,7 +742,7 @@ function scL8(n){
   const items=[['Microfluidics and the mother machine','Cells grow in channels a few micrometres wide, fed by flowing medium. In the mother machine (Wang, Jun and colleagues, 2010) the cell at the closed end of each dead-end channel can be followed for hundreds of generations.',mm],
     ['FISH','Fluorescently labelled oligonucleotides bind ribosomal RNA, so cells of a chosen taxon light up in a mixed sample. Single-molecule FISH counts individual mRNAs in each cell.',fish],
     ['Flow cytometry','Cells stream one by one through a laser, thousands per second; scatter and fluorescence are recorded for each. Fluorescence-activated cell sorting (FACS) isolates chosen cells.',flowc],
-    ['Single-cell RNA-seq in bacteria','Hard, because a cell holds only a few hundred mRNAs, without poly(A) tails. Split-pool barcoding methods (PETRI-seq, microSPLiT, 2020–21) label each cell’s RNA in fixed cells.',split]];
+    ['Single-cell RNA-seq in bacteria','Hard, because a cell holds only a few thousand mRNAs at most, without poly(A) tails. Split-pool barcoding methods (PETRI-seq, microSPLiT, 2020–21) label each cell’s RNA in fixed cells.',split]];
   const c=cards(n,items,{y:20,artH:58});
   const p=para(n?16:24,c.y+10,'Population averages hide heterogeneity: persisters, bistable switches and division asymmetry are only visible cell by cell.',n?50:92,'note start f13',17,1.2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:c.s+p.s};

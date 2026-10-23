@@ -5,7 +5,7 @@ const TOX=[
  {k:'Cholera (AB)',t:'AB enterotoxin',mech:'the A subunit ADP-ribosylates Gsα, locking adenylate cyclase on; cAMP rises and chloride and water pour into the gut',ex:'Vibrio cholerae',eff:'massive watery "rice-water" diarrhoea and dehydration'},
  {k:'Diphtheria (AB)',t:'AB toxin',mech:'the A subunit ADP-ribosylates elongation factor 2, halting protein synthesis and killing the cell',ex:'Corynebacterium diphtheriae (phage-encoded)',eff:'pseudomembrane in the throat, heart and nerve damage'},
  {k:'Botulinum / tetanus (AB)',t:'AB neurotoxins (proteases)',mech:'cleave SNARE proteins, blocking neurotransmitter release; botulinum stops acetylcholine (flaccid), tetanus stops inhibitory signals (rigid)',ex:'Clostridium botulinum, C. tetani',eff:'flaccid paralysis (botulism) or spastic paralysis (tetanus)'},
- {k:'Shiga (AB)',t:'AB toxin',mech:'the A subunit cleaves 28S rRNA, stopping protein synthesis, with a tropism for the gut and kidney endothelium',ex:'Shigella dysenteriae; Shiga-toxin E. coli (O157:H7)',eff:'bloody diarrhoea and haemolytic-uraemic syndrome'},
+ {k:'Shiga (AB)',t:'AB toxin',mech:'the A subunit (an N-glycosidase) removes a single adenine from 28S rRNA, stopping protein synthesis, with a tropism for the gut and kidney endothelium',ex:'Shigella dysenteriae; Shiga-toxin E. coli (O157:H7)',eff:'bloody diarrhoea and haemolytic-uraemic syndrome'},
  {k:'Pore-forming',t:'pore-forming toxins',mech:'insert into the host membrane and punch a hole, dissipating gradients and triggering the inflammasome',ex:'Staphylococcus aureus α-toxin; streptolysin O; listeriolysin O',eff:'cell lysis; listeriolysin lets Listeria escape the phagosome'},
  {k:'Superantigens',t:'superantigens',mech:'clamp MHC II to the T-cell receptor outside the normal groove, activating up to a fifth of all T cells at once',ex:'S. aureus TSST-1 and enterotoxins; streptococcal SPEs',eff:'cytokine storm: toxic shock syndrome'},
  {k:'Endotoxin (LPS)',t:'endotoxin, not a secreted protein',mech:'lipid A of LPS, released as Gram-negatives lyse, is sensed by TLR4 and drives systemic inflammation',ex:'any Gram-negative (E. coli, Neisseria, Salmonella)',eff:'fever, hypotension, septic shock when overwhelming'}];
@@ -90,8 +90,8 @@ function scP7(n){
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,310)),s:s+b.s};
 }
 function scP8(n){
-  const A=n?axes(54,36,276,150,{xr:[0,20],yr:[0,30],xt:[[0,'0'],[10,'10'],[20,'20 d']],yt:[[0,'0'],[30,'cases']],xlab:'day',ylab:'new cases'})
-    :axes(66,40,300,160,{xr:[0,24],yr:[0,30],xt:[[0,'0'],[6,'6'],[12,'12'],[18,'18'],[24,'24 days']],yt:[[0,'0'],[15,'15'],[30,'cases']],xlab:'day of onset',ylab:'new cases'});
+  const A=n?axes(54,36,276,150,{xr:[0,20],yr:[0,30],xt:[[0,'0'],[10,'10'],[20,'20 d']],yt:[[0,'0'],[30,'30']],xlab:'day',ylab:'new cases'})
+    :axes(66,40,300,160,{xr:[0,24],yr:[0,30],xt:[[0,'0'],[6,'6'],[12,'12'],[18,'18'],[24,'24 days']],yt:[[0,'0'],[15,'15'],[30,'30']],xlab:'day of onset',ylab:'new cases'});
   const point=x=>22*Math.exp(-((x-5)**2)/8);
   const prop=x=>7*Math.exp(-((x-6)**2)/4)+12*Math.exp(-((x-13)**2)/6)+16*Math.exp(-((x-19)**2)/8);
   let s=A.s;

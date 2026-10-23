@@ -678,9 +678,9 @@ function scC4(n){
   const cx=n?180:200, cy=n?200:210, R=n?118:136;
   const items=n?[{t:'citrate',w:62,fs:10},{t:'isocitrate',w:74,fs:10},{t:'2-oxo-|glutarate',w:66,fs:10,f:PAL.gold},{t:'succinyl-|CoA',w:66,fs:10,f:PAL.gold},{t:'succinate',w:70,fs:10},{t:'fumarate',w:64,fs:10},{t:'malate',w:54,fs:10},{t:'oxalo-|acetate',w:62,fs:10,f:PAL.gold}]
     :[{t:'citrate',w:76},{t:'isocitrate',w:86},{t:'2-oxoglutarate',w:112,f:PAL.gold},{t:'succinyl-CoA',w:100,f:PAL.gold},{t:'succinate',w:84},{t:'fumarate',w:78},{t:'malate',w:66},{t:'oxaloacetate',w:100,f:PAL.gold}];
-  const labs=n?['','NADH|CO₂','NADH|CO₂','GTP','FADH₂','','NADH','+ acetyl-|CoA']:['','NADH, CO₂','NADH, CO₂','GTP','FADH₂ (complex II)','','NADH','+ acetyl-CoA'];
+  const labs=n?['','NADH|CO₂','NADH|CO₂','ATP or|GTP','FADH₂','','NADH','+ acetyl-|CoA']:['','NADH, CO₂','NADH, CO₂','ATP (GTP in some)','FADH₂ (complex II)','','NADH','+ acetyl-CoA'];
   let s=G('a-fade',0,cycle(cx,cy,R,items,{labs,lr:n?22:26}));
-  const b=n?bullets(24,cy+R+50,[['Per acetyl-CoA','3 NADH, 1 FADH₂ (as reduced quinone), 1 GTP, 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave for biosynthesis and must be replaced.'],['Variants','Anaerobic E. coli runs it as a branched pathway; many bacteria have a glyoxylate shunt.']],44,{d0:1,gap:20})
+  const b=n?bullets(24,cy+R+50,[['Per acetyl-CoA','3 NADH, 1 FADH₂ (as reduced quinone), 1 ATP or GTP, 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave for biosynthesis and must be replaced.'],['Variants','Anaerobic E. coli runs it as a branched pathway; many bacteria have a glyoxylate shunt.']],44,{d0:1,gap:20})
     :bullets(432,52,[['Per acetyl-CoA','3 NADH, 1 reduced quinone from succinate dehydrogenase (complex II), 1 GTP or ATP, and 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave the cycle for biosynthesis, so it must be refilled.'],['Variants','Without oxygen, E. coli runs a branched pathway: an oxidative arm to 2-oxoglutarate and a reductive arm to succinate. Many organisms lack 2-oxoglutarate dehydrogenase.'],['Run backwards','The reductive TCA cycle fixes CO₂ in Chlorobium and Aquifex.']],25,{d0:1,gap:20});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};
 }

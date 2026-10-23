@@ -691,14 +691,14 @@ function scP2(n){
   let u=ln(ux-24,uy,ux+24,uy,'#5A4632',2);
   U.forEach(([dx,dy2,t])=>{const sx=ux+(dx<0?-24:24);u+=ln(sx,uy,ux+dx,uy+dy2,'#5A4632',2)+T(ux+dx+(dx<0?-6:6),uy+dy2+4,t,'lab '+(dx<0?'end':'start')+' f13');});
   s+=G('a-fade',.8,u+T(ux,uy+66,'unrooted: relationships only,','note mid f11')+T(ux,uy+80,'no direction of time','note mid f11'));
-  const b=bullets(n?24:30,uy+(n?112:150),[['Read the nodes, not the tips','Rotating branches around a node changes nothing. E. coli is no closer to Vibrio than Salmonella is, whatever the order on the page.'],['Clades','A clade is an ancestor and all its descendants (monophyletic). A group that leaves some descendants out is paraphyletic, like “prokaryotes” if eukaryotes branch within archaea.'],['Rooting','A root needs extra information, usually an outgroup known to lie outside the group, or a molecular clock.']],n?44:88,{d0:1,gap:18});
+  const b=bullets(n?24:30,uy+(n?112:150),[['Read the nodes, not the tips','Rotating branches around a node changes nothing. E. coli is no closer to Vibrio than Salmonella is, whatever the order on the page.'],['Clades','A clade is an ancestor and all its descendants (monophyletic). A group that leaves some descendants out is paraphyletic, like “prokaryotes”, which leaves out the eukaryotes descended from the same ancestor.'],['Rooting','A root needs extra information, usually an outgroup known to lie outside the group, or a molecular clock.']],n?44:88,{d0:1,gap:18});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 function scP3(n){
   const seq=['ATGGCTAAGCTT-ACGTTGAACG','ATGGCCAAGCTT-ACGTTGAGCG','ATGGCTAAACTCGACGTCGAACG','ATGGCGAAACTCGACGTCGAGCG'];
   const names=['taxon 1','taxon 2','taxon 3','taxon 4'], cw=n?11:13, x0=n?78:110, y0=36;
   let a='';seq.forEach((q,r)=>{a+=T(x0-10,y0+r*18,names[r],'note end f11');[...q].forEach((ch,j)=>{a+=Tc(FX(x0+j*cw+cw/2),y0+r*18,ch,NB[ch]||'#9A9384',n?11:12,'mono mid','600');});});
-  const vc=[5,8,11,12,17,19];
+  const vc=[5,8,11,12,17,20];
   let hl=vc.map(j=>`<rect x="${FX(x0+j*cw)}" y="${y0-13}" width="${cw}" height="${4*18}" fill="${PAL.gold}" opacity=".45"/>`).join('');
   let s=G('a-fade',0,hl+a)+G('a-fade',.3,T(x0,y0+4*18+6,'shaded: variable sites; – : a gap (insertion or deletion)','note start f11'));
   const py=y0+4*18+40;

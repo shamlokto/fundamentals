@@ -36,7 +36,7 @@ const shan=c=>-prop(c).filter(p=>p>0).reduce((a,p)=>a+p*Math.log(p),0);
 const simp=c=>1-prop(c).reduce((a,p)=>a+p*p,0);
 const bray=(a,b)=>1-2*a.reduce((s,x,i)=>s+Math.min(x,b[i]),0)/(a.reduce((x,y)=>x+y,0)+b.reduce((x,y)=>x+y,0));
 /* tree: branches [length, leaves] */
-const TREE=[[1,[0,1]],[1,[2,3]],[2,[4,5]],[1,[0]],[1,[1]],[1,[2]],[1,[3]],[1,[4]],[1,[5]]];
+const TREE=[[1,[0,1]],[1,[2,3]],[2,[4,5]],[2,[0]],[2,[1]],[2,[2]],[2,[3]],[1,[4]],[1,[5]]];  /* lengths match treeDraw */
 const unifrac=(a,b)=>{let tot=0,u=0;TREE.forEach(([l,L])=>{const ia=L.some(i=>a[i]>0),ib=L.some(i=>b[i]>0);if(ia||ib){tot+=l;if(ia!==ib)u+=l;}});return u/tot;};
 const DIV=[
  {k:'Richness',ty:'alpha',f:'S = number of taxa present',v:()=>['A: '+rich(CA),'B: '+rich(CB)],t:'The simplest alpha diversity: count the types. B has more taxa, but most are rare, and richness depends strongly on how deeply you sample. Estimators such as Chao1 use the number of singletons to guess how many taxa were missed.'},
@@ -99,9 +99,9 @@ function scE5(n){
 }
 function scE6(n){
   const R=n?104:118, cx=n?180:190, cy=n?150:170;
-  const it=[{t:n?'attack|phase':'attack phase:|fast swimmer',w:n?84:124,f:PAL.green},{t:n?'attaches|to prey':'attaches to|Gram-negative prey',w:n?96:140},{t:n?'enters|periplasm':'enters the|periplasm',w:n?96:104,f:PAL.gold},{t:n?'bdelloplast|grows':'bdelloplast:|grows as filament',w:n?104:136,f:PAL.gold},{t:n?'divides':'divides into|progeny',w:n?80:104},{t:n?'prey lyses,|release':'prey lyses,|progeny released',w:n?100:134,f:PAL.rose}];
+  const it=[{t:n?'attack|phase':'attack phase:|fast swimmer',w:n?84:124,f:PAL.green},{t:n?'attaches|to prey':'attaches to|Gram-negative prey',w:n?96:140},{t:n?'enters|periplasm':'enters the|periplasm',w:n?96:104,f:PAL.gold},{t:n?'grows as|filament':'in the bdelloplast:|grows as filament',w:n?104:148,f:PAL.gold},{t:n?'divides':'divides into|progeny',w:n?80:104},{t:n?'prey lyses,|release':'prey lyses,|progeny released',w:n?100:134,f:PAL.rose}];
   let s=G('a-fade',0,cycle(cx,cy,R,it,{}));
-  s+=G('a-fade',.6,rodCell2(cx,cy,46,12,{fill:'#E4E8D4'})+coccus(cx-12,cy,5,{fill:'#8C6D46'})+T(cx,cy+30,'Bdellovibrio','note mid f11'));
+  s+=G('a-fade',.6,rodCell2(cx,cy,46,12,{fill:'#E4E8D4'})+coccus(cx-12,cy,5,{fill:'#8C6D46'})+T(cx,cy+30,'Bdellovibrio inside','note mid f11')+T(cx,cy+44,'its prey','note mid f11'));
   const items=[['Bdellovibrio','Discovered by Stolp and Petzold in 1962, these small vibrios hunt other Gram-negative bacteria, growing inside the prey’s periplasm. They are being explored as living antibiotics.'],['Protist grazers','Flagellates and ciliates eat a large share of bacterial production in water and soil. They prefer certain sizes, so bacteria escape by forming filaments, aggregates or biofilms, or by being very small or fast.'],['Training grounds','Some bacteria survive being eaten: Legionella multiplies inside amoebae, and the same tricks later let it grow in human macrophages.']];
   const b=n?bullets(24,cy+R+74,items,44,{d0:1,gap:20}):bullets(398,52,items,30,{d0:1,gap:16});
   const H=n?b.y-4:Math.max(b.y-4,cy+R+56);

@@ -496,7 +496,7 @@ const eLine=(x,w,y,col,sw)=>`<path d="M${x} ${y} h${w}" stroke="${col||'#D6CDB8'
 function scE1(n){
   let s='';const y=n?46:52;
   const marks=[['N6-methyladenine','6mA','by far the commonest in bacteria; the mark Dam and most restriction systems write',METC],
-   ['N4-methylcytosine','4mC','found in thermophiles and in many restriction systems; absent from eukaryotes',INTC],
+   ['N4-methylcytosine','4mC','found in thermophiles and in many restriction systems; almost absent from eukaryotes',INTC],
    ['5-methylcytosine','5mC','present but much rarer than in eukaryotes; Dcm in E. coli writes it',PLS]];
   if(!n){marks.forEach((m,i)=>{const cx=112+i*206;
     s+=G('a-fade',(i*.4).toFixed(1),`<circle cx="${cx}" cy="${y+22}" r="18" fill="${m[3]}" fill-opacity=".45" stroke="${m[3]}" stroke-width="2"/>`
@@ -569,7 +569,9 @@ function scE4(n){
   const inv=(yy,dir)=>eLine(x,W*.46,yy,'#D6CDB8',5)
     +`<path d="M${FX(x+30)} ${FX(yy-7)} l9 7 l-9 7 z" fill="${INTC}" stroke="${INK}" stroke-width=".6"/>`
     +`<path d="M${FX(x+W*.40)} ${FX(yy-7)} l-9 7 l9 7 z" fill="${INTC}" stroke="${INK}" stroke-width=".6"/>`
-    +gArrow(dir>0?x+46:x+W*.34,yy,W*.06,'P',METC,{h:14,fs:9});
+    +(dir>0?gArrow(x+46,yy,W*.06,'P',METC,{h:14,fs:9})
+      :`<path d="M${FX(x+W*.34+W*.06)} ${FX(yy-7)} h${FX(-(W*.06-7))} l-7 7 l7 7 h${FX(W*.06-7)}z" fill="${METC}" stroke="${INK}" stroke-width=".8"/>`+Tc(FX(x+W*.34+7+(W*.06-7)/2),FX(yy+4),'P','#3A2E22',9,'mono mid','600'))
+    +Tc(x+W*.46+(n?8:4),yy+4,dir>0?'ON':'OFF','#6A5B47',10,'mono start');
   s+=G('a-fade',1.2,inv(iy,1)+inv(iy+34,-1)+T(x,iy-16,'site-specific inversion of a promoter','note start f11'));
   /* right column in wide: methylation and cassettes */
   const x2=n?x:x+W*.52, by=n?iy+78:y;
@@ -609,10 +611,10 @@ function scE5(n){
     +gArrow(x+4,y,W*.20,'hsdR',RECC,{h:16,fs:n?9:10})
     +gArrow(x+6+W*.20,y,W*.16,'hsdM',INTC,{h:16,fs:n?9:10})
     +gArrow(x+10+W*.36,y,W*.16,'hsdS',METC,{h:16,fs:n?9:10})
-    +[0,1].map(i=>`<rect x="${FX(x+14+W*(.54+i*.14))}" y="${FX(y-8)}" width="${FX(W*.12)}" height="16" fill="${CLOUD}" stroke="${INK}" stroke-width=".6"/>`).join('')
-    +Tc(FX(x+14+W*.60),y-16,n?'silent hsdS':'silent hsdS segments','#6A5B47',n?9:10,'mono mid')
-    +gArrow(x+18+W*.82,y,W*.16,'creX',PLS,{h:16,fs:n?9:10}));
-  s+=G('a-fade',1,arw(x+W*.46,y+26,x+W*.62,y+26,{blue:1})
+    +gArrow(x+14+W*.54,y,W*.14,'creX',PLS,{h:16,fs:n?9:10})
+    +[0,1].map(i=>`<rect x="${FX(x+18+W*(.70+i*.15))}" y="${FX(y-8)}" width="${FX(W*.13)}" height="16" fill="${CLOUD}" stroke="${INK}" stroke-width=".6"/>`).join('')
+    +Tc(FX(x+18+W*.775),y-16,n?'silent hsdS':'silent hsdS segments','#6A5B47',n?9:10,'mono mid'));
+  s+=G('a-fade',1,`<path d="M${FX(x+10+W*.44)} ${y+12} Q${FX(x+W*.64)} ${y+34} ${FX(x+W*.84)} ${y+12}" stroke="#2F5276" stroke-width="1.6" fill="none" marker-start="url(#ahb)" marker-end="url(#ahb)"/>`
     +Tc(x,n?y+48:y+46,n?'recombination swaps the':'recombination swaps the specificity domains','#6A5B47',10,'mono start')
     +(n?Tc(x,y+62,'specificity domains','#6A5B47',10,'mono start'):''));
   let yy=y+(n?86:72);
@@ -668,7 +670,7 @@ function scE8(n){
   let y=P.y+P.h+(n?92:94);
   const rows=[['Resistance','the MIC rises','A genetic change lets the cells grow in the presence of the drug. Heritable, measured by MIC, and the same for every cell in the clone.'],
    ['Tolerance','the whole population dies more slowly','Usually slow growth or dormancy affecting all cells. The MIC is unchanged; what changes is the minimum duration of killing. Kill curves are shifted, not biphasic.'],
-   ['Persistence','a small subpopulation dies much more slowly','The MIC is unchanged and most cells die at the normal rate, leaving a shoulder. The survivors are not mutants: regrow them and they give a population with the same small persister fraction.'],
+   ['Persistence','a small subpopulation dies much more slowly','The MIC is unchanged and most cells die at the normal rate, leaving a slowly declining tail. The survivors are not mutants: regrow them and they give a population with the same small persister fraction.'],
    ['Heteroresistance','a small subpopulation has a higher MIC','Genuinely different susceptibility in a minority, often from unstable amplification of a resistance gene. Easily missed by a standard MIC, and clinically significant.']];
   const t=n?wtable(n,['Phenomenon','What it is'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,13],[118,38]],{y0:y,d0:1.6})
          :wtable(n,['Phenomenon','The signature','What is happening'],rows,[[24,14],[150,22],[330,44]],{y0:y,d0:1.6});
@@ -690,12 +692,12 @@ function scE9(n){
 
 function scE10(n){
   let s='';const y=n?48:54;
-  const P=n?xyPlot(50,y,272,118,[0,10],[0,10],{xlab:'how often the environment changes',ylab:'best strategy',xdy:24,ydx:16})
+  const P=n?xyPlot(50,y,272,118,[0,10],[0,10],{xlab:'how often the environment changes',ylab:'advantage',xdy:24,ydx:16})
           :xyPlot(74,y,290,138,[0,10],[0,10],{xlab:'how often the environment changes',ylab:'advantage',xdy:24,ydx:18});
   s+=G('a-fade',0,P.s);
   s+=G('a-fade',.4,xyCurve(P,t=>9.2*Math.exp(-t/2.4),{col:CORE,n:120}));
   s+=G('a-fade',.8,xyCurve(P,t=>2+6.4/(1+Math.exp(-(t-5))),{col:PHG,n:120}));
-  s+=G('a-fade',1.2,keyRow(n?22:P.x+6,P.y+P.h+(n?44:46),[['commit to one state, or sense and respond',CORE],['hedge: keep both states at all times',PHG]],{rh:16,fs:'f11'}));
+  s+=G('a-fade',1.2,keyRow(n?22:P.x+6,P.y+P.h+(n?44:46),[['commit to a single state',CORE],['hedge: keep both states at all times',PHG]],{rh:16,fs:'f11'}));
   let yy=P.y+P.h+(n?92:94);
   const b=bullets(n?24:30,yy,[['Sensing is not always the better option','A sensing system costs resources to build and takes time to respond, and it needs a cue that reliably predicts the change. When the change is fast, unpredictable, or has no reliable cue — an immune response, a new host, a dose of antibiotic — a population that already contains both phenotypes does better than one that has to detect and react.'],
    ['Bet-hedging is a statement about long-run growth','The quantity that matters is the geometric mean of growth across environments, not the arithmetic mean. A strategy that is never best in any single environment can win over time, because it is never catastrophically wrong. This is also why the optimal switching rate roughly matches the rate of environmental change.'],

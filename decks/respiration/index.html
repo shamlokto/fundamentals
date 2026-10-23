@@ -653,8 +653,8 @@ function artBullets(n,art,artW,artH,items,o={}){
 /* ===================== deck ===================== */
 const FERM=[
  {k:'Homolactic',p:'2 lactate',org:'Lactococcus, Streptococcus, many Lactobacillus',atp:2,note:'Pyruvate reduced by lactate dehydrogenase. Basis of yoghurt and cheese; streptococcal lactate acidifies dental plaque.'},
- {k:'Heterolactic',p:'lactate + ethanol + CO₂',org:'Leuconostoc, Lactobacillus brevis',atp:1,note:'Uses the phosphoketolase pathway. CO₂ gives the holes in some cheeses and helps sauerkraut ferment.'},
- {k:'Alcoholic',p:'2 ethanol + 2 CO₂',org:'yeast; Zymomonas (via the ED pathway, 1 ATP)',atp:2,note:'Pyruvate decarboxylase then alcohol dehydrogenase. Bread, beer and wine.'},
+ {k:'Heterolactic',up:'net 1 ATP',p:'lactate + ethanol + CO₂',org:'Leuconostoc, Lactobacillus brevis',atp:1,note:'Uses the phosphoketolase pathway. CO₂ gives the holes in some cheeses and helps sauerkraut ferment.'},
+ {k:'Alcoholic',p:'2 ethanol + 2 CO₂',org:'yeast; Zymomonas (via the ED pathway, 1 ATP)',atp:'2 (yeast); 1 (Zymomonas)',note:'Pyruvate decarboxylase then alcohol dehydrogenase. Bread, beer and wine.'},
  {k:'Mixed acid',p:'acetate, lactate, succinate, ethanol, formate → H₂ + CO₂',org:'E. coli, Salmonella, Shigella',atp:2.5,note:'Strongly acidic end products: methyl red positive. Formate hydrogen lyase splits formate to H₂ and CO₂ (gas in Durham tubes).'},
  {k:'Butanediol',p:'2,3-butanediol, ethanol, CO₂, less acid',org:'Enterobacter, Klebsiella, Serratia',atp:2,note:'The intermediate acetoin gives a positive Voges–Proskauer test; less acid, so methyl red negative. Together these tests distinguish E. coli from Klebsiella.'},
  {k:'Butyric / solventogenic',p:'butyrate, acetate, H₂; later acetone and butanol',org:'Clostridium acetobutylicum',atp:3,note:'The acetone–butanol fermentation, developed by Chaim Weizmann during the First World War for acetone.'},
@@ -668,15 +668,15 @@ function scB2(n){
   let s='';const y=n?120:120, x1=n?10:30, x2=n?350:610;
   s+=G('a-fade',0,membraneBand(x1,x2,y-12,24)+T(x1+4,y-40,'outside (periplasm)','note start f11')+T(x1+4,y+34,'cytoplasm','note start f11'));
   const cx=n?[70,150,230]:[120,230,340];
-  s+=G('a-fade',.3,cx.map((x,i)=>`<rect x="${x-22}" y="${y-22}" width="44" height="44" rx="8" fill="${['#A9C4DC','#C9A9D6','#E7A99B'][i]}" stroke="${INK}" class="tint"/>`+Tc(x,y+4,['I','Q','IV'][i],'#3A2E22',12,'mono mid','600')+arw(x+8,y+28,x+8,y-34,{w:1.2,blue:1})).join(''));
+  s+=G('a-fade',.3,cx.map((x,i)=>`<rect x="${x-22}" y="${y-22}" width="44" height="44" rx="8" fill="${['#A9C4DC','#C9A9D6','#E7A99B'][i]}" stroke="${INK}" class="tint"/>`+Tc(x,y+4,['I','III','IV'][i],'#3A2E22',12,'mono mid','600')+arw(x+8,y+28,x+8,y-34,{w:1.2,blue:1})).join(''));
   const ax=n?310:500;
-  s+=G('a-fade',.6,`<rect x="${ax-16}" y="${y-30}" width="32" height="60" rx="6" fill="${PAL.gold}" stroke="${INK}" class="tint"/><circle cx="${ax}" cy="${y+46}" r="18" fill="${PAL.gold}" stroke="${INK}"/>`+Tc(ax,y+50,'F₁','#3A2E22',11,'mono mid','600')+arw(ax-26,y-36,ax-26,y+30,{w:1.2,red:1})+T(ax+24,y+52,'ATP','mono start f12'));
+  s+=G('a-fade',.6,`<rect x="${ax-16}" y="${y-30}" width="32" height="60" rx="6" fill="${PAL.gold}" stroke="${INK}" class="tint"/><circle cx="${ax}" cy="${y+46}" r="18" fill="${PAL.gold}" stroke="${INK}"/>`+Tc(ax,y+50,'F₁','#3A2E22',11,'mono mid','600')+arw(ax-6,y-40,ax-6,y+24,{w:1.4,red:1})+T(ax+24,y+52,'ATP','mono start f12'));
   s+=G('a-fade',.9,T(n?180:240,y-50,n?'protons pumped out':'electron transport pumps protons out','note mid f11')+T(ax,y-46,'flow back','note mid f11'));
   const b=bullets(n?24:30,y+90,[['Δp = Δψ − (2.3RT/F)·ΔpH','The proton motive force has an electrical part (inside negative) and a chemical part (inside alkaline). In E. coli it is about −150 to −200 mV, mostly Δψ at neutral pH.'],['It powers more than ATP','Flagellar rotation, many transporters, SecDF and Tat protein export, and the uptake of aminoglycosides all run on it.'],['Uncouplers','Molecules that carry protons across the membrane collapse Δp and stop ATP synthesis without stopping electron flow.']],n?44:88,{d0:1.2,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scB3(n){
-  const items=[['A rotary motor','Protons flowing through the membrane F₀ part turn a ring of c subunits and the central stalk; the stalk rotates inside the F₁ head, whose three β subunits cycle through binding, making and releasing ATP (Paul Boyer’s binding-change mechanism).'],['Proven by watching it spin','Noji, Yoshida and colleagues (1997) attached an actin filament to the γ stalk and saw it rotate as F₁ hydrolysed ATP; 120° steps were resolved in 1998.'],['Stoichiometry','ATP per turn is 3; protons per turn equal the number of c subunits (8 in mitochondria, 10 in E. coli, up to 15 in some bacteria), so about 3–5 protons per ATP.'],['Runs both ways','Fermenting bacteria run it backwards, spending ATP to maintain Δp. The anti-tuberculosis drug bedaquiline binds the c ring of mycobacteria.']];
+  const items=[['A rotary motor','Protons flowing through the membrane F₀ part turn a ring of c subunits and the central stalk; the stalk rotates inside the F₁ head, whose three β subunits cycle through binding, making and releasing ATP (Paul Boyer’s binding-change mechanism).'],['Proven by watching it spin','Noji, Yoshida and colleagues (1997) attached an actin filament to the γ stalk and saw it rotate as F₁ hydrolysed ATP; 120° steps were resolved in 1998.'],['Stoichiometry','ATP per turn is 3; protons per turn equal the number of c subunits (8 in animal mitochondria, 10 in E. coli, 13–15 in some bacteria and chloroplasts), so about 2.7–5 protons per ATP.'],['Runs both ways','Fermenting bacteria run it backwards, spending ATP to maintain Δp. The anti-tuberculosis drug bedaquiline binds the c ring of mycobacteria.']];
   const c=cards(n,items,{y:20,num:1});
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }
@@ -699,7 +699,7 @@ function scB6(n){
   const f=FERM[fermSel];
   const N=n?{g:{x:180,y:40,w:120,t:'glucose'},p:{x:180,y:120,w:120,t:'pyruvate',f:PAL.gold},e:{x:180,y:210,w:320,t:f.p.length>34?f.p.replace(/, (?=[^,]*$)/,',|').replace(', formate',',|formate'):f.p,f:PAL.rose}}
     :{g:{x:70,y:60,w:100,t:'glucose'},p:{x:220,y:60,w:100,t:'pyruvate',f:PAL.gold},e:{x:480,y:60,w:250,t:f.p.length>26?f.p.replace(/, /g,',|').split('|').reduce((a,w)=>{const L=a[a.length-1];if((L+' '+w).length>28)a.push(w);else a[a.length-1]=(L?L+' ':'')+w;return a;},['']).join('|'):f.p,f:PAL.rose,fs:11}};
-  let s=G('a-fade',0,flow(N,[['g','p','2 ATP, 2 NADH',{side:n?-1:1}],['p','e','NADH reoxidised',{side:n?-1:1}]]));
+  let s=G('a-fade',0,flow(N,[['g','p',f.up||'2 ATP, 2 NADH',{side:n?-1:1}],['p','e','NADH reoxidised',{side:n?-1:1}]]));
   const ex=explorer(n,{h:f.k+' fermentation',rows:[['Products',f.p],['Organisms',f.org],['ATP per glucose',String(f.atp)]],note:f.note},{y:n?260:130});
   return {vb:ex.vb,s:s+ex.s};
 }
@@ -707,7 +707,7 @@ function scB7(n){
   const items=[['aerobic respiration (E. coli)',26,PAL.blue,'~26 ATP'],['nitrate respiration',16,PAL.blue,'~10–20'],['fumarate respiration',4,PAL.green,'~3–5'],['mixed-acid fermentation',2.5,PAL.rose,'~2–3'],['homolactic fermentation',2,PAL.rose,'2']];
   const top=para(n?16:24,30,'ATP per glucose, approximate. Fermentation sacrifices yield for simplicity; the difference is why fermenters must consume far more sugar for the same growth.',n?50:92,'lab start f13',17,0);
   const h=hbars(n,n?10:30,top.y+14,n?340:560,items,{max:30,lw:n?150:200});
-  const p=para(n?16:24,h.y+12,'The textbook figure of 36–38 ATP per glucose assumed whole numbers of protons per ATP; measured values in E. coli and mitochondria are closer to 26–30. In practice, yield depends on which dehydrogenases and oxidases are active.',n?50:92,'note start f13',17,1);
+  const p=para(n?16:24,h.y+12,'The textbook figure of 36–38 ATP per glucose assumed whole numbers of protons per ATP; current estimates for E. coli and mitochondria are closer to 26–32. In practice, yield depends on which dehydrogenases and oxidases are active.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:top.s+h.s+p.s};
 }
 const S=[

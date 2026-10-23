@@ -372,7 +372,7 @@ function scPalade(n){
   for(let i=0;i<40;i++)g+=`<circle cx="${(cx-r+rnd()*2*r).toFixed(1)}" cy="${(cy-r+rnd()*2*r).toFixed(1)}" r="2.6" fill="#2C2318" opacity=".8"/>`;
   s+=G('a-fade',0,`<g clip-path="url(#em)">${g}</g><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${INK}" stroke-width="2"/>`+T(cx,cy+r+22,n?'electron micrograph (sketch)':'electron micrograph, sketched','note mid f12'));
   const tx=n?14:330, ty=n?250:60;
-  const L=[['1955','George Palade sees dense granules lining cell membranes and free in the cytoplasm'],['1958','They are named ribosomes: ribonucleoprotein particles'],['1974','Palade shares the Nobel Prize with Albert Claude and Christian de Duve']];
+  const L=[['1955','George Palade sees dense granules lining the ER membranes and free in the cytoplasm'],['1958','They are named ribosomes: ribonucleoprotein particles'],['1974','Palade shares the Nobel Prize with Albert Claude and Christian de Duve']];
   L.forEach((e,i)=>{const y=ty+i*(n?50:62);s+=G('a-fade',(1+i*.5).toFixed(1),T(tx,y,e[0],'mono acc start f13')+wrap(e[1],n?40:36).map((l,j)=>T(tx+56,y+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));});
   return {vb:n?slim(ty+3*50):wide(290),s};
 }
@@ -386,12 +386,12 @@ function scComposition(n){
   if(!n){
     s+=G('a-fade',0,col(170,30,'Bacteria','70S · 2.5 MDa',[['50S','50S: 23S + 5S rRNA, 33 proteins'],['30S','30S: 16S rRNA, 21 proteins']]));
     s+=G('a-fade',.8,col(470,30,'Eukaryotes','80S · ~4 MDa',[['60S','60S: 28S, 5.8S, 5S rRNA, ~47 proteins'],['40S','40S: 18S rRNA, ~33 proteins']]));
-    s+=G('a-fade',1.6,T(320,250,'About two-thirds RNA by mass. S is a sedimentation unit, so 50S + 30S makes 70S, not 80S.','lab mid'));
+    s+=G('a-fade',1.6,T(320,250,'Mostly RNA by mass. S is a sedimentation unit, so 50S + 30S makes 70S, not 80S.','lab mid'));
     return {vb:wide(266),s};
   }
   s+=G('a-fade',0,col(90,24,'Bacteria','70S · 2.5 MDa',[['50S','23S + 5S, 33 prot.'],['30S','16S, 21 prot.']]));
   s+=G('a-fade',.8,col(270,24,'Eukaryotes','80S · ~4 MDa',[['60S','28S, 5.8S, 5S, ~47'],['40S','18S, ~33 prot.']]));
-  s+=G('a-fade',1.6,T(180,240,'~2/3 RNA by mass.','lab mid')+T(180,262,'S values do not add up.','note mid'));
+  s+=G('a-fade',1.6,T(180,240,'Mostly RNA by mass.','lab mid')+T(180,262,'S values do not add up.','note mid'));
   return {vb:slim(276),s};
 }
 
@@ -470,7 +470,7 @@ function scTable(n){
     s+=G('a-fade',(.2+i*.3).toFixed(1),Tc(x0+6,yb+2*Hh+4,b1,'#2F5276',14,'mono mid','600')+B.split('').map((b2,j)=>B.split('').map((b3,k2)=>{const c=b1+b2+b3,a=tr(c),x=x0+18+j*W,y=yb+k2*Hh;const col=a==='*'?RED:a==='M'?'#4F7A3F':'#3A2E22';
       return `<rect x="${x+1}" y="${y}" width="${W-2}" height="${Hh-1}" fill="${a==='*'?'#F0D3CC':a==='M'?'#D3E2C8':(j%2?'#E9E1CF':'#E3D9C3')}"/>`+Tc(x+4,y+Hh-4,c,'#6A3E12',n?10:11,'mono start')+Tc(x+(n?32:44),y+Hh-4,THREE[a],col,n?10:11,'mono start',a==='*'||a==='M'?'600':'');}).join('')).join(''));});
   const yb=y0+4*(4*Hh+8)+(n?14:16);
-  s+=G('a-fade',1.6,T(n?180:320,yb,n?'61 sense codons, 3 stops; AUG starts':'61 codons for 20 amino acids, 3 stops; AUG also starts every protein','lab mid'));
+  s+=G('a-fade',1.6,T(n?180:320,yb,n?'61 sense codons, 3 stops; AUG usually starts':'61 codons for 20 amino acids, 3 stops; AUG is the usual start codon','lab mid'));
   return {vb:n?slim(yb+12):wide(yb+14),s};
 }
 
@@ -791,7 +791,7 @@ const S=[
  {p:3,title:'Palade’s granules',draw:scPalade,
   text:"In 1955 George Palade, using the electron microscope, saw small dense granules throughout the cytoplasm, many lining the membranes of the endoplasmic reticulum. They turned out to be particles of RNA and protein, named ribosomes in 1958. Proteins are made on them. Palade shared the 1974 Nobel Prize for his work on the cell's organisation."},
  {p:3,title:'Two subunits',draw:scComposition,
-  text:"Every ribosome has a large and a small subunit, named by how fast they sediment in a centrifuge. The bacterial 70S ribosome has a 30S subunit built around 16S rRNA and a 50S subunit built around 23S and 5S rRNA. Eukaryotic 80S ribosomes are larger, with more RNA and proteins. In both, about two-thirds of the mass is RNA."},
+  text:"Every ribosome has a large and a small subunit, named by how fast they sediment in a centrifuge. The bacterial 70S ribosome has a 30S subunit built around 16S rRNA and a 50S subunit built around 23S and 5S rRNA. Eukaryotic 80S ribosomes are larger, with more RNA and proteins. In both, most of the mass is RNA: about two-thirds in bacteria, a little over half in eukaryotes."},
  {p:3,title:'Where the work happens',draw:scSites,
   text:"The mRNA runs through a channel in the small subunit, where the decoding centre checks each codon against an anticodon. Above it, the large subunit holds the peptidyl transferase centre, where peptide bonds form, and a tunnel through which the new chain leaves. tRNAs move through three sites in turn: A for the incoming aminoacyl-tRNA, P for the tRNA holding the chain, and E for the exit."},
  {p:3,title:'A ribozyme at the core',draw:scRibozyme,
@@ -803,7 +803,7 @@ const S=[
  {p:4,title:'Reading the rest',draw:scDecipher,
   text:"Har Gobind Khorana chemically synthesised RNAs with repeating sequences, such as UCUCUC, and read off the alternating amino acids they encoded. Nirenberg and Philip Leder showed that a single triplet bound to a ribosome captures only its matching charged tRNA on a filter. By 1966 all 64 codons were assigned. Holley, Khorana and Nirenberg shared the 1968 Nobel Prize."},
  {p:4,title:'The genetic code',draw:scTable,
-  text:"Sixty-one codons specify amino acids and three, UAA, UAG and UGA, mean stop. AUG codes for methionine and also marks where translation starts. Most amino acids have several codons, which usually differ only in the third base, so many mutations there are silent. With a few exceptions, such as in mitochondria, the same code is used by all life."},
+  text:"Sixty-one codons specify amino acids and three, UAA, UAG and UGA, mean stop. AUG codes for methionine and usually marks where translation starts, though bacteria sometimes start at GUG or UUG. Most amino acids have several codons, which usually differ only in the third base, so many mutations there are silent. With a few exceptions, such as in mitochondria, the same code is used by all life."},
  {p:4,title:'Wobble',draw:scWobble,
   text:"If every codon needed its own tRNA, a cell would need 61. In 1966 Crick proposed that the third codon position pairs loosely with the first anticodon base. A G there can pair with U or C, and inosine, a modified base, can pair with U, C or A. So one tRNA can read several codons, and cells manage with fewer tRNAs."},
  {p:4,title:'Variants of the code',draw:scVariants,

@@ -492,7 +492,7 @@ function keyRow(x,y,items,o={}){
   return s;}
 /* ===================== Part I · the chromosome ===================== */
 function scG1(n){
-  const sp=[['Mycoplasma genitalium',0.58,'475 genes, an obligate parasite',PHG],
+  const sp=[['Mycoplasma genitalium',0.58,'about 480 protein-coding genes, a parasite',PHG],
    ['Streptococcus pneumoniae',2.1,'about 2,100 genes',CORE],
    ['Escherichia coli K-12',4.6,'about 4,300 genes',CORE],
    ['Pseudomonas aeruginosa',6.3,'about 5,700 genes',SHELL],
@@ -519,12 +519,13 @@ function scG2(n){
     +`<path d="M${cx} ${cy-R} A${R} ${R} 0 0 0 ${cx} ${cy+R}" fill="none" stroke="${PHG}" stroke-width="7" opacity=".4"/>`
     +Tc(cx+R+(n?6:10),cy,n?'right':'right replichore','#2F5276',10,'mono start','600')
     +Tc(cx-R-(n?6:10),cy,n?'left':'left replichore','#A4473A',10,'mono end','600'));
-  /* co-oriented genes */
-  const arcs=[[-70,PHG],[-40,PHG],[-10,PHG],[20,PHG],[50,PHG]];
-  s+=G('a-fade',1,[ -75,-50,-25,0,25,50,75].map(a=>{const r=(a-90)*Math.PI/180;
-      return `<path d="M${FX(cx+(R-10)*Math.cos(r))} ${FX(cy+(R-10)*Math.sin(r))} l${FX(7*Math.sin(r))} ${FX(-7*Math.cos(r))}" stroke="${CORE}" stroke-width="3.4" stroke-linecap="round"/>`;}).join(''));
-  s+=G('a-fade',1.3,[-75,-50,-25,0,25,50,75].map(a=>{const r=(90-a)*Math.PI/180;
-      return `<path d="M${FX(cx+(R-10)*Math.cos(r))} ${FX(cy+(R-10)*Math.sin(r))} l${FX(7*Math.sin(r))} ${FX(7*Math.cos(r))}" stroke="${PHG}" stroke-width="3.4" stroke-linecap="round"/>`;}).join(''));
+  /* co-oriented genes: arrows on each replichore point away from oriC, towards ter */
+  const gArc=(deg,dir,col)=>{const r0=R-12, a0=(deg-dir*7)*Math.PI/180, a1=(deg+dir*7)*Math.PI/180;
+    const P=a=>[cx+r0*Math.sin(a),cy-r0*Math.cos(a)], p0=P(a0), p1=P(a1), tx=dir*Math.cos(a1), ty=dir*Math.sin(a1), nx=-ty, ny=tx;
+    return `<path d="M${FX(p0[0])} ${FX(p0[1])} A${r0} ${r0} 0 0 ${dir>0?1:0} ${FX(p1[0])} ${FX(p1[1])}" stroke="${col}" stroke-width="3" fill="none"/>`
+      +`<path d="M${FX(p1[0]+tx*6)} ${FX(p1[1]+ty*6)} L${FX(p1[0]+nx*4)} ${FX(p1[1]+ny*4)} L${FX(p1[0]-nx*4)} ${FX(p1[1]-ny*4)} Z" fill="${col}"/>`;};
+  s+=G('a-fade',1,[30,60,90,120,150].map(d=>gArc(d,1,CORE)).join(''));
+  s+=G('a-fade',1.3,[30,60,90,120,150].map(d=>gArc(-d,-1,PHG)).join(''));
   s+=G('a-fade',1.6,Tc(cx,cy-4,'most genes point','#6A5B47',10,'mono mid')+Tc(cx,cy+10,'away from oriC','#6A5B47',10,'mono mid'));
   let y=cy+R+(n?46:50);
   const b=bullets(n?24:30,y,[['Two replichores, one origin','Replication starts at oriC and two forks travel in opposite directions, meeting near ter. The two arms are usually close to equal in length — large inversions that unbalance them are selected against.'],
@@ -538,18 +539,18 @@ function scG3(n){
   const P=n?xyPlot(48,46,278,130,[0,100],[-1.1,1.1],{xlab:'position on the chromosome (%)',ylab:'cumulative GC skew',xdy:24,ydx:16})
           :xyPlot(70,52,300,150,[0,100],[-1.1,1.1],{xlab:'position on the chromosome (%)',ylab:'cumulative GC skew',xdy:24,ydx:18});
   let s=G('a-fade',0,P.s+`<path d="M${P.px(0)} ${FX(P.py(0))} H${FX(P.px(100))}" stroke="${AXC}" stroke-width=".8" opacity=".5" stroke-dasharray="4 3"/>`);
-  const skew=t=>t<52?-t/52:(t-52)/48-1;
+  const skew=t=>t<52?t/52:1-(t-52)/48;
   s+=G('a-fade',.5,xyCurve(P,skew,{col:CORE,n:160}));
   s+=G('a-fade',1,`<circle cx="${FX(P.px(0))}" cy="${FX(P.py(0))}" r="4" fill="${METC}" stroke="${INK}"/>`
-    +`<circle cx="${FX(P.px(52))}" cy="${FX(P.py(-1))}" r="4" fill="${CLOUD}" stroke="${INK}"/>`
+    +`<circle cx="${FX(P.px(52))}" cy="${FX(P.py(1))}" r="4" fill="${CLOUD}" stroke="${INK}"/>`
     +`<circle cx="${FX(P.px(100))}" cy="${FX(P.py(0))}" r="4" fill="${METC}" stroke="${INK}"/>`
     +Tc(FX(P.px(0)),P.y-8,'oriC','#3A2E22',10,'mono mid','600')
-    +Tc(FX(P.px(52)),P.py(-1)-10,'ter','#3A2E22',10,'mono mid','600'));
+    +Tc(FX(P.px(52)),P.py(1)-10,'ter','#3A2E22',10,'mono mid','600'));
   let y=P.y+P.h+(n?52:56);
-  const b=bullets(n?24:30,y,[['What is being counted','Along each strand, count G and C in a sliding window and plot (G − C)/(G + C). The leading strand is enriched in G and depleted in C; the lagging strand is the reverse. Plotting the running total gives a V, and the two turning points are the origin and the terminus.'],
-   ['Why the strands differ','Cytosine deaminates to uracil far faster in single-stranded DNA, and the lagging strand spends longer single-stranded during discontinuous synthesis. Different mutational exposure, not different function, writes the skew.'],
-   ['Reading it as a diagnostic','A clean V means the assembly and the replication structure are both intact. Extra reversals mark recent inversions or a misassembly; a flat region often marks a recently acquired island that has not yet acquired the host’s skew.'],
-   ['It also locates the origin without an experiment','For a newly sequenced genome the skew minimum is usually the first and best estimate of ter, and the maximum of oriC — which is how origins are annotated in most draft genomes.']],n?44:88,{d0:1.6,gap:24});
+  const b=bullets(n?24:30,y,[['What is being counted','Along each strand, count G and C in a sliding window and plot (G − C)/(G + C). The leading strand is enriched in G and depleted in C; the lagging strand is the reverse. Plotting the running total from the origin gives a single peak: the minimum marks the origin and the maximum the terminus.'],
+   ['Why the strands differ','Cytosine deaminates to uracil far faster in single-stranded DNA, and the parental strand that templates lagging-strand synthesis stays single-stranded longest. It loses C, so the strand with leading-strand orientation ends up G-rich. Different mutational exposure, not different function, writes the skew.'],
+   ['Reading it as a diagnostic','A single clean peak means the assembly and the replication structure are both intact. Extra reversals mark recent inversions or a misassembly; a flat region often marks a recently acquired island that has not yet acquired the host’s skew.'],
+   ['It also locates the origin without an experiment','For a newly sequenced genome the minimum of the cumulative skew is usually the first and best estimate of oriC, and the maximum of ter — which is how origins are annotated in most draft genomes.']],n?44:88,{d0:1.6,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 
@@ -560,7 +561,7 @@ function scG4(n){
   s+=G('a-fade',.3,barRow(n?16:24,y+8,n?118:250,bars.map(b=>[b[0],b[1],b[2],b[1].toFixed(2)]),.8,{bx:n?182:260,rh:n?28:28,fs:n?'f11':'f12'}));
   let yy=y+8+bars.length*28+(n?14:18);
   const b=bullets(n?24:30,yy,[['Synonymous codons are not used equally','The genetic code is redundant, and in every genome some synonymous codons are preferred. In highly expressed genes the bias is strong and matches the abundant tRNAs; in the rest of the genome it is weak and reflects mutational pressure instead.'],
-   ['Translational selection, where growth is fast','Species that grow quickly — E. coli, Bacillus subtilis — show strong codon bias in ribosomal protein and glycolytic genes, with multiple rRNA operons and large tRNA sets to match. Slow-growing species such as Mycobacterium tuberculosis show almost none, because selection on translation speed is too weak relative to drift.'],
+   ['Translational selection, where growth is fast','Species that grow quickly — E. coli, Bacillus subtilis — show strong codon bias in ribosomal protein and glycolytic genes, with multiple rRNA operons and large tRNA sets to match. Slow-growing species such as Mycobacterium tuberculosis show little of this translational bias, because selection on translation speed is too weak relative to drift.'],
    ['Which makes codon usage a detector of imported DNA','A gene whose composition and codon usage differ sharply from the rest of the genome is a candidate recent acquisition. The signal fades over time as the new sequence accumulates mutations under the host’s own biases — a process called amelioration — so it finds recent transfers and misses old ones.'],
    ['And a practical lever','Expression of a heterologous gene often fails for codon reasons: rare codons, especially in runs near the 5′ end, stall ribosomes. Codon optimisation or a tRNA-supplementing host usually fixes it — and over-optimising can cause misfolding by removing the pauses the protein needed.']],n?44:88,{d0:1.4,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
@@ -575,7 +576,7 @@ function scG5(n){
   s+=G('a-fade',1.2,Tc(cx,cy+4,'core','#F3EDE0',12,'mono mid','600')
     +Tc(cx,cy-R*.52,'shell','#2F5276',11,'mono mid','600')
     +Tc(cx,cy-R*.84,'cloud','#5A4632',11,'mono mid','600'));
-  const labs=[['core','in essentially every isolate','about 1,100 genes in the pneumococcus',CORE],
+  const labs=[['core','in essentially every isolate','about 1,100–1,500 in the pneumococcus',CORE],
    ['shell','in many but not all','a few thousand across the species',SHELL],
    ['cloud','in one or a few isolates','the long tail, and most of the pangenome',CLOUD]];
   let y=cy+R+(n?30:34);
@@ -585,7 +586,7 @@ function scG5(n){
     y+=50;}
   else{labs.forEach((l,i)=>{s+=G('a-fade',(1.4+i*.3).toFixed(1),`<rect x="20" y="${y-10}" width="12" height="11" rx="2" fill="${l[3]}" stroke="${INK}" stroke-width=".6"/>`
       +T(38,y,l[0],'cname start f13')+T(38,y+15,l[1],'note start f11')+T(38,y+29,l[2],'note start f11'));y+=50;});}
-  const b=bullets(n?24:30,y+6,[['A species is not one genome','Two isolates of Streptococcus pneumoniae typically share around 1,100 core genes and differ in several hundred others. The pangenome — every gene found in any isolate — runs to five thousand or more families and keeps growing as more genomes are added.'],
+  const b=bullets(n?24:30,y+6,[['A species is not one genome','Each Streptococcus pneumoniae genome has about 2,000 genes; only about 1,100 to 1,500 are core to the species, and two isolates typically differ in several hundred. The pangenome — every gene found in any isolate — runs to five thousand or more families and keeps growing as more genomes are added.'],
    ['The thresholds are arbitrary','“Core” is usually defined as present in 95 or 99 percent of isolates, not 100, because annotation errors, assembly gaps and genuine loss make strict universality rare. The number you report depends on the threshold you chose and on how many genomes you sampled.'],
    ['Most of the accessory genome is rare','The distribution is strongly skewed: a few thousand gene families are present in one or two isolates. These cloud genes are mostly phage, mobile elements and hypothetical proteins, and are the hardest part to interpret.'],
    ['Clustering choices matter as much as biology','Whether two divergent alleles are one gene family or two depends on the identity threshold in the clustering step. Comparing pangenome sizes between papers without matching those settings is not meaningful.']],n?44:88,{d0:2.2,gap:24});
@@ -596,13 +597,13 @@ function scG6(n){
   const P=n?xyPlot(50,46,276,140,[0,60],[0,6000],{xlab:'genomes sampled',ylab:'gene families',xdy:24,ydx:18})
           :xyPlot(74,52,300,160,[0,60],[0,6000],{xlab:'genomes sampled',ylab:'gene families found',xdy:24,ydx:20});
   let s=G('a-fade',0,P.s);
-  s+=G('a-fade',.4,xyCurve(P,t=>t<1?null:1700*Math.pow(t,0.287),{col:PHG,n:160}));
-  s+=G('a-fade',.9,xyCurve(P,t=>t<1?null:4000+260*(1-Math.exp(-t/7)),{col:CORE,n:160,dash:'6 4'}));
-  s+=G('a-fade',1.3,xyCurve(P,t=>t<1?null:1100+900*Math.exp(-t/4),{col:INTC,n:160}));
-  s+=G('a-fade',1.6,keyRow(n?22:P.x+6,P.y+P.h+(n?46:48),[['pangenome, open (S. pneumoniae)',PHG],['pangenome, closed (M. tuberculosis)',CORE],['core genome',INTC]],{rh:16,fs:'f11'}));
+  s+=G('a-fade',.4,xyCurve(P,t=>t<1?NaN:2000*Math.pow(t,0.25),{col:PHG,n:160}));
+  s+=G('a-fade',.9,xyCurve(P,t=>t<1?NaN:4000+260*(1-Math.exp(-(t-1)/7)),{col:CORE,n:160,dash:'6 4'}));
+  s+=G('a-fade',1.3,xyCurve(P,t=>t<1?NaN:1100+900*Math.exp(-(t-1)/4),{col:INTC,n:160}));
+  s+=G('a-fade',1.6,keyRow(n?22:P.x+6,P.y+P.h+(n?46:48),[['pangenome, open (S. pneumoniae)',PHG],['pangenome, closed (M. tuberculosis)',CORE],['core genome (S. pneumoniae)',INTC]],{rh:16,fs:'f11'}));
   let y=P.y+P.h+(n?112:114);
   const b=bullets(n?24:30,y,[['Open or closed','Add genomes one at a time and count the gene families seen so far. If the curve keeps rising, every new isolate brings new genes and the pangenome is open; if it saturates, the species has been sampled and the pangenome is closed.'],
-   ['Heaps’ law','The rising curve is well fitted by n^α. An exponent above zero means open; Streptococcus pneumoniae, E. coli and Helicobacter pylori are open, with α around 0.1 to 0.2 for new genes per genome. Mycobacterium tuberculosis and Bacillus anthracis are effectively closed.'],
+   ['Heaps’ law','The rising curve is well fitted by a power law, pangenome size ∝ N^γ, where N is the number of genomes: γ above zero means open. Equivalently, new genes per added genome fall as N^−α, and α below 1 means open. Streptococcus pneumoniae, E. coli and Helicobacter pylori are open; Mycobacterium tuberculosis and Bacillus anthracis are effectively closed.'],
    ['Openness tracks lifestyle','Species that recombine freely, live in mixed communities and meet many mobile elements have open pangenomes. Recently emerged, host-restricted clones that pass through tight bottlenecks have closed ones. It is a statement about ecology and population history, not about how “advanced” the organism is.'],
    ['The core curve falls, then flattens','As genomes are added the core shrinks, because any gene missing from any isolate drops out. With relaxed thresholds it stabilises quickly; with a strict definition it keeps eroding, which is another reason to state the threshold.']],n?44:88,{d0:1.8,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
@@ -619,7 +620,7 @@ function scG7(n){
     +Tc(x,y+40,'and differing in GC content from the rest','#6A5B47',10,'mono start'));
   let yy=y+(n?64:68);
   const rows=[['Prophages','Integrated temperate phages, often several per genome, together making up a few percent of it. Many are defective. They carry toxins and defence systems, and they are the most variable part of many genomes.'],
-   ['ICEs and plasmids','Large, self-mobile, usually integrated beside a tRNA gene. These carry the biggest accessory cargoes, including most transferable resistance.'],
+   ['ICEs and plasmids','Large and self-mobile: ICEs integrate, usually beside a tRNA gene, while plasmids replicate on their own. These carry the biggest accessory cargoes, including most transferable resistance.'],
    ['IS elements','Short, repeated, and the main cause of assembly breaks in short-read data. Their copy number is a good indicator of a genome’s recent history: expansion during host restriction, then loss during reduction.'],
    ['Genomic islands','A descriptive term for any large block with atypical composition carrying a coherent function — virulence, metabolism, resistance. Detection relies on composition, on phylogenetic distribution, or on both.']];
   const t=wtable(n,['What is there','Why it matters'],rows,n?[[10,13],[118,38]]:[[24,16],[190,54]],{y0:yy,d0:2});
@@ -632,7 +633,7 @@ function scG8(n){
   const stages=[['Free-living ancestor','4–6 Mb, few pseudogenes, few IS copies',CORE],
    ['Newly host-restricted','IS elements expand explosively, rearrangements, many pseudogenes',PHG],
    ['Reduced','1–2 Mb, pseudogenes removed, IS copies lost again',TNC],
-   ['Obligate endosymbiont','0.15–0.8 Mb, no mobile elements, no repair genes, AT-rich',CLOUD]];
+   ['Obligate endosymbiont','0.1–0.8 Mb, no mobile elements, few repair genes, AT-rich',CLOUD]];
   const bw=n?300:132;
   if(!n){stages.forEach((st,i)=>{const x=24+i*152;
     s+=G('a-fade',(i*.4).toFixed(1),`<rect x="${x}" y="${y}" width="${bw}" height="${FX(74-i*16)}" rx="4" fill="${st[2]}" fill-opacity=".4" stroke="${st[2]}" stroke-width="1.6"/>`
@@ -680,7 +681,7 @@ function scG10(n){
 
 const GENQ=[
  {q:'A 40 kb stretch has markedly lower GC content than the rest of the chromosome, sits beside a tRNA gene, and is flanked by 18 bp direct repeats.',a:'A recently acquired genomic island',t:'All three signals point the same way: atypical composition, integration at a tRNA locus, and the direct repeats left by site-specific integration. Look for an integrase at one end to tell an ICE or prophage from a passively acquired island.'},
- {q:'The cumulative GC skew plot has four turning points instead of two.',a:'An inversion, or a misassembly',t:'A correct chromosome gives one maximum at the origin and one minimum at the terminus. Extra reversals mean a segment is in the wrong orientation — either genuinely, by inversion between inverted repeats, or because the assembler placed it wrongly across a repeat.'},
+ {q:'The cumulative GC skew plot has four turning points instead of two.',a:'An inversion, or a misassembly',t:'A correct chromosome gives one minimum at the origin and one maximum at the terminus. Extra reversals mean a segment is in the wrong orientation — either genuinely, by inversion between inverted repeats, or because the assembler placed it wrongly across a repeat.'},
  {q:'A gene is present in 94 percent of isolates and the paper calls it accessory; another paper calls the same gene core.',a:'A threshold difference, not a biological one',t:'Core is conventionally defined at 95 or 99 percent presence. A gene at 94 percent sits exactly where the two conventions disagree. Always report the threshold, and prefer showing the presence distribution over a binary label.'},
  {q:'A genome contains 230 copies of IS elements and about 1,100 pseudogenes.',a:'Recent host restriction',t:'This is the signature of a lineage that has recently become dependent on a host and passed through severe bottlenecks: drift allows mobile elements to expand and lets genes decay before they are deleted. Mycobacterium leprae and Bordetella pertussis look like this.'},
  {q:'The core-genome tree is strongly supported, but the branch lengths differ wildly between genes.',a:'Unmasked recombination',t:'Imported patches carry divergent sequence and inflate branch lengths locally. Detect and mask recombinant regions before building the tree, or the support values measure the consistency of the recombination, not of the descent.'},
@@ -711,11 +712,11 @@ const NAR='Narrator';
 const S=[
  {p:1,title:'What a bacterial genome looks like',draw:scG1,text:"Bacterial genomes run from under a megabase to more than thirteen, and coding density stays near ninety percent throughout, so size is essentially gene content. A larger genome means more transport, more regulation and more metabolism — and the requirement for regulation is thought to set the upper limit."},
  {p:1,title:'Replichores and orientation',draw:scG2,text:"Replication starts at a single origin and runs in both directions, and that fact organises the chromosome. Genes point away from the origin, essential and highly expressed genes sit close to it where copy number is highest during fast growth, and the two arms stay close to equal in length."},
- {p:1,title:'GC skew',draw:scG3,text:"The leading and lagging strands are exposed to different mutational pressures, so they differ in G and C content. Plot the running total of that difference and you get a V whose turning points are the origin and the terminus — a free estimate of replication structure, and a sensitive detector of inversions and misassemblies."},
+ {p:1,title:'GC skew',draw:scG3,text:"The leading and lagging strands are exposed to different mutational pressures, so they differ in G and C content. Plot the running total of that difference and you get a curve whose minimum and maximum are the origin and the terminus — a free estimate of replication structure, and a sensitive detector of inversions and misassemblies."},
  {p:1,title:'Codon usage',draw:scG4,text:"Synonymous codons are not used equally. In fast-growing species, highly expressed genes use the codons matching the abundant tRNAs, while the rest of the genome follows mutational pressure. That makes composition a detector of recently imported DNA — and it explains why heterologous expression so often fails for reasons that have nothing to do with the protein."},
- {p:2,title:'Core, shell and cloud',draw:scG5,text:"A bacterial species is not a genome but a distribution. Some genes are in every isolate, some in many, and a long tail appear in one or two. For Streptococcus pneumoniae the core is around eleven hundred genes and the pangenome several thousand — with both numbers depending on thresholds that should always be stated."},
+ {p:2,title:'Core, shell and cloud',draw:scG5,text:"A bacterial species is not a genome but a distribution. Some genes are in every isolate, some in many, and a long tail appear in one or two. For Streptococcus pneumoniae the core is roughly 1,100 to 1,500 genes and the pangenome several thousand — with both numbers depending on thresholds that should always be stated."},
  {p:2,title:'Open and closed pangenomes',draw:scG6,text:"Add genomes one at a time and count the gene families seen. If the curve keeps rising, every new isolate brings something new and the pangenome is open; if it saturates, it is closed. Openness reflects ecology and population history — free recombination and mixed communities against host restriction and bottlenecks."},
- {p:2,title:'Where the accessory genome lives',draw:scG7,text:"Accessory content is not scattered evenly. It sits in prophages, ICEs, plasmids, IS elements and genomic islands, usually beside tRNA genes, flanked by direct repeats, and differing in composition from the rest. For questions about virulence, resistance and host range, this is the part of the genome that matters."},
+ {p:2,title:'Where the accessory genome lives',draw:scG7,text:"Accessory content is not scattered evenly. It sits in prophages, ICEs, plasmids, IS elements and genomic islands; integrated elements are often beside tRNA genes, flanked by direct repeats, and differing in composition from the rest. For questions about virulence, resistance and host range, this is the part of the genome that matters."},
  {p:2,title:'Genome reduction',draw:scG8,text:"Lineages that become restricted to a host follow a recognisable trajectory: mobile elements expand, genes decay into pseudogenes, and both are then deleted, leaving a small, AT-rich genome with no repair systems and no mobile elements. Finding a genome mid-way through this process dates a lifestyle change."},
  {p:3,title:'Five sentences to distrust',draw:scG9,text:"Most genomic claims hide a methodological choice. A gene called absent may be unassembled; an open pangenome may reflect the sampling; a core-genome tree is only valid once recombination is masked. The remedy is not scepticism about genomics but stating the thresholds, the sampling and the assembly quality."},
  {p:3,title:'A worked example',draw:scG10,text:"In the pneumococcus the distinction between core and accessory cuts across the clinically important loci. The capsule locus is universal but its content defines the serotype and is exchanged by recombination; the penicillin-binding proteins are core genes with mosaic alleles. Neither can be understood by presence-and-absence analysis alone."},

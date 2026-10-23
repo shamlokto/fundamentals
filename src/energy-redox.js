@@ -103,9 +103,10 @@ function scE7(n){
   const A=n?axes(54,40,276,170,{xr:[-6,0],yr:[-50,20],xt:[[-6,'10⁻⁶'],[-4,'10⁻⁴'],[-2,'10⁻²'],[0,'1']],yt:[-40,-20,0,20],xlab:'H₂ partial pressure (atm)',ylab:'ΔG (kJ/mol)'})
     :axes(70,40,300,200,{xr:[-6,0],yr:[-50,20],xt:[[-6,'10⁻⁶'],[-4,'10⁻⁴'],[-2,'10⁻²'],[0,'1']],yt:[-40,-20,0,20],xlab:'H₂ partial pressure (atm)',ylab:'ΔG (kJ/mol)'});
   const f=v=>9.6+2*RT*Math.log(10)*v;
-  let s=A.s+ln(A.px(-6),FX(A.py(0)),A.px(0),FX(A.py(0)),'#9A8E78',1,'4 3')+`<rect x="${A.px(-6)}" y="${FX(A.py(-20))}" width="${FX(A.px(-4)-A.px(-6))}" height="${FX(A.py(-50)-A.py(-20))}" fill="#A9C49A" opacity=".35"/>`;
-  s+=G('a-fade',.4,curve(A,f,{col:'#A4473A'})+T(FX(A.px(-1.6)),FX(A.py(8)),'ethanol → acetate + 2H₂','note end f11 halo'));
-  s+=T(FX(A.px(-5.9)),FX(A.py(-24)),n?'livable':'enough to live on','note start f11');
+  let s=A.s+ln(A.px(-6),FX(A.py(0)),A.px(0),FX(A.py(0)),'#9A8E78',1,'4 3')+`<rect x="${A.px(-6)}" y="${FX(A.py(-20))}" width="${FX(A.px(0)-A.px(-6))}" height="${FX(A.py(-50)-A.py(-20))}" fill="#A9C49A" opacity=".35"/>`;
+  s+=G('a-fade',.4,curve(A,f,{col:'#A4473A',from:-5.2})+T(FX(A.px(-1.6)),FX(A.py(8)),'ethanol → acetate + 2H₂','note end f11 halo'));
+  s+=T(FX(A.px(-0.1)),FX(A.py(-46)),n?'ΔG below about −20: livable':'ΔG below about −20: enough to live on','note end f11');
+  s+=G('a-fade',.8,`<circle cx="${FX(A.px(-4))}" cy="${FX(A.py(f(-4)))}" r="4" fill="#2F5276"/>`+T(FX(A.px(-4)+8),FX(A.py(f(-4))+4),n?'10⁻⁴ atm: −36':'10⁻⁴ atm H₂: ΔG ≈ −36','note start f11 halo'));
   const b=n?bullets(24,A.y+A.h+60,[['Unfavourable alone','At 1 atm H₂, ethanol oxidation has ΔG°′ ≈ +9.6 kJ/mol.'],['Partners pull it','A methanogen keeps H₂ near 10⁻⁴ atm, making ΔG about −36 kJ/mol.'],['A small slice','Organisms can live on about −20 kJ/mol, roughly one proton’s worth.']],44,{d0:1,gap:22})
     :bullets(400,52,[['Unfavourable alone','At 1 atm H₂, ethanol → acetate + 2H₂ has ΔG°′ ≈ +9.6 kJ/mol.'],['A partner pulls it','A methanogen consumes H₂ and holds it near 10⁻⁴ atm, so ΔG falls to about −36 kJ/mol. This is syntrophy.'],['A small slice','The minimum on which cells can live is around −10 to −20 kJ/mol per reaction, a fraction of one ATP.']],30,{d0:1,gap:22});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y,A.y+A.h+50)),s:s+b.s};

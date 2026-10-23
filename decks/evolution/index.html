@@ -520,23 +520,23 @@ function scE2(n){
   let y=t.y+16,s=t.s;
   s+=G('a-fade',1.4,T(n?16:24,y,'Why the per-genome number is the one to remember','cname start f14'));
   y+=22;
-  const q=para(n?16:24,y,'An overnight culture reaching 10⁹ cells has gone through about 30 doublings and roughly 10⁹ divisions. At 0.003 mutations per genome per generation that is some 3 million mutational events in the tube — so every single-base change compatible with life is present somewhere, and resistance to almost anything is already there before you add it.',n?50:92,'note start f13',17,1.6);
+  const q=para(n?16:24,y,'An overnight culture reaching 10⁹ cells has gone through about 30 doublings and roughly 10⁹ divisions. At 0.003 mutations per genome per generation that is some 3 million mutational events in the tube — so roughly half of all the bases in the genome have been changed in at least one cell, and a resistance that several different point mutations can give is almost always already there before you add the drug.',n?50:92,'note start f13',17,1.6);
   const b=bullets(n?24:30,q.y+12,[['Mutations are not uniform','Transitions outnumber transversions; some sequence contexts and homopolymer runs mutate far more often; and the two strands differ. A “mutation rate” is an average over a very uneven landscape.'],
    ['The spectrum is informative','Which changes dominate tells you which repair system is missing — the logic of the mutator plate in the DNA repair deck.']],n?44:88,{d0:2,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+q.s+b.s};
 }
 
 function scE3(n){
-  const P=n?xyPlot(44,40,290,150,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency',xdy:22,ydx:14})
-           :xyPlot(60,46,280,170,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency of the variant',xdy:24,ydx:16});
+  const P=n?xyPlot(44,40,290,150,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency',xdy:30,ydx:14})
+           :xyPlot(60,46,280,170,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency of the variant',xdy:32,ydx:16});
   const logistic=s=>t=>1/(1+1e6*Math.exp(-s*t));
-  let s=G('a-fade',0,P.s);
+  let s=G('a-fade',0,P.s+[0,100,200,300].map(v=>`<path d="M${FX(P.px(v))} ${P.y+P.h} v4" stroke="${AXC}"/>`+T(FX(P.px(v)),P.y+P.h+14,v,'mono mid f10')).join(''));
   [[0.30,'s = 0.30',PHG,''],[0.15,'s = 0.15',CORE,''],[0.05,'s = 0.05',TNC,'5 3']].forEach((c,i)=>{
     s+=G('a-fade',(.3+i*.35).toFixed(1),xyCurve(P,logistic(c[0]),{col:c[2],dash:c[3],n:140}));});
   s+=G('a-fade',1.4,n?keyRow(26,P.y+P.h+44,[['s = 0.30',PHG],['s = 0.15',CORE],['s = 0.05',TNC]],{rh:16,fs:'f11'})
     :keyRow(P.x+10,P.y+P.h+44,[['s = 0.30',PHG],['s = 0.15',CORE],['s = 0.05',TNC]],{cw:120,fs:'f11'}));
   let y=P.y+P.h+(n?112:70);
-  const b=bullets(n?24:30,y,[['A sweep looks like this','One beneficial variant, starting as a single cell in a million, rises as a sigmoid. A 15 percent advantage takes roughly a hundred generations to go from one cell in a million to fixation — about four days of daily passage.'],
+  const b=bullets(n?24:30,y,[['A sweep looks like this','One beneficial variant, starting as a single cell in a million, rises as a sigmoid. A 15 percent advantage takes about 90 generations to reach half the population and nearly 200 to fix: around four weeks of daily 1:100 transfers, at 6.6 generations a day.'],
    ['Hitchhiking','Everything physically linked to the winner is dragged to fixation with it. In a clonal organism that is the whole chromosome, which is why a single adaptive mutation can wipe out diversity across a genome.'],
    ['Clonal interference','In large populations several beneficial mutations arise in different lineages at once and compete. Most good mutations are lost, and adaptation is slower than the sum of its parts.']],n?44:88,{d0:1.8,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
@@ -704,7 +704,7 @@ function scE11(n){
 const NAR='Narrator';
 const S=[
  {p:1,title:'Four forces',draw:scE1,text:"A bacterial population changes by four processes: mutation makes new variants, selection sorts them, drift randomises them, and recombination brings in variants made elsewhere. Everything in bacterial evolution is some combination of these, and which one dominates is mostly a question of population size."},
- {p:1,title:'How often mutations happen',draw:scE2,text:"The per-base mutation rate in bacteria is extraordinarily low, around a tenth of a billionth per generation. But genomes are large and populations are enormous, so the useful number is per genome: roughly one mutation per three hundred divisions. In a single overnight culture that means millions of mutational events, which is why resistance is usually already present before you select for it."},
+ {p:1,title:'How often mutations happen',draw:scE2,text:"The per-base mutation rate in bacteria is extraordinarily low, between one in two billion and one in ten billion per generation. But genomes are large and populations are enormous, so the useful number is per genome: roughly one mutation per three hundred divisions. In a single overnight culture that means millions of mutational events, which is why resistance is usually already present before you select for it."},
  {p:1,title:'Selection and sweeps',draw:scE3,text:"A variant with a reproductive advantage rises in frequency along a sigmoid curve. Because bacteria are largely clonal, everything linked to that variant rises with it, so a single adaptive mutation can purge diversity across the whole chromosome. In very large populations, several beneficial mutations compete in different lineages at once, and most are lost."},
  {p:1,title:'Drift and bottlenecks',draw:scE4,text:"When only a few cells found the next population, frequencies change by chance alone. Bacteria meet bottlenecks constantly: transmission to a new host, colonisation of a new site, a course of antibiotics, or simply being streaked to a single colony. Within a host, effective population sizes can be small enough that drift outweighs weak selection."},
  {p:2,title:'The question Luria and Delbrück asked',draw:scE5,text:"Does exposure to a phage or an antibiotic instruct cells to become resistant, or does it merely reveal mutants that were already there? Both ideas predict resistant colonies. They differ in how variable the number of resistant cells should be between identical parallel cultures, and that difference is measurable."},

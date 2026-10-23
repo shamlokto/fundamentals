@@ -13,7 +13,7 @@ let mscSel=1;
 function mscArt(m,cx,cy,w){
   const h=96, x=cx-w/2, y=cy-h/2;
   let s=`<rect x="${FX(x)}" y="${FX(y)}" width="${w}" height="${h}" rx="6" fill="${m.bg}" stroke="${INK}" stroke-width="1"/>`;
-  const P=[[-.32,-.15,0],[-.05,.18,25],[.22,-.2,-15],[.34,.22,60]];
+  const P=[[-.32,-.15,0],[-.05,.18,25],[.22,-.2,-15],[.34,.14,60]];
   const k=mscSel;
   if(k===6)s+=`<rect x="${FX(x+2)}" y="${FX(cy-14)}" width="${w-4}" height="28" fill="#7FD08A" opacity=".18"/>`;
   P.forEach(([dx,dy,a],i)=>{const px=cx+dx*w, py=cy+dy*h*1.4, L=44, r=8, tr=`transform="rotate(${a} ${FX(px)} ${FX(py)})"`;
@@ -145,9 +145,9 @@ const S=[
  {p:1,title:'The diffraction limit',draw:scM2,text:"Light bends around small objects, so a lens images a point as a blur. Ernst Abbe showed that two points closer than about half the wavelength divided by the numerical aperture cannot be separated. For visible light that is about 200 nanometres, a fifth of a typical bacterium."},
  {p:2,title:'Light microscopy methods',chips:'msc',draw:scM3,text:"Most bacteria are colourless and nearly transparent, so light microscopes differ mainly in how they create contrast. Pick a method to compare its resolution, what it shows, whether cells can stay alive, and its limitations."},
  {p:2,title:'Super-resolution',draw:scM4,text:"Super-resolution methods get round the diffraction limit by controlling which molecules fluoresce, rather than by better lenses. STED shrinks the emitting spot, SIM extracts finer detail from patterned light, and PALM and STORM localise single molecules one at a time."},
- {p:3,title:'Electron microscopy',draw:scM5,text:"Electrons have a wavelength thousands of times shorter than light, so electron microscopes can approach atomic detail. Transmission EM looks through thin sections or stained particles, scanning EM looks at surfaces, and cryo-EM images frozen, unstained samples."},
+ {p:3,title:'Electron microscopy',draw:scM5,text:"Fast electrons have a wavelength about a hundred thousand times shorter than visible light, so electron microscopes can approach atomic detail. Transmission EM looks through thin sections or stained particles, scanning EM looks at surfaces, and cryo-EM images frozen, unstained samples."},
  {p:3,title:'Cryo-EM and tomography',draw:scM6,text:"Cryo-EM freezes samples so fast that water becomes glass, preserving their native state. Single-particle analysis averages many copies of a purified complex into a near-atomic map; cryo-electron tomography reconstructs whole cells, after ion-beam milling has thinned them."},
- {p:3,title:'From atoms to cells',draw:scM7,text:"Biological objects span six orders of magnitude, from atoms to cells. The dashed lines show roughly what each class of method can resolve: the eye stops at a tenth of a millimetre, light at a fifth of a micrometre, and electrons and X-rays reach atoms."},
+ {p:3,title:'From atoms to cells',draw:scM7,text:"Biological objects span about five orders of magnitude, from atoms to cells. The dashed lines show roughly what each class of method can resolve: the eye stops at a tenth of a millimetre, light at a fifth of a micrometre, and electrons and X-rays reach atoms."},
  {p:4,title:'Atomic structures',draw:scM8,text:"Three methods give most atomic structures. X-ray crystallography needs crystals, NMR works in solution for smaller proteins, and cryo-EM needs neither but works best for large complexes. The resolution number tells you which features in a map you can trust."},
  {p:4,title:'Structure prediction',draw:scM9,text:"AlphaFold2 showed in 2020 that a neural network trained on known structures can predict many protein structures from sequence alone. Its confidence scores matter as much as the model: pLDDT for each residue and the predicted aligned error between parts."}];
 const CHIPS={msc:{list:MSC.map(m=>m.k),get:()=>mscSel,set:k=>mscSel=k}};

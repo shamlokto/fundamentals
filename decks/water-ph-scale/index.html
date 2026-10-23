@@ -657,7 +657,7 @@ function scW1(n){return introPlate(n,{q:'What do water, pH and sheer size do to 
   belief:'A bacterium is a few femtolitres of crowded water. Its chemistry is set by pH and by how much water is free to move; its physics is that of an object so small that diffusion is fast, inertia is irrelevant, and surface is plentiful.',
   items:['pH, pKa and buffers','pH homeostasis','Water activity and osmotic pressure','Diffusion and time','Reynolds number','Surface and volume'],
   art:(cx,cy)=>rodCell2(cx,cy,150,40)+T(cx,cy+4,'~1 fL of water','note mid f12')+T(cx,cy-56,'pH ~7.6 inside','note mid f11')+T(cx,cy+66,'turgor: several atmospheres','note mid f11')
-    +[[-1,0],[1,0]].map(([d])=>arw(cx+d*110,cy,cx+d*80,cy,{w:1.2})).join(''),artH:180});}
+    +[[-1,0],[1,0]].map(([d])=>arw(cx+d*79,cy,cx+d*108,cy,{w:1.2})).join(''),artH:180});}
 function scW2(n){
   const b=BUF[bufSel], pK=b[1];
   const A=n?axes(54,30,280,170,{xr:[2,11],yr:[0,1],xt:[2,4,6,8,10],yt:[[0,'0'],[.5,'½'],[1,'1']],xlab:'pH',ylab:'fraction deprotonated'})
@@ -688,11 +688,11 @@ function scW4(n){
 }
 function scW5(n){
   const cw=n?150:180, y=n?60:70;
-  const panel=(x,lab,arrowIn,note)=>{let s=rodCell2(x,y+40,cw-30,32,{fill:arrowIn?'#DDE7F0':'#EFE6D2'})+T(x,y-2,lab,'cname mid f14');
+  const panel=(x,lab,arrowIn,note)=>{let s=(arrowIn?rodCell2(x,y+40,cw-30,32,{fill:'#DDE7F0'}):rodCell2(x,y+40,cw-30,32,{fill:'none',tint:false,sw:1.2}).replace('/>',' stroke-dasharray="4 3"/>')+rodCell2(x,y+40,cw-62,20,{fill:'#EFE6D2'}))+T(x,y-2,lab,'cname mid f14');
     for(let i=0;i<4;i++){const ax=x-cw/2+30+i*(cw-60)/3;s+=arrowIn?arw(ax,y+98,ax,y+78,{w:1.3,blue:1}):arw(ax,y+76,ax,y+98,{w:1.3});}
     return s+T(x,y+116,note,'note mid f11');};
   let s=G('a-fade',0,panel(n?92:150,'hypo-osmotic shock',true,'water rushes in'));
-  s+=G('a-fade',.4,panel(n?268:470,'hyper-osmotic shock',false,'water leaves; cell shrinks'));
+  s+=G('a-fade',.4,panel(n?268:470,'hyper-osmotic shock',false,n?'cytoplasm shrinks':'water leaves; cytoplasm shrinks'));
   const b=bullets(n?24:30,y+150,[['Turgor','The cytoplasm is more concentrated than most environments, so water pushes outwards. The wall holds the pressure: estimates run from about 1 atmosphere in Gram-negatives to 10–20 in Gram-positives, though measurements disagree.'],
    ['Safety valves','On sudden dilution, mechanosensitive channels MscS and MscL open and release solutes within milliseconds.'],
    ['Rebuilding','After a salt upshift, cells first take up K⁺, then replace it with compatible solutes that do not disturb proteins.'],
@@ -717,10 +717,10 @@ function scW7(n){
 }
 const CELLS=[['Mycoplasma',0.3,'one of the smallest free-living cells'],['Pelagibacter',0.1,'the most abundant ocean bacterium; tiny rods'],['E. coli',0.5,'a rod about 1 × 2 µm (radius ~0.5)'],['yeast',2.5,'a eukaryotic cell ~5 µm across'],['Epulopiscium',40,'giant gut bacterium, hundreds of µm long; many genome copies'],['Thiomargarita',300,'giant sulfur bacterium; a thin cytoplasm around a vacuole']];
 function scW8(n){
-  const items=CELLS.map(c=>[c[0],3/c[1],c[1]<1?PAL.green:c[1]<5?PAL.blue:PAL.rose,(3/c[1]).toFixed(c[1]<1?0:2)+' µm⁻¹']);
+  const items=CELLS.map(c=>[`${c[0]} (r ${c[1]} µm)`,3/c[1],c[1]<1?PAL.green:c[1]<5?PAL.blue:PAL.rose,(3/c[1]).toFixed(c[1]<1?0:2)+' µm⁻¹']);
   const top=para(n?16:24,30,'For a sphere, surface area divided by volume is 3/r. Halve the radius and each unit of cytoplasm has twice the membrane through which to feed.',n?50:92,'lab start f13',17,0);
-  const max=10;const h=hbars(n,n?10:30,top.y+14,n?340:560,items.map(i=>[i[0],Math.min(i[1],max),i[2],i[3]]),{max,lw:n?100:130});
-  const p=para(n?16:24,h.y+10,'Values are for a sphere of the given radius; bars are capped at 10 µm⁻¹. Giant bacteria cheat the rule: Thiomargarita fills most of its volume with a vacuole, so its living cytoplasm is a thin shell, and Epulopiscium carries tens of thousands of genome copies near its surface.',n?50:92,'note start f13',17,1);
+  const max=10;const h=hbars(n,n?10:30,top.y+14,n?340:560,items.map(i=>[i[0],Math.min(i[1],max),i[2],i[3]]),{max,lw:n?150:180});
+  const p=para(n?16:24,h.y+10,'Values are 3/r for a sphere of the radius shown; bars are capped at 10 µm⁻¹. Giant bacteria cheat the rule: Thiomargarita fills most of its volume with a vacuole, so its living cytoplasm is a thin shell, and Epulopiscium carries tens of thousands of genome copies near its surface.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:top.s+h.s+p.s};
 }
 const S=[

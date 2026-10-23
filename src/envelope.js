@@ -1,18 +1,22 @@
 /*META
 {"title":"Cell Envelopes","eyebrow":"Cell structure · an animated primer","h1":"The layers that hold a microbe together","parts":["Three envelopes","Peptidoglycan","Surface polymers","Archaea and the domains"],"foot":"Layer thicknesses and compositions are typical; species vary widely. Envelope assembly machines (Sec, Bam, Lol, Lpt) are covered in the protein-targeting primer, and septal wall synthesis in the cell-division primer.","description":"Gram-positive, Gram-negative and acid-fast envelopes; peptidoglycan chemistry and turnover; LPS, teichoic and mycolic acids; archaeal membranes, S-layers and the three domains."}
 META*/
-const LAY={om:['outer membrane','#D9C89B'],lps:['LPS','#C9A9D6'],pg:['peptidoglycan','#C6D3A8'],pgT:['thick peptidoglycan','#C6D3A8'],peri:['periplasm','#F1ECDF'],im:['cytoplasmic membrane','#EDE0B8'],ta:['teichoic acids','#E7A99B'],ag:['arabinogalactan','#E0C88A'],myc:['mycomembrane','#B9A0C8'],caps:['capsule','#E8E0CC'],sl:['S-layer','#A9C4DC'],arch:['ether-lipid membrane','#D6C79F'],cyto:['cytoplasm','#E4E8D4']};
-function stack(n,x,y,w,layers,o={}){let s='',yy=y;
-  layers.forEach(([k,h])=>{const L=LAY[k];
-    if(k==='im'||k==='om'||k==='arch'||k==='myc')s+=membraneBand(x,x+w,yy,h,{fill:L[1]});
+const LAY={om:['outer membrane, LPS outside','#D9C89B'],lps:['LPS sugar chains','#C9A9D6'],pg:['peptidoglycan','#C6D3A8'],pgT:['thick peptidoglycan','#C6D3A8'],peri:['periplasm','#F1ECDF'],im:['cytoplasmic membrane','#EDE0B8'],ta:['teichoic acids','#E7A99B'],ag:['arabinogalactan','#E0C88A'],myc:['mycomembrane','#B9A0C8'],caps:['capsule','#E8E0CC'],sl:['S-layer','#A9C4DC'],arch:['ether-lipid membrane','#D6C79F'],cyto:['cytoplasm','#E4E8D4']};
+function stack(n,x,y,w,layers,o={}){let s='',yy=y,post='';
+  layers.forEach(([k,h],idx)=>{const L=LAY[k], prev=idx?layers[idx-1][0]:'', next=layers[idx+1];
+    if(k==='im'||k==='om'||k==='arch'||k==='myc'){s+=membraneBand(x,x+w,yy,h,{fill:L[1]});
+      // LPS is the outer leaflet of the outer membrane: colour those head groups as LPS
+      if(k==='om'&&prev==='lps')s+=`<path d="M${x+3} ${yy+3} H${x+w}" stroke="#7D4A98" stroke-width="4.5" stroke-dasharray="0.1 7" stroke-linecap="round"/>`;}
     else if(k==='lps'){s+=`<rect x="${x}" y="${yy}" width="${w}" height="${h}" fill="#F1ECDF"/>`;for(let i=x+6;i<x+w;i+=12)s+=`<path d="M${i} ${yy+h} v-${h-3}" stroke="#7D4A98" stroke-width="1.6"/><circle cx="${i}" cy="${yy+3}" r="2.4" fill="#7D4A98"/>`;}
-    else if(k==='ta'){s+=`<rect x="${x}" y="${yy}" width="${w}" height="${h}" fill="#F1ECDF"/>`;}
+    else if(k==='ta'){s+=`<rect x="${x}" y="${yy}" width="${w}" height="${h}" fill="#F1ECDF"/>`;
+      // teichoic acids are threaded through the wall, so draw them over the next (peptidoglycan) layer
+      const d=next?next[1]*.85:0;for(let i=x+8;i<x+w-4;i+=16)post+=`<path d="M${i} ${yy+1} v${FX(h+d)}" stroke="#B5584A" stroke-width="1.6"/>`;}
     else if(k==='sl'){s+=`<rect x="${x}" y="${yy}" width="${w}" height="${h}" fill="#F1ECDF"/>`;for(let i=x+2;i<x+w-8;i+=14)s+=`<rect x="${i}" y="${yy+2}" width="11" height="${h-4}" rx="3" fill="${L[1]}" stroke="${INK}" stroke-width=".6"/>`;}
     else if(k==='pg'||k==='pgT'){s+=`<rect x="${x}" y="${yy}" width="${w}" height="${h}" fill="${L[1]}"/>`;for(let j=yy+4;j<yy+h-1;j+=7)s+=`<path d="M${x} ${j} H${x+w}" stroke="#7E8F5A" stroke-width="1" stroke-dasharray="10 3"/>`;}
     else s+=`<rect x="${x}" y="${yy}" width="${w}" height="${h}" fill="${L[1]}"${k==='caps'?' opacity=".8"':''}/>`;
     if(!o.nolab){let ly=yy+h/2+4;if(o._ly!=null&&ly<o._ly+14)ly=o._ly+14;o._ly=ly;s+=ln(x+w,FX(yy+h/2),x+w+10,FX(ly-4),'#9A8E78',.8)+T(x+w+13,FX(ly),L[0],'note start f11');}
     yy+=h;});
-  return {s:s+`<rect x="${x}" y="${y}" width="${w}" height="${yy-y}" fill="none" stroke="${INK}" stroke-width=".8"/>`,y:yy};}
+  return {s:s+post+`<rect x="${x}" y="${y}" width="${w}" height="${yy-y}" fill="none" stroke="${INK}" stroke-width=".8"/>`,y:yy};}
 const ENV=[
  {k:'Gram-negative',L:[['lps',12],['om',16],['peri',16],['pg',8],['peri',14],['im',16],['cyto',18]],rows:[['Example','Escherichia coli, Pseudomonas, Neisseria'],['Wall','a thin layer of peptidoglycan, 2–7 nm, in the periplasm'],['Outer membrane','asymmetric: phospholipid inside, lipopolysaccharide outside; porins let small solutes through'],['Gram stain','pink: the thin wall loses crystal violet when the outer membrane is dissolved by alcohol']],note:'The outer membrane is a permeability barrier that keeps out many antibiotics, detergents and bile; it is why vancomycin does not work on E. coli.'},
  {k:'Gram-positive',L:[['caps',14],['ta',6],['pgT',44],['im',16],['cyto',18]],rows:[['Example','Staphylococcus, Streptococcus, Bacillus'],['Wall','20–80 nm of peptidoglycan threaded with wall and lipoteichoic acids'],['Outer membrane','none; proteins are anchored to the wall by sortase or to lipids'],['Gram stain','purple: the thick, dehydrated wall traps the crystal-violet–iodine complex']],note:'Without an outer membrane, the thick wall is exposed: lysozyme and many antibiotics reach it directly, but it resists turgor and dehydration well.'},
@@ -92,7 +96,7 @@ function scV5(n){
     s+=G('a-fade',.5,bx(78,150,96,'L-Ala')+bx(268,150,140,'D-Ala–D-Ala')+arw(127,150,196,150)+lab(162,140,'Alr, Ddl','mid')+red(162,176,'D-cycloserine ⊣','mid')+red(162,192,'Alr and Ddl','mid')
       +arw(340,140,414,78)+lab(386,122,'MurF','start'));
     s+=G('a-fade',.8,bx(480,my-24,110,'lipid I',PAL.gold)+anch(480,my-7,my+mh-4)
-      +arw(480,76,480,my-43)+lab(490,150,'MraY','start')+T(490,168,'adds Und-P','note start f13')
+      +arw(480,76,480,my-43)+lab(490,150,'MraY','start')+T(490,168,'transfers to Und-P','note start f13')
       +bx(300,my-24,110,'lipid II',PAL.gold)+anch(300,my-7,my+mh-4)+arw(424,my-24,357,my-24)+lab(390,my-48,'MurG','mid'));
     s+=G('a-fade',1.1,arw(357,my-14,357,my+mh+26,{q:[400,my+mh/2]})+lab(392,my+mh/2+5,'MurJ flips','start')
       +bx(300,my+mh+40,110,'lipid II',PAL.gold)+anch(300,my+4,my+mh+22)
@@ -110,7 +114,7 @@ function scV5(n){
   s+=G('a-fade',.5,bx(290,40,110,'L-Ala')+arw(290,58,290,96)+lab(284,72,'Alr,','end')+lab(284,88,'Ddl','end')
     +bx(290,116,120,'D-Ala–|D-Ala',PAL.cream,46)+red(290,158,'D-cycloserine','mid')+red(290,174,'⊣ Alr and Ddl','mid')
     +arw(260,140,206,180)+lab(250,196,'MurF','start'));
-  s+=G('a-fade',.8,arw(110,222,110,my-43)+lab(120,262,'MraY adds Und-P')
+  s+=G('a-fade',.8,arw(110,222,110,my-43)+lab(120,262,'MraY: onto Und-P')
     +bx(130,my-24,104,'lipid I',PAL.gold)+anch(130,my-7,my+mh-4)
     +bx(276,my-24,104,'lipid II',PAL.gold)+anch(276,my-7,my+mh-4)+arw(183,my-24,223,my-24)+lab(203,my-48,'MurG','mid'));
   s+=G('a-fade',1.1,arw(330,my-12,330,oy-16,{q:[352,(my+oy)/2]})+lab(322,my+mh+16,'MurJ','end')
@@ -133,8 +137,8 @@ function scV7(n){
   const seg=(yy,h,f,lab,sub)=>box(x,yy,w,h,f,3)+T(x+w+12,yy+h/2+2,lab,'lab start f13')+T(x+w+12,yy+h/2+18,sub,'note start f11');
   s+=G('a-fade',0,seg(y,70,'#C9A9D6','O-antigen','repeating sugar units; serotype (e.g. O157)'));
   s+=G('a-fade',.3,seg(y+74,40,'#E0C88A','core oligosaccharide','includes Kdo and heptose'));
-  s+=G('a-fade',.6,seg(y+118,44,'#E7A99B','lipid A','acylated glucosamine disaccharide: endotoxin'));
-  s+=G('a-fade',.9,membraneBand(x-20,x+w+20,y+166,22)+T(x-20,y+206,'outer membrane (LPS in the outer leaflet)','note start f11'));
+  s+=G('a-fade',.6,membraneBand(x-20,x+w+20,y+118,50)+seg(y+118,25,'#E7A99B','lipid A','acylated glucosamine disaccharide: endotoxin'));
+  s+=G('a-fade',.9,T(x+w+12,y+168,'inner leaflet: phospholipid','note start f11')+T(x-20,y+192,'outer membrane: lipid A is its outer leaflet','note start f11'));
   const b=n?bullets(24,y+222,[['Endotoxin','Lipid A activates TLR4–MD-2; in blood it drives septic shock.'],['A barrier','LPS packs tightly with Mg²⁺ bridges, excluding detergents and hydrophobic drugs.'],['Colistin','Polymyxins bind lipid A; resistance comes from adding positive charges (mcr genes).']],44,{d0:1.2,gap:20})
     :bullets(400,52,[['Endotoxin','Hexa-acylated lipid A activates TLR4–MD-2 at picomolar levels; in blood it drives septic shock. Some pathogens remodel lipid A to evade it.'],['A barrier','LPS molecules pack tightly with Mg²⁺ bridges, excluding detergents, bile and hydrophobic antibiotics.'],['Colistin','Polymyxins bind lipid A and disrupt the membrane; resistance adds positive charges to lipid A, including by plasmid-borne mcr genes.']],30,{d0:1.2,gap:20});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,y+200)),s:s+b.s};

@@ -12,7 +12,7 @@ let prrSel=0;
 function phago(cx,cy,k=1){return `<path d="M${cx-30*k} ${cy} q-6 -26 20 -30 q10 -12 24 -2 q22 -8 26 18 q14 10 2 26 q6 20 -18 22 q-12 14 -26 2 q-22 6 -26 -18 q-12 -10 2 -26Z" transform="translate(0 0)" fill="${PAL.blue}" stroke="${INK}" stroke-width="1.2" class="tint"/>`
   +`<circle cx="${cx}" cy="${cy}" r="${10*k}" fill="${PAL.lilac}" stroke="${INK}" stroke-width=".8"/>`;}
 function bactDot(cx,cy,f){return `<ellipse cx="${cx}" cy="${cy}" rx="7" ry="4.2" fill="${f||PAL.green}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}
-function abY(cx,cy,k=1,col=PAL.gold){const a=`M${cx} ${cy} V${cy-18*k}`,l=`M${cx} ${cy-6*k} L${cx-12*k} ${cy-20*k}`,r=`M${cx} ${cy-6*k} L${cx+12*k} ${cy-20*k}`;
+function abY(cx,cy,k=1,col=PAL.gold){const a=`M${cx} ${cy} V${cy-8*k}`,l=`M${cx} ${cy-8*k} L${cx-12*k} ${cy-20*k}`,r=`M${cx} ${cy-8*k} L${cx+12*k} ${cy-20*k}`;
   return `<path d="${a} ${l} ${r}" stroke="${INK}" stroke-width="${2.4*k}" fill="none" stroke-linecap="round"/>`
     +`<circle cx="${cx-12*k}" cy="${cy-20*k}" r="${3.2*k}" fill="${col}" stroke="${INK}" stroke-width=".7"/><circle cx="${cx+12*k}" cy="${cy-20*k}" r="${3.2*k}" fill="${col}" stroke="${INK}" stroke-width=".7"/>`;}
 function scI1(n){return introPlate(n,{q:'How does the body tell self from a microbe, and respond fast but also remember?',
@@ -22,7 +22,7 @@ function scI1(n){return introPlate(n,{q:'How does the body tell self from a micr
 function scI2(n){
   const items=[
    ['Barriers come first','Intact skin, the acid of the stomach, lysozyme in tears and saliva, mucus and its beating cilia, and the competition of the normal microbiota keep most microbes out before any sensing is needed.'],
-   ['Pattern recognition','Innate cells carry receptors (PRRs) for conserved microbial molecules (PAMPs) such as LPS, flagellin, peptidoglycan and microbial nucleic acids, and for host "danger" signals. Charles Janeway predicted these receptors; Hoffmann and Beutler won the 2011 Nobel Prize for finding Toll and TLR4.'],
+   ['Pattern recognition','Innate cells carry receptors (PRRs) for conserved microbial molecules (PAMPs) such as LPS, flagellin, peptidoglycan and microbial nucleic acids, and for host "danger" signals. Charles Janeway predicted these receptors; Hoffmann and Beutler shared the 2011 Nobel Prize for showing that Toll (in flies) and TLR4 (in mice) sense microbes.'],
    ['One pattern, one class of microbe','Because PAMPs are shared and essential, a handful of receptors covers huge groups of pathogens at once, and the microbe cannot easily discard the target.'],
    ['Output: inflammation and interferon','Engaged receptors switch on NF-κB and interferon programs: cytokines, recruitment of phagocytes, fever, and an antiviral state in neighbouring cells.']];
   const c=cards(n,items,{y:20});
@@ -37,12 +37,12 @@ function scI3(n){
 }
 function scI4(n){
   const N=n?{t:{x:180,y:34,w:240,t:'trigger: microbe surface|or antibody or lectin'},
-     c3:{x:180,y:112,w:200,t:'C3 convertase',f:PAL.gold},
+     c3:{x:180,y:112,w:200,t:'C3 → C5|convertases',f:PAL.gold},
      op:{x:88,y:196,w:150,t:'C3b: opsonisation',f:PAL.blue},
      an:{x:264,y:196,w:150,t:'C3a, C5a:|inflammation',f:PAL.rose},
      mac:{x:180,y:278,w:210,t:'C5–C9: membrane|attack complex',f:PAL.lilac}}
    :{t:{x:120,y:60,w:170,t:'three triggers:|classical, lectin,|alternative'},
-     c3:{x:330,y:60,w:150,t:'C3 convertase',f:PAL.gold},
+     c3:{x:330,y:60,w:150,t:'C3 → C5|convertases',f:PAL.gold},
      op:{x:540,y:40,w:150,t:'C3b: opsonisation',f:PAL.blue},
      an:{x:540,y:110,w:160,t:'C3a, C5a:|inflammation',f:PAL.rose},
      mac:{x:540,y:185,w:160,t:'MAC (C5b–C9):|lysis',f:PAL.lilac}};
@@ -50,8 +50,8 @@ function scI4(n){
     :[['t','c3','cascade'],['c3','op','',{side:-1}],['c3','an',''],['c3','mac','',{side:1}]];
   let s=G('a-fade',0,flow(N,E));
   const b=bullets(n?24:30,n?330:230,[
-    ['Three ways in, one hub','The classical pathway starts on antibody bound to a microbe, the lectin pathway on mannose-binding lectin recognising sugars, the alternative pathway by spontaneous ticking-over on any surface that fails to switch it off. All converge on C3 convertase.'],
-    ['Three outputs','C3b coats the microbe for phagocytes (opsonisation), the small fragments C3a and C5a recruit and activate cells (and C5a is a strong chemoattractant), and C5b nucleates the pore-forming membrane attack complex.'],
+    ['Three ways in, one hub','The classical pathway starts on antibody bound to a microbe, the lectin pathway on mannose-binding lectin recognising sugars, the alternative pathway by spontaneous ticking-over on any surface that fails to switch it off. All converge on C3 convertase, which then forms C5 convertase.'],
+    ['Three outputs','C3b coats the microbe for phagocytes (opsonisation), the small fragments C3a and C5a recruit and activate cells (and C5a is a strong chemoattractant), and C5b, cut from C5 by C5 convertase, nucleates the pore-forming membrane attack complex.'],
     ['Why it is dangerous and controlled','The alternative pathway attacks indiscriminately, so host cells carry regulators (CD55, CD59, factor H). Losing them causes disease; people who lack the terminal components (C5–C9) suffer recurrent Neisseria infections.']],
     n?44:82,{d0:.6,gap:22});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,250)),s:s+b.s};
@@ -86,12 +86,12 @@ function scI7(n){
    ['CD4 Th1','IFN-γ','activate macrophages against intracellular bacteria and viruses'],
    ['CD4 Th2','IL-4, IL-5, IL-13','help against helminths; drive IgE and eosinophils'],
    ['CD4 Th17','IL-17, IL-22','recruit neutrophils; guard mucosal surfaces against fungi, extracellular bacteria'],
-   ['CD4 Tfh','help in germinal centres','drive B cell affinity maturation and class switching'],
+   ['CD4 Tfh','IL-21, CD40L','drive B cell affinity maturation and class switching'],
    ['Treg','IL-10, TGF-β','suppress responses; prevent autoimmunity and limit damage'],
    ['B cells','make antibody','secrete immunoglobulin; also present antigen']];
   const t=wtable(n,['Cell','Signal / ligand','Job against microbes'],rows,
     n?[[10,10],[92,14],[200,16]]:[[24,14],[150,20],[330,34]],{y0:30,R:n?354:620});
-  const p=para(n?16:24,t.y+14,'A naive CD4 cell is pushed toward one fate by the cytokines dendritic cells make, which depend on the PRRs that fired. The match of T-helper subset to microbe type is central: a Th1 response clears tuberculosis, a misdirected Th2 response lets it persist.',n?50:92,'note start f13',17,.6);
+  const p=para(n?16:24,t.y+14,'A naive CD4 cell is pushed toward one fate by the cytokines dendritic cells make, which depend on the PRRs that fired. The match of T-helper subset to microbe type is central: a strong Th1 response contains leprosy in its limited tuberculoid form, while a Th2-skewed response allows the spreading lepromatous form.',n?50:92,'note start f13',17,.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scI8(n){
@@ -119,7 +119,7 @@ function scI9(n){
   const AX=n?axes(58,36,268,150,{xr:[1,13],yr:[0,100],xt:[[2,'2'],[6,'6'],[12,'12']],yt:[[0,'0'],[50,'50'],[100,'100%']],xlab:'R0',ylab:'% immune'})
     :axes(72,40,300,160,{xr:[1,13],yr:[0,100],xt:[[2,'2'],[6,'6'],[12,'12']],yt:[[0,'0'],[50,'50'],[100,'100%']],xlab:'basic reproduction number R0',ylab:'% immune needed (1 − 1/R0)'});
   let s=AX.s+G('a-fade',.3,curve(AX,x=>100*(1-1/x),{col:'#2F5276'}));
-  const marks=[[2,'flu-like'],[6,'SARS-CoV-2 early'],[12,'measles']];
+  const marks=[[2,'1918 flu'],[3,'SARS-CoV-2 early'],[12,'measles']];
   s+=G('a-fade',.5,marks.map(m=>`<circle cx="${FX(AX.px(m[0]))}" cy="${FX(AX.py(100*(1-1/m[0])))}" r="4" fill="${PAL.rose}" stroke="${INK}" stroke-width="1"/>`
     +(n?'':T(FX(AX.px(m[0])+6),FX(AX.py(100*(1-1/m[0]))+4),m[1],'note start f10 halo'))).join(''));
   const b=bullets(n?24:400,n?AX.y+AX.h+54:52,[
