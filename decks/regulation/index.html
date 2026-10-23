@@ -559,19 +559,20 @@ function flow(nodes,edges,o={}){
 }
 /* boxes evenly on a circle joined by arcs; items [{t,f,w,sub}], arcs labelled outside by labs[i] (arc i -> i+1) */
 function cycle(cx,cy,R,items,o={}){
-  const k=items.length, a0=o.a0==null?-90:o.a0, P=i=>{const a=(a0+i*360/k)*Math.PI/180;return [cx+R*Math.cos(a),cy+R*Math.sin(a)];};
+  const k=items.length, a0=o.a0==null?-90:o.a0, ang=i=>(a0+i*360/k)*Math.PI/180, P=a=>[cx+R*Math.cos(a),cy+R*Math.sin(a)];
+  const H=it=>28+(lines(it.t).length-1)*15;
+  /* angular half-width of a box on the circle: step until the point leaves the padded box */
+  const half=(i)=>{const it=items[i],[bx,by]=P(ang(i)),hw=(it.w||70)/2+7,hh=H(it)/2+7;let d=0;while(d<Math.PI/k){const [x,y]=P(ang(i)+d);if(Math.abs(x-bx)>hw||Math.abs(y-by)>hh)break;d+=0.005;}return d;};
+  const hw=items.map((_,i)=>half(i));
   let es='',ns='',ls='';
   items.forEach((it,i)=>{const j=(i+1)%k;if(o.open&&j===0)return;
-    const [x1,y1]=P(i),[x2,y2]=P(j), w1=it.w||70, w2=items[j].w||70;
-    const g1=Math.min(80,(w1/2+10)/R*180/Math.PI*(Math.abs(Math.cos((a0+i*360/k)*Math.PI/180))>.5?1:.55)+6);
-    const g2=Math.min(80,(w2/2+10)/R*180/Math.PI*(Math.abs(Math.cos((a0+j*360/k)*Math.PI/180))>.5?1:.55)+8);
-    const A1=(a0+i*360/k+g1)*Math.PI/180, A2=(a0+(i+1)*360/k-g2)*Math.PI/180;
-    es+=`<path d="M${FX(cx+R*Math.cos(A1))} ${FX(cy+R*Math.sin(A1))} A${R} ${R} 0 0 1 ${FX(cx+R*Math.cos(A2))} ${FX(cy+R*Math.sin(A2))}" stroke="#6A5B47" stroke-width="1.5" fill="none" marker-end="url(#ahp)"/>`;
-    if(o.labs&&o.labs[i]){const am=(a0+(i+.5)*360/k)*Math.PI/180, rr=R+(o.lr||18), lx=cx+rr*Math.cos(am), ly=cy+rr*Math.sin(am);
-      const anc=Math.cos(am)>.25?'start':Math.cos(am)<-.25?'end':'mid';
-      ls+=lines(o.labs[i]).map((l,q)=>T(FX(lx),FX(ly+4+q*13+(Math.sin(am)>.5?6:Math.sin(am)<-.5?-6-(lines(o.labs[i]).length-1)*13:0)),l,`note ${anc} f11 halo`)).join('');}
+    const A1=ang(i)+hw[i], A2=ang(i)+2*Math.PI/k-hw[j]-0.02;
+    if(A2-A1>0.03)es+=`<path d="M${FX(cx+R*Math.cos(A1))} ${FX(cy+R*Math.sin(A1))} A${R} ${R} 0 0 1 ${FX(cx+R*Math.cos(A2))} ${FX(cy+R*Math.sin(A2))}" stroke="#6A5B47" stroke-width="1.5" fill="none" marker-end="url(#ahp)"/>`;
+    if(o.labs&&o.labs[i]){const am=(A1+A2)/2, rr=R+(o.lr||18), lx=cx+rr*Math.cos(am), ly=cy+rr*Math.sin(am);
+      const anc=Math.cos(am)>.25?'start':Math.cos(am)<-.25?'end':'mid', L=lines(o.labs[i]);
+      ls+=L.map((l,q)=>T(FX(lx),FX(ly+4+q*13+(Math.sin(am)>.5?6:Math.sin(am)<-.5?-6-(L.length-1)*13:-(L.length-1)*6.5)),l,`note ${anc} f11 halo`)).join('');}
   });
-  items.forEach((it,i)=>{const [x,y]=P(i);ns+=nodeBox({x,y,w:it.w||70,t:it.t,f:it.f,sub:it.sub,fs:it.fs}).s;});
+  items.forEach((it,i)=>{const [x,y]=P(ang(i));ns+=nodeBox({x,y,w:it.w||70,t:it.t,f:it.f,sub:it.sub,fs:it.fs}).s;});
   return es+ns+ls;
 }
 /* axes: returns {s,px,py,...}; o:{xr,yr,xlab,ylab,xt,yt,xfmt,yfmt,logx,logy} */

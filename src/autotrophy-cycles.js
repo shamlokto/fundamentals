@@ -14,17 +14,17 @@ function scA1(n){return introPlate(n,{q:'Where do the carbon and nitrogen in liv
 function scA2(n){const c=CFIX[cfSel];return explorer(n,{h:c.k,rows:c.rows,note:'Six pathways of CO₂ fixation are known in nature; cost and oxygen sensitivity explain where each is found. The reductive glycine pathway is a recently recognised seventh.'});}
 function scA3(n){
   const rows=[['Oxygenic','cyanobacteria, algae, plants','water','two photosystems (PSII + PSI)','O₂'],['Anoxygenic, purple','purple sulfur and non-sulfur bacteria','H₂S, H₂, Fe²⁺, organics','one, quinone-type (type II)','S⁰, no O₂'],['Anoxygenic, green','green sulfur bacteria (Chlorobium)','H₂S, H₂','one, Fe–S type (type I); chlorosomes','S⁰'],['Heliobacteria','Gram-positive heliobacteria','organics','one, type I','—'],['Rhodopsin','many marine bacteria and haloarchaea','—','retinal proton pump, not a reaction centre','—']];
-  const t=wtable(n,['Type','Who','Electron donor','Reaction centres','Product'],rows,n?[[6,8],[70,12],[150,10],[220,12],[310,6]]:[[20,12],[120,20],[270,16],[400,24],[560,8]],{y0:30,R:n?356:624});
+  const t=wtable(n,['Type','Who','Electron donor','Reaction centres','Product'],rows,n?[[6,13],[70,12],[150,10],[220,12],[310,6]]:[[20,14],[120,20],[270,16],[400,24],[560,8]],{y0:30,R:n?356:624});
   const p=para(n?16:24,t.y+12,'Oxygenic photosynthesis, invented once in the ancestors of cyanobacteria, oxidised the Earth’s surface about 2.4 billion years ago (the Great Oxidation Event). Proteorhodopsin, found in 2000, may let a large share of ocean bacteria harvest light without chlorophyll.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scA4(n){
-  const cx=n?180:200, cy=n?180:190, R=n?118:130;
+  const cx=n?180:215, cy=n?180:190, R=n?110:130;
   const items=[{t:'N₂',w:52},{t:'NH₄⁺',w:60,f:PAL.green},{t:'NO₂⁻',w:60,f:PAL.gold},{t:'NO₃⁻',w:60,f:PAL.gold},{t:'N₂O, NO',w:76,f:PAL.rose}];
-  let s=G('a-fade',0,cycle(cx,cy,R,items,{labs:['fixation','nitritation','nitratation','denitrification','denitrification'],lr:n?20:24}));
-  s+=G('a-fade',.6,`<path d="M${cx-R*.55} ${cy+R*.05} Q ${cx} ${cy+20} ${cx+R*.45} ${cy-R*.5}" stroke="#2F5276" stroke-width="1.5" fill="none" stroke-dasharray="5 3" marker-start="url(#ahb)"/>`+T(cx-6,cy+12,'anammox','note mid f11 halo'));
+  let s=G('a-fade',0,cycle(cx,cy,R,items,{labs:n?['fixation','nitri-|tation','nitra-|tation','denitri-|fication','denitri-|fication']:['fixation','nitritation','nitratation','denitrification','denitrification'],lr:n?20:24}));
+  s+=G('a-fade',.6,`<path d="M${FX(cx+R*.55)} ${FX(cy+R*.3)} Q ${FX(cx-R*.1)} ${FX(cy+R*.1)} ${FX(cx-R*.05)} ${FX(cy-R*.72)}" stroke="#2F5276" stroke-width="1.5" fill="none" stroke-dasharray="5 3" marker-end="url(#ahb)"/>`+T(FX(cx+4),FX(cy+R*.32),'anammox','note mid f11 halo'));
   const b=n?bullets(24,cy+R+50,[['Fixation','Nitrogenase, N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Oxygen-sensitive.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota), nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both.'],['Denitrification','Nitrate respiration to N₂ via NO and N₂O, a potent greenhouse gas.'],['Anammox','NH₄⁺ + NO₂⁻ → N₂ (Planctomycetes), a major sink of fixed nitrogen in oceans.']],44,{d0:1,gap:18})
-    :bullets(380,48,[['Fixation','Nitrogenase: N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Extremely oxygen-sensitive, protected by heterocysts, respiration or root nodules.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota) then nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both (2015).'],['Denitrification','Nitrate respiration to N₂ through NO and N₂O, a potent greenhouse gas.'],['Anammox','Anaerobic ammonium oxidation, NH₄⁺ + NO₂⁻ → N₂, by Planctomycetes: a major ocean sink of fixed nitrogen.']],32,{d0:1,gap:18});
+    :bullets(400,48,[['Fixation','Nitrogenase: N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Extremely oxygen-sensitive, protected by heterocysts, respiration or root nodules.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota) then nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both (2015).'],['Denitrification','Nitrate respiration to N₂ through NO and N₂O, a potent greenhouse gas.'],['Anammox','Anaerobic ammonium oxidation, NH₄⁺ + NO₂⁻ → N₂, by Planctomycetes: a major ocean sink of fixed nitrogen.']],32,{d0:1,gap:18});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};
 }
 function scA5(n){

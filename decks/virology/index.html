@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viruses</title>
+<meta name="description" content="What a virus is, capsid symmetry and envelopes, the Baltimore classification, the replication cycle, replication strategies, and viral evolution and zoonotic emergence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: one "projector" stage, drawn as a printed plate, with the narrator's caption beneath */
+:root{
+  --bg:#E9ECE6; --surface:#F7F8F4; --surface2:#EEF1EA; --cell:#E2E6DD; --line:#C9CFC4;
+  --ink:#1E2632; --muted:#5A6371; --accent:#2D5A88; --on-accent:#F7F8F4;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --plate:"IM Fell English", "Iowan Old Style", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171D; --surface:#1A2028; --surface2:#212833; --cell:#29313C; --line:#36404C;
+  --ink:#E4E8EC; --muted:#9AA4B0; --accent:#86AEDB; --on-accent:#12171D; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(26px,5vw,36px);line-height:1.15;text-wrap:balance}
+.parts{display:flex;gap:8px;flex-wrap:wrap}
+.parts button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.parts button[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* The stage is a printed plate: one deliberate paper look in both themes */
+.stage{
+  --surface:#EFE8D8; --surface2:#E7DEC9; --cell:#E8E0CC; --line:#B9A889; --ink:#2C2318; --muted:#6A5B47;
+  --accent:#2F5276; --on-accent:#F3EDE0;
+  color-scheme:light; color:var(--ink);
+  background-color:var(--surface);
+  background-image:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(110,80,40,.14) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  border:4px double var(--line);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 8px 24px -12px rgba(0,0,0,.25)}
+.scene-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.scene-no{font-family:var(--plate);font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size:22px;line-height:1.25;text-wrap:balance}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips[hidden]{display:none}
+.chips button{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:6px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#stage{display:block;width:100%;height:auto;fill:var(--ink);font-family:var(--body)}
+.narr{display:grid;gap:4px;padding:2px 2px 0;min-width:0}
+.speaker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.narr p{margin:0;max-width:65ch}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.controls button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+.dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
+.dots button.p2{border-radius:2px}
+.dots button.p3{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.dots button[aria-current="true"]{background:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* SVG text */
+#stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
+#stage .mono{font-family:var(--mono)}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:16px}
+#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
+#stage .acc{fill:var(--accent);font-weight:600}
+#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .card{fill:var(--surface2);stroke:var(--line)}
+#stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
+#stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
+#stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#stage .ax{stroke:#6A5B47;stroke-width:1.4}
+#stage .tint{filter:url(#plate)}
+#stage .halo{paint-order:stroke;stroke:#EFE8D8;stroke-width:3.5px;stroke-linejoin:round}
+#stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
+
+/* Motion */
+.a-pop{animation:pop .5s cubic-bezier(.2,.8,.3,1.25) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.a-fade{animation:fade .55s ease-out both;animation-delay:var(--d,0s)}
+.a-drop{animation:drop .6s cubic-bezier(.3,.7,.3,1.15) both;animation-delay:var(--d,0s)}
+.a-grow{animation:grow .6s ease-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:bottom center}
+.a-move{animation:move .9s ease-in-out both;animation-delay:var(--d,0s)}
+.a-slow{animation:move 2.4s ease-in-out both;animation-delay:var(--d,0s)}
+.a-out{animation:out .8s ease-in both;animation-delay:var(--d,0s)}
+.a-dim{animation:dim .6s ease-out both;animation-delay:var(--d,0s)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+@keyframes drop{from{opacity:0;transform:translateY(-34px)}}
+@keyframes grow{from{opacity:0;transform:scaleY(0)}}
+@keyframes out{to{opacity:0;transform:translate(var(--dx,0px),var(--dy,-30px))}}
+@keyframes dim{to{opacity:.28}}
+@keyframes move{from{transform:translate(var(--dx,0px),var(--dy,0px))}}
+@media (prefers-reduced-motion: reduce){ .a-pop,.a-fade,.a-drop,.a-grow,.a-move,.a-slow,.a-out,.a-dim{animation:none} }
+
+.a-draw{animation:draw 2.6s ease-in-out both;animation-delay:var(--d,0s)}
+.a-shrink{animation:shrink 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:left center}
+.a-growR{animation:growr 1.6s ease-in-out both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:right center}
+@keyframes draw{from{stroke-dashoffset:var(--len)}}
+@keyframes shrink{to{transform:scaleX(0)}}
+@keyframes growr{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion: reduce){ .a-draw,.a-shrink,.a-growR{animation:none} }
+
+.dots button.p2,.dots button.p4,.dots button.p6{border-radius:2px}
+.dots button.p3,.dots button.p5{border-radius:2px;transform:rotate(45deg) scale(.85)}
+.hubback{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;align-self:flex-start;padding:2px 0}.hubback:hover{color:var(--accent);text-decoration:underline}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#6A5B47"/></marker>
+  <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3A2E22"/></marker>
+  <marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#A4473A"/></marker>
+  <marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#2F5276"/></marker>
+  <marker id="ahn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3E5F82"/></marker>
+  <filter id="plate" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="warp"/>
+    <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="wob"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11" result="grain"/>
+    <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .2  0 0 0 0 .15  0 0 0 0 .08  .9 0 0 0 -.33" result="speck"/>
+    <feComposite in="speck" in2="wob" operator="in" result="speckIn"/>
+    <feMerge><feMergeNode in="wob"/><feMergeNode in="speckIn"/></feMerge>
+  </filter>
+  <pattern id="hatch" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><rect width="3.6" height="3.6" fill="#E3D9C3"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#3A2E22" stroke-width="1.2"/></pattern>
+  <pattern id="hatchX" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><line x1="0" y1="0" x2="0" y2="3.2" stroke="#3A2E22" stroke-width="1.1"/></pattern>
+  <linearGradient id="csg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE2"/><stop offset="1" stop-color="#C9B892"/></linearGradient>
+</defs>
+</svg>
+<div class="wrap">
+  <a class="hubback" href="../../">← All primers</a>
+  <header>
+    <p class="eyebrow">Virology · an animated primer</p>
+    <h1>What viruses are and how they replicate</h1>
+  </header>
+  <nav class="parts" aria-label="Parts">
+    <button id="part1" type="button">I · Particles</button>
+    <button id="part2" type="button">II · Classes</button>
+    <button id="part3" type="button">III · Replication</button>
+    <button id="part4" type="button">IV · Evolution</button>
+  </nav>
+  <section class="stage" aria-live="polite">
+    <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
+    <div class="chips" id="chips" hidden></div>
+    <svg id="stage" role="img" viewBox="0 0 640 400"></svg>
+    <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
+  </section>
+  <div class="controls">
+    <button id="prev" type="button">Back</button>
+    <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
+    <button id="replay" type="button">Replay</button>
+    <button id="next" type="button" class="primary">Next</button>
+  </div>
+  <p class="foot">Classifications and mutation rates are typical values that vary between families; figures are rounded. Bacteriophages are treated in the phage-defence primer and only mentioned here.</p>
+</div>
+<script>
+const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
+      RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
+const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
+const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
+const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
+const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" ${extra}/>`;
+const wide=h=>`0 0 640 ${h||400}`, slim=h=>`0 0 360 ${h}`;
+const ln=(x1,y1,x2,y2,c='#6A5B47',w=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
+const blob=(cx,cy,rx,ry,fill,extra='')=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint" ${extra}/>`;
+function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class="okc"/><path d="M${x-5} ${y} l3.5 3.5 l6.5 -7" class="tick"/>`:`<circle cx="${x}" cy="${y}" r="${r}" class="badc"/><path d="M${x-4.5} ${y-4.5} l9 9 m0 -9 l-9 9" class="tick"/>`;}
+function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
+function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
+function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
+function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
+function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
+function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
+function portrait(cx,cy,k,glasses=true){const bust='M-62 70 Q-56 22 0 20 Q56 22 62 70 Q46 94 0 98 Q-46 94 -62 70Z';
+  return `<g transform="translate(${cx} ${cy}) scale(${k})"><ellipse rx="84" ry="102" fill="#E8E0CC"/><rect x="-12" y="0" width="24" height="26" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatch)"/><path d="${bust}" fill="url(#hatchX)"/><path d="M-14 22 L0 46 L14 22" fill="#E3D9C3" stroke="#3A2E22" stroke-width="1"/><circle cy="-30" r="36" fill="url(#hatch)" stroke="#3A2E22" stroke-width="1"/><path d="M-30 -36 q2 -30 30 -30 q28 0 30 30 q-14 -14 -30 -14 q-16 0 -30 14z" fill="#3A2E22" opacity=".6"/>`
+   +(glasses?`<circle cx="-12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><circle cx="12" cy="-30" r="7" fill="none" stroke="#3A2E22" stroke-width="1.6"/><path d="M-5 -30 h10" stroke="#3A2E22" stroke-width="1.4"/>`:'')
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+function rnap(cx,cy,k=1,sigma=false,dim=false){return `<g opacity="${dim?.25:1}" transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse rx="30" ry="20" fill="${POLC}" stroke="${INK}" stroke-width="1.2"/><path d="M-14 -8 q14 -10 28 0" stroke="${INK}" stroke-width=".8" fill="none" opacity=".5"/>${sigma?`<ellipse cx="-24" cy="12" rx="14" ry="8" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`:''}</g>`;}
+function ribo(cx,cy,k=1,fill='#BBA27A'){return `<g transform="translate(${cx} ${cy}) scale(${k})" class="tint"><ellipse cx="0" cy="-6" rx="11" ry="8" fill="${fill}" stroke="${INK}" stroke-width=".8"/><ellipse cx="0" cy="5" rx="9" ry="5" fill="${fill}" opacity=".8" stroke="${INK}" stroke-width=".8"/></g>`;}
+function medal(cx,cy,r,year,lines){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D9B85A" stroke="${INK}" stroke-width="1.4" class="tint"/><circle cx="${cx}" cy="${cy}" r="${r*.8}" fill="none" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,cy-3,'NOBEL','#3A2E22',r>40?14:12,'mono mid','600')+Tc(cx,cy+15,year,'#3A2E22',r>40?13:12,'mono mid','600')+lines.map((l,i)=>T(cx,cy+r+22+i*18,l[0],l[1])).join('');}
+
+/* ===================== shared translation glyphs ===================== */
+const SSU='#D9C89B', LSU='#BBA27A', TRNA_C='#8FB1CF', AA_C='#4F7A3F', CHAIN=['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#B4766E','#5E7F7A'];
+const GRP={np:['nonpolar','#D6C79F'],po:['polar','#A9C4DC'],ac:['acidic','#E7A99B'],ba:['basic','#B9A0C8']};
+const AAS=[['G','Gly','np'],['A','Ala','np'],['V','Val','np'],['L','Leu','np'],['I','Ile','np'],['P','Pro','np'],['F','Phe','np'],['M','Met','np'],['W','Trp','np'],
+ ['S','Ser','po'],['T','Thr','po'],['C','Cys','po'],['N','Asn','po'],['Q','Gln','po'],['Y','Tyr','po'],['D','Asp','ac'],['E','Glu','ac'],['K','Lys','ba'],['R','Arg','ba'],['H','His','ba']];
+const THREE=Object.fromEntries(AAS.map(a=>[a[0],a[1]]));THREE['*']='Stop';
+const CODE='FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+function tr(c){const o='UCAG';const i=16*o.indexOf(c[0])+4*o.indexOf(c[1])+o.indexOf(c[2]);return CODE[i];}
+function sub(x,y,k){return k;} // placeholder
+
+function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
+  const S=v=>v*k;
+  let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
+  return s+'</g>';
+}
+function chain(x,y,k,n,dir=-1){let s='';for(let i=0;i<n;i++){const xx=x-i*k*6,yy=y-i*k*13;s+=`<circle cx="${xx}" cy="${yy}" r="${k*7}" fill="${CHAIN[i%CHAIN.length]}" stroke="${INK}" stroke-width=".8" class="tint"/>`;}return s;}
+function ribosome(cx,my,k,o={}){
+  const S=v=>v*k, sx={E:cx-S(50),P:cx,A:cx+S(50)};
+  let s='';
+  if(o.large!==false)s+=`<path d="M${cx-S(130)} ${my-S(22)} C ${cx-S(156)} ${my-S(160)}, ${cx+S(156)} ${my-S(160)}, ${cx+S(130)} ${my-S(22)} C ${cx+S(80)} ${my-S(36)}, ${cx-S(80)} ${my-S(36)}, ${cx-S(130)} ${my-S(22)} Z" fill="${LSU}" opacity=".55" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
+  if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
+  if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
+  return s;
+}
+
+function timeline(x,y,ev,wrapN,fs,indent,gap,d0){let s='',yy=y;ev.forEach((e,i)=>{const L=wrap(e[1],wrapN);s+=G('a-fade',(d0+i*.4).toFixed(1),T(x,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(x+indent,yy+j*18,l,'lab start '+fs)).join(''));yy+=L.length*18+gap;});return {s,y:yy};}
+/* ===================== text & layout utilities ===================== */
+const FX=(v,d=1)=>Number(v).toFixed(d);
+const SB=t=>`<tspan baseline-shift="-24%" style="font-size:.72em">${t}</tspan>`;
+const SP=t=>`<tspan baseline-shift="super" style="font-size:.72em">${t}</tspan>`;
+function para(x,y,text,wn,cls='note start f13',lh=17,d=0){const L=wrap(text,wn);return {s:G('a-fade',d,L.map((l,j)=>T(x,y+j*lh,l,cls)).join('')),y:y+L.length*lh};}
+function boxItem(x,y,W,head,body,o={}){
+  const L=wrap(body,Math.floor(W/(o.cw||6.3))), H=34+L.length*16+8;
+  return {s:box(x,y,W,o.H||H,o.fill||'#E7DEC9',4)+(o.num?badge(x+14,y+16,o.num):'')+T(x+(o.num?28:12),y+21,head,'lab start f14')
+    +L.map((l,j)=>T(x+12,y+42+j*16,l,'note start f12')).join(''),h:H};
+}
+function bullets(x,y,items,wrapN,o={}){
+  let s='',yy=y;
+  items.forEach((it,i)=>{const L=wrap(it[1],wrapN);
+    s+=G('a-fade',((o.d0||0)+i*.3).toFixed(1),(o.nonum?'':badge(x,yy-4,i+1))+T(x+(o.nonum?0:16),yy,it[0],'cname start '+(o.hfs||'f14'))
+      +L.map((l,j)=>T(x+(o.nonum?0:16),yy+18+j*17,l,'note start '+(o.fs||'f13'))).join(''));
+    yy+=L.length*17+(o.gap||30);});
+  return {s,y:yy};
+}
+function wtable(n,head,rows,cols,o={}){
+  let y=o.y0||30, s=''; const R2=o.R||(n?350:620);
+  s+=G('a-fade',o.d0||0,head.map((h,i)=>T(cols[i][0],y,h,'cname start '+(n?'f13':'f14'))).join('')+ln(cols[0][0]-4,y+7,R2,y+7));
+  y+=26;
+  rows.forEach((r,i)=>{const W=r.map((c,j)=>wrap(c,cols[j][1])); const L=Math.max(...W.map(w=>w.length)); const h=L*16+10;
+    const hi=o.hi===i;
+    s+=G('a-fade',((o.d0||0)+.1*i).toFixed(2),(hi?`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+        :(i%2?'':`<rect x="${cols[0][0]-6}" y="${y-15}" width="${R2-cols[0][0]+8}" height="${h}" fill="#E7DEC9" opacity=".5"/>`))
+      +W.map((w,j)=>w.map((l,k)=>T(cols[j][0],y+k*16,l,(j?'note':'lab')+' start '+(n?'f12':'f13'))).join('')).join(''));
+    y+=h;});
+  return {s,y};
+}
+
+/* ===================== DNA-repair toolkit ===================== */
+const BB='#5A4632', NEW='#3E7FA8', LESU='#A4473A', OXO='#7D4A98', METH='#C17A2C', CPDC='#C99A2E', INV='#C17A2C',
+      E1='#9DB4AE', E2='#B4766E', E3='#D9B85A', E4='#A9C4DC', E5='#A9C49A', E6='#C9A9D6', RECAC='#E3B26B', PAPR='#ECE4D2';
+function segAt(segs,i){for(const s of segs)if(i>=s[0]&&i<s[1])return s[2]||BB;return null;}
+/* ladder: n base pairs from x; top strand at y, bottom at y+g.
+   o.top/o.bot = [[i0,i1,col]] strand segments; o.mk = {i:{t:col,b:col,tx:1,bx:1}} (tx/bx = base missing)
+   o.lab=[{i,s,t,col}]; o.dimer=[i]; o.me=[{i,s,op}]; o.nick=[{i,s}] (gap before index i); o.flip=[{i,s,col}] */
+function lad(x,y,n,o={}){
+  const dx=o.dx||12,g=o.g||24,top=o.top||[[0,n,BB]],bot=o.bot||[[0,n,BB]],mk=o.mk||{};
+  let s='';
+  for(let i=0;i<n;i++){const cx=x+i*dx+dx/2, tc=segAt(top,i), bc=segAt(bot,i), m=mk[i]||{};
+    if(tc&&!m.tx){const c=m.t;s+=`<path d="M${FX(cx)} ${FX(y)} V${FX(y+g/2-1.5)}" stroke="${c||tc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}
+    if(bc&&!m.bx){const c=m.b;s+=`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g/2+1.5)}" stroke="${c||bc}" stroke-width="${c?4.5:1.8}"${c?'':' opacity=".7"'}/>`;}}
+  const bbp=(segs,yy)=>segs.map(sg=>`<path d="M${FX(x+sg[0]*dx)} ${FX(yy)} H${FX(x+sg[1]*dx)}" stroke="${sg[2]||BB}" stroke-width="2.8"/>`).join('');
+  s+=bbp(top,y)+bbp(bot,y+g);
+  (o.nick||[]).forEach(k=>{const xx=x+k.i*dx, yy=k.s==='b'?y+g:y;s+=`<rect x="${FX(xx-2)}" y="${FX(yy-2.5)}" width="4" height="5" fill="${PAPR}"/>`;});
+  (o.dimer||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2-4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.dimerB||[]).forEach(d=>{const cx=x+d*dx+dx/2;s+=`<path d="M${FX(cx)} ${FX(y+g/2+4)} H${FX(cx+dx)}" stroke="${CPDC}" stroke-width="3.2"/>`;});
+  (o.flip||[]).forEach(f=>{const cx=x+f.i*dx+dx/2;s+=f.s==='b'?`<path d="M${FX(cx)} ${FX(y+g)} V${FX(y+g+12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`
+      :`<path d="M${FX(cx)} ${FX(y)} V${FX(y-12)}" stroke="${f.col||LESU}" stroke-width="4.5"/>`;});
+  (o.me||[]).forEach(m=>{const cx=x+m.i*dx+dx/2, yy=m.s==='b'?y+g+6:y-6;s+=`<circle cx="${FX(cx)}" cy="${FX(yy)}" r="3.2" fill="${METH}" stroke="${INK}" stroke-width=".6"${m.op?` opacity="${m.op}"`:''}/>`;});
+  (o.lab||[]).forEach(L=>{const cx=x+L.i*dx+dx/2;s+=Tc(FX(cx+(L.dx||0)),FX(L.s==='b'?y+g+(L.dy||16):y-(L.dy||7)),L.t,L.col||'#3A2E22',L.fs||10,'mono mid','600');});
+  if(o.ends)s+=Tc(x-5,y+4,'5′','#6A5B47',10,'mono end')+Tc(x-5,y+g+4,'3′','#6A5B47',10,'mono end')
+    +Tc(x+n*dx+5,y+4,'3′','#6A5B47',10,'mono start')+Tc(x+n*dx+5,y+g+4,'5′','#6A5B47',10,'mono start');
+  return s;
+}
+function prot(cx,cy,rx,ry,fill,label,o={}){
+  return blob(FX(cx),FX(cy),rx,ry,fill,o.op?`opacity="${o.op}"`:'')+(label?Tc(FX(cx),FX(cy+3.8),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function ring(cx,cy,rx,ry,fill,label,o={}){
+  return `<ellipse cx="${FX(cx)}" cy="${FX(cy)}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity=".55" stroke="${INK}" stroke-width="1.1" class="tint"/>`
+    +(label?Tc(FX(cx+(o.ldx||0)),FX(cy+(o.ldy!==undefined?o.ldy:-ry-5)),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
+function recaFil(x1,x2,y,o={}){let s='';for(let x=x1;x<=x2-8;x+=9)s+=`<rect x="${FX(x)}" y="${FX(y-6)}" width="8" height="12" rx="3" fill="${o.col||RECAC}" stroke="${INK}" stroke-width=".7"/>`;
+  return s+(o.label?Tc(FX((x1+x2)/2),FX(y-11),o.label,'#8C5A1E',10,'mono mid','600'):'');}
+function ssb(cx,y){return `<circle cx="${FX(cx)}" cy="${FX(y)}" r="5" fill="${E4}" stroke="${INK}" stroke-width=".7"/>`;}
+function arw(x1,y1,x2,y2,o={}){const m=o.red?'ahr':o.blue?'ahb':'ahp', c=o.red?'#A4473A':o.blue?'#2F5276':(o.col||'#6A5B47');
+  return `<path d="M${FX(x1)} ${FX(y1)} ${o.q?`Q${FX(o.q[0])} ${FX(o.q[1])} `:'L'}${FX(x2)} ${FX(y2)}" stroke="${c}" stroke-width="${o.w||1.6}" fill="none" marker-end="url(#${m})"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
+function pairBox(cx,cy,t,b,o={}){const w=o.w||62,h=o.h||46;
+  return box(cx-w/2,cy-h/2,w,h,o.fill||'#EFE6D2',5)+Tc(cx,cy-5,t,o.tc||'#3A2E22',o.fs||13,'mono mid','600')
+    +`<path d="M${cx-10} ${cy+1} h20" stroke="${INK}" stroke-width="1" stroke-dasharray="2 2"/>`+Tc(cx,cy+17,b,o.bc||'#3A2E22',o.fs||13,'mono mid','600');}
+function photon(x1,y1,x2,y2,col='#3E7FA8'){const L=Math.hypot(x2-x1,y2-y1), a=Math.atan2(y2-y1,x2-x1)*180/Math.PI; let d='M0 0';
+  for(let t=0;t<L-12;t+=8)d+=` q2 -5 4 0 q2 5 4 0`;
+  return `<g transform="translate(${FX(x1)} ${FX(y1)}) rotate(${FX(a)})"><path d="${d} L${FX(L-2)} 0" stroke="${col}" stroke-width="1.6" fill="none" marker-end="url(#ahb)"/></g>`;}
+/* left-text / right-drawing steps; d(x,y,w) draws a ladder whose top strand is at y */
+function stepsLad(n,steps,o={}){
+  let s='',y=o.y0||24;
+  const tx=n?16:20;
+  steps.forEach((st,i)=>{const L=wrap(st.t,n?52:(o.wn||36)), th=22+L.length*16, top=st.top||24, dh=st.dh||44, dl=((o.d0||0)+i*.6).toFixed(1);
+    const head=badge(tx+8,y-4,i+1)+T(tx+22,y,st.h,'cname start f14')+L.map((l,j)=>T(tx,y+20+j*16,l,'note start f12')).join('');
+    if(n){const dy=y+th+top;s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(24,dy,312));y=dy+dh+28;}
+    else{const h=Math.max(th,top+dh-8);s+=G('a-fade',dl,head)+G('a-fade',(+dl+.3).toFixed(1),st.d(o.dx0||284,y-14+top,o.dw||330));
+      y+=h+22;if(i<steps.length-1)s+=ln(tx,y-14,620,y-14,'#6A5B47',.5,'2 4');}});
+  return {s,y};
+}
+function cut(cx,y){return Tc(FX(cx),FX(y),'\u25be','#A4473A',15,'mono mid');}
+function oligo(x1,x2,y,dx,dim){let s=`<path d="M${FX(x1)} ${FX(y)} H${FX(x2)}" stroke="${BB}" stroke-width="2.6"/>`;
+  for(let xx=x1+dx/2;xx<x2;xx+=dx)s+=`<path d="M${FX(xx)} ${FX(y)} V${FX(y+10)}" stroke="${BB}" stroke-width="1.8" opacity=".7"/>`;
+  if(dim!==undefined)s+=`<path d="M${FX(x1+dim*dx+dx/2)} ${FX(y)} V${FX(y+10)} M${FX(x1+(dim+1)*dx+dx/2)} ${FX(y)} V${FX(y+10)}" stroke="${CPDC}" stroke-width="4.5"/><path d="M${FX(x1+dim*dx+dx/2)} ${FX(y+7)} h${FX(dx)}" stroke="${CPDC}" stroke-width="3"/>`;
+  return s;}
+function tbox(cx,cy,w,t,o={}){return box(cx-w/2,cy-14,w,28,o.fill||'#EFE6D2',4)+Tc(cx,cy+4,t,o.tc||'#3A2E22',o.fs||12,'mono mid','600');}
+/* ===================== history toolkit ===================== */
+let UID=0;
+const AXC='#6A5B47', GLASSE='#7E8F92', GLASSF='#DCE6E8', BROTH='#EAD9A0', TURB='#C4A86A', DUST='#5A4632', AGAR='#E9DAA8', COLC='#C99A2E',
+      MOUSEC='#D3C8B6', BLOOD='#A4473A', CAPS='#C9A9D6', LEAF='#7FA05A', LEAFD='#C9D58A';
+function rnd(seed){let s=seed;return ()=>{s=(s*9301+49297)%233280;return s/233280;};}
+function microbes(cx,cy,rx,ry,n,seed,col='#5A4632'){const r=rnd(seed);let s='';
+  for(let i=0;i<n;i++){const a=r()*Math.PI*2,d=Math.sqrt(r()),x=cx+Math.cos(a)*rx*d,y=cy+Math.sin(a)*ry*d,an=r()*180;
+    s+=`<rect x="${FX(x-3)}" y="${FX(y-1.2)}" width="6" height="2.4" rx="1.2" fill="${col}" opacity=".75" transform="rotate(${FX(an)} ${FX(x)} ${FX(y)})"/>`;}
+  return s;}
+/* round-bottomed flask; type: straight | swan | broken | sealed | plug */
+function flask(cx,by,type,o={}){
+  const r=o.r||30, t=by-2*r+4, id='fl'+(UID++), lvl=by-r*(o.full||1.05);
+  let s=`<defs><clipPath id="${id}"><circle cx="${cx}" cy="${by-r}" r="${r-1.5}"/></clipPath></defs>`;
+  s+=`<circle cx="${cx}" cy="${by-r}" r="${r}" fill="${GLASSF}" fill-opacity=".55" stroke="${GLASSE}" stroke-width="1.6"/>`;
+  s+=`<rect x="${cx-r}" y="${FX(lvl)}" width="${2*r}" height="${FX(by-lvl)}" fill="${o.turbid?TURB:BROTH}" clip-path="url(#${id})"/>`;
+  if(o.turbid)s+=microbes(cx,by-r*.45,r*.7,r*.32,14,o.seed||7);
+  const tube=(d,w=10)=>`<path d="${d}" stroke="${GLASSE}" stroke-width="${w+3}" fill="none" stroke-linecap="round"/><path d="${d}" stroke="#EEF3F3" stroke-width="${w-1}" fill="none" stroke-linecap="round"/>`;
+  if(type==='straight'||type==='plug')s+=tube(`M${cx} ${t} V${t-34}`);
+  if(type==='plug')s+=`<rect x="${cx-6}" y="${t-44}" width="12" height="16" rx="3" fill="#F4F0E6" stroke="${INK}" stroke-width=".8"/>`;
+  if(type==='sealed')s+=tube(`M${cx} ${t} V${t-28}`)+`<circle cx="${cx}" cy="${t-30}" r="6.5" fill="${GLASSE}"/>`;
+  if(type==='broken')s+=tube(`M${cx} ${t} V${t-10}`)+`<path d="M${cx-6.5} ${t-11} l3 -4 l3 3 l3 -4 l3 4" stroke="${GLASSE}" stroke-width="1.6" fill="none"/>`;
+  if(type==='swan'){const d=`M${cx} ${t} V${t-18} C${cx} ${t-46} ${cx+34} ${t-50} ${cx+44} ${t-26} C${cx+50} ${t-12} ${cx+62} ${t-10} ${cx+68} ${t-24} L${cx+80} ${t-50}`;
+    s+=tube(d);
+    if(o.wet)s+=`<path d="M${cx+46} ${t-21} C${cx+50} ${t-12} ${cx+62} ${t-10} ${cx+66} ${t-19}" stroke="${o.turbid?TURB:BROTH}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+    s+=[[54,-14],[58,-13],[61,-15],[56,-16]].map(p=>`<circle cx="${cx+p[0]}" cy="${t+p[1]}" r="1.6" fill="${DUST}"/>`).join('');}
+  if(o.label)s+=T(cx,by+18,o.label,'note mid f12');
+  return s;
+}
+function colonySet(n,seed,R){const r=rnd(seed),a=[];let k=0;while(a.length<n&&k<500){k++;const ang=r()*Math.PI*2,d=Math.sqrt(r())*R*.82,x=Math.cos(ang)*d,y=Math.sin(ang)*d,rad=2.4+r()*2.6;
+  if(a.every(c=>Math.hypot(c[0]-x,c[1]-y)>c[2]+rad+2))a.push([x,y,rad]);}return a;}
+function dish(cx,cy,R,cols=[],o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${o.agar||AGAR}" stroke="${GLASSE}" stroke-width="1.8"/><circle cx="${cx}" cy="${cy}" r="${R-4}" fill="none" stroke="${GLASSE}" stroke-width=".6" opacity=".7"/>`;
+  cols.forEach(c=>s+=`<circle cx="${FX(cx+c[0])}" cy="${FX(cy+c[1])}" r="${FX(c[2])}" fill="${c[3]||o.col||COLC}" stroke="${INK}" stroke-width=".5"/>`);
+  if(o.mark)s+=`<path d="M${cx} ${cy-R-6} v8" stroke="${INK}" stroke-width="2"/>`;
+  if(o.label)s+=T(cx,cy+R+17,o.label,'note mid f12');
+  return s;}
+function tube(cx,by,o={}){const w=o.w||18,h=o.h||70,top=by-h,lvl=by-h*(o.full||.55);
+  let s=`<path d="M${cx-w/2} ${top} V${by-w/2} a${w/2} ${w/2} 0 0 0 ${w} 0 V${top}" fill="${GLASSF}" fill-opacity=".5" stroke="${GLASSE}" stroke-width="1.5"/>`;
+  s+=`<path d="M${cx-w/2+1.5} ${FX(lvl)} V${by-w/2} a${w/2-1.5} ${w/2-1.5} 0 0 0 ${w-3} 0 V${FX(lvl)} Z" fill="${o.fill||(o.turbid?TURB:BROTH)}"/>`;
+  if(o.turbid)s+=microbes(cx,(lvl+by)/2,w*.3,(by-lvl)*.38,6,o.seed||3);
+  if(o.label)s+=T(cx,by+16,o.label,'note mid f11');
+  return s;}
+function mouse(cx,cy,k=1,o={}){
+  const f=o.dead?'#B8B0A2':MOUSEC;
+  let g=`<path d="M${cx-19*k} ${cy+2*k} q${-14*k} ${-2*k} ${-22*k} ${-12*k}" stroke="${INK}" stroke-width="1.2" fill="none"/>`
+   +`<ellipse cx="${cx}" cy="${cy}" rx="${20*k}" ry="${11*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+19*k}" cy="${cy-3*k}" r="${8.5*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+15*k}" cy="${cy-11*k}" r="${4.2*k}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+   +`<circle cx="${cx+27*k}" cy="${cy-2*k}" r="${1.6*k}" fill="${INK}"/>`;
+  if(o.dead)g+=`<path d="M${cx-10*k} ${cy+10*k} v${5*k} M${cx-3*k} ${cy+11*k} v${5*k} M${cx+5*k} ${cy+11*k} v${5*k} M${cx+12*k} ${cy+9*k} v${5*k}" stroke="${INK}" stroke-width="1.2"/>`
+    +`<path d="M${cx+20*k} ${cy-7*k} l${4*k} ${4*k} m0 ${-4*k} l${-4*k} ${4*k}" stroke="${INK}" stroke-width="1.1"/>`;
+  else g+=`<circle cx="${cx+21*k}" cy="${cy-5*k}" r="${1.4*k}" fill="${INK}"/>`;
+  let s=o.dead?`<g transform="rotate(180 ${cx} ${cy})">${g}</g>`:g;
+  if(o.label)s+=T(cx,cy+(o.ldy||26)*k,o.label,'note mid f12');
+  return s;}
+function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="${FX(cy-w/2)}" width="${l}" height="${w}" rx="${w/2}" fill="${col}" stroke="${INK}" stroke-width=".7" transform="rotate(${ang} ${FX(cx)} ${FX(cy)})"/>`;}
+function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
+  let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
+  return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
+function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
+function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
+  let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
+  s+=G('a-fade',0,medallion(mx,my,k,o.name,o.dates,o.glasses));
+  let x=n?16:270, y=n?my+112*k+76:44;
+  s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
+  const Q=wrap(o.q,n?40:40);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
+  s+=G('a-fade',1,T(x,y,'What was believed','mono acc start f12'));
+  const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;
+  if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
+  const H=n?y+12:Math.max(y+14,my+112*k+56);
+  return {vb:n?slim(H):wide(H),s};
+}
+/* hypothesis-testing plate: spec={hyps:[[name,short]],conds:[{n,d,draw(cx,y,n),pred:[...],obs,note}],dh} */
+function predictPlate(n,spec,sel){
+  const c=spec.conds[sel], H=spec.hyps, oc=x=>Array.isArray(x)?x[0]:x, tx=x=>Array.isArray(x)?(x[1]?x[0]+': '+x[1]:x[0]):x, hit=(cc,i)=>oc(cc.pred[i])===oc(cc.obs);
+  let s='', y=14;
+  const dh=n?(spec.dhn||spec.dh||150):(spec.dh||150);
+  s+=G('a-fade',0,c.draw(n?180:320,y,n));
+  y+=dh+8;
+  s+=G('a-fade',.2,T(n?16:24,y,`${sel+1}. ${c.n}`,'cname start f15'));
+  const D=wrap(c.d||'',n?52:92);s+=G('a-fade',.3,D.map((l,i)=>T(n?16:24,y+20+i*16,l,'note start f12')).join(''));y+=20+D.length*16+18;
+  const cx=n?[16,148,338]:[24,300,606];
+  s+=G('a-fade',.5,T(cx[0],y,n?'If it were…':'If the explanation were…','mono acc start f11')+T(cx[1],y,'we would expect','mono acc start f11')+ln(cx[0],y+6,n?346:616,y+6));
+  y+=24;
+  H.forEach((h,i)=>{const A=wrap(h[0],n?20:40),P=wrap(tx(c.pred[i]),n?28:42),L=Math.max(A.length,P.length),ok=hit(c,i);
+    s+=G('a-fade',(.6+i*.2).toFixed(1),A.map((l,j)=>T(cx[0],y+j*16,l,'lab start f13')).join('')+P.map((l,j)=>T(cx[1],y+j*16,l,'note start f13')).join('')+mark(cx[2],y-4,ok,8));
+    y+=L*16+10;});
+  const O=wrap(tx(c.obs),n?28:42);
+  s+=G('a-fade',(.7+H.length*.2).toFixed(1),`<rect x="${cx[0]-6}" y="${y-16}" width="${(n?352:620)-cx[0]}" height="${O.length*16+12}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`
+    +T(cx[0],y,'Observed','cname start f14')+O.map((l,j)=>T(cx[1],y+j*16,l,'lab start f13')).join(''));
+  y+=O.length*16+28;
+  // running tally
+  const mx=n?160:300, cw=n?32:36;
+  s+=G('a-fade',1.4,T(cx[0],y,'Across all tests','mono acc start f11')+spec.conds.map((cc,j)=>(j===sel?`<rect x="${mx+j*cw-cw/2+2}" y="${y-13}" width="${cw-4}" height="${18+H.length*22}" rx="3" fill="#E7DEC9"/>`:'')+Tc(mx+j*cw,y,j+1,'#2F5276',11,'mono mid','600')).join(''));
+  y+=20;
+  H.forEach((h,i)=>{s+=G('a-fade',(1.5+i*.1).toFixed(1),T(cx[0],y+4,h[1],'note start f12')+spec.conds.map((cc,j)=>mark(mx+j*cw,y,hit(cc,i),6.5)).join(''));y+=22;});
+  if(c.note){const p=para(n?16:24,y+12,c.note,n?50:92,'note start f13',17,1.8);s+=p.s;y=p.y;}
+  return {vb:n?slim(y+10):wide(y+12),s};
+}
+/* generic text-and-picture plate helpers */
+function sideText(n,x,y,items,wn,o={}){return bullets(n?24:x,y,items,n?44:wn,o);}
+/* ===================== sequencing toolkit ===================== */
+const NB={A:'#4F7A3F',C:'#2F5276',G:'#8C6D46',T:'#A4473A',N:'#9A9384'};
+const ADP1='#7D4A98', ADP2='#C17A2C', IDX='#2E7D78', DNAC='#5A4632', SIGC='#2F5276', GLS='#7E8F92';
+/* double-stranded fragment, optionally with adapters/index blocks at each end */
+function frag(x,y,w,o={}){
+  const h=o.h||9, a=o.a||0;
+  let s='';
+  if(a){s+=`<rect x="${FX(x)}" y="${FX(y)}" width="${a}" height="${h}" fill="${ADP1}" stroke="${INK}" stroke-width=".7"/>`
+       +`<rect x="${FX(x+w-a)}" y="${FX(y)}" width="${a}" height="${h}" fill="${ADP2}" stroke="${INK}" stroke-width=".7"/>`;}
+  s+=`<rect x="${FX(x+a)}" y="${FX(y)}" width="${FX(w-2*a)}" height="${h}" fill="${o.fill||'#D9CDB0'}" stroke="${INK}" stroke-width=".8"/>`;
+  for(let xx=x+a+5;xx<x+w-a;xx+=7)s+=`<path d="M${FX(xx)} ${FX(y+1)} v${h-2}" stroke="${INK}" stroke-width=".5" opacity=".4"/>`;
+  if(o.idx)s+=`<rect x="${FX(x+a)}" y="${FX(y)}" width="12" height="${h}" fill="${IDX}" stroke="${INK}" stroke-width=".7"/>`;
+  if(o.label)s+=T(FX(x+w/2),FX(y+h+15),o.label,'note mid f11');
+  return s;}
+/* flowcell surface: a lawn of short oligos */
+function lawn(x1,x2,y,o={}){
+  let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${o.h||8}" fill="#DCE6E8" stroke="${GLS}" stroke-width="1"/>`;
+  for(let x=x1+5;x<x2-2;x+=9)s+=`<path d="M${FX(x)} ${y} v-7" stroke="${x%18<9?ADP1:ADP2}" stroke-width="2" stroke-linecap="round"/>`;
+  return s;}
+/* a cluster of identical strands standing on the flowcell */
+function clust(cx,y,n,col,o={}){
+  let s='';const sp=o.sp||4.5;
+  for(let i=0;i<n;i++){const x=cx+(i-(n-1)/2)*sp;s+=`<path d="M${FX(x)} ${y} v-${o.h||20}" stroke="${col||DNAC}" stroke-width="1.6" stroke-linecap="round"/>`;}
+  if(o.dot)s+=`<circle cx="${cx}" cy="${FX(y-(o.h||20)-5)}" r="4.5" fill="${o.dot}" stroke="${INK}" stroke-width=".7"/>`;
+  if(o.label)s+=T(cx,y+16,o.label,'note mid f11');
+  return s;}
+/* bead carrying clonal DNA */
+function bead(cx,cy,r,o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#C9BFAB'}" stroke="${INK}" stroke-width="1.1"/><ellipse cx="${FX(cx-r*.3)}" cy="${FX(cy-r*.35)}" rx="${r*.3}" ry="${r*.18}" fill="#FFF" opacity=".5"/>`;
+  if(o.dna!==false)for(let i=0;i<10;i++){const a=i/10*Math.PI*2;s+=`<path d="M${FX(cx+r*Math.cos(a))} ${FX(cy+r*Math.sin(a))} l${FX(7*Math.cos(a))} ${FX(7*Math.sin(a))}" stroke="${DNAC}" stroke-width="1.3"/>`;}
+  if(o.label)s+=T(cx,cy+r+(o.ldy||20),o.label,'note mid f11');
+  return s;}
+/* microwell holding a bead, with an ISFET sensor underneath */
+function well(cx,by,w,h,o={}){
+  let s=`<path d="M${cx-w/2} ${by-h} v${h} h${w} v${-h}" fill="#E8E3D4" stroke="${GLS}" stroke-width="1.6"/>`;
+  if(o.bead!==false)s+=bead(cx,by-w*.42,w*.3,{dna:false});
+  s+=`<rect x="${cx-w/2}" y="${by}" width="${w}" height="12" fill="${o.sense||'#B9C6CE'}" stroke="${INK}" stroke-width=".9"/>`;
+  if(o.label)s+=T(cx,by+26,o.label,'note mid f11');
+  return s;}
+/* zero-mode waveguide: a well in metal film with polymerase at the floor */
+function zmw(cx,by,w,h,o={}){
+  let s=`<rect x="${cx-w/2-26}" y="${by-h}" width="${26}" height="${h}" fill="#B9AE96" stroke="${INK}" stroke-width=".8"/><rect x="${cx+w/2}" y="${by-h}" width="${26}" height="${h}" fill="#B9AE96" stroke="${INK}" stroke-width=".8"/>`;
+  s+=`<rect x="${cx-w/2}" y="${by-h}" width="${w}" height="${h}" fill="#E6EEF0" opacity=".55"/>`;
+  if(o.lit)s+=`<path d="M${cx-w/2} ${by} L${cx+w/2} ${by} L${cx+w/2-4} ${by-h*.55} L${cx-w/2+4} ${by-h*.55} Z" fill="#E0B84A" opacity=".35"/>`;
+  s+=prot(cx,by-9,13,9,'#9DB4AE','pol',{fs:9});
+  if(o.label)s+=T(cx,by+20,o.label,'note mid f11');
+  return s;}
+/* membrane with a protein pore, motor protein and translocating strand */
+function poreMemb(cx,my,o={}){
+  const h=o.h||26;
+  let s=`<rect x="${cx-110}" y="${my}" width="220" height="${h}" fill="#EDE0B8"/><path d="M${cx-108} ${my+3} H${cx+108} M${cx-108} ${my+h-3} H${cx+108}" stroke="#B89A5E" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`;
+  s+=`<path d="M${cx-17} ${my-3} h34 l-7 ${h+6} h-20 z" fill="#9DB4AE" stroke="${INK}" stroke-width="1.1"/>`;
+  s+=`<path d="M${cx-70} ${my-30} q30 4 50 -8 q12 -7 20 2" stroke="${DNAC}" stroke-width="2.4" fill="none"/>`;
+  s+=`<path d="M${cx} ${my-16} V${my+h+22}" stroke="${DNAC}" stroke-width="2.2"/>`;
+  s+=prot(cx-26,my-18,15,10,'#C99A2E','motor',{fs:8.5});
+  if(o.label)s+=T(cx,my+h+40,o.label,'note mid f11');
+  return s;}
+/* generic trace: pts = array of y values 0..1, drawn in a box */
+function trace(x,y,w,h,pts,o={}){
+  let d='';pts.forEach((v,i)=>{const px=x+i*w/(pts.length-1),py=y+h-v*h;d+=(i?(o.step?`H${FX(px)} V${FX(py)}`:`L${FX(px)} ${FX(py)}`):`M${FX(px)} ${FX(py)}`);});
+  let s=o.frame===false?'':`<path d="M${x} ${y} V${y+h} H${x+w}" stroke="${AXC}" stroke-width="1.1" fill="none"/>`;
+  return s+`<path d="${d}" stroke="${o.col||SIGC}" stroke-width="${o.w||1.8}" fill="none" stroke-linejoin="round"/>`+(o.label?T(x+w/2,y+h+16,o.label,'note mid f11'):'');}
+/* sanger-style chromatogram: seq of bases as gaussian peaks */
+function chroma(x,y,w,h,seq,o={}){
+  const n=seq.length, dx=w/n;let s=`<path d="M${x} ${y+h} H${x+w}" stroke="${AXC}" stroke-width="1"/>`;
+  seq.split('').forEach((b,i)=>{const cx=x+dx*(i+.5);
+    let d=`M${FX(cx-dx*.5)} ${FX(y+h)}`;for(let t=-.5;t<=.5;t+=.1){const px=cx+t*dx,py=y+h-h*.82*Math.exp(-t*t*18);d+=` L${FX(px)} ${FX(py)}`;}
+    s+=`<path d="${d}" stroke="${NB[b]}" stroke-width="1.6" fill="none"/>`+Tc(FX(cx),FX(y+h+14),b,NB[b],o.fs||11,'mono mid','600');});
+  return s;}
+/* coloured base letters in a row */
+function baseSeq(x,y,seq,dx,o={}){
+  return seq.split('').map((b,i)=>Tc(FX(x+i*dx+dx/2),y,b,NB[b]||'#6A5B47',o.fs||12,'mono mid','600')).join('');}
+/* stacked reads aligned under a reference line */
+function pileup(x,y,w,reads,o={}){
+  let s=`<path d="M${x} ${y} H${x+w}" stroke="${BB}" stroke-width="2.6"/>`;
+  reads.forEach((r,i)=>{const rx=x+r[0]*w,rw=r[1]*w,ry=y+12+i*(o.gap||9);
+    s+=`<path d="M${FX(rx)} ${FX(ry)} h${FX(rw)}" stroke="${r[2]||'#8FB1CF'}" stroke-width="${o.sw||5}" stroke-linecap="round"/>`;});
+  return s;}
+
+/* clickable external link rendered inside the plate */
+function xlink(x,y,text,url,o={}){
+  return `<a href="${url}" target="_blank" rel="noopener"><text x="${FX(x)}" y="${FX(y)}" class="mono ${o.a||'start'} ${o.fs||'f11'}">${text} \u2197</text></a>`;}
+const VENDOR={
+  illumina:['Illumina: sequencing by synthesis, with animation','https://www.illumina.com/science/technology/next-generation-sequencing/sequencing-technology.html'],
+  ion:['Thermo Fisher: Ion Torrent semiconductor sequencing','https://www.thermofisher.com/sg/en/home/life-science/sequencing/next-generation-sequencing/ion-torrent-next-generation-sequencing-technology.html'],
+  mgi:['MGI: DNBSEQ technology, with figures','https://global-mgitech.com/technologies/dnbseq-technology'],
+  pacbio:['PacBio: the steps of SMRT sequencing','https://www.pacb.com/blog/steps-of-smrt-sequencing'],
+  hifi:['PacBio: HiFi reads','https://www.pacb.com/technology/hifi-sequencing/'],
+  ont:['Oxford Nanopore: how nanopore sequencing works','https://nanoporetech.com/platform/technology']};
+function vendorLine(n,y,keys){let s='',yy=y;keys.forEach(k=>{const v=VENDOR[k];s+=xlink(n?16:30,yy,n?v[0].replace(/, with (animation|figures)/,''):v[0],v[1],{fs:n?'f10':'f11'});yy+=16;});return {s,y:yy};}
+/* ===================== Part I · the idea ===================== */
+const OUT=[['Sanger capillary, 96 wells','c. 2000',7.7e4,'#9A9384'],['454 pyrosequencing','2005',2e7,'#B9AE96'],['Illumina Genome Analyzer','2007',1e9,'#8FB1CF'],
+ ['Illumina HiSeq 2500','2013',6e11,'#5E87AD'],['Illumina NovaSeq X','2023',1.6e13,'#2F5276'],['Nanopore PromethION','2023',1.4e13,'#C17A2C']];
+
+/* ===================== shared library for the generated decks ===================== */
+const PAL={sand:'#E7DEC9',blue:'#A9C4DC',green:'#A9C49A',rose:'#E7A99B',gold:'#E0C88A',lilac:'#C9A9D6',teal:'#9DB4AE',grey:'#D8D2C2',cream:'#F3EEE2',ochre:'#D9B85A'};
+const lines=t=>String(t).split('|');
+/* opening plate without a portrait: art on the left (wide) or on top (narrow) */
+function introPlate(n,o){
+  let s='';const aw=n?328:220, ah=o.artH||200;
+  const ax=n?16:20, ay=n?14:30;
+  if(o.art)s+=G('a-fade',0,o.art(ax+aw/2,ay+ah/2,n));
+  let x=n?16:270, y=n?ay+ah+34:44;
+  s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
+  const Q=wrap(o.q,n?40:42);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
+  if(o.belief){s+=G('a-fade',1,T(x,y,o.bh||'Why it matters','mono acc start f12'));
+    const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;}
+  if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
+  const H=n?y+12:Math.max(y+14,ay+ah+20);
+  return {vb:n?slim(H):wide(H),s};
+}
+/* point where the segment from a box centre toward (tx,ty) leaves the box */
+function rectEdge(cx,cy,w,h,tx,ty,pad=4){const dx=tx-cx,dy=ty-cy;const sx=dx?(w/2+pad)/Math.abs(dx):1e9,sy=dy?(h/2+pad)/Math.abs(dy):1e9,t=Math.min(sx,sy,1);return [cx+dx*t,cy+dy*t];}
+/* node: {x,y,w,h,t,f,sub,fs,tc,r}  (x,y = centre); edge: [a,b,label,{bend,col,dash,lx,ly,la,w}] */
+function nodeBox(N){const h=N.h||(28+(lines(N.t).length-1)*15+(N.sub?13:0)), L=lines(N.t);
+  let s=box(N.x-N.w/2,N.y-h/2,N.w,h,N.f||'#EFE6D2',N.r==null?4:N.r);
+  const y0=N.y-h/2+18+(N.sub?0:Math.max(0,(h-28-(L.length-1)*15)/2));
+  s+=L.map((l,i)=>Tc(N.x,y0+i*15,l,N.tc||'#3A2E22',N.fs||12,'mono mid','600')).join('');
+  if(N.sub)s+=T(N.x,y0+(L.length-1)*15+14,N.sub,'note mid f10');
+  return {s,h};}
+function flow(nodes,edges,o={}){
+  const H={};Object.entries(nodes).forEach(([k,N])=>{H[k]=N.h||(28+(lines(N.t).length-1)*15+(N.sub?13:0));});
+  let es='',ls='',ns='';
+  edges.forEach(e=>{const [a,b,lab,op={}]=e, A=nodes[a], B=nodes[b];
+    let cx1=A.x,cy1=A.y,cx2=B.x,cy2=B.y;
+    const mx=(cx1+cx2)/2,my=(cy1+cy2)/2,dx=cx2-cx1,dy=cy2-cy1,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,bd=op.bend||0;
+    const qx=mx+nx*bd,qy=my+ny*bd;
+    const [x1,y1]=rectEdge(A.x,A.y,A.w,H[a],bd?qx:B.x,bd?qy:B.y,op.pad1==null?4:op.pad1);
+    const [x2,y2]=rectEdge(B.x,B.y,B.w,H[b],bd?qx:A.x,bd?qy:A.y,op.pad2==null?6:op.pad2);
+    const col=op.col||'#6A5B47', m=op.red?'ahr':op.blue?'ahb':'ahp';
+    const d=bd?`M${FX(x1)} ${FX(y1)} Q${FX(qx)} ${FX(qy)} ${FX(x2)} ${FX(y2)}`:`M${FX(x1)} ${FX(y1)} L${FX(x2)} ${FX(y2)}`;
+    es+=`<path d="${d}" stroke="${op.red?'#A4473A':op.blue?'#2F5276':col}" stroke-width="${op.w||1.5}" fill="none"${op.none?'':` marker-end="url(#${m})"`}${op.dash?` stroke-dasharray="${op.dash}"`:''}${op.both?` marker-start="url(#${m})"`:''}/>`;
+    if(lab){const side=op.side||(bd?Math.sign(bd):1), off=op.off==null?12:op.off;
+      const px=(bd?(mx+qx)/2:mx)+nx*off*side+(op.lx||0), py=(bd?(my+qy)/2:my)+ny*off*side+(op.ly||0)+4;
+      const anc=op.la||(Math.abs(nx*side)<.3?'mid':(nx*side>0?'start':'end'));
+      const LL=lines(lab), up=(ny*side<-.3)?(LL.length-1)*13:(ny*side>.3?-6:(LL.length-1)*6.5);
+      ls+=LL.map((l,i)=>T(FX(px),FX(py-up+i*13),l,`${op.lc||'note'} ${anc} f11 halo`)).join('');}
+  });
+  Object.values(nodes).forEach(N=>{ns+=nodeBox(N).s;});
+  return es+ns+ls;
+}
+/* boxes evenly on a circle joined by arcs; items [{t,f,w,sub}], arcs labelled outside by labs[i] (arc i -> i+1) */
+function cycle(cx,cy,R,items,o={}){
+  const k=items.length, a0=o.a0==null?-90:o.a0, ang=i=>(a0+i*360/k)*Math.PI/180, P=a=>[cx+R*Math.cos(a),cy+R*Math.sin(a)];
+  const H=it=>28+(lines(it.t).length-1)*15;
+  /* angular half-width of a box on the circle: step until the point leaves the padded box */
+  const half=(i)=>{const it=items[i],[bx,by]=P(ang(i)),hw=(it.w||70)/2+7,hh=H(it)/2+7;let d=0;while(d<Math.PI/k){const [x,y]=P(ang(i)+d);if(Math.abs(x-bx)>hw||Math.abs(y-by)>hh)break;d+=0.005;}return d;};
+  const hw=items.map((_,i)=>half(i));
+  let es='',ns='',ls='';
+  items.forEach((it,i)=>{const j=(i+1)%k;if(o.open&&j===0)return;
+    const A1=ang(i)+hw[i], A2=ang(i)+2*Math.PI/k-hw[j]-0.02;
+    if(A2-A1>0.03)es+=`<path d="M${FX(cx+R*Math.cos(A1))} ${FX(cy+R*Math.sin(A1))} A${R} ${R} 0 0 1 ${FX(cx+R*Math.cos(A2))} ${FX(cy+R*Math.sin(A2))}" stroke="#6A5B47" stroke-width="1.5" fill="none" marker-end="url(#ahp)"/>`;
+    if(o.labs&&o.labs[i]){const am=(A1+A2)/2, rr=R+(o.lr||18), lx=cx+rr*Math.cos(am), ly=cy+rr*Math.sin(am);
+      const anc=Math.cos(am)>.25?'start':Math.cos(am)<-.25?'end':'mid', L=lines(o.labs[i]);
+      ls+=L.map((l,q)=>T(FX(lx),FX(ly+4+q*13+(Math.sin(am)>.5?6:Math.sin(am)<-.5?-6-(L.length-1)*13:-(L.length-1)*6.5)),l,`note ${anc} f11 halo`)).join('');}
+  });
+  items.forEach((it,i)=>{const [x,y]=P(ang(i));ns+=nodeBox({x,y,w:it.w||70,t:it.t,f:it.f,sub:it.sub,fs:it.fs}).s;});
+  return es+ns+ls;
+}
+/* axes: returns {s,px,py,...}; o:{xr,yr,xlab,ylab,xt,yt,xfmt,yfmt,logx,logy} */
+function axes(x,y,w,h,o){
+  const lx=v=>o.logx?Math.log10(v):v, ly=v=>o.logy?Math.log10(v):v;
+  const X0=lx(o.xr[0]),X1=lx(o.xr[1]),Y0=ly(o.yr[0]),Y1=ly(o.yr[1]);
+  const px=v=>x+(lx(v)-X0)/(X1-X0)*w, py=v=>y+h-(ly(v)-Y0)/(Y1-Y0)*h;
+  let s=`<path d="M${x} ${y} V${y+h} H${x+w}" stroke="#6A5B47" stroke-width="1.3" fill="none"/>`;
+  (o.xt||[]).forEach(t=>{const v=Array.isArray(t)?t[0]:t,l=Array.isArray(t)?t[1]:t;s+=ln(FX(px(v)),y+h,FX(px(v)),y+h+4,'#6A5B47',1)+T(FX(px(v)),y+h+16,l,'note mid f10');});
+  (o.yt||[]).forEach(t=>{const v=Array.isArray(t)?t[0]:t,l=Array.isArray(t)?t[1]:t;s+=ln(x-4,FX(py(v)),x,FX(py(v)),'#6A5B47',1)+T(x-7,FX(py(v)+3.5),l,'note end f10');});
+  if(o.xlab)s+=T(x+w/2,y+h+(o.xt?32:18),o.xlab,'note mid f12');
+  if(o.ylab)s+=`<text transform="translate(${x-(o.yt?(o.ydx||34):14)} ${y+h/2}) rotate(-90)" class="note mid f12">${o.ylab}</text>`;
+  return {s,px,py,x,y,w,h,xr:o.xr,logx:o.logx};
+}
+function curve(A,f,o={}){const N=o.n||120,a=o.from==null?A.xr[0]:o.from,b=o.to==null?A.xr[1]:o.to;let d='';
+  for(let i=0;i<=N;i++){const v=A.logx?a*Math.pow(b/a,i/N):a+(b-a)*i/N, yv=f(v); if(!isFinite(yv))continue; d+=(d?' L':'M')+FX(A.px(v))+' '+FX(A.py(yv));}
+  return `<path d="${d}" stroke="${o.col||'#2F5276'}" stroke-width="${o.w||2.2}" fill="none"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
+/* horizontal bars: items [[label,value,colour,note]] */
+function hbars(n,x,y,w,items,o={}){const max=o.max||Math.max(...items.map(i=>i[1])), lw=o.lw||(n?96:150), bh=o.bh||16, gap=o.gap||10;let s='',yy=y;
+  items.forEach((it,i)=>{const bw=Math.max(2,(w-lw-(o.vw||46))*it[1]/max);
+    s+=G('a-fade',(i*.12).toFixed(2),T(x+lw-8,yy+bh-4,it[0],'lab end '+(n?'f11':'f12'))+box(x+lw,yy,FX(bw),bh,it[2]||PAL.blue,2)+T(FX(x+lw+bw+6),yy+bh-4,it[3]!=null?it[3]:it[1],'mono start f10'));yy+=bh+gap;});
+  return {s,y:yy};}
+/* grid of text cards with equalised row heights; items [[head,body,art?]] art(cx,cy) drawn in a band of artH */
+function cards(n,items,o={}){
+  const cols=n?(o.ncols||1):(o.cols||2), x0=o.x||(n?10:12), W=((n?340:616)-(cols-1)*(o.gap||12))/cols, artH=o.artH||0;
+  const cw=o.cw||6.4; let y=o.y||20, s='';
+  for(let r=0;r<items.length;r+=cols){const row=items.slice(r,r+cols);
+    const Ls=row.map(it=>wrap(it[1],Math.floor((W-24)/cw)));
+    const Hh=row.map(it=>lines(it[0]).length);
+    const h=Math.max(...row.map((it,i)=>30+(Hh[i]-1)*18+artH+Ls[i].length*16+10));
+    row.forEach((it,i)=>{const x=x0+i*(W+(o.gap||12)), num=o.num?r+i+1:0;
+      s+=G('a-fade',((r+i)*.25).toFixed(2),box(x,y,W,h,it[3]||o.fill||'#E7DEC9',4)+(num?badge(x+16,y+17,num):'')
+        +lines(it[0]).map((l,q)=>T(x+(num?32:12),y+22+q*18,l,'lab start f14')).join('')
+        +(it[2]&&artH?it[2](x+W/2,y+26+(Hh[i]-1)*18+artH/2,W):'')
+        +Ls[i].map((l,j)=>T(x+12,y+40+(Hh[i]-1)*18+artH+j*16,l,'note start f12')).join(''));});
+    y+=h+(o.vgap||10);}
+  return {s,y};}
+/* explorer card for a chips plate: it={h,sub,rows:[[k,v]],pros:[],cons:[],note,art:(cx,cy,n)=>svg,artH} */
+function explorer(n,it,o={}){
+  let s='',y=o.y||34;const x=n?16:24, R=n?344:616;
+  if(it.art){s+=G('a-fade',0,it.art(n?180:320,y+(it.artH||120)/2-6,n));y+=(it.artH||120)+8;}
+  s+=G('a-fade',.1,T(x,y,it.h,'cname start f16'));y+=18;
+  if(it.sub){s+=G('a-fade',.15,T(x,y,it.sub,'mono acc start f12'));y+=8;}
+  y+=14;
+  const kx=x, vx=n?x+104:x+180, vw=n?30:66;
+  (it.rows||[]).forEach((r,i)=>{const V=wrap(r[1],vw);s+=G('a-fade',(.2+i*.08).toFixed(2),T(kx,y,r[0],'lab start f13')+V.map((l,j)=>T(vx,y+j*16,l,'note start f13')).join(''));y+=V.length*16+10;});
+  if(it.pros||it.cons){y+=6;const cx2=n?x:x+300, cw=n?44:40;let ya=y,yb=y;
+    if(it.pros){s+=T(x,ya,it.ph||'Strengths','cname start f14');ya+=20;it.pros.forEach(p=>{const L=wrap(p,cw);s+=Tc(x+4,ya,'+','#4F7A3F',13,'mono start','600')+L.map((l,j)=>T(x+18,ya+j*16,l,'note start f12')).join('');ya+=L.length*16+6;});}
+    if(n)yb=ya+8;
+    if(it.cons){s+=T(cx2,yb,it.ch||'Limitations','cname start f14');yb+=20;it.cons.forEach(p=>{const L=wrap(p,cw);s+=Tc(cx2+4,yb,'−','#A4473A',13,'mono start','600')+L.map((l,j)=>T(cx2+18,yb+j*16,l,'note start f12')).join('');yb+=L.length*16+6;});}
+    y=Math.max(ya,yb)+6;}
+  if(it.note){const p=para(x,y+10,it.note,n?50:92,'lab start f13',17,.6);s+=p.s;y=p.y;}
+  return {vb:n?slim(y+10):wide(y+12),s};
+}
+/* rod-shaped cell outline */
+function rodCell2(cx,cy,L,R,o={}){return `<rect x="${cx-L/2}" y="${cy-R}" width="${L}" height="${2*R}" rx="${R}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.6}" ${o.tint===false?'':'class="tint"'}/>`;}
+function coccus(cx,cy,r,o={}){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.4}" class="tint"/>`;}
+function membraneBand(x1,x2,y,h=16,o={}){let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${o.fill||'#EDE0B8'}"/>`;
+  s+=`<path d="M${x1+3} ${y+3} H${x2} M${x1+3} ${y+h-3} H${x2}" stroke="${o.dot||'#B89A5E'}" stroke-width="4.5" stroke-dasharray="0.1 7" stroke-linecap="round"/>`;return s;}
+function pill(x,y,t,fill,tc='#F3EDE0',fs=11){const w=t.length*fs*.62+18;return `<rect x="${FX(x)}" y="${y-fs-3}" width="${FX(w)}" height="${fs+9}" rx="${(fs+9)/2}" fill="${fill}"/>`+Tc(FX(x+w/2),y+1,t,tc,fs,'mono mid','600');}
+/* simple two-column text plate for wide, stacked on narrow: art on left/top, bullets right/below */
+function artBullets(n,art,artW,artH,items,o={}){
+  let s='';s+=G('a-fade',0,art(n?180:(o.ax||20)+artW/2,(o.ay||24)+artH/2,n));
+  const b=n?bullets(24,(o.ay||24)+artH+30,items,44,{d0:.8,gap:o.gap||24}):bullets(o.bx||(artW+56),o.by||44,items,o.wn||Math.floor((600-artW-40)/7),{d0:.8,gap:o.gap||24});
+  s+=b.s;
+  let H=n?b.y:Math.max(b.y,(o.ay||24)+artH+16);
+  if(o.foot){const p=para(n?16:24,H+8,o.foot,n?50:92,'note start f13',17,2);s+=p.s;H=p.y;}
+  return {vb:n?slim(H+4):wide(H+6),s};
+}
+
+/* ===================== deck ===================== */
+const BALT=[
+ {k:'I · dsDNA',g:'double-stranded DNA',m:'host RNA polymerase II reads the DNA directly in the nucleus (poxviruses carry their own in the cytoplasm)',ex:'herpesviruses, adenoviruses, papillomaviruses, poxviruses',enz:'host RNA polymerase (poxviruses: own)',note:'The most "cell-like" strategy. Many are large and encode their own DNA-handling enzymes.'},
+ {k:'II · ssDNA',g:'single-stranded DNA',m:'the strand is first copied to double-stranded DNA, which host polymerase then transcribes',ex:'parvoviruses (B19, adeno-associated virus)',enz:'host DNA and RNA polymerases',note:'Small, simple genomes; parvoviruses depend heavily on the host and often on a helper virus.'},
+ {k:'III · dsRNA',g:'double-stranded RNA, usually segmented',m:'a viral RNA-dependent RNA polymerase packaged in the particle copies mRNA from the negative strand inside a sub-particle',ex:'reoviruses, rotavirus (childhood diarrhoea)',enz:'viral RdRp (brought in)',note:'The cell has no way to read dsRNA, so the enzyme must travel inside the virion.'},
+ {k:'IV · (+)ssRNA',g:'positive-sense single-stranded RNA',m:'the genome IS mRNA: ribosomes translate it on entry, making the polymerase that then copies the genome',ex:'picornaviruses (polio, rhinovirus), coronaviruses (SARS-CoV-2), flaviviruses (dengue, Zika)',enz:'viral RdRp (made after entry)',note:'The largest RNA class. The bare genome is infectious on its own.'},
+ {k:'V · (−)ssRNA',g:'negative-sense single-stranded RNA',m:'a packaged viral polymerase first transcribes the genome into mRNA; only then can proteins be made',ex:'rhabdoviruses (rabies), paramyxoviruses (measles), filoviruses (Ebola), influenza (segmented)',enz:'viral RdRp (brought in)',note:'Like class III, the enzyme must be carried in. Influenza’s segmented genome lets strains reassort.'},
+ {k:'VI · ssRNA-RT',g:'positive-sense RNA, replicated through DNA',m:'reverse transcriptase copies the RNA to DNA, which integrates into the host genome and is transcribed as a host gene',ex:'retroviruses: HIV, HTLV, many tumour viruses',enz:'reverse transcriptase + integrase',note:'Integration makes the infection permanent and is why HIV cannot be cleared.'},
+ {k:'VII · dsDNA-RT',g:'DNA genome, replicated through RNA',m:'the DNA is transcribed to an RNA pregenome, which reverse transcriptase copies back into the DNA genome',ex:'hepadnaviruses: hepatitis B virus',enz:'reverse transcriptase',note:'A DNA virus that still uses reverse transcription, which is why some HIV drugs also treat hepatitis B.'}];
+let baltSel=3;
+function icosa(cx,cy,r){let p='';for(let i=0;i<6;i++){const a=(-90+i*60)*Math.PI/180;p+=(i?'L':'M')+FX(cx+r*Math.cos(a))+' '+FX(cy+r*Math.sin(a));}p+='Z';
+  const inner=`M${FX(cx)} ${FX(cy-r)} L${FX(cx+r*.5)} ${FX(cy+r*.29)} L${FX(cx-r*.5)} ${FX(cy+r*.29)} Z M${FX(cx)} ${FX(cy+r*.58)} L${FX(cx-r*.87)} ${FX(cy-r*.5)} M${FX(cx)} ${FX(cy+r*.58)} L${FX(cx+r*.87)} ${FX(cy-r*.5)}`;
+  return `<path d="${p}" fill="${PAL.blue}" stroke="${INK}" stroke-width="1.4" class="tint"/><path d="${inner}" stroke="${INK}" stroke-width=".7" fill="none" opacity=".5"/>`;}
+function helical(cx,cy,R){let s=`<rect x="${cx-R}" y="${cy-9}" width="${2*R}" height="18" rx="9" fill="${PAL.gold}" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
+  for(let x=cx-R+5;x<cx+R;x+=6)s+=ln(FX(x),cy-9,FX(x),cy+9,INK,.6,'');
+  s+=`<path d="M${cx-R} ${cy} H${cx+R}" stroke="${RNAC}" stroke-width="1.6" fill="none" opacity=".8"/>`;return s;}
+function complexPhage(cx,cy){return `<path d="M${cx} ${cy-26} l16 9 v18 l-16 9 l-16 -9 v-18 Z" fill="${PAL.lilac}" stroke="${INK}" stroke-width="1.2" class="tint"/>`
+  +`<rect x="${cx-3}" y="${cy+10}" width="6" height="18" fill="${PAL.lilac}" stroke="${INK}" stroke-width="1" class="tint"/>`
+  +[-7,0,7].map(d=>ln(cx+d,cy+28,cx+d*1.6,cy+36,INK,1)).join('');}
+function enveloped(cx,cy,r){let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${PAL.rose}" stroke="${INK}" stroke-width="1.3" class="tint"/>`;
+  for(let i=0;i<12;i++){const a=i*30*Math.PI/180,x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);s+=ln(FX(x),FX(y),FX(cx+(r+7)*Math.cos(a)),FX(cy+(r+7)*Math.sin(a)),INK,1)+`<circle cx="${FX(cx+(r+8)*Math.cos(a))}" cy="${FX(cy+(r+8)*Math.sin(a))}" r="2.3" fill="${PAL.teal}" stroke="${INK}" stroke-width=".6"/>`;}
+  s+=`<circle cx="${cx}" cy="${cy}" r="${r*.5}" fill="${PAL.gold}" stroke="${INK}" stroke-width=".8" opacity=".8"/>`;return s;}
+function scV1(n){return introPlate(n,{q:'Is a virus alive, and how can something with a few genes hijack a whole cell?',
+  belief:'A virus is a packet of genes, DNA or RNA, wrapped in protein and sometimes a stolen piece of membrane. It carries no ribosomes and makes no ATP, so outside a cell it does nothing. Inside one, it turns the cell’s own machinery to copying itself. How it makes its messenger RNA defines its whole life cycle.',
+  items:['Capsids, symmetry and envelopes','The Baltimore classification (I–VII)','The replication cycle','Polymerases, reverse transcription, segments','Error rates and quasispecies','Antigenic shift and drift','Zoonotic spillover'],
+  art:(cx,cy)=>enveloped(cx,cy,26)+T(cx,cy+48,'an enveloped virion','note mid f11'),artH:150});}
+function scV2(n){
+  const cy=n?64:70;
+  const xs=n?[64,152,240,312]:[110,250,400,540];
+  let s=G('a-fade',0,icosa(xs[0],cy,26)+T(xs[0],cy+44,'icosahedral','note mid f11')
+    +helical(xs[1],cy,n?36:46)+T(xs[1],cy+44,'helical','note mid f11')
+    +complexPhage(xs[2],cy)+T(xs[2],cy+52,'complex','note mid f11')
+    +enveloped(xs[3],cy,n?18:22)+T(xs[3],cy+48,'enveloped','note mid f11'));
+  const b=bullets(n?24:30,n?150:150,[
+    ['The capsid','A shell of many copies of a few protein subunits, which saves genome space. Nearly all capsids are either icosahedral (a near-spherical cage, like poliovirus) or helical (a rod or coil wound round the genome, like tobacco mosaic virus and rabies). Poxviruses are "complex".'],
+    ['The nucleocapsid and envelope','Capsid plus genome is the nucleocapsid. Many animal viruses wrap this in an envelope of host membrane, studded with viral glycoprotein spikes (influenza haemagglutinin, HIV Env, coronavirus spike) that bind the next cell.'],
+    ['Enveloped versus naked','Enveloped viruses enter by membrane fusion and are fragile, needing close contact or droplets. Naked capsids (noroviruses, rhinoviruses) resist drying, acid and detergents, so they spread on surfaces and through the gut.']],
+    n?44:82,{d0:.4,gap:22});
+  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
+}
+function scV3(n){
+  const c=BALT[baltSel];
+  const ex=explorer(n,{h:'Baltimore class '+c.k,sub:c.g,
+    rows:[['mRNA made by',c.m],['Examples',c.ex],['Key enzyme',c.enz]],note:c.note},{y:n?34:40});
+  return ex;
+}
+function scV4(n){
+  const N=n?{at:{x:180,y:34,w:200,t:'attachment|(receptor binding)'},en:{x:180,y:104,w:200,t:'entry and uncoating',f:PAL.blue},
+     ge:{x:180,y:176,w:220,t:'genome replication|and gene expression',f:PAL.gold},as:{x:180,y:250,w:200,t:'assembly',f:PAL.green},
+     ma:{x:90,y:322,w:140,t:'maturation',f:PAL.lilac},re:{x:270,y:322,w:150,t:'release:|lysis or budding',f:PAL.rose}}
+   :{at:{x:110,y:70,w:150,t:'attachment|receptor binding'},en:{x:300,y:70,w:150,t:'entry and|uncoating',f:PAL.blue},
+     ge:{x:500,y:70,w:150,t:'replication and|gene expression',f:PAL.gold},as:{x:500,y:200,w:150,t:'assembly',f:PAL.green},
+     ma:{x:300,y:200,w:150,t:'maturation',f:PAL.lilac},re:{x:110,y:200,w:150,t:'release:|lysis or budding',f:PAL.rose}};
+  const E=n?[['at','en',''],['en','ge',''],['ge','as',''],['as','ma',''],['as','re','',{side:-1}]]
+    :[['at','en',''],['en','ge',''],['ge','as',''],['as','ma',''],['ma','re','',{side:1}]];
+  let s=G('a-fade',0,flow(N,E));
+  const b=bullets(n?24:30,n?400:300,[
+    ['Attachment is specific','A viral protein binds a particular host molecule: HIV binds CD4 plus a chemokine co-receptor, SARS-CoV-2 binds ACE2. This tropism decides which cells, and which hosts, a virus can infect.'],
+    ['Making messenger RNA is the pivot','Whatever the genome, it must be turned into mRNA the ribosome can read. The Baltimore class is simply the route a virus takes to that mRNA.'],
+    ['Release','Naked viruses usually burst the cell; enveloped ones bud through a membrane, taking a wrapper with them. Budding can let the cell survive and shed virus for a long time.']],
+    n?44:82,{d0:.6,gap:22});
+  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,330)),s:s+b.s};
+}
+function scV5(n){
+  const items=[
+   ['RNA-dependent RNA polymerase','Cells never copy RNA from RNA, so RNA viruses must encode their own RdRp. It has no proofreading, which is the root of their high mutation rate. It is a prime drug target: remdesivir and molnupiravir attack the coronavirus RdRp.'],
+   ['Reverse transcription','Retroviruses (class VI) and hepadnaviruses (class VII) copy RNA back into DNA with reverse transcriptase, discovered by Temin and Baltimore in 1970. Retroviral DNA integrates into the host chromosome; most anti-HIV drugs block this enzyme or integration.'],
+   ['Segmented genomes','Some viruses split their genome into separate pieces (influenza has eight, rotavirus eleven). When two strains infect one cell, segments can be repackaged in new combinations, a fast route to novelty called reassortment.'],
+   ['Where replication happens','DNA viruses mostly replicate in the nucleus and borrow its polymerases; influenza is the exception. RNA viruses mostly stay in the cytoplasm, often in membrane-bound "factories" that hide their RNA from host sensors.']];
+  const c=cards(n,items,{y:20});
+  return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
+}
+function scV6(n){
+  const A=n?axes(58,36,268,150,{xr:[2,10],yr:[-9,-3],logx:0,xt:[[3,'DNA\\npol'],[9,'RNA']],yt:[[-4,'high'],[-8,'low']],xlab:'genome type',ylab:'error rate'})
+    :axes(72,40,300,160,{xr:[2,10],yr:[-9,-3],xt:[[3,'DNA pol'],[9,'RNA pol'],[6,'reverse transcr.']],yt:[[-4,'high'],[-8,'low']],xlab:'polymerase (less to more error-prone)',ylab:'mutation rate'});
+  const pts=[[3,-8.2,'herpes (DNA)'],[6,-5.2,'HIV (RT)'],[9,-4.1,'influenza, SARS-CoV-2 (RNA)']];
+  let s=A.s;
+  s+=G('a-fade',.3,pts.map(p=>`<circle cx="${FX(A.px(p[0]))}" cy="${FX(A.py(p[1]))}" r="4.5" fill="${PAL.rose}" stroke="${INK}" stroke-width="1"/>`).join('')
+    +curve(A,x=>-9+(x-2)*(6/8),{col:'#2F5276',dash:'5 4'}));
+  if(!n)s+=G('a-fade',.5,pts.map(p=>T(FX(A.px(p[0])+6),FX(A.py(p[1])-6),p[2],'note start f10 halo')).join(''));
+  const b=bullets(n?24:400,n?A.y+A.h+54:52,[
+    ['Quasispecies','An RNA virus does not exist as one sequence but as a swarm of related mutants around a consensus. Selection acts on the swarm, which is why resistance to a single drug appears so fast.'],
+    ['Error catastrophe','The rate is near the limit: push it higher with a mutagenic drug such as molnupiravir and the population collapses under its own errors.'],
+    ['Recombination','Polymerases can switch templates mid-copy, stitching two genomes together. This created some pandemic strains and complicates vaccine design for HIV and enteroviruses.']],
+    n?44:34,{d0:.6,gap:20});
+  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,A.y+A.h+50)),s:s+b.s};
+}
+function scV7(n){
+  const N=n?{h3:{x:95,y:40,w:150,t:'human H3N2',f:PAL.blue},av:{x:265,y:40,w:150,t:'avian H5N1',f:PAL.green},
+     co:{x:180,y:150,w:200,t:'co-infected pig or bird',f:PAL.gold},nw:{x:180,y:250,w:220,t:'new reassortant|(e.g. 2009 H1N1)',f:PAL.rose}}
+   :{h3:{x:150,y:60,w:150,t:'human H3N2',f:PAL.blue},av:{x:150,y:150,w:150,t:'avian H5N1',f:PAL.green},
+     co:{x:360,y:105,w:160,t:'co-infected host',f:PAL.gold},nw:{x:560,y:105,w:150,t:'new reassortant',f:PAL.rose}};
+  const E=n?[['h3','co','',{side:1}],['av','co','',{side:-1}],['co','nw','segments mixed']]
+    :[['h3','co','',{side:-1}],['av','co','',{side:1}],['co','nw','segments mixed']];
+  let s=G('a-fade',0,flow(N,E));
+  const b=bullets(n?24:30,n?330:230,[
+    ['Drift: small, steady change','Point mutations in the surface proteins haemagglutinin and neuraminidase slowly change them until last year’s antibodies no longer fit. This is why the flu vaccine is reformulated every year.'],
+    ['Shift: a sudden swap','When two influenza strains infect one cell, their segments reassort and a surface protein the population has never seen can appear at once. Such antigenic shifts caused the 1957, 1968 and 2009 pandemics.'],
+    ['Why influenza is special','Only segmented viruses reassort this way. It makes influenza uniquely prone to pandemics, and makes pigs and birds important mixing vessels.']],
+    n?44:82,{d0:.6,gap:22});
+  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,250)),s:s+b.s};
+}
+function scV8(n){
+  const rows=[
+   ['HIV-1','chimpanzee SIV','bushmeat contact, c. 1920s','adapted fully to humans'],
+   ['SARS-CoV-1','bats via civets','live-animal markets, 2002','contained, ~8000 cases'],
+   ['SARS-CoV-2','bats (intermediate debated)','2019','ongoing pandemic'],
+   ['MERS-CoV','bats via camels','2012','camel contact, limited spread'],
+   ['Nipah','fruit bats via pigs/date palm sap','1998 onward','high fatality, little human spread'],
+   ['Influenza','wild waterfowl','recurring','poultry and pigs as bridges'],
+   ['Rabies','many mammals','ancient','near-100% fatal once symptomatic']];
+  const t=wtable(n,['Virus','Reservoir','Spillover','Outcome'],rows,
+    n?[[10,10],[96,12],[200,12],[290,10]]:[[24,14],[180,18],[330,20],[500,18]],{y0:30,R:n?354:620});
+  const p=para(n?16:24,t.y+14,'Most new human viruses come from animals. Spillover needs a reservoir (often bats or birds, which tolerate many viruses), contact, and then adaptation to spread human-to-human. Bats carry many RNA viruses in part because their immune and metabolic biology limits the damage. Surveillance of reservoirs and interfaces is how the next spillover is caught early.',n?50:92,'note start f13',17,.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+}
+const S=[
+ {p:1,title:'What a virus is',draw:scV1,text:"A virus is genetic material in a protein coat, with no metabolism of its own. It replicates only by entering a cell and redirecting that cell’s machinery. The single most useful thing to know about any virus is how it turns its genome into messenger RNA, because everything else follows from that."},
+ {p:1,title:'Capsids and envelopes',draw:scV2,text:"The genome is packed in a capsid built from repeated protein subunits, almost always with icosahedral or helical symmetry. Many animal viruses add an envelope of host membrane carrying viral spike proteins. Whether a virus is enveloped or naked shapes how it enters cells and how it spreads."},
+ {p:2,title:'The Baltimore classification',chips:'balt',draw:scV3,text:"David Baltimore sorted all viruses into seven classes by how they reach messenger RNA, placing the (+)ssRNA genome, which is itself mRNA, at the centre. Pick a class to see how its mRNA is made, examples, and the key enzyme. Classes III and V must carry their own polymerase into the cell; classes VI and VII use reverse transcription."},
+ {p:3,title:'The replication cycle',draw:scV4,text:"Every infection runs through the same steps: attachment to a specific receptor, entry and uncoating, replication of the genome and expression of its genes, assembly of new particles, maturation, and release. The details differ by class, but making mRNA is always the hinge on which the rest turns."},
+ {p:3,title:'Replication strategies',draw:scV5,text:"Three tricks recur. RNA viruses encode an error-prone RNA-dependent RNA polymerase. Retroviruses and hepatitis B reverse-transcribe RNA into DNA. And some viruses carry segmented genomes that can be shuffled. Each is both a vulnerability and a drug target."},
+ {p:4,title:'Error rates and quasispecies',draw:scV6,text:"RNA polymerases do not proofread, so RNA viruses mutate roughly a hundred thousand times faster than their hosts. A single infection is therefore a cloud of variants, a quasispecies, on which selection acts immediately. The same error rate also sets a limit that antiviral mutagens can push past."},
+ {p:4,title:'Antigenic shift and drift',draw:scV7,text:"Influenza changes in two ways. Drift is the slow accumulation of point mutations in its surface proteins that erodes immunity year by year. Shift is the sudden reassortment of whole genome segments between strains, which can produce a pandemic virus the population has never met."},
+ {p:4,title:'Zoonotic emergence',draw:scV8,text:"Most new human viruses spill over from animal reservoirs, often bats or birds, sometimes through an intermediate host. Spillover then has to be followed by adaptation to human-to-human spread. HIV, SARS-CoV-2 and Nipah all crossed this way, which is why watching the animal interface matters."}];
+const CHIPS={balt:{list:BALT.map(b=>b.k),get:()=>baltSel,set:k=>baltSel=k}};
+const NAR='Narrator';
+const $=id=>document.getElementById(id);
+const stage=$('stage'), chips=$('chips'), dots=$('dots');
+const NPARTS=Math.max(...S.map(s=>s.p));
+let cur=0, lastNarrow=null;
+S.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='p'+s.p;b.setAttribute('aria-label',`Scene ${i+1}: ${s.title}`);b.onclick=()=>go(i);dots.appendChild(b);});
+function isNarrow(){return stage.parentElement.clientWidth<560;}
+function buildChips(sc){chips.innerHTML='';if(!sc.chips){chips.hidden=true;return;}const C=CHIPS[sc.chips];chips.hidden=false;
+  C.list.forEach((t,k)=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.setAttribute('aria-pressed',k===C.get());b.onclick=()=>{C.set(k);render();};chips.appendChild(b);});}
+function render(){
+  const sc=S[cur], n=isNarrow(); lastNarrow=n;
+  const out=sc.draw(n);
+  stage.setAttribute('viewBox',out.vb); stage.innerHTML=out.s;
+  $('sceneNo').textContent=`Part ${roman(sc.p)} · Plate ${roman(cur+1)}`;
+  $('sceneTitle').textContent=sc.title; $('speaker').textContent=NAR; $('narr').textContent=sc.text;
+  stage.setAttribute('aria-label',sc.title+'. '+sc.text);
+  buildChips(sc);
+  [...dots.children].forEach((b,i)=>b.setAttribute('aria-current',i===cur));
+  for(let k=1;k<=NPARTS;k++)$('part'+k).setAttribute('aria-current',sc.p===k);
+  $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
+}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+for(let k=1;k<=NPARTS;k++)$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});
+render();
+</script>
+
+</body>
+</html>
