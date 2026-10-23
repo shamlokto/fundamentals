@@ -523,16 +523,29 @@ function scD1(n){
 }
 
 function scD2(n){
-  let s='';const x=n?18:40, W=n?324:560, y=n?52:58;
-  const site=(yy,meth,cut)=>{let t=dLine(x,W,yy,'#D6CDB8',5)
-    +`<rect x="${FX(x+W*.42)}" y="${FX(yy-8)}" width="${FX(W*.16)}" height="16" rx="2" fill="${INTC}" fill-opacity=".5" stroke="${INTC}" stroke-width="1.2"/>`;
-    if(meth)t+=`<circle cx="${FX(x+W*.46)}" cy="${FX(yy-13)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`
-      +`<circle cx="${FX(x+W*.54)}" cy="${FX(yy+13)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`;
-    if(cut)t+=`<path d="M${FX(x+W*.44)} ${FX(yy-12)} V${FX(yy+12)}" stroke="${PHG}" stroke-width="2.4"/>`;
+  let s='';const x=n?18:40, W=n?324:340, y=n?60:62;
+  /* two strands, EcoRI site GAATTC; M.EcoRI methylates the second A on each strand, R.EcoRI cuts G^AATTC */
+  const cw=n?13:15, sx=x+W/2-3*cw, top='GAATTC', bot='CTTAAG';
+  const site=(yy,meth,cut)=>{const y1=yy-8,y2=yy+10;let t='';
+    t+=`<rect x="${FX(sx-3)}" y="${FX(y1-12)}" width="${FX(6*cw+6)}" height="${FX(y2-y1+18)}" rx="3" fill="${INTC}" fill-opacity=".18" stroke="${INTC}" stroke-width="1"/>`;
+    [[y1,'5′','3′'],[y2,'3′','5′']].forEach(([yl,a,b])=>{t+=ln(x+18,yl-4,sx-4,yl-4,DNA,2.2)+ln(sx+6*cw+4,yl-4,x+W-18,yl-4,DNA,2.2)
+      +T(x+12,yl,a,'mono end f12')+T(x+W-12,yl,b,'mono start f12');});
+    for(let i=0;i<6;i++){t+=Tc(FX(sx+i*cw+cw/2),FX(y1),top[i],INK,n?12:13,'mono mid','600')+Tc(FX(sx+i*cw+cw/2),FX(y2),bot[i],INK,n?12:13,'mono mid','600');}
+    if(meth){const mx1=sx+2*cw+cw/2, mx2=sx+3*cw+cw/2;
+      t+=`<circle cx="${FX(mx1)}" cy="${FX(y1-17)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`+ln(mx1,y1-13,mx1,y1-10,INK,.8)
+        +`<circle cx="${FX(mx2)}" cy="${FX(y2+11)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`+ln(mx2,y2+4,mx2,y2+7,INK,.8)
+        +T(FX(mx1+8),FX(y1-14),'CH₃ (N6-methyl-A)','note start f12 halo')+T(FX(mx2+8),FX(y2+15),'CH₃','note start f12 halo');}
+    if(cut){const c1=sx+cw, c2=sx+5*cw, ym=(y1+y2)/2-3;
+      t+=`<path d="M${FX(c1)} ${FX(y1-15)} V${FX(ym)} H${FX(c2)} V${FX(y2+7)}" stroke="${PHG}" stroke-width="2.2" fill="none"/>`;}
     return t;};
-  s+=G('a-fade',0,site(y,true,false)+T(x,y-26,'host DNA: the site is methylated — left alone','note start f11'));
-  s+=G('a-fade',.6,site(y+58,false,true)+T(x,y+58-26,'incoming phage DNA: unmethylated — cut','note start f11'));
-  let yy=y+(n?96:100);
+  const side=(yy,l1,l2)=>n?'':T(x+W+20,yy-4,l1,'note start f13')+T(x+W+20,yy+13,l2,'note start f13');
+  s+=G('a-fade',0,T(x,y-36,n?'host DNA: site methylated on both strands':'host DNA: M.EcoRI has methylated the site on both strands','note start f12')
+    +site(y,true,false)+side(y,'R.EcoRI cannot cut:','DNA left alone'));
+  const y2=y+(n?92:96);
+  s+=G('a-fade',.6,T(x,y2-36,n?'phage DNA: unmethylated, so R.EcoRI cuts':'incoming phage DNA: unmethylated, so R.EcoRI cuts G↓AATTC','note start f12')
+    +site(y2,false,true)+side(y2,'staggered cut on both','strands: 5′-AATT overhangs')
+    +(n?T(x,y2+32,'staggered cut, 5′-AATT overhangs','note start f12'):''));
+  let yy=y2+(n?58:50);
   const rows=[['Type I','one complex does both','EcoKI and relatives: a three-subunit enzyme recognises a bipartite site, then translocates DNA until it collides with another and cuts far away. Needs ATP and SAM.'],
    ['Type II','separate enzyme and methylase','Short palindromic site, cut at a fixed position, no ATP needed. The cloning workhorses: EcoRI, BamHI, and every other enzyme in the freezer.'],
    ['Type III','a pair of sites in head-to-head orientation','Cuts a short distance from the site; requires two unmethylated sites in the correct relative orientation, so a single site is not enough.'],
@@ -549,17 +562,23 @@ function scD3(n){
   let s='';const x=n?18:40, y=n?54:60, W=n?320:560;
   /* CRISPR array */
   const unit=W/7;
-  s+=G('a-fade',0,gArrow(x,y,unit*1.5,'cas genes',RECC,{h:17}));
-  for(let i=0;i<4;i++){const cx0=x+unit*1.7+i*unit*1.2;
-    s+=G('a-fade',(.3+i*.2).toFixed(1),`<path d="M${FX(cx0)} ${FX(y-9)} l${FX(unit*.34)} 9 l${FX(-unit*.34)} 9 z" fill="${CLOUD}" stroke="${INK}" stroke-width=".6"/>`
-      +`<rect x="${FX(cx0+unit*.4)}" y="${FX(y-9)}" width="${FX(unit*.66)}" height="18" rx="2" fill="${[PHG,INTC,METC,PLS][i]}" fill-opacity=".75" stroke="${INK}" stroke-width=".6"/>`);}
-  s+=G('a-fade',1.2,Tc(x,y-24,'cas operon','#3E7FA8',10,'mono start','600')
-    +Tc(x+unit*1.8,y-24,n?'repeat + spacer …':'repeat + spacer, repeat + spacer …','#6A5B47',10,'mono start')
-    +Tc(x,y+30,n?'each spacer: a remembered invader':'each spacer is a remembered piece of an invader','#6A5B47',10,'mono start'));
-  let yy=y+(n?58:62);
+  s+=G('a-fade',0,gArrow(x,y,unit*1.3,'cas genes',RECC,{h:17}));
+  /* leader, then repeat–spacer units, ending in a terminal repeat */
+  const L0=x+unit*1.4, lw=unit*.5, rw=unit*.3, sw=unit*.62;
+  let ax=L0+lw+unit*.05, arr=`<rect x="${FX(L0)}" y="${FX(y-7)}" width="${FX(lw)}" height="14" rx="2" fill="#EFE6D2" stroke="${INK}" stroke-width=".6"/>`;
+  const sx=[], rx=[];
+  for(let i=0;i<9;i++){if(i%2===0){rx.push(ax+rw/2);arr+=`<path d="M${FX(ax)} ${FX(y-9)} l${FX(rw)} 9 l${FX(-rw)} 9 z" fill="${CLOUD}" stroke="${INK}" stroke-width=".6"/>`;ax+=rw;}
+    else{const k=(i-1)/2;sx.push(ax+sw/2);arr+=`<rect x="${FX(ax)}" y="${FX(y-9)}" width="${FX(sw)}" height="18" rx="2" fill="${[PHG,INTC,METC,PLS][k]}" fill-opacity=".75" stroke="${INK}" stroke-width=".6"/>`;ax+=sw;}}
+  s+=G('a-fade',.3,arr);
+  s+=G('a-fade',1.2,Tc(x,y-(n?36:22),'cas operon','#3E7FA8',12,'mono start','600')
+    +T(FX(L0),y-20,'leader','note start f12')+ln(L0+lw/2,y-16,L0+lw/2,y-8,'#6A5B47',.8)
+    +T(FX(sx[1]),y-20,'spacer','note mid f12')+T(FX(rx[2]),y+25,'repeat','note mid f12')+ln(rx[2],y+14,rx[2],y+9,'#6A5B47',.8)
+    +T(FX(sx[0]),y+(n?40:25),n?'newest spacer':'newest','note mid f12 acc')+T(FX(sx[3]),y+(n?40:25),'oldest','note mid f12')
+    +T(x,y+(n?58:44),n?'new spacers enter beside the leader':'new spacers are inserted beside the leader; each is a remembered piece of an invader','note start f12'));
+  let yy=y+(n?74:62);
   const steps=[['Adaptation','Cas1–Cas2 cut a piece out of the invading genome and insert it as a new spacer at the leader end of the array. A PAM next to the protospacer is required, which is how the system knows the fragment came from outside.'],
    ['Expression','The array is transcribed and processed into small crRNAs, each carrying one spacer. In type II this needs a tracrRNA and host RNase III; in types I and III a dedicated Cas endoribonuclease does it.'],
-   ['Interference','The crRNA guides an effector — Cascade plus Cas3, Cas9, Cas12, Cas13 — to a matching sequence. Base pairing beside a correct PAM licenses cleavage; the same sequence inside the array has no PAM, so the cell does not cut itself.']];
+   ['Interference','The crRNA guides an effector — Cascade plus Cas3, Cas9, Cas12, Cas13 — to a matching sequence. In types I, II and V, base pairing beside a correct PAM licenses cleavage; the same sequence inside the array has no PAM, so the cell does not cut itself. Type III instead checks that the crRNA tag does not pair with a repeat.']];
   if(n){steps.forEach((st,i)=>{const b=boxItem(16,yy,332,st[0],st[1],{num:i+1,cw:6.1});s+=G('a-fade',(1.4+i*.3).toFixed(1),b.s);yy+=b.h+9;});}
   else{steps.forEach((st,i)=>{const b=boxItem(24,yy,592,st[0],st[1],{num:i+1,cw:6.3});s+=G('a-fade',(1.4+i*.3).toFixed(1),b.s);yy+=b.h+10;});}
   const b2=bullets(n?24:30,yy+8,[['Two classes, six types','Class 1 systems — types I, III and IV — use a multi-subunit effector complex and account for most CRISPR in nature. Class 2 — types II, V and VI — use a single protein, which is precisely why Cas9 and Cas12a became tools.'],
@@ -612,13 +631,13 @@ function scD6(n){
   const stepW=n?104:168;
   const nodes=[['sensor','detects infection',INTC],[n?'messenger':'second messenger','a cyclic nucleotide',METC],['effector','kills the cell or the phage',PHG]];
   nodes.forEach((nd,i)=>{const x=cx+(i-1)*stepW;
-    s+=G('a-fade',(i*.4).toFixed(1),`<rect x="${FX(x-(n?44:66))}" y="${y}" width="${n?88:132}" height="${n?42:44}" rx="5" fill="#E7DEC9" stroke="${INK}"/>`
+    s+=G('a-fade',(i*.4).toFixed(1),`<rect x="${FX(x-(n?44:66))}" y="${y}" width="${n?88:132}" height="58" rx="5" fill="#E7DEC9" stroke="${INK}"/>`
       +Tc(x,y+(n?18:20),nd[0],'#3A2E22',n?11:12,'mono mid','600')
-      +wrap(nd[1],n?16:22).map((l,j)=>T(x,y+(n?32:36)+j*13,l,'note mid f10')).join(''));
-    if(i<2)s+=G('a-fade',(.3+i*.4).toFixed(1),arw(x+(n?46:68),y+(n?21:22),x+stepW-(n?46:68),y+(n?21:22),{blue:1}));});
-  s+=G('a-fade',1.4,`<circle cx="${cx}" cy="${y+(n?66:72)}" r="7" fill="${METC}" fill-opacity=".6" stroke="${INK}"/>`
-    +Tc(cx,y+(n?90:96),'cGAMP, cyclic tri-AMP, cyclic ADP-ribose','#6A5B47',10,'mono mid'));
-  let yy=y+(n?112:120);
+      +wrap(nd[1],n?14:20).map((l,j)=>T(x,y+36+j*14,l,'note mid f12')).join(''));
+    if(i<2)s+=G('a-fade',(.3+i*.4).toFixed(1),arw(x+(n?46:68),y+29,x+stepW-(n?46:68),y+29,{blue:1}));});
+  s+=G('a-fade',1.4,`<circle cx="${cx}" cy="${y+(n?80:84)}" r="7" fill="${METC}" fill-opacity=".6" stroke="${INK}"/>`
+    +Tc(cx,y+(n?102:106),'cGAMP, cyclic tri-AMP, cyclic ADP-ribose','#6A5B47',10,'mono mid'));
+  let yy=y+(n?124:130);
   const rows=[['CBASS','a cGAS/DncV-like cyclase','cyclic di- or tri-nucleotide','phospholipase, nuclease, or a transmembrane pore'],
    ['Thoeris','a TIR-domain protein','cyclic ADP-ribose isomer','a SIR2 domain that destroys NAD⁺'],
    ['Type III CRISPR','Cas10, on target recognition','cyclic oligoadenylate','Csm6/Csx1, a promiscuous RNase'],
@@ -698,7 +717,7 @@ const DEFQ=[
  {q:'Phage adsorbs and injects normally, no progeny are produced, and the infected cells lyse early and release nothing.',a:'Abortive infection',t:'The infection is detected after entry and the cell commits suicide before the phage matures. Nothing has to recognise a specific sequence; the trigger is usually some general consequence of infection, such as host shut-off.'},
  {q:'A strain resists one particular phage completely, and sequencing finds a 32 bp match to that phage in a repeat array.',a:'CRISPR–Cas',t:'Sequence-specific, heritable, and acquired. The spacer length and the flanking repeats are the giveaway. Escape mutants of the phage will carry point mutations in the protospacer or its PAM.'},
  {q:'A small circular plasmid is destroyed on entry, but phages infect normally.',a:'Wadjet',t:'A plasmid-specific system: the JetABCD complex recognises small circular DNA topologically rather than by sequence, so it defends against plasmids and leaves linear phage genomes alone.'},
- {q:'Infected cells survive but stop growing, and their NAD⁺ pool is gone.',a:'Thoeris, or another NADase system',t:'TIR-domain sensors making cyclic ADP-ribose, which activates a SIR2 NADase, deplete NAD⁺ and arrest the cell. The same TIR–NADase chemistry appears in plant and animal immunity.'},
+ {q:'Infected cells stop growing and release no phage, and their NAD⁺ pool is gone.',a:'Thoeris, or another NADase system',t:'TIR-domain sensors making cyclic ADP-ribose, which activates a SIR2 NADase, deplete NAD⁺ and arrest the cell. The same TIR–NADase chemistry appears in plant and animal immunity.'},
  {q:'Resistance is present in about half the cells of a clonal culture, and the proportion changes over time.',a:'Phase-variable defence',t:'An invertible promoter or a phase-variable methyltransferase switches the system stochastically. The population hedges: some cells pay the cost and are protected, others do not. This is heterogeneity, not mutation.'},
  {q:'The phage genome is not cut, and does not replicate either.',a:'BREX, or a related methylation-based system',t:'BREX marks the host genome by methylation but blocks phage DNA replication rather than cleaving it. A standard restriction assay, which looks for cut DNA, sees nothing — which is why these systems were missed for so long.'},
  {q:'A phage that was restricted for several generations suddenly propagates freely on the same strain.',a:'Acquired modification, not mutation',t:'A phage that escapes restriction once is methylated by the host system during that round and its progeny are then protected on that host — but not on a different one. The classic observation of host-controlled restriction and modification, and the reason it was named that way.'}];

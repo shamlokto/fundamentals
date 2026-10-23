@@ -654,7 +654,7 @@ function artBullets(n,art,artW,artH,items,o={}){
 const PATHS=[
  {k:'EMP (glycolysis)',atp:2,nadh:2,nadph:0,rows:[['Steps','glucose → 2 pyruvate through fructose-1,6-bisphosphate'],['Net yield','2 ATP, 2 NADH per glucose'],['Key enzymes','phosphofructokinase (committed, regulated), pyruvate kinase'],['Who uses it','E. coli, Bacillus, yeast, most animals']]},
  {k:'Entner–Doudoroff',atp:1,nadh:1,nadph:1,rows:[['Steps','glucose-6-P → 6-phosphogluconate → KDPG, split by KDPG aldolase'],['Net yield','1 ATP, 1 NADH, 1 NADPH per glucose'],['Why','fewer enzymes and less protein needed for the same flux; favoured by many aerobes'],['Who uses it','Pseudomonas, Zymomonas, many marine bacteria; E. coli for gluconate']]},
- {k:'Pentose phosphate',atp:0,nadh:0,nadph:2,rows:[['Oxidative branch','glucose-6-P → ribulose-5-P + CO₂, making 2 NADPH'],['Non-oxidative branch','transketolase and transaldolase interconvert sugars of 3–7 carbons'],['Purpose','NADPH for biosynthesis and defence; ribose-5-P for nucleotides; erythrose-4-P for aromatic amino acids'],['Flexible','can return carbon to glycolysis or run in reverse']]}];
+ {k:'Pentose phosphate',atp:0,nadh:0,nadph:2,rows:[['Oxidative','glucose-6-P → ribulose-5-P + CO₂, making 2 NADPH'],['Non-oxidative','transketolase and transaldolase interconvert sugars of 3–7 carbons'],['Purpose','NADPH for biosynthesis and defence; ribose-5-P for nucleotides; erythrose-4-P for aromatic amino acids'],['Flexible','can return carbon to glycolysis or run in reverse']]}];
 let pathSel=0;
 function scC1(n){return introPlate(n,{q:'How does a cell turn sugar into everything else?',
   belief:'A dozen precursor metabolites, four energy and redox currencies, and a handful of pathways connect almost all of metabolism. Central carbon metabolism supplies all of them. Knowing its map lets you reason about growth, fermentation, antibiotic tolerance and engineering.',
@@ -675,13 +675,13 @@ function scC3(n){
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scC4(n){
-  const cx=n?180:200, cy=n?200:210, R=n?118:136;
-  const items=n?[{t:'citrate',w:62,fs:10},{t:'isocitrate',w:74,fs:10},{t:'2-oxo-|glutarate',w:66,fs:10,f:PAL.gold},{t:'succinyl-|CoA',w:66,fs:10,f:PAL.gold},{t:'succinate',w:70,fs:10},{t:'fumarate',w:64,fs:10},{t:'malate',w:54,fs:10},{t:'oxalo-|acetate',w:62,fs:10,f:PAL.gold}]
-    :[{t:'citrate',w:76},{t:'isocitrate',w:86},{t:'2-oxoglutarate',w:112,f:PAL.gold},{t:'succinyl-CoA',w:100,f:PAL.gold},{t:'succinate',w:84},{t:'fumarate',w:78},{t:'malate',w:66},{t:'oxaloacetate',w:100,f:PAL.gold}];
-  const labs=n?['','NADH|CO₂','NADH|CO₂','ATP or|GTP','FADH₂','','NADH','+ acetyl-|CoA']:['','NADH, CO₂','NADH, CO₂','ATP (GTP in some)','FADH₂ (complex II)','','NADH','+ acetyl-CoA'];
+  const cx=n?180:204, cy=n?200:214, R=n?118:142;
+  const items=n?[{t:'citrate|6C',w:62,fs:10},{t:'isocitrate|6C',w:74,fs:10},{t:'2-oxo-|glutarate 5C',w:80,fs:10,f:PAL.gold},{t:'succinyl-|CoA 4C',w:66,fs:10,f:PAL.gold},{t:'succinate|4C',w:70,fs:10},{t:'fumarate|4C',w:64,fs:10},{t:'malate|4C',w:54,fs:10},{t:'oxalo-|acetate 4C',w:72,fs:10,f:PAL.gold}]
+    :[{t:'citrate (6C)',w:110},{t:'isocitrate (6C)',w:126},{t:'2-oxoglutarate (5C)',w:150,f:PAL.gold},{t:'succinyl-CoA (4C)',w:140,f:PAL.gold},{t:'succinate (4C)',w:118},{t:'fumarate (4C)',w:112},{t:'malate (4C)',w:96},{t:'oxaloacetate (4C)',w:140,f:PAL.gold}];
+  const labs=n?['','NADH|CO₂','NADH|CO₂','ATP or|GTP','QH₂|(via FAD)','','NADH','+ acetyl-|CoA (2C)']:['','NADH, CO₂','NADH, CO₂','ATP (GTP in some)','QH₂ (via FAD, complex II)','','NADH','+ acetyl-CoA (2C)'];
   let s=G('a-fade',0,cycle(cx,cy,R,items,{labs,lr:n?22:26}));
-  const b=n?bullets(24,cy+R+50,[['Per acetyl-CoA','3 NADH, 1 FADH₂ (as reduced quinone), 1 ATP or GTP, 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave for biosynthesis and must be replaced.'],['Variants','Anaerobic E. coli runs it as a branched pathway; many bacteria have a glyoxylate shunt.']],44,{d0:1,gap:20})
-    :bullets(432,52,[['Per acetyl-CoA','3 NADH, 1 reduced quinone from succinate dehydrogenase (complex II), 1 GTP or ATP, and 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave the cycle for biosynthesis, so it must be refilled.'],['Variants','Without oxygen, E. coli runs a branched pathway: an oxidative arm to 2-oxoglutarate and a reductive arm to succinate. Many organisms lack 2-oxoglutarate dehydrogenase.'],['Run backwards','The reductive TCA cycle fixes CO₂ in Chlorobium and Aquifex.']],25,{d0:1,gap:20});
+  const b=n?bullets(24,cy+R+64,[['Per acetyl-CoA','3 NADH, 1 reduced quinone (QH₂, via the FAD of succinate dehydrogenase), 1 ATP or GTP, 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave for biosynthesis and must be replaced.'],['Variants','Anaerobic E. coli runs it as a branched pathway; many bacteria have a glyoxylate shunt.']],44,{d0:1,gap:20})
+    :bullets(452,52,[['Per acetyl-CoA','3 NADH, 1 reduced quinone from succinate dehydrogenase (complex II), 1 GTP or ATP, and 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave the cycle for biosynthesis, so it must be refilled.'],['Variants','Without oxygen, E. coli runs a branched pathway: an oxidative arm to 2-oxoglutarate and a reductive arm to succinate. Many organisms lack 2-oxoglutarate dehydrogenase.'],['Run backwards','The reductive TCA cycle fixes CO₂ in Chlorobium and Aquifex.']],23,{d0:1,gap:20});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};
 }
 function scC5(n){

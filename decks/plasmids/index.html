@@ -498,15 +498,16 @@ const pLine=(x,w,y,col,sw)=>`<path d="M${x} ${y} h${w}" stroke="${col||'#D6CDB8'
 
 function scP1(n){
   let s='';
-  const cx=n?180:300, cy=n?96:102;
-  s+=G('a-fade',0,cellRod(cx,cy,n?290:420,n?62:72,{}));
-  s+=G('a-fade',.3,`<ellipse cx="${cx-(n?60:100)}" cy="${cy}" rx="${n?62:92}" ry="${n?30:34}" fill="none" stroke="${CHR}" stroke-width="2.6"/>`
-    +Tc(cx-(n?60:100),cy+(n?46:50),'chromosome','#5A4632',10,'mono mid','600'));
+  const cx=n?180:300, cy=n?104:102;
+  s+=G('a-fade',0,cellRod(cx,cy,n?250:420,n?70:72,{}));
+  s+=G('a-fade',.3,`<ellipse cx="${cx-(n?55:100)}" cy="${cy-(n?10:0)}" rx="${n?52:92}" ry="${n?26:34}" fill="none" stroke="${CHR}" stroke-width="2.6"/>`
+    +Tc(cx-(n?55:100),cy+(n?32:50),'chromosome','#5A4632',n?12:10,'mono mid','600'));
   [[0,-16,13,'high copy'],[34,14,13,''],[62,-6,13,''],[28,-30,13,'']].forEach((p,i)=>{
     s+=G('a-fade',(.6+i*.2).toFixed(1),pRing(cx+(n?52:96)+p[0]*(n?.6:1),cy+p[1],p[2]*(n?.8:1),{col:PLS,w:2.4}));});
-  s+=G('a-fade',1.4,pRing(cx+(n?8:20),cy+(n?18:26),n?15:20,{col:METC,w:3})
-    +Tc(cx+(n?60:20),cy+(n?78:58),'a large, low-copy plasmid','#6A5B47',10,'mono mid'));
-  let y=cy+(n?92:100);
+  s+=G('a-fade',1.2,Tc(cx+(n?80:126),cy-(n?46:52),n?'high-copy plasmids':'small, high-copy plasmids','#6A5B47',12,'mono mid'));
+  s+=G('a-fade',1.4,pRing(cx+(n?30:20),cy+(n?32:26),n?14:20,{col:METC,w:3})
+    +Tc(cx+(n?40:20),cy+(n?60:58),'a large, low-copy plasmid','#6A5B47',n?12:10,'mono mid'));
+  let y=cy+(n?100:100);
   s+=G('a-fade',1.8,T(n?16:24,y,'A plasmid is defined by its replicon, not its cargo','cname start f14'));
   y+=22;
   const q=para(n?16:24,y,'The replicon is the origin of replication plus whatever protein and RNA elements control initiation from it. Everything else a plasmid carries — resistance, virulence, metabolism, nothing at all — is cargo. Two plasmids with the same replicon cannot be stably co-inherited; two with different replicons can, which is why a single cell routinely carries several.',n?50:92,'note start f13',17,2);
@@ -529,12 +530,17 @@ function scP2(n){
   const lab=(x,y,t,a='start')=>T(x,y,t,`note ${a} f12 halo`);
   const theta=(cx,cy)=>{let t='';
     t+=arc(cx,cy,R,70,290,PA)+arc(cx,cy,R-7,70,290,PB);                       // unreplicated duplex
-    t+=arc(cx,cy,R+12,-58,58,PA)+arc(cx,cy,R+6,-58,58,NEW);                   // daughter 1: parental + new
-    t+=arc(cx,cy,R-19,-58,58,PB)+arc(cx,cy,R-13,-58,58,NEW);                  // daughter 2
+    t+=arc(cx,cy,R+12,-58,58,PA)+arc(cx,cy,R-19,-58,58,PB);                  // parental strands, separated in the bubble
     [-1,1].forEach(d=>{const f=70*d,g=58*d,o=P(cx,cy,R,f),i=P(cx,cy,R-7,f);
-      [[R+12,PA,o],[R+6,NEW,o],[R-13,NEW,i],[R-19,PB,i]].forEach(([r,c,st])=>{const e=P(cx,cy,r,g);
+      [[R+12,PA,o],[R-19,PB,i]].forEach(([r,c,st])=>{const e=P(cx,cy,r,g);
         t+=`<path d="M${st[0]} ${st[1]} L${e[0]} ${e[1]}" stroke="${c}" stroke-width="${W}" stroke-linecap="round"/>`;});});
-    t+=head(cx,cy,R+6,-58,-1,NEW)+head(cx,cy,R-13,58,1,NEW);
+    // daughter 1 (outer): new strand runs anticlockwise 5'->3': leading towards the left fork, Okazaki pieces on the right
+    t+=arc(cx,cy,R+6,-60,0,NEW)+head(cx,cy,R+6,-60,-1,NEW);
+    [[6,20],[25,39],[44,58]].forEach(([a,b])=>{t+=arc(cx,cy,R+6,a,b,NEW)+head(cx,cy,R+6,a,-1,NEW);});
+    // daughter 2 (inner): new strand runs clockwise: leading towards the right fork, Okazaki pieces on the left
+    t+=arc(cx,cy,R-13,0,60,NEW)+head(cx,cy,R-13,60,1,NEW);
+    [[-58,-44],[-39,-25],[-20,-6]].forEach(([a,b])=>{t+=arc(cx,cy,R-13,a,b,NEW)+head(cx,cy,R-13,b,1,NEW);});
+    t+=lab(cx,cy+R+20,'solid: leading strand','mid')+lab(cx,cy+R+35,'pieces: lagging (Okazaki)','mid');
     const o=P(cx,cy,R+12,0);t+=`<circle cx="${o[0]}" cy="${o[1]}" r="3.5" fill="${INK}"/>`+lab(o[0],o[1]-10,'ori','mid');
     const fk=P(cx,cy,R+4,72);t+=lab(fk[0]+8,fk[1]+4,'fork')+lab(cx-R-8,cy-R*.5,'fork','end');
     return t;};
@@ -555,13 +561,18 @@ function scP2(n){
     t+=head(cx,cy,R-7,140,1,NEW);
     const a=P(cx,cy,R-7,0),b=P(cx,cy,R-7,140);                                // displaced light strand bulges inward
     t+=`<path d="M${a[0]} ${a[1]} Q${FX(cx-R*.35)} ${FX(cy+R*.05)} ${b[0]} ${b[1]}" fill="none" stroke="${PB}" stroke-width="${W}"/>`;
-    const s2=[FX(cx-R*.12),FX(cy-R*.05)];
-    t+=`<path d="M${FX(s2[0]-2)} ${FX(s2[1]+2)} q${FX(R*.12)} ${FX(R*.28)} ${FX(R*.38)} ${FX(R*.44)}" fill="none" stroke="${NEW}" stroke-width="2.2" stroke-dasharray="4 3"/>`;
+    const c=[cx-R*.35,cy+R*.05],B=t2=>[(1-t2)*(1-t2)*a[0]+2*(1-t2)*t2*c[0]+t2*t2*b[0],(1-t2)*(1-t2)*a[1]+2*(1-t2)*t2*c[1]+t2*t2*b[1]];
+    // second new strand: primed at the exposed origin near the fork end, copied antiparallel, back towards oriV
+    const pts=[];for(let k=0;k<=10;k++){const t2=.8-k*.05,p=B(t2),q=B(t2+.01),dx=q[0]-p[0],dy=q[1]-p[1],L=Math.hypot(dx,dy);pts.push([p[0]+dy/L*5,p[1]-dx/L*5]);}
+    t+=`<path d="M${pts.map(p=>FX(p[0])+' '+FX(p[1])).join(' L')}" fill="none" stroke="${NEW}" stroke-width="2.4" stroke-linecap="round"/>`;
+    {const p=pts[pts.length-1],q=pts[pts.length-2],dx=p[0]-q[0],dy=p[1]-q[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;
+     t+=`<path d="M${FX(p[0]+ux*6)} ${FX(p[1]+uy*6)} L${FX(p[0]-ux*2+uy*4)} ${FX(p[1]-uy*2-ux*4)} L${FX(p[0]-ux*2-uy*4)} ${FX(p[1]-uy*2+ux*4)}Z" fill="${NEW}"/>`;}
+    const s2=B(.82);
     const o=P(cx,cy,R,0);t+=`<circle cx="${o[0]}" cy="${o[1]}" r="3.5" fill="${INK}"/>`+lab(o[0],o[1]-10,'oriV','mid');
-    t+=`<circle cx="${s2[0]}" cy="${s2[1]}" r="3" fill="${INK}"/>`+lab(cx-R*.55,cy+R+20,'displaced single strand','mid')+lab(cx-R*.55,cy+R+34,'with its own origin (●)','mid');
+    t+=`<circle cx="${FX(s2[0])}" cy="${FX(s2[1])}" r="3.2" fill="${INK}"/>`+lab(cx-R*.55,cy+R+20,'displaced single strand','mid')+lab(cx-R*.55,cy+R+34,'with its own origin (●)','mid');
     return t;};
   const modes=[['Theta',theta],['Rolling circle',rolling],['Strand displacement',disp]];
-  const txt=['Both strands are copied at once from a single origin, through a θ-shaped bubble with one or two forks: leading and lagging strands, as in the chromosome. Needs DnaA or a plasmid Rep protein to open the origin, then host Pol III. The mode of most medium and large plasmids.',
+  const txt=['Both strands are copied at once from a single origin, through a θ-shaped bubble with one or two forks: leading and lagging strands, as in the chromosome. The origin is opened by a plasmid Rep protein, often with DnaA (ColE1 instead uses an RNA primer extended by Pol I); host Pol III then copies. The mode of most medium and large plasmids.',
    'Rep nicks one strand at the double-strand origin (dso) and stays bound to its 5′ end. Host polymerase extends the free 3′ end round the template, peeling the old strand off as a single strand, which is released as a circle and made double-stranded from a separate single-strand origin (sso). Common in small Gram-positive plasmids.',
    'A plasmid primase starts a new strand at one origin and copies it continuously, displacing the other parental strand as single-stranded DNA. That displaced strand exposes a second origin, from which it too is copied continuously. No lagging strand. Used by IncQ plasmids such as RSF1010.'];
   const leg=(x,y)=>`<path d="M${x} ${y} h18" stroke="${PA}" stroke-width="3"/><path d="M${x} ${y+6} h18" stroke="${PB}" stroke-width="3"/>`+T(x+24,y+7,'parental strands','note start f12')
@@ -589,35 +600,36 @@ function scP3(n){
   let s='';const y=n?56:60;
   s+=G('a-fade',0,T(n?16:24,28,'Copy number is set by negative feedback on initiation','cname start '+(n?'f13':'f14')));
   /* iteron handcuffing picture (left) and antisense RNA (right) */
-  const A=(x0,yy)=>{
+  const A=(x0,yy,lab,dy)=>{
     let t=pLine(x0,n?150:200,yy,'#D6CDB8',5);
-    [0,1,2,3].forEach(i=>{t+=`<path d="M${FX(x0+16+i*((n?110:150)/4))} ${FX(yy-7)} l9 7 l-9 7 z" fill="${RECC}" stroke="${INK}" stroke-width=".6"/>`;});
-    t+=Tc(x0,yy-20,'iterons','#3E7FA8',10,'mono start','600');
+    [0,1,2,3].forEach(i=>{const ix=x0+16+i*((n?110:150)/4);t+=`<path d="M${FX(ix)} ${FX(yy-7)} l9 7 l-9 7 z" fill="${RECC}" stroke="${INK}" stroke-width=".6"/>`
+      +`<ellipse cx="${FX(ix+4)}" cy="${FX(yy+dy*9)}" rx="6" ry="4.5" fill="${METC}" stroke="${INK}" stroke-width=".7"/>`;});
+    if(lab)t+=Tc(x0,yy-20,'iterons','#3E7FA8',12,'mono start','600')+Tc(x0+(n?150:200)+8,yy+14,'Rep','#8A6A1E',12,'mono start','600');
     return t;};
   if(!n){
-    s+=G('a-fade',.3,A(30,y+20)+A(30,y+72)
-      +[0,1,2,3].map(i=>`<path d="M${FX(46+i*37.5)} ${y+27} V${y+65}" stroke="${RECC}" stroke-width="1.6" stroke-dasharray="3 2"/>`).join('')
-      +Tc(30,y+96,'handcuffing: two copies pair through their iterons','#6A5B47',10,'mono start')
-      +Tc(30,y+110,'and initiation is blocked','#6A5B47',10,'mono start'));
+    s+=G('a-fade',.3,[0,1,2,3].map(i=>`<path d="M${FX(50+i*37.5)} ${y+29} V${y+63}" stroke="${METC}" stroke-width="2" stroke-dasharray="3 2"/>`).join('')
+      +A(30,y+20,1,1)+A(30,y+72,0,-1)
+      +Tc(30,y+96,'handcuffing: Rep on the iterons of one copy','#6A5B47',10,'mono start')
+      +Tc(30,y+110,'binds Rep on the other; initiation is blocked','#6A5B47',10,'mono start'));
     s+=G('a-fade',.9,pLine(340,246,y+28,'#D6CDB8',5)
       +gArrow(346,y+28,190,'RNA II (primer)',CORE,{h:15})
       +`<path d="M538 ${y+20} V${y+36}" stroke="${INK}" stroke-width="2"/>`+Tc(548,y+32,'ori','#3A2E22',10,'mono start','600')
-      +gArrowL(372,y+50,70,'RNA I',PHG,{h:14})
+      +gArrowL(348,y+50,48,'RNA I',PHG,{h:14,fs:9})
       +Tc(340,y+8,'ColE1: two overlapping transcripts','#6A5B47',10,'mono start')
-      +Tc(450,y+54,'← antisense, other strand','#6A5B47',9,'mono start')
+      +Tc(404,y+54,'← antisense, other strand, over the 5′ end','#6A5B47',9,'mono start')
       +Tc(340,y+82,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
       +Tc(340,y+96,'and stops it maturing; Rom makes','#6A5B47',10,'mono start')
       +Tc(340,y+110,'the pairing faster — delete rom','#6A5B47',10,'mono start')
       +Tc(340,y+124,'and the copy number rises','#6A5B47',10,'mono start'));
   } else {
-    s+=G('a-fade',.3,A(20,y+22)+A(20,y+66)
-      +[0,1,2,3].map(i=>`<path d="M${FX(36+i*27.5)} ${y+29} V${y+59}" stroke="${RECC}" stroke-width="1.6" stroke-dasharray="3 2"/>`).join('')
-      +Tc(20,y+90,'handcuffing: two copies pair','#6A5B47',10,'mono start')
-      +Tc(20,y+104,'and initiation is blocked','#6A5B47',10,'mono start'));
+    s+=G('a-fade',.3,[0,1,2,3].map(i=>`<path d="M${FX(40+i*27.5)} ${y+31} V${y+57}" stroke="${METC}" stroke-width="2" stroke-dasharray="3 2"/>`).join('')
+      +A(20,y+22,1,1)+A(20,y+66,0,-1)
+      +Tc(20,y+90,'handcuffing: Rep-bound iterons','#6A5B47',10,'mono start')
+      +Tc(20,y+104,'of two copies pair; initiation blocked','#6A5B47',10,'mono start'));
     s+=G('a-fade',.9,pLine(20,318,y+136,'#D6CDB8',5)
       +gArrow(24,y+136,220,'RNA II (primer)',CORE,{h:15})
       +`<path d="M246 ${y+128} V${y+144}" stroke="${INK}" stroke-width="2"/>`+Tc(254,y+140,'ori','#3A2E22',10,'mono start','600')
-      +gArrowL(50,y+152,70,'RNA I',PHG,{h:12,fs:9})+Tc(128,y+155,'← antisense','#6A5B47',9,'mono start')
+      +gArrowL(26,y+152,46,'RNA I',PHG,{h:12,fs:9})+Tc(80,y+155,'← antisense, over the 5′ end','#6A5B47',9,'mono start')
       +Tc(20,y+120,'ColE1: two overlapping transcripts','#6A5B47',10,'mono start')
       +Tc(20,y+172,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
       +Tc(20,y+186,'and stops it maturing; Rom speeds','#6A5B47',10,'mono start')
@@ -636,11 +648,11 @@ function scP4(n){
     +pRing(cx-(n?24:32),cy,n?11:13,{col:a,w:2.4})+(b2?pRing(cx+(n?24:32),cy,n?11:13,{col:b2,w:2.4}):'')
     +T(cx,cy+(n?34:40),lab,'note mid f11');
   if(!n){
-    s+=G('a-fade',0,cell(170,y+34,PLS,INTC,'different replicons')+cell(470,y+34,PLS,PLS,'the same replicon'));
+    s+=G('a-fade',0,cell(170,y+34,PLS,INTC,'different replicons')+cell(470,y+34,PLS,PHG,'the same replicon, different cargo'));
     s+=G('a-fade',.8,arw(170,y+84,170,y+106,{blue:1})+arw(470,y+84,470,y+106,{blue:1}));
-    s+=G('a-fade',1.2,cell(170,y+140,PLS,INTC,'both daughters keep both')+cell(470,y+140,PLS,null,'one is lost at random'));
+    s+=G('a-fade',1.2,cell(170,y+140,PLS,INTC,'both daughters keep both')+cell(470,y+140,PLS,null,'one type is lost at random'));
   } else {
-    s+=G('a-fade',0,cell(90,y+30,PLS,INTC,'different replicons')+cell(268,y+30,PLS,PLS,'the same replicon'));
+    s+=G('a-fade',0,cell(90,y+30,PLS,INTC,'different replicons')+cell(268,y+30,PLS,PHG,'same replicon'));
     s+=G('a-fade',.8,arw(90,y+78,90,y+100,{blue:1})+arw(268,y+78,268,y+100,{blue:1}));
     s+=G('a-fade',1.2,cell(90,y+132,PLS,INTC,'both kept')+cell(268,y+132,PLS,null,'one is lost'));
   }
@@ -657,18 +669,23 @@ function scP5(n){
   /* par picture: cell with two plasmids pushed apart */
   const cx=n?180:320;
   s+=G('a-fade',0,cellRod(cx,y+34,n?310:460,n?30:34,{}));
-  s+=G('a-fade',.3,pRing(cx-(n?92:150),y+34,n?12:14,{col:PLS,w:2.4})+pRing(cx+(n?92:150),y+34,n?12:14,{col:PLS,w:2.4}));
-  s+=G('a-fade',.7,`<path d="M${cx-(n?72:128)} ${y+34} H${cx+(n?72:128)}" stroke="${RECC}" stroke-width="3.2" stroke-dasharray="6 4"/>`
-    +Tc(cx,y+16,'ParM filament, or ParA gradient','#3E7FA8',10,'mono mid','600')
-    +arw(cx-(n?60:110),y+34,cx-(n?78:134),y+34,{blue:1})+arw(cx+(n?60:110),y+34,cx+(n?78:134),y+34,{blue:1}));
-  s+=G('a-fade',1.1,Tc(cx,y+(n?82:90),'parS sites on each copy, bound by ParB','#6A5B47',10,'mono mid'));
-  let yy=y+(n?104:114);
-  const rows=[['Type I','ParA, a Walker-box ATPase','ParB binds parS and forms a large nucleoprotein complex; ParA on the nucleoid is depleted locally, and the complex chases the remaining gradient to the cell pole. The commonest type, and the same system the chromosome uses.'],
+  /* Type II (R1) as the worked example: ParR–parC on each copy caps a ParM filament that grows between them */
+  const dx=n?92:150,pr=n?12:14,cy=y+34;
+  s+=G('a-fade',.3,[-1,1].map(d=>pRing(cx+d*dx,cy,pr,{col:PLS,w:2.4})
+      +`<ellipse cx="${cx+d*(dx-pr)}" cy="${cy}" rx="5" ry="8" fill="${METC}" stroke="${INK}" stroke-width=".8"/>`).join(''));
+  const f0=cx-(dx-pr-5),f1=cx+(dx-pr-5),st=n?7:8;let fil='';
+  for(let x=f0+4;x<=f1-3;x+=st){fil+=`<circle cx="${FX(x)}" cy="${cy-2.6}" r="3" fill="${RECC}" stroke="${INK}" stroke-width=".4"/><circle cx="${FX(x+st/2)}" cy="${cy+2.6}" r="3" fill="#6F9CC0" stroke="${INK}" stroke-width=".4"/>`;}
+  s+=G('a-fade',.7,fil+arw(cx-dx-pr-4,cy,cx-dx-pr-26,cy,{blue:1})+arw(cx+dx+pr+4,cy,cx+dx+pr+26,cy,{blue:1})
+    +T(cx,cy-(n?36:42),n?'ParM filament grows between two copies':'ParM filament (actin-like) grows between two copies and pushes them apart','note mid f12'));
+  s+=G('a-fade',1.1,T(cx-dx,cy+(n?44:50),'ParR on parC','note mid f12')+T(cx+dx,cy+(n?44:50),'ParR on parC','note mid f12')
+    +T(cx,cy+(n?62:68),n?'Type II shown; type I uses ParB on parS':'Type II (plasmid R1) shown; type I uses ParB bound to parS and a ParA gradient','note mid f12'));
+  let yy=y+(n?122:128);
+  const rows=[['Type I','ParA, a Walker-box ATPase','ParB binds parS and forms a large nucleoprotein complex; ParA on the nucleoid is depleted locally, and the complex chases the remaining gradient to the cell pole. The commonest type, and the same system many bacterial chromosomes use.'],
    ['Type II','ParM, an actin homologue','ParR bound at parC caps a filament that elongates between two plasmid copies and pushes them apart — an insertional ratchet. The R1 plasmid system, and one of the first bacterial cytoskeletal filaments studied in action.'],
    ['Type III','TubZ, a tubulin homologue','A treadmilling filament tows the plasmid along. Found on large Bacillus virulence plasmids such as pXO1 and pBtoxis.']];
   const t=wtable(n,['Type','Motor','How it works'],rows,n?[[10,8],[72,16],[186,23]]:[[24,10],[110,22],[320,44]],{y0:yy,d0:1.4});
   const b=bullets(n?24:30,t.y+14,[['Only low-copy plasmids need this','With forty copies, the chance that a daughter gets none by random partition is vanishingly small. With one or two, it is close to a quarter per division — so every low-copy plasmid carries an active partition system, and losing it is lethal to the plasmid within tens of generations.'],
-   ['Partition explains the “second chromosome” problem','Megaplasmids use the same machinery and the same replication control as chromosomes. Whether to call a large replicon a chromosome or a plasmid is largely a question of whether it carries essential genes, not of mechanism.']],n?44:88,{d0:2.2,gap:24});
+   ['Partition explains the “second chromosome” problem','Megaplasmids and chromids keep plasmid-type replication and partition systems (RepABC in rhizobia, for example), yet some carry essential genes. Whether to call a large replicon a chromosome or a plasmid is then a question of gene content, not of mechanism.']],n?44:88,{d0:2.2,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
 }
 
@@ -700,19 +717,25 @@ function scP7(n){
   let s='';const y=n?52:56;
   const cx=n?180:320;
   /* mother cell loses plasmid -> toxin outlives antitoxin */
-  const step=(x,yy,hasP,dead,lab1,lab2)=>cellRod(x,yy,n?96:130,n?24:28,{fill:dead?'#E0D3C4':CELLF,dash:dead?'4 3':''})
-    +(hasP?pRing(x,yy,n?10:12,{col:PLS,w:2.2}):'')
+  const TX='#A4473A',AT='#4F7A3F';
+  const tox=(x,yy)=>`<rect x="${FX(x-3.5)}" y="${FX(yy-3.5)}" width="7" height="7" fill="${TX}" stroke="${INK}" stroke-width=".5"/>`;
+  const atx=(x,yy)=>`<circle cx="${FX(x)}" cy="${FX(yy)}" r="3.6" fill="${AT}" stroke="${INK}" stroke-width=".5"/>`;
+  const step=(x,yy,hasP,dead,lab1,lab2,nA)=>cellRod(x,yy,n?96:130,n?24:28,{fill:dead?'#E0D3C4':CELLF,dash:dead?'4 3':''})
+    +(hasP?pRing(x-(n?26:34),yy,n?10:12,{col:PLS,w:2.2}):'')
+    +[[-4,-9],[12,6],[28,-7]].map(([dx,dy],i)=>tox(x+dx*(n?.8:1),yy+dy*(n?.8:1))+(i<nA?atx(x+dx*(n?.8:1)+8,yy+dy*(n?.8:1)):'')).join('')
     +T(x,yy+(n?34:40),lab1,'note mid f11')+(lab2?T(x,yy+(n?48:54),lab2,'note mid f11'):'');
   if(!n){
-    s+=G('a-fade',0,step(120,y+30,true,false,'plasmid present','toxin + antitoxin made'));
-    s+=G('a-fade',.5,arw(196,y+30,250,y+30,{blue:1})+step(320,y+30,false,false,'plasmid lost at division','no new antitoxin'));
-    s+=G('a-fade',1,arw(396,y+30,450,y+30,{blue:1})+step(520,y+30,false,true,'antitoxin decays first','the toxin kills the cell'));
+    s+=G('a-fade',0,step(120,y+30,true,false,'plasmid present','toxin + antitoxin made',3)
+      +tox(214,y-8)+T(222,y-4,'toxin: stable','note start f12')+atx(330,y-8)+T(338,y-4,'antitoxin: unstable','note start f12'));
+    s+=G('a-fade',.5,arw(205,y+30,233,y+30,{blue:1})+step(320,y+30,false,false,'plasmid lost at division','no new antitoxin',1));
+    s+=G('a-fade',1,arw(405,y+30,433,y+30,{blue:1})+step(520,y+30,false,true,'antitoxin decays first','the toxin kills the cell',0));
   } else {
-    s+=G('a-fade',0,step(90,y+26,true,false,'plasmid present','toxin + antitoxin'));
-    s+=G('a-fade',.5,step(268,y+26,false,false,'plasmid lost','no new antitoxin'));
-    s+=G('a-fade',1,arw(180,y+96,180,y+112,{blue:1})+step(180,y+146,false,true,'antitoxin decays first','the toxin kills the cell'));
+    s+=G('a-fade',0,step(90,y+26,true,false,'plasmid present','toxin + antitoxin',3)
+      +tox(60,y-12)+T(68,y-8,'toxin: stable','note start f12')+atx(186,y-12)+T(194,y-8,'antitoxin: unstable','note start f12'));
+    s+=G('a-fade',.5,arw(162,y+26,180,y+26,{blue:1})+step(268,y+26,false,false,'plasmid lost','no new antitoxin',1));
+    s+=G('a-fade',1,arw(180,y+96,180,y+112,{blue:1})+step(180,y+146,false,true,'antitoxin decays first','the toxin kills the cell',0));
   }
-  let yy=n?y+204:y+100;
+  let yy=n?y+212:y+106;
   const rows=[['I','antisense RNA','small RNA blocks translation of the toxin mRNA','hok/sok of R1'],
    ['II','protein–protein','a labile antitoxin protein binds and neutralises the toxin','ccdAB of F, relBE, mazEF'],
    ['III','RNA–protein','an RNA pseudoknot array sequesters the toxin protein','toxIN of Pectobacterium'],

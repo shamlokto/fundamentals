@@ -213,7 +213,9 @@ function scLocus(n){
   const g=n?{y:56,h:26,list:[[16,46,TR,'tracr'],[66,112,CAS_B,'cas9'],[182,46,CAS_A,'cas1'],[232,36,CAS_A,'cas2'],[272,46,CAS_A,'csn2']],by:96,bx:[66,318]}
            :{y:150,h:28,list:[[24,56,TR,'tracr'],[86,130,CAS_B,'cas9'],[222,50,CAS_A,'cas1'],[278,40,CAS_A,'cas2'],[324,50,CAS_A,'csn2']],by:192,bx:[86,374]};
   let s='';
-  g.list.forEach((a,i)=>s+=G('a-fade',(.15*i).toFixed(2),gene(a[0],g.y,a[1],g.h,a[2],a[3])));
+  /* SF370: tracrRNA is encoded on the opposite strand to the cas genes, so its arrow points left */
+  const geneL=(x,y,w,h,fill,label)=>`<path d="M${x+w} ${y} h${-(w-10)} l-10 ${h/2} l10 ${h/2} h${w-10} z" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint"/>`+T(x+10+(w-10)/2-2,y+h/2+4,label,'gl mid');
+  g.list.forEach((a,i)=>s+=G('a-fade',(.15*i).toFixed(2),(i?gene:geneL)(a[0],g.y,a[1],g.h,a[2],a[3])));
   s+=G('a-fade',.9,brk(g.bx[0],g.bx[1],g.by,'cas genes')+T(g.list[0][0]+g.list[0][1]/2-4,g.by+24,'tracrRNA','note mid'));
   const A=n?{lx:16,lw:22,x:42,y:196,sw:60,h:26,by:230,cap:[300,320]}:{lx:390,lw:24,x:418,y:150,sw:44,h:28,by:192,cap:[300]};
   const a=arr(A.x,A.y,[S1,S2,S3],A.sw,A.h), rx=A.x+7, sx=A.x+14+A.sw/2;
