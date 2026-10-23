@@ -468,6 +468,9 @@ function cellRod(cx,cy,L,R,o={}){
   if(o.label)s+=T(cx,cy+R+(o.ldy||18),o.label,'note mid f11');
   return s;}
 /* --- gene arrow --- */
+function gArrowL(x,y,w,label,fill,o={}){const h=o.h||17;
+  return `<path d="M${FX(x+w)} ${FX(y-h/2)} h${FX(-(w-7))} l-7 ${FX(h/2)} l7 ${FX(h/2)} h${FX(w-7)}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
+   +(label?Tc(FX(x+7+(w-7)/2),FX(y+4),label,o.tc||'#3A2E22',o.fs||10,'mono mid','600'):'');}
 function gArrow(x,y,w,label,fill,o={}){
   const h=o.h||17;
   return `<path d="M${x} ${FX(y-h/2)} h${FX(w-7)} l7 ${FX(h/2)} l-7 ${FX(h/2)} h${FX(-(w-7))}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
@@ -564,9 +567,11 @@ function scP3(n){
       +Tc(30,y+96,'handcuffing: two copies pair through their iterons','#6A5B47',10,'mono start')
       +Tc(30,y+110,'and initiation is blocked','#6A5B47',10,'mono start'));
     s+=G('a-fade',.9,pLine(340,246,y+28,'#D6CDB8',5)
-      +gArrow(346,y+28,96,'RNA II',CORE,{h:15})+gArrow(460,y+28,70,'RNA I',PHG,{h:15})
+      +gArrow(346,y+28,190,'RNA II (primer)',CORE,{h:15})
+      +`<path d="M538 ${y+20} V${y+36}" stroke="${INK}" stroke-width="2"/>`+Tc(548,y+32,'ori','#3A2E22',10,'mono start','600')
+      +gArrowL(372,y+50,70,'RNA I',PHG,{h:14})
       +Tc(340,y+8,'ColE1: two overlapping transcripts','#6A5B47',10,'mono start')
-      +`<path d="M390 ${y+58} q24 -14 48 0" fill="none" stroke="${PHG}" stroke-width="2.4"/>`
+      +Tc(450,y+54,'← antisense, other strand','#6A5B47',9,'mono start')
       +Tc(340,y+82,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
       +Tc(340,y+96,'and stops it maturing; Rom makes','#6A5B47',10,'mono start')
       +Tc(340,y+110,'the pairing faster — delete rom','#6A5B47',10,'mono start')
@@ -577,13 +582,15 @@ function scP3(n){
       +Tc(20,y+90,'handcuffing: two copies pair','#6A5B47',10,'mono start')
       +Tc(20,y+104,'and initiation is blocked','#6A5B47',10,'mono start'));
     s+=G('a-fade',.9,pLine(20,318,y+136,'#D6CDB8',5)
-      +gArrow(24,y+136,150,'RNA II',CORE,{h:15})+gArrow(196,y+136,110,'RNA I',PHG,{h:15})
+      +gArrow(24,y+136,220,'RNA II (primer)',CORE,{h:15})
+      +`<path d="M246 ${y+128} V${y+144}" stroke="${INK}" stroke-width="2"/>`+Tc(254,y+140,'ori','#3A2E22',10,'mono start','600')
+      +gArrowL(50,y+152,70,'RNA I',PHG,{h:12,fs:9})+Tc(128,y+155,'← antisense','#6A5B47',9,'mono start')
       +Tc(20,y+120,'ColE1: two overlapping transcripts','#6A5B47',10,'mono start')
-      +Tc(20,y+168,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
-      +Tc(20,y+182,'and stops it maturing; Rom speeds','#6A5B47',10,'mono start')
-      +Tc(20,y+196,'that up — delete rom, copies rise','#6A5B47',10,'mono start'));
+      +Tc(20,y+172,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
+      +Tc(20,y+186,'and stops it maturing; Rom speeds','#6A5B47',10,'mono start')
+      +Tc(20,y+200,'that up — delete rom, copies rise','#6A5B47',10,'mono start'));
   }
-  let yy=n?y+226:y+148;
+  let yy=n?y+230:y+148;
   const b=bullets(n?24:30,yy,[['The inhibitor is counted, not the plasmid','In every system the cell measures the concentration of something made in proportion to plasmid number — an antisense RNA, a Rep protein, a set of binding sites — and shuts initiation down above a threshold. Copy number is the steady state of that loop.'],
    ['Randomly, then corrected','Which copy fires is random, so copy number drifts; the feedback pulls it back. That is why runaway mutants are easy to isolate: break the inhibitor and the plasmid replicates until it kills the host.'],
    ['Copy number is a design parameter','High copy gives yield and strong expression but a heavy burden and more recombination between repeats. Low copy gives stability and faithful representation of a library. Choosing a vector is mostly choosing a replicon.']],n?44:88,{d0:1.6,gap:24});
@@ -624,7 +631,7 @@ function scP5(n){
   s+=G('a-fade',1.1,Tc(cx,y+(n?82:90),'parS sites on each copy, bound by ParB','#6A5B47',10,'mono mid'));
   let yy=y+(n?104:114);
   const rows=[['Type I','ParA, a Walker-box ATPase','ParB binds parS and forms a large nucleoprotein complex; ParA on the nucleoid is depleted locally, and the complex chases the remaining gradient to the cell pole. The commonest type, and the same system the chromosome uses.'],
-   ['Type II','ParM, an actin homologue','ParR bound at parC caps a filament that elongates between two plasmid copies and pushes them apart — an insertional ratchet. The R1 plasmid system; the first cytoskeleton described in bacteria.'],
+   ['Type II','ParM, an actin homologue','ParR bound at parC caps a filament that elongates between two plasmid copies and pushes them apart — an insertional ratchet. The R1 plasmid system, and one of the first bacterial cytoskeletal filaments studied in action.'],
    ['Type III','TubZ, a tubulin homologue','A treadmilling filament tows the plasmid along. Found on large Bacillus virulence plasmids such as pXO1 and pBtoxis.']];
   const t=wtable(n,['Type','Motor','How it works'],rows,n?[[10,8],[72,16],[186,23]]:[[24,10],[110,22],[320,44]],{y0:yy,d0:1.4});
   const b=bullets(n?24:30,t.y+14,[['Only low-copy plasmids need this','With forty copies, the chance that a daughter gets none by random partition is vanishingly small. With one or two, it is close to a quarter per division — so every low-copy plasmid carries an active partition system, and losing it is lethal to the plasmid within tens of generations.'],
