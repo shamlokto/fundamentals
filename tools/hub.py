@@ -43,9 +43,9 @@ for g in groups:
     secs.append(f'<section class="group" id="{gid}"><div class="ghead"><h2>{e(g["name"])}</h2><p>{e(g["desc"])}</p></div><div class="grid">{"".join(cards)}</div></section>')
 
 idx = (ROOT / 'index.html').read_text()
-start = idx.index('<section class="group">'); end = idx.index('<footer>')
+start = idx.index('<section class="group"'); end = idx.index('<footer>')
 idx = idx[:start] + ''.join(secs) + '\n' + idx[end:]
-idx = re.sub(r'<div class="stats">.*?</div></div>', f'<div class="stats"><div class="stat"><b>{num}</b><span>primers</span></div><div class="stat"><b>{len(groups)}</b><span>sections</span></div><div class="stat"><b>{total_plates}</b><span>plates</span></div><div class="stat"><b>{total_int}</b><span>interactive plates</span></div><div class="stat"><b>{int_decks}</b><span>primers with interactive plates</span></div></div>', idx, flags=re.S)
+idx = re.sub(r'<div class="stats">.*?</div></div>', f'<div class="stats"><div class="stat"><b>{num}</b><span>primers</span></div><div class="stat"><b>{len(groups)}</b><span>sections</span></div><div class="stat"><b>{total_plates}</b><span>plates</span></div><div class="stat"><b>{total_int}</b><span>interactive plates</span></div></div>', idx, flags=re.S)
 tocb = '<nav class="toc" aria-label="Sections"><h2>Contents</h2><ol>' + ''.join(toc) + '</ol></nav>'
 if '<nav class="toc"' in idx:
     idx = re.sub(r'<nav class="toc".*?</nav>', tocb, idx, flags=re.S)
