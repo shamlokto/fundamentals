@@ -648,7 +648,7 @@ function scDrugs(n){
   const lx=n?64:130, mx=n?150:280, px=n?232:410, zx=n?300:520;
   s+=G('a-pop',.1,`<path d="M${lx} ${y+14} v-14" stroke="#E0B84A" stroke-width="3"/><rect x="${lx-7}" y="${y-13}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`+T(lx,y+(n?54:56),'lipid II','note mid f11'));
   s+=G('a-pop',.1,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx,y+(n?34:36),'FtsW','#3A2E22',10,'mono mid','600'));
-  s+=G('a-pop',.1,tmProt(px,y,16,14,PBPC,'',{})+blob(px,y-(n?26:30),n?13:15,n?9:10,PBPC)+Tc(px,y-(n?23:27),'PBP','#F3EDE0',9,'mono mid','600'));
+  s+=G('a-pop',.1,tmProt(px,y,16,14,PBPC,'',{})+`<path d="M${px} ${y} v-${n?18:21}" stroke="${PBPC}" stroke-width="3"/>`+blob(px,y-(n?26:30),n?13:15,n?9:10,PBPC)+Tc(px,y-(n?23:27),'PBP','#F3EDE0',9,'mono mid','600'));
   s+=G('a-pop',.1,filament(zx-(n?34:40),y+(n?40:44),5,[ZC],{w:n?12:14,h:10})+T(zx,y+(n?66:70),'FtsZ','mono mid f11'));
   s+=G('a-pop',.1,blob(n?64:130,y+(n?88:94),n?14:16,n?10:11,'#C9BFAB')+Tc(n?64:130,y+(n?91:97),'Mur','#3A2E22',9,'mono mid','600'));
   const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?45:49)],cyto:[n?64:130,y+(n?88:94)],sub:[lx,y-7]}[m.at];
