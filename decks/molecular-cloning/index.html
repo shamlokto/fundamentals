@@ -403,7 +403,7 @@ function scPCRends(n){
   s+=G('a-fade',1.4,duplex(x1-44,x2+44,y2,{col:INS})+`<rect x="${x1-44}" y="${y2-5}" width="28" height="19" rx="3" fill="${VEC}" opacity=".85"/><rect x="${x2+16}" y="${y2-5}" width="28" height="19" rx="3" fill="${VEC}" opacity=".85"/>`
     +T((x1+x2)/2,y2+32,'product now carries whatever ends you designed','note mid f12'));
   const rows=[['homology to the vector','Gibson, In-Fusion, SLIC, CPEC'],['a Type IIS site','Golden Gate, MoClo'],['a restriction site plus spacer','classical cloning'],['a 3′-A, added by Taq','TA cloning']];
-  const ty=y2+(n?62:66);
+  const ty=y2b+(n?20:14);
   s+=G('a-fade',2,T(n?14:60,ty,'Put in the tail…','cname start '+(n?'f14':''))+T(n?170:330,ty,'…and you get','cname start '+(n?'f14':''))+ln(n?12:58,ty+8,n?350:616,ty+8));
   rows.forEach((r,i)=>{const yy=ty+28+i*(n?26:26);s+=G('a-fade',(2.2+i*.2).toFixed(1),T(n?14:60,yy,r[0],'lab start '+(n?'f12':'f14'))+T(n?170:330,yy,r[1],'note start '+(n?'f12':'f13')));});
   return {vb:n?slim(ty+28+4*26+16):wide(ty+28+4*26+16),s};
@@ -497,15 +497,32 @@ function scMoClo(n){
 }
 
 function scTopo(n){
-  const y=n?90:100, dx=n?20:24, x=n?40:150;
+  /* TOPO-TA: linearised vector with a 3′-T overhang and a bound topoisomerase at each end; PCR product with 3′-A overhangs; joined into a circle */
   let s=G('a-fade',0,T(n?180:320,n?32:38,'The enzyme arrives already loaded','lab mid '+(n?'f14':'')));
-  s+=G('a-fade',.4,duplex(x,x+(n?130:180),y,{col:VEC})+T(x+(n?65:90),y+32,'linearised vector','note mid f11')
-    +Tc(x+(n?138:188),y+4,'CCCTT','#A4473A',n?11:13,'mono start','600'));
-  s+=G('a-pop',1.0,blob(x+(n?150:210),y-30,n?20:24,n?14:16,ENZ)+Tc(x+(n?150:210),y-26,'Topo','#3A2E22',10,'mono mid','600')
-    +`<path d="M${x+(n?150:210)} ${y-(n?16:14)} v${n?6:4}" stroke="${ENZ}" stroke-width="3"/>`+(n?T(180,y-44,'covalent bond to the 3′ phosphate','note mid f11'):T(x+250,y-26,'covalent bond to the 3′ phosphate','note start f11')));
-  const y2=y+(n?80:86);
-  s+=G('a-fade',1.8,duplex(x,x+(n?120:160),y2,{col:INS})+T(x+(n?60:80),y2+30,'your PCR product','note mid f11')
-    +`<path d="M${x+(n?130:176)} ${y2+4} h${n?40:60}" class="arrow"/>`+T(x+(n?190:260),y2+8,'5 min, room temperature','lab start '+(n?'f13':'')));
+  const y=n?92:96, g=12;
+  const X=n?{l0:16,l1:76,i0:112,i1:248,r0:284,r1:344}:{l0:30,l1:150,i0:200,i1:350,r0:400,r1:510};
+  const str=(x1,x2,yy,c)=>`<path d="M${x1} ${yy} H${x2}" stroke="${c}" stroke-width="2.6"/>`;
+  const rung=(x1,x2,yy)=>{let r='';for(let x=x1+3;x<x2;x+=7)r+=`M${x} ${yy} v${g}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".35"/>`;};
+  const ch=(x,yy,t,c)=>Tc(x,yy+4,t,c,12,'mono mid','700');
+  const topo=(x,yy)=>blob(x,yy,n?15:17,10,ENZ)+Tc(x,yy+4,'Topo','#3A2E22',n?9:10,'mono mid','600');
+  /* left vector arm: top strand ends in 3′-T, Topo on it */
+  let v=str(X.l0,X.l1,y,VEC)+str(X.l0,X.l1,y+g,VEC)+rung(X.l0,X.l1,y)+ch(X.l1+7,y,'T',RED2)+topo(X.l1+7,y-22)+ln(X.l1+7,y-12,X.l1+7,y-6,ENZ,2.4);
+  /* right vector arm: bottom strand ends (on its left) in 3′-T, Topo on it */
+  v+=str(X.r0,X.r1,y,VEC)+str(X.r0,X.r1,y+g,VEC)+rung(X.r0,X.r1,y)+ch(X.r0-7,y+g,'T',RED2)+topo(X.r0-7,y+g+22)+ln(X.r0-7,y+g+6,X.r0-7,y+g+12,ENZ,2.4);
+  v+=`<path d="M${X.l0} ${y+6} q-12 0 -12 18 v${n?40:34} q0 14 14 14 H${X.r1-2} q14 0 14 -14 v${n?-40:-34} q0 -18 -12 -18" stroke="${VEC}" stroke-width="1.2" stroke-dasharray="4 3" fill="none"/>`
+    +T((X.l0+X.r1)/2,y+(n?78:72),'the rest of the linearised vector','note mid f12');
+  s+=G('a-fade',.4,v+T(X.l0,y-14,'5′','mono start f12')+T(X.r1,y+g+16,'5′','mono end f12'));
+  /* insert with 3′-A overhangs */
+  const ins=str(X.i0,X.i1,y,INS)+str(X.i0,X.i1,y+g,INS)+rung(X.i0,X.i1,y)+ch(X.i1+7,y,'A',INS)+ch(X.i0-7,y+g,'A',INS)
+    +T((X.i0+X.i1)/2,y-12,n?'PCR product (Taq)':'your PCR product, made with Taq','note mid f12');
+  s+=G('a-fade',1.0,ins);
+  s+=G('a-fade',1.4,T((X.i0+X.i1)/2,y+g+20,n?'3′-A pairs with 3′-T':'each 3′-A pairs with a vector 3′-T','note mid f12 acc'));
+  const y2=y+(n?100:96);
+  if(n){s+=G('a-fade',1.8,`<path d="M180 ${y2-6} v14" class="arrow"/>`+T(194,y2+4,'5 min, room temperature','note start f12')
+      +plasmid(180,y2+56,34,[[.62,.88,INS,'insert',16]],{name:'',fs:11})+T(180,y2+108,'Topo seals both joins and leaves','note mid f12'));var y3=y2+118;}
+  else {s+=G('a-fade',1.8,`<path d="M520 ${y+6} h22" class="arrow"/>`+plasmid(590,y+6,32,[[.62,.88,INS,'insert',14]],{name:'',fs:11})
+      +T(590,y+60,'5 min, room temp.','note mid f12'));var y3=y2;}
+  const y2b=y3;
   const ty=y2+(n?62:66);
   const TL0=wrap(n?'Vaccinia topoisomerase I cuts at CCCTT and stays attached to the DNA, storing the bond’s energy. When your insert’s end base-pairs, the enzyme reverses the reaction and seals the join, then lets go. No ligase, no ATP.':'Vaccinia virus topoisomerase I cuts at CCCTT and stays joined to the DNA through a phosphotyrosine bond, holding the energy of the broken bond. When your insert anneals, the enzyme simply runs the reaction backwards, seals the join and releases. No ligase and no ATP are needed, which is why it takes five minutes.',n?46:88);
   s+=G('a-fade',2.4,TL0.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));

@@ -469,14 +469,14 @@ const METHTEST={dh:96,dhn:96,
   {n:'Membrane lipids',d:'The chemistry of the lipids that make the membrane.',draw:(cx,y)=>{
     /* glycerol backbone with two hydrocarbon tails: ester bonds and straight fatty acids (bacteria); ether bonds and branched isoprenoids (methanogens) */
     const zig=(x0,yy,branch,col)=>{let d=`M${x0} ${yy}`,t='';for(let k=1;k<=10;k++){const x=x0+k*9,yv=yy+(k%2?-4:4);d+=` L${x} ${yv}`;if(branch&&k%2===0)t+=`<path d="M${x} ${yv} l0 7" stroke="${col}" stroke-width="1.6"/>`;}return `<path d="${d}" stroke="${col}" stroke-width="2" fill="none"/>`+t;};
-    const lip=(gx,col,ester,branch)=>{let o=`<rect x="${gx-9}" y="${y+28}" width="18" height="52" rx="4" fill="#EFE6D2" stroke="${INK}" stroke-width="1"/>`+T(gx,y+98,'glycerol','note mid f12');
+    const lip=(gx,col,ester,branch)=>{let o=`<rect x="${gx-9}" y="${y+28}" width="18" height="52" rx="4" fill="#EFE6D2" stroke="${INK}" stroke-width="1"/>`+T(gx,y+94,'glycerol','note mid f12');
       [44,66].forEach(dy=>{o+=ln(gx+9,y+dy,gx+16,y+dy,INK,1.4)+Tc(gx+20,y+dy+4,'O','#3A2E22',11,'mono mid','600');
-        if(ester)o+=Tc(gx+34,y+dy-7,'O','#A4473A',11,'mono mid','600')+`<path d="M${gx+32} ${y+dy-4} v-1 M${gx+36} ${y+dy-4} v-1" stroke="#A4473A"/>`+ln(gx+25,y+dy,gx+34,y+dy,INK,1.4)+ln(gx+34,y+dy,gx+34,y+dy-4,'#A4473A',1.4);
+        if(ester)o+=ln(gx+25,y+dy,gx+36,y+dy,INK,1.4)+`<path d="M${gx+34.5} ${y+dy} v-8 M${gx+37.5} ${y+dy} v-8" stroke="#A4473A" stroke-width="1.3"/>`+Tc(gx+36,y+dy-11,'O','#A4473A',11,'mono mid','600');
         o+=zig(gx+(ester?38:26),y+dy,branch,col);});
       return o;};
-    return lip(cx-140,BACC,1,0)+lip(cx+20,ARCC,0,1)
-      +T(cx-80,y+122,'bacteria: ester bonds,','note mid f12')+T(cx-80,y+137,'straight fatty acids','note mid f12')
-      +T(cx+80,y+122,'methanogens: ether bonds,','note mid f12')+T(cx+80,y+137,'branched isoprenoids','note mid f12');},
+    return lip(cx-130,BACC,1,0)+lip(cx+30,ARCC,0,1)
+      +T(cx-110,y+112,'bacteria: ester bonds, straight chains','note start f12')
+      +T(cx-110,y+128,'methanogens: ether bonds, branched isoprenoids','note start f12');},
    pred:[['ester-linked fatty acids','like other bacteria'],['something different','a separate line could differ in basics']],obs:['something different','ether-linked isoprenoid lipids']},
   {n:'Cell wall',d:'Is there peptidoglycan, with muramic acid?',draw:(cx,y)=>T(cx,y+50,'no muramic acid; pseudomurein or protein layers instead','note mid f12'),
    pred:[['peptidoglycan','the universal bacterial wall'],['something different','']],obs:['something different','no peptidoglycan']},

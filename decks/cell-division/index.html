@@ -733,8 +733,8 @@ function scShapes(n){
     if(i===1){[0,1].forEach(k=>g+=`<circle cx="${cx+(k?22:-22)}" cy="${cy}" r="${n?20:22}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`);g+=`<path d="M${cx} ${cy-20} v40" stroke="${WALLE}" stroke-width="2.4"/>`;}
     if(i===2)g+=ovoCell(cx,cy,n?90:96,n?24:26,.4);
     if(i===3){g+=rodCell(cx-14,cy,n?70:76,n?18:20,0);g+=`<path d="M${cx-50} ${cy} h-16" stroke="${WALLE}" stroke-width="3"/><circle cx="${cx-70}" cy="${cy}" r="4" fill="${WALLE}"/>`;
-      g+=`<path d="M${cx+26} ${cy} q 14 -8 22 0 q -14 8 -22 0" stroke="${WALLE}" stroke-width="2" fill="none"/>`;}
-    if(i===4){g+=rodCell(cx,cy,n?100:110,n?17:19,0);g+=`<path d="M${cx-50} ${cy-18} v36 M${cx+50} ${cy-18} v36" stroke="${PBPC}" stroke-width="3"/>`;}
+      g+=`<path d="M${cx+24} ${cy} q 6 -7 12 0 t 12 0 t 12 0 t 12 0" stroke="${WALLE}" stroke-width="1.8" fill="none"/>`;}
+    if(i===4){g+=rodCell(cx,cy,n?100:110,n?17:19,0);{const L4=n?100:110,R4=n?17:19,x1=cx-L4/2,x2=cx+L4/2,cr=R4*.62;g+=`<path d="M${x1} ${cy-R4} A${FX(cr)} ${R4} 0 0 0 ${x1} ${cy+R4}" stroke="${PBPC}" stroke-width="6" fill="none"/><path d="M${x2} ${cy-R4} A${FX(cr)} ${R4} 0 0 1 ${x2} ${cy+R4}" stroke="${PBPC}" stroke-width="3" fill="none"/>`;}}
     if(!n)g+=wrap(c[2],26).map((l,j)=>T(x+16,y+60+j*15,l,'note start f11')).join('');
     else g+=wrap(c[2],26).map((l,j)=>T(x+16,y+62+j*15,l,'note start f11')).join('');
     s+=G('a-fade',(i*.4).toFixed(1),g);});
