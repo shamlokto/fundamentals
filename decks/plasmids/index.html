@@ -652,7 +652,7 @@ function scP6(n){
   s+=G('a-fade',.9,arw(cx+(n?46:60),y+R,cx+(n?70:98),y+R,{blue:1})
     +mono(cx+(n?104:170))
     +T(cx+(n?104:170),y+2*R+22,n?'resolved':'XerCD at cer: monomers again','note mid f11'));
-  s+=G('a-fade',1,Tc(cx+(n?120:200),y+(n?2:0),'cer','#2E7D78',10,'mono start','600'));
+  s+=G('a-fade',1,Tc(FX(cx+(n?104:170)+d+r+8),y+R+4,'cer','#2E7D78',10,'mono start','600'));
   if(n)s+=G('a-fade',1.2,Tc(20,y+2*R+44,'a dimer is one replicon with half the','#6A5B47',10,'mono start')
     +Tc(20,y+2*R+58,'copies; XerCD at cer resolves it','#6A5B47',10,'mono start'));
   let yy=y+2*R+(n?84:50);
@@ -732,7 +732,7 @@ function scP10(n){
   parts.forEach((p,i)=>{s+=G('a-fade',(.4+i*.25).toFixed(2),gArrow(x+p[2]*W,y,p[3]*W-6,p[0],p[1],{h:17}));});
   s+=G('a-fade',1.8,Tc(x,y+30,'and the choices behind each one','#6A5B47',10,'mono start'));
   let yy=y+(n?52:56);
-  const rows=[['Origin','sets copy number and host range','ColE1/pUC for high copy in E. coli; p15A or pSC101 when two vectors must coexist; pAMβ1 or pWV01 theta replicons for streptococci; pE194-type rolling-circle replicons for small Gram-positive constructs.'],
+  const rows=[['Origin','sets copy number and host range','ColE1/pUC for high copy in E. coli; p15A or pSC101 when two vectors must coexist; pAMβ1-type theta replicons for larger streptococcal constructs; pWV01- or pE194-type rolling-circle replicons for small Gram-positive ones.'],
    ['Marker','selects the cells that have it','Choose one the host is not already resistant to, and remember that β-lactamase is secreted, so satellite colonies appear. In the pneumococcus spectinomycin, erythromycin, kanamycin and chloramphenicol cassettes are the usual set.'],
    ['Replicating or integrating','two different experiments','A replicating vector gives extra copies and is lost without selection. An integrating vector, or a suicide vector with a counter-selectable marker, puts a single copy at a defined site — essential for clean complementation and for allelic exchange.'],
    ['Mobility','how it gets in, and whether it can leave','oriT lets a plasmid be conjugated from a donor strain, which is the standard route into species that are hard to transform. Leaving oriT out is a containment decision as much as a technical one.']];

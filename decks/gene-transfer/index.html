@@ -654,7 +654,7 @@ function scH6(n){
     s+=G('a-fade',.4,gArrowL(x+4,y,w1,'intI',RECC,{h:16})
       +`<path d="M${FX(x+w1-4)} ${y-8} V${y-20} H${FX(x+w1+14)}" stroke="${INK}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`+Tc(x+w1-10,y-22,'Pc','#3A2E22',10,'mono end','600')
       +`<rect x="${FX(x+w1+8)}" y="${FX(y-7)}" width="16" height="14" rx="2" fill="${INTC}" stroke="${INK}" stroke-width=".7"/>`
-      +Tc(x+w1+16,y-14,'attI','#2E7D78',10,'mono mid','600')
+      +Tc(x+w1+16,y-28,'attI','#2E7D78',10,'mono mid','600')
       +Tc(x+4,y+26,'Pc, inside intI, reads into the cassettes; intI is read the other way','#6A5B47',10,'mono start'));
     const c0=x+w1+30, cw=(W-w1-40)/3;
     ['cassette 1','cassette 2','cassette 3'].forEach((c,i)=>{
@@ -667,10 +667,10 @@ function scH6(n){
   } else {
     const x=20, W=320, y=84;
     s+=G('a-fade',.2,dnaLine(x,W*.62,y,'#D6CDB8'));
-    s+=G('a-fade',.4,gArrowL(x+4,y,132,'intI',RECC,{h:16})
+    s+=G('a-fade',.4,gArrowL(x+4,y,118,'intI',RECC,{h:16})
       +`<path d="M132 ${y-8} V${y-20} H148" stroke="${INK}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`+Tc(126,y-22,'Pc','#3A2E22',10,'mono end','600')
       +`<rect x="146" y="${y-7}" width="16" height="14" rx="2" fill="${INTC}" stroke="${INK}" stroke-width=".7"/>`
-      +Tc(154,y-14,'attI','#2E7D78',10,'mono mid','600')
+      +Tc(154,y-28,'attI','#2E7D78',10,'mono mid','600')
       +Tc(186,y+4,'Pc drives all of them','#6A5B47',10,'mono start'));
     const y2=y+52;
     s+=G('a-fade',.7,dnaLine(x,W,y2,'#D6CDB8'));

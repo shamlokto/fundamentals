@@ -533,10 +533,10 @@ function scE3(n){
   let s=G('a-fade',0,P.s+[0,100,200,300].map(v=>`<path d="M${FX(P.px(v))} ${P.y+P.h} v4" stroke="${AXC}"/>`+T(FX(P.px(v)),P.y+P.h+14,v,'mono mid f10')).join(''));
   [[0.30,'s = 0.30',PHG,''],[0.15,'s = 0.15',CORE,''],[0.05,'s = 0.05',TNC,'5 3']].forEach((c,i)=>{
     s+=G('a-fade',(.3+i*.35).toFixed(1),xyCurve(P,logistic(c[0]),{col:c[2],dash:c[3],n:140}));});
-  s+=G('a-fade',1.4,n?keyRow(26,P.y+P.h+44,[['s = 0.30',PHG],['s = 0.15',CORE],['s = 0.05',TNC]],{rh:16,fs:'f11'})
-    :keyRow(P.x+10,P.y+P.h+44,[['s = 0.30',PHG],['s = 0.15',CORE],['s = 0.05',TNC]],{cw:120,fs:'f11'}));
-  let y=P.y+P.h+(n?112:70);
-  const b=bullets(n?24:30,y,[['A sweep looks like this','One beneficial variant, starting as a single cell in a million, rises as a sigmoid. A 15 percent advantage takes about 90 generations to reach half the population and nearly 200 to fix: around four weeks of daily 1:100 transfers, at 6.6 generations a day.'],
+  s+=G('a-fade',1.4,n?keyRow(26,P.y+P.h+50,[['s = 0.30',PHG],['s = 0.15',CORE],['s = 0.05',TNC]],{rh:16,fs:'f11'})
+    :keyRow(P.x+10,P.y+P.h+54,[['s = 0.30',PHG],['s = 0.15',CORE],['s = 0.05',TNC]],{cw:120,fs:'f11'}));
+  let y=P.y+P.h+(n?118:80);
+  const b=bullets(n?24:30,y,[['A sweep looks like this','One beneficial variant, starting as a single cell in a million, rises as a sigmoid. A 15 percent advantage takes about 90 generations to reach half the population and about 140 to pass 99.9 percent: some three weeks of daily 1:100 transfers, at 6.6 generations a day.'],
    ['Hitchhiking','Everything physically linked to the winner is dragged to fixation with it. In a clonal organism that is the whole chromosome, which is why a single adaptive mutation can wipe out diversity across a genome.'],
    ['Clonal interference','In large populations several beneficial mutations arise in different lineages at once and compete. Most good mutations are lost, and adaptation is slower than the sum of its parts.']],n?44:88,{d0:1.8,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
@@ -667,7 +667,7 @@ function scE9(n){
   s+=G('a-fade',1.1,bar(y+d3,[[0,.34,'#D6CDB8'],[.34,.16,INTC],[.5,.5,'#D6CDB8']])
     +T(x,y+d3-(n?32:18),n?'after recombination: a patch of':'after recombination: a patch of foreign sequence','note start f11')
     +(n?T(x,y+d3-18,'foreign sequence','note start f11'):'')
-    +arw(x+.42*w,y+d2+12,x+.42*w,y+d3-12,{blue:1}));
+    +arw(x+.42*w,y+d2+12,x+.42*w,y+d3-(n?46:12),{blue:1}));
   let yy=y+d3+(n?40:44);
   const b=bullets(n?24:30,yy,[['Bacteria recombine, but not like us','There is no meiosis and no reciprocal exchange of whole genomes. A fragment arrives, and homologous recombination replaces the matching stretch — a patch, typically a few kilobases.'],
    ['The clonal frame','Most of the chromosome descends vertically, punctuated by imported patches. Reconstructing a phylogeny means finding and masking those patches first, or the tree will be wrong.'],

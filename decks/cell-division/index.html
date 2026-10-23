@@ -340,7 +340,7 @@ function scProblem(n){
   const items=[['Pick the spot','exactly at midcell, and only once per cycle'],
    ['Wait for the DNA','both copies clear of the site before the wall closes'],
    ['Build inwards','new membrane and new wall, laid down as a ring that shrinks'],
-   ['Stay sealed','a cell at 3 atmospheres of turgor cannot afford a hole']];
+   ['Stay sealed','a cell under several atmospheres of turgor cannot afford a hole']];
   const ty=y+R+(n?60:66);
   let yy=ty;items.forEach((it,i)=>{const L2=wrap(it[1],n?44:76);
     s+=G('a-fade',(1.4+i*.3).toFixed(1),badge(n?20:30,yy-4,i+1)+T(n?36:46,yy,it[0],'cname start '+(n?'f14':''))
@@ -396,7 +396,7 @@ function scDivisome(n){
   const y4=y3+h+(n?22:24);
   s+=G('a-fade',1.9,T(n?14:30,y4,'late: bring in the enzymes that build the wall','note start f12'));
   const ty=y4+(n?26:28);
-  const L=wrap(n?'In E. coli more than a dozen proteins arrive in a set order, each needing the one before it. FtsN is the last, and its arrival is the signal to start making septal wall.':'In E. coli more than a dozen proteins arrive in a defined order, each depending on the ones before it — a hierarchy mapped by depletion experiments. FtsN arrives last, and its arrival is the signal that switches on septal wall synthesis. Gram-positive bacteria use a smaller, overlapping set: there is no ZipA, and FtsA alone does the tethering.',n?46:88);
+  const L=wrap(n?'In E. coli more than a dozen proteins arrive in a set order, each needing the one before it. FtsN is the last, and its arrival is the signal to start making septal wall.':'In E. coli more than a dozen proteins arrive in a defined order, each depending on the ones before it — a hierarchy mapped by depletion experiments. FtsN arrives last, and its arrival is the signal that switches on septal wall synthesis. Gram-positive bacteria use a smaller, overlapping set: there is no ZipA, and FtsA and SepF do the tethering.',n?46:88);
   s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};
 }
@@ -509,11 +509,15 @@ function scAnchor(n){
   let s=G('a-fade',0,bilayer(x1,x2,y,16)+T(x1,y-10,'periplasm','note start f11')+T(x1,y+40,'cytoplasm','note start f11'));
   const zx=n?180:320;
   s+=G('a-pop',.4,filament(zx-(n?60:70),y+(n?48:52),8,[ZC],{w:n?13:15,h:11})+T(zx,y+(n?76:80),'FtsZ filament','note mid f12'));
-  s+=G('a-pop',.9,tmProt(zx-(n?70:84),y,16,12,FTSA,'FtsA',{dy:14})+`<path d="M${zx-(n?70:84)} ${y+16} v${n?30:34}" stroke="${FTSA}" stroke-width="2.6"/>`);
-  s+=G('a-pop',1.3,tmProt(zx+(n?60:76),y,16,12,'#D9B85A','ZipA',{dy:14})+`<path d="M${zx+(n?60:76)} ${y+16} v${n?30:34}" stroke="#D9B85A" stroke-width="2.6"/>`);
+  /* FtsA is peripheral: a cytoplasmic protein whose amphipathic helix dips into the inner leaflet */
+  const fa=zx-(n?40:48), za=zx+(n?36:44), fz=y+(n?48:52);
+  s+=G('a-pop',.9,`<path d="M${fa} ${y+20} V${y+9}" stroke="${FTSA}" stroke-width="3" stroke-linecap="round"/>`+blob(fa,y+27,n?12:14,8,FTSA)
+    +`<path d="M${fa} ${y+35} V${fz}" stroke="${FTSA}" stroke-width="2.6"/>`+Tc(fa-(n?16:19),y+31,'FtsA','#3A2E22',10,'mono end','600'));
+  /* ZipA crosses the membrane once and reaches FtsZ through a long cytoplasmic linker */
+  s+=G('a-pop',1.3,tmProt(za,y,16,8,'#D9B85A','',{})+`<path d="M${za} ${y+16} V${fz}" stroke="#D9B85A" stroke-width="2.6"/>`+Tc(za+(n?8:10),y+31,'ZipA','#3A2E22',10,'mono start','600'));
   s+=G('a-pop',1.7,tmProt(zx,y,16,22,'#7FA59B','FtsEX',{dy:14}));
   const ty=y+(n?104:110);
-  const items=[['FtsA','an actin relative; binds FtsZ through its C-terminal tail and sits on the membrane by an amphipathic helix. Essential, and present in almost all bacteria.'],
+  const items=[['FtsA','an actin relative; binds FtsZ through its C-terminal tail and sits on the membrane by an amphipathic helix. Essential in E. coli and widespread, though some groups, such as the actinobacteria, lack it.'],
    ['ZipA','a membrane protein that does the same job in E. coli and close relatives only. Either FtsA or ZipA will do; losing both is lethal.'],
    ['FtsEX','an ABC-transporter-like complex that spans the membrane and, later, switches on the wall hydrolases that split the septum.']];
   let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:76);
@@ -563,8 +567,8 @@ function scPG(n){
   let s=G('a-fade',0,T(n?14:30,n?30:34,'Lipid II arrives, is polymerised, then cross-linked','cname start '+(n?'f14':'')));
   s+=G('a-fade',.4,bilayer(x1,x2,y,16)+T(x1,y-8,'outside','note start f11')+T(x1,y+42,'cytoplasm','note start f11'));
   const lx=n?70:140;
-  s+=G('a-pop',.8,`<path d="M${lx} ${y+34} v-18" stroke="#E0B84A" stroke-width="3"/>`+`<rect x="${lx-7}" y="${y+2}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`
-    +T(lx,y+(n?54:56),'lipid II on undecaprenyl','note mid f11'));
+  s+=G('a-pop',.8,`<path d="M${lx} ${y+14} v-14" stroke="#E0B84A" stroke-width="3"/>`+`<rect x="${lx-7}" y="${y-13}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`
+    +T(lx,y+(n?54:56),n?'lipid II, flipped out':'lipid II, flipped to the outer face','note mid f11'));
   const mx=n?180:320;
   s+=G('a-pop',1.3,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx-(n?40:60),y-(n?12:14),'FtsW polymerises','#2E7D78',10,'mono mid','600'));
   const px=n?268:450;
@@ -642,12 +646,12 @@ function scDrugs(n){
   const y=n?92:100, x1=n?20:60, x2=n?344:600;
   let s=G('a-fade',0,bilayer(x1,x2,y,16)+T(x1,y-8,'outside','note start f11')+T(x1,y+42,'cytoplasm','note start f11'));
   const lx=n?64:130, mx=n?150:280, px=n?232:410, zx=n?300:520;
-  s+=G('a-pop',.1,`<path d="M${lx} ${y+34} v-18" stroke="#E0B84A" stroke-width="3"/><rect x="${lx-7}" y="${y+2}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`+T(lx,y+(n?54:56),'lipid II','note mid f11'));
+  s+=G('a-pop',.1,`<path d="M${lx} ${y+14} v-14" stroke="#E0B84A" stroke-width="3"/><rect x="${lx-7}" y="${y-13}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`+T(lx,y+(n?54:56),'lipid II','note mid f11'));
   s+=G('a-pop',.1,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx,y+(n?34:36),'FtsW','#3A2E22',10,'mono mid','600'));
   s+=G('a-pop',.1,tmProt(px,y,16,14,PBPC,'',{})+blob(px,y-(n?26:30),n?13:15,n?9:10,PBPC)+Tc(px,y-(n?23:27),'PBP','#F3EDE0',9,'mono mid','600'));
   s+=G('a-pop',.1,filament(zx-(n?34:40),y+(n?40:44),5,[ZC],{w:n?12:14,h:10})+T(zx,y+(n?66:70),'FtsZ','mono mid f11'));
   s+=G('a-pop',.1,blob(n?64:130,y+(n?88:94),n?14:16,n?10:11,'#C9BFAB')+Tc(n?64:130,y+(n?91:97),'Mur','#3A2E22',9,'mono mid','600'));
-  const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?45:49)],cyto:[n?64:130,y+(n?88:94)],sub:[lx,y+8]}[m.at];
+  const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?45:49)],cyto:[n?64:130,y+(n?88:94)],sub:[lx,y-7]}[m.at];
   s+=G('a-pop',.4,`<circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?17:20}" fill="${AMI}" opacity=".3"/><circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?22:26}" fill="none" stroke="${AMI}" stroke-width="2" stroke-dasharray="4 3"/>`);
   const ty=y+(n?104:112);
   s+=G('a-fade',.6,T(n?14:30,ty,m.d,'cname start')+T(n?14:30,ty+20,'target: '+m.t,'note start '+(n?'f12':'f13')));
@@ -662,7 +666,7 @@ const BREAK=[
  {g:'ftsI (pbp3)',p:'septal transpeptidase',cls:'ring, no wall',col:'#C99A2E',text:'The divisome assembles and may even begin to constrict, but septal wall cannot be cross-linked. This is what cephalexin does chemically.'},
  {g:'ftsN',p:'the final signal',cls:'assembled but switched off',col:'#C99A2E',text:'Everything is in place and nothing happens, because the FtsQLB switch is never released. Suppressor mutations in ftsL or ftsB bypass it, which is how the switch was worked out.'},
  {g:'minCDE',p:'ring placement',cls:'minicells',col:'#7D4A98',text:'Rings form at the poles as well as midcell. Division at a pole pinches off a small, DNA-free minicell — harmless to the mother, and a classic teaching phenotype.'},
- {g:'slmA / noc',p:'nucleoid occlusion',cls:'guillotined DNA',col:'#7D4A98',text:'Alone, mild. Combined with a Min defect, septa close over unsegregated chromosomes and cut them, which is lethal.'},
+ {g:'slmA / noc',p:'nucleoid occlusion',cls:'guillotined DNA',col:'#7D4A98',text:'Alone, mild. Combined with a Min defect it is serious: E. coli lacking both SlmA and Min divides very poorly in rich medium, with FtsZ assembling over the nucleoids, and a septum that closes across a chromosome cuts it.'},
  {g:'amiABC',p:'septum splitting',cls:'chains',col:SEDS,text:'Division completes but daughters stay joined, so cells grow in chains. In the pneumococcus the equivalent loss of LytB gives exactly this.'},
  {g:'sulA (induced)',p:'SOS brake',cls:'reversible block',col:'#5E7F7A',text:'Not a mutant but a response: DNA damage switches on SulA, which sequesters FtsZ. Cells filament until repair is done, then resume. Deleting sulA removes the brake.'}];
 let brkSel=0;
@@ -731,13 +735,13 @@ const S=[
  {p:1,title:'The fts mutants',draw:scFts,
   text:"The machinery was found by looking for cells that could not do it. In 1968 François Jacob and Yukinori Hirota collected E. coli mutants that grew normally at 30 °C but, at 42 °C, kept growing and copying their DNA without ever splitting, turning into long filaments. They called the genes fts, for filamentation temperature sensitive. Most of them turned out to lie in one cluster on the chromosome, and most encode parts of one machine."},
  {p:1,title:'FtsZ makes a ring',draw:scZring,
-  text:"In 1991 Erfei Bi and Joe Lutkenhaus used immuno-electron microscopy to show that FtsZ, the product of the first fts gene, forms a ring around the inside of the cell at midcell, and that it is there before any constriction is visible. FtsZ is a GTPase and a distant relative of tubulin; its ring is patchy rather than continuous, built from short overlapping filaments. Everything else in the divisome is recruited to it."},
+  text:"In 1991 Erfei Bi and Joe Lutkenhaus used immuno-electron microscopy to show that FtsZ, the product of the ftsZ gene, forms a ring around the inside of the cell at midcell, and that it is there before any constriction is visible. FtsZ is a GTPase and a distant relative of tubulin; its ring is patchy rather than continuous, built from short overlapping filaments. Everything else in the divisome is recruited to it."},
  {p:1,title:'The divisome',draw:scDivisome,
   text:"More than a dozen proteins join the ring in a defined order, worked out by depleting one at a time and asking which others still arrive. An early group assembles and anchors the ring; a late group brings the enzymes that build the wall. The last to arrive, FtsN, is the one that gives the signal to start. Gram-positive bacteria use a smaller version of the same set."},
  {p:2,title:'The Min system',draw:scMin,
   text:"How does a cell find its own middle? MinC inhibits FtsZ assembly, and MinC with MinD oscillates from one pole to the other about once a minute, driven by MinE. Averaged over time, the inhibitor is abundant at the poles and scarce at midcell, which leaves exactly one place where a ring can form. The oscillation was seen directly by David Raskin and Piet de Boer in 1999. Bacillus subtilis gets the same result without oscillating: DivIVA holds MinCD at the poles."},
  {p:2,title:'Nucleoid occlusion',draw:scNoc,
-  text:"The second safeguard makes sure the septum never closes on DNA. SlmA in E. coli and Noc in Bacillus subtilis bind specific sites scattered over the chromosome and prevent FtsZ assembling above them. As the two chromosomes separate, midcell clears and the block is lifted. Neither protein has sites near the replication terminus, so the region that leaves last does not delay division indefinitely. Cells lacking both Min and nucleoid occlusion still divide, so a third mechanism must exist."},
+  text:"The second safeguard makes sure the septum never closes on DNA. SlmA in E. coli and Noc in Bacillus subtilis bind specific sites scattered over the chromosome and prevent FtsZ assembling above them. As the two chromosomes separate, midcell clears and the block is lifted. Neither protein has sites near the replication terminus, so the region that leaves last does not delay division indefinitely. Cells lacking both Min and nucleoid occlusion are sick, especially in rich medium, but many still divide near midcell, so a further mechanism must exist."},
  {p:2,title:'Ovococci: MapZ',draw:scOvo,
   text:"Streptococcus pneumoniae has no Min system and no MreB, and it is not a sphere: it is an ovococcus, a slightly elongated coccus that divides in parallel planes. MapZ, also called LocZ, forms a ring at the equator early in the cycle, anchored to the wall by an extracellular domain. As the cell grows, that ring splits into two that move apart and mark where the next divisions will occur. It positions FtsZ by attracting it, not by excluding it. Described independently by two groups in 2014."},
  {p:2,title:'Getting the DNA out of the way',draw:scSegregate,
