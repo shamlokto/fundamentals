@@ -113,7 +113,7 @@ function scE7(n){
 function scE8(n){
   const items=[['Respiration','Electrons from a donor pass down a membrane chain to an external acceptor such as O₂, nitrate or sulfate. The chain pumps protons; ATP synthase spends them.'],
    ['Fermentation','No external acceptor. An organic intermediate is reduced to regenerate NAD⁺, and ATP comes only from substrate-level phosphorylation. Yields are small.'],
-   ['Chemolithotrophy','The donor is inorganic: H₂, H₂S, NH₄⁺, Fe²⁺. Some donors sit above NAD⁺, so cells must spend energy to push electrons uphill (reverse electron flow) to make NADH.'],
+   ['Chemolithotrophy','The donor is inorganic: H₂, H₂S, NH₄⁺, Fe²⁺. Some donors are more positive than NAD⁺, so cells must spend energy to push electrons uphill (reverse electron flow) to make NADH.'],
    ['Phototrophy','Light raises an electron in a reaction centre to a strongly negative potential, from which it flows downhill like any other.']];
   const c=cards(n,items,{y:20,num:1});
   const p=para(n?16:24,c.y+10,'Every strategy in the metabolism decks that follow is one of these four ways of finding a donor, an acceptor and a gap between them.',n?50:92,'note start f13',17,1.2);
