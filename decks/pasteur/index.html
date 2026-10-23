@@ -377,7 +377,7 @@ function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y}
 /* A photograph, if one is supplied, is laid over the engraved bust inside the oval frame.
    Put a public-domain or openly licensed portrait at PHOTO.src (relative to this page) and fill in PHOTO.credit.
    If the file is missing the browser draws nothing for it and the engraved bust shows through. */
-const PHOTO={src:'portrait.jpg',credit:'',ok:false};
+const PHOTO={src:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Louis_Pasteur,_foto_av_Paul_Nadar,_Crisco_edit.jpg/400px-Louis_Pasteur,_foto_av_Paul_Nadar,_Crisco_edit.jpg',credit:'Photo: Paul Nadar · public domain · Wikimedia Commons',ok:false};
 {const im=new Image();im.onload=()=>{PHOTO.ok=true;if(typeof cur!=='undefined'&&cur===0)render();};im.src=PHOTO.src;}
 function photo(cx,cy,k){if(!PHOTO.ok)return '';return `<g transform="translate(${cx} ${cy}) scale(${k})"><clipPath id="pclip"><ellipse rx="83" ry="101"/></clipPath>`
   +`<image href="${PHOTO.src}" x="-84" y="-102" width="168" height="204" preserveAspectRatio="xMidYMin slice" clip-path="url(#pclip)" style="filter:sepia(.55) contrast(1.05) brightness(.97)"/>`
@@ -538,7 +538,7 @@ function scP7(n){
     +`<path d="M${tx} ${ty+90} H${tx+270}" stroke="${AXC}" stroke-width="1.2"/>`+[0,1,2].map(i=>`<path d="M${tx+10+i*86} ${ty+88} v-62 h22 v62" stroke="${LESU}" stroke-width="2" fill="none"/>`+T(tx+21+i*86,ty+18,'boil','note mid f11')
       +(i<2?T(tx+75+i*86,ty+80,'wait','note mid f11'):'')).join('')+T(tx+135,ty+108,'spores germinate between heatings, and the next boil kills them','note mid f11'));
   const y=(n?ty+130:180);
-  const b=bullets(n?24:30,y,[['The hay problem','Pouchet’s hay infusions, and some of Pasteur’s own milk and urine broths, grew after boiling. John Tyndall found in 1876–77 that hay infusions resisted boiling far better than others.'],
+  const b=bullets(n?24:30,y,[['The hay problem','Pouchet’s hay infusions, Pasteur’s own milk flasks and Bastian’s urine grew after boiling. John Tyndall found in 1876–77 that hay infusions resisted boiling far better than others.'],
    ['Spores','Ferdinand Cohn showed in 1876 that the hay bacillus, Bacillus subtilis, forms heat-resistant endospores. Robert Koch described the same in anthrax that year.'],
    ['A better method','Tyndall’s repeated gentle heating (tyndallisation) killed the spores once they germinated. The anomaly that had seemed to support spontaneous generation became evidence for spores.']],n?44:88,{d0:1.6,gap:26});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};

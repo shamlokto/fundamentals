@@ -375,7 +375,7 @@ function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y}
 /* A photograph, if one is supplied, is laid over the engraved bust inside the oval frame.
    Put a public-domain or openly licensed portrait at PHOTO.src (relative to this page) and fill in PHOTO.credit.
    If the file is missing the browser draws nothing for it and the engraved bust shows through. */
-const PHOTO={src:'portrait.jpg',credit:'',ok:false};
+const PHOTO={src:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Mwb_in_lab.JPG/400px-Mwb_in_lab.JPG',credit:'Photo 1921 · public domain · Delft archives via Wikimedia Commons',ok:false};
 {const im=new Image();im.onload=()=>{PHOTO.ok=true;if(typeof cur!=='undefined'&&cur===0)render();};im.src=PHOTO.src;}
 function photo(cx,cy,k){if(!PHOTO.ok)return '';return `<g transform="translate(${cx} ${cy}) scale(${k})"><clipPath id="pclip"><ellipse rx="83" ry="101"/></clipPath>`
   +`<image href="${PHOTO.src}" x="-84" y="-102" width="168" height="204" preserveAspectRatio="xMidYMin slice" clip-path="url(#pclip)" style="filter:sepia(.55) contrast(1.05) brightness(.97)"/>`
@@ -510,7 +510,7 @@ function scB6(n){
 
 const NAR='Narrator';
 const S=[
- {p:1,title:'Martinus Beijerinck',draw:scB1,text:"Beijerinck worked first at a yeast factory and then at the Technical University of Delft. He is remembered for two things that seem unrelated: the discovery of viruses, and the method of enrichment culture. Both came from asking what conditions an organism needs, and designing experiments around that."},
+ {p:1,title:'Martinus Beijerinck',draw:scB1,text:"Beijerinck taught at Wageningen, then worked at a yeast factory and at the Delft Polytechnic. He is remembered for two things that seem unrelated: the discovery of viruses, and the method of enrichment culture. Both came from asking what conditions an organism needs, and designing experiments around that."},
  {p:1,title:'Tobacco mosaic',draw:scB2,text:"Adolf Mayer showed in 1886 that tobacco mosaic disease could be passed from plant to plant in sap, but could not find a bacterium. Dmitri Ivanovsky showed in 1892 that the sap was still infectious after passing a filter that held back bacteria. He suspected a toxin, or an unusually small bacterium."},
  {p:1,title:'Bacterium, toxin or something new?',chips:'tmv',draw:scB3,text:"In 1898 Beijerinck repeated the filtration and added tests that could tell the explanations apart. Pick a test to see what each explanation predicts. Only one survives all five: something that passes filters and diffuses through agar like a dissolved substance, yet multiplies, and only in living, growing cells. He called it a contagium vivum fluidum, a contagious living fluid."},
  {p:1,title:'What came next',draw:scB4,text:"Within months, Loeffler and Frosch showed that foot-and-mouth disease was also caused by a filterable agent. Over the following decades viruses were found in humans and in bacteria, crystallised, analysed and finally seen. Beijerinck's fluid turned out to be a particle of RNA and protein, but his central inference stood."},
