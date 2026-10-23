@@ -3,9 +3,15 @@ const PAL={sand:'#E7DEC9',blue:'#A9C4DC',green:'#A9C49A',rose:'#E7A99B',gold:'#E
 const lines=t=>String(t).split('|');
 /* opening plate without a portrait: art on the left (wide) or on top (narrow) */
 function introPlate(n,o){
-  let s='';const aw=n?328:220, ah=o.artH||200;
+  let s='';const aw=n?328:220;let ah=o.artH||200;
   const ax=n?16:20, ay=n?14:30;
-  if(o.art)s+=G('a-fade',0,o.art(ax+aw/2,ay+ah/2,n));
+  if(typeof COVER!=='undefined'&&COVER){const fh=n?Math.max(ah,200):Math.max(ah,250);
+    s+=G('a-fade',0,`<clipPath id="covclip"><rect x="${ax}" y="${ay}" width="${aw}" height="${fh}" rx="4"/></clipPath>`
+      +`<image href="${COVER}" x="${ax}" y="${ay}" width="${aw}" height="${fh}" preserveAspectRatio="xMidYMid slice" clip-path="url(#covclip)" style="filter:sepia(.25) saturate(.9)"/>`
+      +`<rect x="${ax}" y="${ay}" width="${aw}" height="${fh}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+      +`<rect x="${ax-5}" y="${ay-5}" width="${aw+10}" height="${fh+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/>`);
+    ah=fh;}
+  else if(o.art)s+=G('a-fade',0,o.art(ax+aw/2,ay+ah/2,n));
   let x=n?16:270, y=n?ay+ah+34:44;
   s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
   const Q=wrap(o.q,n?40:42);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;

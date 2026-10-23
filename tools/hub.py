@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Rebuild index.html and the README table from tools/hub.json.
 
-hub.json is a list of groups: {"name", "desc", "decks": [{"slug","psub","title","sub","blurb"}]}.
+hub.json is a list of groups: {"name", "desc", "icon", "decks": [{"slug","psub","title","sub","blurb"}]}.
+icon names an emblem in tools/emblems.py. Optional pictures: img/hero.jpg replaces the drawn header plate,
+and img/cards/<slug>.jpg is shown in a primer's card.
 Plate counts, interactive counts and part names are read from each built deck in a headless browser.
 """
-import json, subprocess, html, pathlib, re
+import json, subprocess, html, pathlib, re, sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / 'tools'))
+from emblems import emblem, HERO
 groups = json.loads((ROOT / 'tools' / 'hub.json').read_text())
 slugs = [d['slug'] for g in groups for d in g['decks']]
 
@@ -14,7 +18,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 (async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});const out={};
 for(const d of process.argv.slice(2)){const p=await b.newPage();await p.route(/fonts/,r=>r.abort());
  await p.goto('file://ROOT/decks/'+d+'/index.html');
- out[d]=await p.evaluate(()=>({n:S.length,i:S.filter(s=>s.chips||s.explore).length,parts:[...document.querySelectorAll('nav.parts button')].map(b=>b.textContent.replace(/^[IVXL]+ · /,''))}));
+ out[d]=await p.evaluate(()=>({n:S.length,i:S.filter(s=>s.chips||s.explore).length,parts:[...document.querySelectorAll('nav.parts button')].map(b=>b.textContent.replace(/^([IVXL]+|[0-9]+) · /,''))}));
  await p.close();}
 console.log(JSON.stringify(out));await b.close();})();
 """.replace('ROOT', str(ROOT))
@@ -36,11 +40,14 @@ for g in groups:
         num += 1; I = info[d['slug']]; total_plates += I['n']; total_int += I['i']; int_decks += bool(I['i'])
         meta = f"{I['n']} plates · {len(I['parts'])} parts" + (f" · {I['i']} interactive" if I['i'] else '')
         parts = ''.join(f'<li>{e(p)}</li>' for p in I['parts'])
-        cards.append(f'<a class="card" href="decks/{d["slug"]}/"><div class="plate" aria-hidden="true"><span class="pno">{roman(num)}</span><span class="psub">{e(d["psub"])}</span></div><div class="cbody"><h3>{e(d["title"])}</h3><p class="sub">{e(d["sub"])}</p><p class="blurb">{e(d["blurb"])}</p><p class="meta">{meta}</p><ol class="parts">{parts}</ol></div></a>')
+        art = ROOT / 'img' / 'cards' / f"{d['slug']}.jpg"
+        plate = (f'<div class="plate has-art" aria-hidden="true"><img src="img/cards/{d["slug"]}.jpg" alt="" loading="lazy"><span class="pno">{roman(num)}</span><span class="psub">{e(d["psub"])}</span></div>' if art.exists()
+                 else f'<div class="plate" aria-hidden="true"><span class="pno">{roman(num)}</span>{emblem(g["icon"], "cemb", 52)}<span class="psub">{e(d["psub"])}</span></div>')
+        cards.append(f'<a class="card" href="decks/{d["slug"]}/">{plate}<div class="cbody"><h3>{e(d["title"])}</h3><p class="sub">{e(d["sub"])}</p><p class="blurb">{e(d["blurb"])}</p><p class="meta">{meta}</p><ol class="parts">{parts}</ol></div></a>')
         rows.append(f"| {roman(num)} | {d['title']} | {g['name']} | {I['n']} | {I['i']} | [`decks/{d['slug']}/`](decks/{d['slug']}/) |")
     gid = re.sub(r'[^a-z]+', '-', g['name'].lower()).strip('-')
-    toc.append(f'<li><a href="#{gid}">{e(g["name"])}</a> <span>{len(g["decks"])}</span></li>')
-    secs.append(f'<section class="group" id="{gid}"><div class="ghead"><h2>{e(g["name"])}</h2><p>{e(g["desc"])}</p></div><div class="grid">{"".join(cards)}</div></section>')
+    toc.append(f'<li>{emblem(g["icon"], "temb", 24)}<a href="#{gid}">{e(g["name"])}</a> <span>{len(g["decks"])}</span></li>')
+    secs.append(f'<section class="group" id="{gid}"><div class="ghead">{emblem(g["icon"], "gemb", 36)}<h2>{e(g["name"])}</h2><p>{e(g["desc"])}</p></div><div class="grid">{"".join(cards)}</div></section>')
 
 idx = (ROOT / 'index.html').read_text()
 start = idx.index('<section class="group"'); end = idx.index('<footer>')
@@ -51,6 +58,8 @@ if '<nav class="toc"' in idx:
     idx = re.sub(r'<nav class="toc".*?</nav>', tocb, idx, flags=re.S)
 else:
     idx = idx.replace('</header>', tocb + '\n</header>', 1)
+hero = '<img class="hero" src="img/hero.jpg" alt="">' if (ROOT / 'img' / 'hero.jpg').exists() else HERO
+idx = re.sub(r'<!--hero-->.*?<!--/hero-->', lambda m: '<!--hero-->' + hero + '<!--/hero-->', idx, flags=re.S)
 (ROOT / 'index.html').write_text(idx)
 
 rd = (ROOT / 'README.md').read_text()

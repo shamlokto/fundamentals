@@ -164,6 +164,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <p class="foot">Immunology is simplified to its microbial essentials; cytokine networks and signalling are abbreviated. The herd-immunity figures are rounded illustrations.</p>
 </div>
 <script>
+/* optional picture for the opening plate: decks/immunity/cover.jpg */
+const COVER=null;
 const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
       RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
 const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
@@ -515,9 +517,15 @@ const PAL={sand:'#E7DEC9',blue:'#A9C4DC',green:'#A9C49A',rose:'#E7A99B',gold:'#E
 const lines=t=>String(t).split('|');
 /* opening plate without a portrait: art on the left (wide) or on top (narrow) */
 function introPlate(n,o){
-  let s='';const aw=n?328:220, ah=o.artH||200;
+  let s='';const aw=n?328:220;let ah=o.artH||200;
   const ax=n?16:20, ay=n?14:30;
-  if(o.art)s+=G('a-fade',0,o.art(ax+aw/2,ay+ah/2,n));
+  if(typeof COVER!=='undefined'&&COVER){const fh=n?Math.max(ah,200):Math.max(ah,250);
+    s+=G('a-fade',0,`<clipPath id="covclip"><rect x="${ax}" y="${ay}" width="${aw}" height="${fh}" rx="4"/></clipPath>`
+      +`<image href="${COVER}" x="${ax}" y="${ay}" width="${aw}" height="${fh}" preserveAspectRatio="xMidYMid slice" clip-path="url(#covclip)" style="filter:sepia(.25) saturate(.9)"/>`
+      +`<rect x="${ax}" y="${ay}" width="${aw}" height="${fh}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+      +`<rect x="${ax-5}" y="${ay-5}" width="${aw+10}" height="${fh+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/>`);
+    ah=fh;}
+  else if(o.art)s+=G('a-fade',0,o.art(ax+aw/2,ay+ah/2,n));
   let x=n?16:270, y=n?ay+ah+34:44;
   s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
   const Q=wrap(o.q,n?40:42);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;

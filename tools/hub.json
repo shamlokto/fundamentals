@@ -38,7 +38,8 @@
     "sub": "Sugars, and the enzymes that join them",
     "blurb": "Monosaccharides, linkages and nucleotide sugars; glycosyltransferase folds and mechanisms; and how the pneumococcal capsule is built."
    }
-  ]
+  ],
+  "icon": "chemistry"
  },
  {
   "name": "The central dogma",
@@ -79,7 +80,8 @@
     "sub": "Keeping the genome intact",
     "blurb": "Damage, direct reversal, excision and mismatch repair, recombination, SOS and translesion synthesis."
    }
-  ]
+  ],
+  "icon": "dogma"
  },
  {
   "name": "The cell",
@@ -113,7 +115,8 @@
     "sub": "How bacteria move, and decide where to go",
     "blurb": "The flagellar motor, runs and tumbles, the chemotaxis circuit and its adaptation, pili and gliding."
    }
-  ]
+  ],
+  "icon": "cell"
  },
  {
   "name": "Regulation and heterogeneity",
@@ -140,7 +143,8 @@
     "sub": "Why identical cells behave differently",
     "blurb": "DNA methylation and what reads it; phase variation, phasevarions and pneumococcal opacity; bistability, persistence and why clonal populations hedge."
    }
-  ]
+  ],
+  "icon": "regulation"
  },
  {
   "name": "Genetics, genomes and evolution",
@@ -209,7 +213,8 @@
     "sub": "Reading trees, naming microbes",
     "blurb": "Alignments, substitution models, likelihood and Bayes, long-branch attraction, ANI and GTDB, and deep time."
    }
-  ]
+  ],
+  "icon": "evolution"
  },
  {
   "name": "Metabolism",
@@ -236,7 +241,8 @@
     "sub": "Fixing carbon and nitrogen, cycling the rest",
     "blurb": "Six ways to fix CO₂, phototrophy, nitrogen fixation and the N, S and methane cycles, and who runs each step."
    }
-  ]
+  ],
+  "icon": "metabolism"
  },
  {
   "name": "Growth, physiology and ecology",
@@ -263,7 +269,8 @@
     "sub": "Communities, diversity and interactions",
     "blurb": "Community assembly, diversity metrics and rarefaction, syntrophy, competition and predation, microbiomes, and why correlations are not causes."
    }
-  ]
+  ],
+  "icon": "growth"
  },
  {
   "name": "Viruses, hosts and disease",
@@ -290,7 +297,8 @@
     "sub": "How microbes cause disease, and how it spreads",
     "blurb": "Steps of infection, virulence factors and toxins, secretion systems, immune evasion, dysbiosis, and epidemiology basics."
    }
-  ]
+  ],
+  "icon": "viruses"
  },
  {
   "name": "Methods and tools",
@@ -345,7 +353,8 @@
     "sub": "From raw reads to answers",
     "blurb": "Quality control, mapping, assembly, annotation, metagenomic binning, differential abundance and reproducible pipelines."
    }
-  ]
+  ],
+  "icon": "methods"
  },
  {
   "name": "Antimicrobials and applications",
@@ -365,7 +374,8 @@
     "sub": "Microbes at work",
     "blurb": "Industrial fermentation, bioremediation, plant–microbe interactions, food safety, clinical diagnostics and synthetic biology."
    }
-  ]
+  ],
+  "icon": "antimicrobials"
  },
  {
   "name": "Quantitative and professional",
@@ -392,7 +402,8 @@
     "sub": "Working safely, securely, honestly and openly",
     "blurb": "Biosafety levels and cabinets, select agents and dual-use oversight, IBC/IACUC/IRB, authorship and misconduct, reproducibility and FAIR data."
    }
-  ]
+  ],
+  "icon": "quantitative"
  },
  {
   "name": "History",
@@ -447,6 +458,7 @@
     "sub": "A third form of life",
     "blurb": "16S rRNA as a molecular clock, oligonucleotide catalogues, the archaea, and the three domains."
    }
-  ]
+  ],
+  "icon": "history"
  }
 ]
