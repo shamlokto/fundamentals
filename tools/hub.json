@@ -1,0 +1,295 @@
+[
+ {
+  "name": "Chemistry and physics of life",
+  "desc": "Energy, water, weak forces and the molecules they shape.",
+  "decks": [
+   {
+    "slug": "energy-redox",
+    "psub": "Bioenergetics",
+    "title": "Energy and Redox",
+    "sub": "Where a cell’s energy comes from",
+    "blurb": "Free energy, coupling, redox potentials and an interactive electron tower; syntrophy on thin margins."
+   },
+   {
+    "slug": "water-ph-scale",
+    "psub": "Physical chemistry",
+    "title": "Water, pH and Scale",
+    "sub": "Life in water, at the scale of a micrometre",
+    "blurb": "Buffers and pKa, pH homeostasis, water activity, turgor, diffusion, Reynolds number and surface-to-volume."
+   },
+   {
+    "slug": "macromolecules",
+    "psub": "Biomolecules",
+    "title": "The Molecules of Life",
+    "sub": "Weak forces, precise shapes",
+    "blurb": "Weak interactions, folding and domains, base pairing and supercoiling, bilayers and glycosidic linkages."
+   },
+   {
+    "slug": "enzyme-kinetics",
+    "psub": "Enzymes",
+    "title": "Enzyme Kinetics",
+    "sub": "How enzymes work, and how fast",
+    "blurb": "Catalysis, Michaelis–Menten, inhibition, cooperativity and allostery, and kinetics in antibiotic action."
+   },
+   {
+    "slug": "glycans",
+    "psub": "Glycobiology",
+    "title": "Glycans and Glycosyltransferases",
+    "sub": "Sugars, and the enzymes that join them",
+    "blurb": "Monosaccharides, linkages and nucleotide sugars; glycosyltransferase folds and mechanisms; and how the pneumococcal capsule is built."
+   }
+  ]
+ },
+ {
+  "name": "The central dogma",
+  "desc": "Copying DNA, reading it, making and placing proteins, and repairing the genome.",
+  "decks": [
+   {
+    "slug": "dna-replication",
+    "psub": "DNA replication",
+    "title": "How DNA Is Copied",
+    "sub": "Every cell copies its DNA before it divides",
+    "blurb": "From Meselson–Stahl and Kornberg to the bacterial replisome, with a mutant explorer."
+   },
+   {
+    "slug": "transcription",
+    "psub": "Transcription",
+    "title": "How Genes Are Transcribed",
+    "sub": "Reading a gene into RNA",
+    "blurb": "RNA polymerase, sigma factors, termination and regulation in bacteria, with eukaryotic comparisons."
+   },
+   {
+    "slug": "translation",
+    "psub": "Translation",
+    "title": "How Proteins Are Made",
+    "sub": "From messenger to protein",
+    "blurb": "Proteins, tRNA, the ribosome, the genetic code, and the antibiotics that jam translation."
+   },
+   {
+    "slug": "protein-targeting",
+    "psub": "Protein targeting",
+    "title": "Protein Targeting and Modification",
+    "sub": "After the ribosome: sending and finishing proteins",
+    "blurb": "Signal peptides, Sec and Tat, SRP, YidC, envelope assembly, secretion systems and glycosylation."
+   },
+   {
+    "slug": "dna-repair",
+    "psub": "DNA repair",
+    "title": "Repairing DNA",
+    "sub": "Keeping the genome intact",
+    "blurb": "Damage, direct reversal, excision and mismatch repair, recombination, SOS and translesion synthesis."
+   }
+  ]
+ },
+ {
+  "name": "The cell",
+  "desc": "Envelopes, organelles, division and movement.",
+  "decks": [
+   {
+    "slug": "envelope",
+    "psub": "Cell envelopes",
+    "title": "Cell Envelopes",
+    "sub": "The layers that hold a microbe together",
+    "blurb": "Gram-positive, Gram-negative and acid-fast envelopes, peptidoglycan, LPS, teichoic and mycolic acids, archaeal membranes."
+   },
+   {
+    "slug": "eukaryotic-cell",
+    "psub": "Eukaryotic cells",
+    "title": "Organelles and Endosymbiosis",
+    "sub": "The bacteria inside our cells",
+    "blurb": "Organelles, the secretory and endocytic pathways, pathogens that hijack them, and the bacterial origin of mitochondria and plastids."
+   },
+   {
+    "slug": "cell-division",
+    "psub": "Bacterial cell division",
+    "title": "How Bacteria Divide",
+    "sub": "Making two cells from one",
+    "blurb": "The fts genes, Z ring, Min and nucleoid occlusion, MapZ, the septal wall, and drugs that stop division."
+   },
+   {
+    "slug": "motility",
+    "psub": "Motility",
+    "title": "Motility and Chemotaxis",
+    "sub": "How bacteria move, and decide where to go",
+    "blurb": "The flagellar motor, runs and tumbles, the chemotaxis circuit and its adaptation, pili and gliding."
+   }
+  ]
+ },
+ {
+  "name": "Regulation",
+  "desc": "How a bacterial gene is built, and how cells decide which genes to use.",
+  "decks": [
+   {
+    "slug": "prokaryotic-gene",
+    "psub": "Bacterial genetics",
+    "title": "Anatomy of a Prokaryotic Gene",
+    "sub": "From promoter to terminator",
+    "blurb": "Promoter to terminator, operons, and the causes of polar effects, including overexpression and antisense from cassettes."
+   },
+   {
+    "slug": "regulation",
+    "psub": "Gene regulation",
+    "title": "Bacterial Gene Regulation",
+    "sub": "How a cell decides which genes to use",
+    "blurb": "Operons and regulons, lac, two-component systems, small RNAs, quorum sensing, sporulation, phase variation and persisters."
+   }
+  ]
+ },
+ {
+  "name": "Genetics and genomes",
+  "desc": "Inheritance, evolution, mobile DNA and genome biology.",
+  "decks": [
+   {
+    "slug": "bateson-epistasis",
+    "psub": "Genetic interactions",
+    "title": "Bateson's Epistasis",
+    "sub": "Two genes, one trait",
+    "blurb": "Bateson’s sweet-pea crosses, the 9:7 ratio, and the main kinds of epistasis."
+   },
+   {
+    "slug": "evolution-genetics",
+    "psub": "Population genetics",
+    "title": "Mutation, Selection and Drift",
+    "sub": "How bacterial populations evolve",
+    "blurb": "Mutation rates, drift, selection, recombination, the long-term evolution experiment, epistasis, clonal interference and the cost of resistance."
+   },
+   {
+    "slug": "mobile-dna",
+    "psub": "Horizontal gene transfer",
+    "title": "Mobile DNA and Plasmids",
+    "sub": "Genes that move between cells",
+    "blurb": "Transformation, conjugation and transduction; transposons, integrons and ICEs; plasmid replication, incompatibility and addiction."
+   },
+   {
+    "slug": "phage-defence",
+    "psub": "Phages and immunity",
+    "title": "Phages and Defences",
+    "sub": "Bacteriophages, and how bacteria fight them",
+    "blurb": "Lytic and temperate cycles, the λ decision, restriction–modification and the anti-phage arsenal, coevolution and phage therapy."
+   },
+   {
+    "slug": "genomes",
+    "psub": "Genome biology",
+    "title": "Bacterial Genomes",
+    "sub": "How a bacterial genome is laid out",
+    "blurb": "Size and density, organisation around replication, GC skew, codon usage, genome decay and pangenomes."
+   }
+  ]
+ },
+ {
+  "name": "Metabolism",
+  "desc": "Carbon, energy and the element cycles.",
+  "decks": [
+   {
+    "slug": "central-metabolism",
+    "psub": "Metabolism",
+    "title": "Central Carbon Metabolism",
+    "sub": "Sugar to precursors, energy and reducing power",
+    "blurb": "EMP, ED and pentose phosphate pathways, precursor metabolites, the TCA cycle, anaplerosis, overflow and catabolite repression."
+   },
+   {
+    "slug": "respiration",
+    "psub": "Bioenergetics",
+    "title": "Respiration and Fermentation",
+    "sub": "Making ATP with and without an acceptor",
+    "blurb": "Chemiosmosis, ATP synthase, branched respiratory chains, alternative acceptors and fermentation end products."
+   },
+   {
+    "slug": "autotrophy-cycles",
+    "psub": "Element cycles",
+    "title": "Autotrophy and the Element Cycles",
+    "sub": "Fixing carbon and nitrogen, cycling the rest",
+    "blurb": "Six ways to fix CO₂, phototrophy, nitrogen fixation and the N, S and methane cycles, and who runs each step."
+   }
+  ]
+ },
+ {
+  "name": "Tools",
+  "desc": "Building, editing and screening DNA in the lab.",
+  "decks": [
+   {
+    "slug": "molecular-cloning",
+    "psub": "Molecular cloning",
+    "title": "Tools for Molecular Cloning",
+    "sub": "Ways to join DNA",
+    "blurb": "Restriction cloning to Golden Gate, MoClo and Gibson; recombineering and allelic exchange."
+   },
+   {
+    "slug": "crispr-cas9",
+    "psub": "Genome editing",
+    "title": "How CRISPR–Cas9 Works",
+    "sub": "An immune system with a memory",
+    "blurb": "CRISPR as bacterial immunity, how Cas9 finds and cuts DNA, and how it became a genome-editing tool."
+   },
+   {
+    "slug": "sequencing",
+    "psub": "Sequencing",
+    "title": "Next-Generation Sequencing",
+    "sub": "Reading DNA a billion molecules at a time",
+    "blurb": "Sanger to nanopore: how each platform holds molecules apart and detects a base, what each gets wrong, and which to choose for a given job."
+   },
+   {
+    "slug": "tn-seq",
+    "psub": "Functional genomics",
+    "title": "How Tn-seq Works",
+    "sub": "Finding the genes a cell can’t live without",
+    "blurb": "Transposon libraries, sequencing insertion sites, and calling essential genes."
+   }
+  ]
+ },
+ {
+  "name": "History",
+  "desc": "Classic experiments, and the logic that made them decisive.",
+  "decks": [
+   {
+    "slug": "pasteur",
+    "psub": "Louis Pasteur",
+    "title": "Pasteur and the Swan-Neck Flask",
+    "sub": "Life comes only from life",
+    "blurb": "Spontaneous generation and the swan-neck flask, hay infusions and spores, fermentation, and the first controlled vaccine trial."
+   },
+   {
+    "slug": "koch",
+    "psub": "Robert Koch",
+    "title": "Koch and the Pure Culture",
+    "sub": "One microbe, one disease",
+    "blurb": "Anthrax and serial passage, solid media and pure culture, tuberculosis, and the postulates tested against real diseases."
+   },
+   {
+    "slug": "winogradsky",
+    "psub": "Sergei Winogradsky",
+    "title": "Winogradsky and the Soil",
+    "sub": "Life on rocks and gases",
+    "blurb": "Energy from sulfur and ammonia, nitrifiers on silica gel, elective culture, and the Winogradsky column."
+   },
+   {
+    "slug": "beijerinck",
+    "psub": "Martinus Beijerinck",
+    "title": "Beijerinck and the First Virus",
+    "sub": "A contagious living fluid",
+    "blurb": "Tobacco mosaic and the first virus, enrichment culture, nitrogen fixers, and the Delft school."
+   },
+   {
+    "slug": "griffith-avery",
+    "psub": "Frederick Griffith and Oswald Avery",
+    "title": "Griffith, Avery and DNA",
+    "sub": "The transforming principle",
+    "blurb": "Pneumococcal types, Griffith’s mice, purifying the transforming principle, and the enzyme test that pointed to DNA."
+   },
+   {
+    "slug": "lederberg",
+    "psub": "Joshua and Esther Lederberg",
+    "title": "Lederberg and Bacterial Genetics",
+    "sub": "Bacteria have genes too",
+    "blurb": "The fluctuation test, bacterial mating, replica plating and transduction."
+   },
+   {
+    "slug": "woese",
+    "psub": "Carl Woese",
+    "title": "Woese and the Tree of Life",
+    "sub": "A third form of life",
+    "blurb": "16S rRNA as a molecular clock, oligonucleotide catalogues, the archaea, and the three domains."
+   }
+  ]
+ }
+]
