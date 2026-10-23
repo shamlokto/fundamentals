@@ -590,7 +590,7 @@ function scInitE(n){
 }
 
 function scElong(n){
-  const W=n?340:305,H=n?164:190,pos=panelGrid(n,4,2,W,H),k=n?.52:.6;
+  const W=n?340:305,H=n?196:190,pos=panelGrid(n,4,2,W,H),k=n?.68:.6;
   const P=[
     ['Deliver','EF-Tu·GTP brings aa-tRNA to A',{trnas:[{site:'P',ac:'AAG',aa:''},{site:'A',ac:'CCA',aa:'G',col:'#A9D0C0'}],chainOn:'P',chainN:4,tu:true}],
     ['Check','codon–anticodon fit; GTP hydrolysed',{trnas:[{site:'P',ac:'AAG',aa:''},{site:'A',ac:'CCA',aa:'G'}],chainOn:'P',chainN:4}],
@@ -643,7 +643,7 @@ function scTerm(n){
   P.forEach((p,i)=>{const [x,y]=pos[i],cx=x+W/2,my=y+H-(n?30:46);
     let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,p[0],'lab start f14')+T(x+14,y+38,p[1],'note start f11');
     const cod=[['P','CUG'],['A','UAA']];
-    if(i<2)g+=ribosome(cx,my,k,{codons:cod,codonCol:{A:'#A4473A'},trnas:[{site:'P',ac:'GAC',aa:''}],chainOn:i===0?'P':null,chainN:5})+`<path d="M${cx+k*44} ${my-k*8} v${-k*70} h${k*14} v${k*70} z" fill="#7D4A98" stroke="${INK}" class="tint"/>`+Tc(cx+k*80,my-k*50,'RF','#7D4A98',k*13,'mono start','600');
+    if(i<2)g+=ribosome(cx,my,k,{codons:cod,codonCol:{A:'#A4473A'},trnas:[{site:'P',ac:'GAC',aa:''}],chainOn:i===0?'P':null,chainN:5})+`<path d="M${cx+k*44} ${my-k*8} v${-k*70} h${k*14} v${k*70} z" fill="#7D4A98" stroke="${INK}" class="tint"/>`+Tc(cx+k*62,my-k*50,'RF','#7D4A98',11,'mono start halo','600');
     if(i===1)g+=chain(cx-k*30,my-k*150,k,5);
     if(i===2)g+=`<path d="M${cx-k*110} ${my-k*70} C ${cx-k*130} ${my-k*170}, ${cx+k*130} ${my-k*170}, ${cx+k*110} ${my-k*70} Z" fill="${LSU}" opacity=".55" stroke="${INK}"/>`+`<path d="M${cx-k*120} ${my+k*14} C ${cx-k*126} ${my+k*60}, ${cx+k*126} ${my+k*60}, ${cx+k*120} ${my+k*14} Z" fill="${SSU}" opacity=".7" stroke="${INK}"/>`+`<path d="M${cx-k*170} ${my-k*14} H${cx+k*170}" stroke="${RNAC}" stroke-width="2.4"/>`;
     s+=G('a-fade',(i*.9).toFixed(1),g);});
@@ -752,13 +752,13 @@ function scStringent(n){
   const gx=n?240:340, gy=n?70:90;
   s+=G('a-fade',1.6,`<path d="M${cx+k*134} ${my-k*82} C ${gx-60} ${gy+60}, ${gx-40} ${gy+20}, ${gx-20} ${gy+6}" class="arrow"/>`+`<circle cx="${gx}" cy="${gy}" r="16" fill="#E0B84A" stroke="${INK}"/>`+Tc(gx,gy+4,'ppGpp','#3A2E22',n?9:10,'mono mid','600')+T(gx,gy-24,'“magic spot”','note mid f12'));
   if(!n){
-    s+=G('a-fade',2.2,`<path d="M${gx+20} ${gy+10} L${gx+80} ${gy+50}" class="arrow"/>`+rnap(gx+110,gy+70,1.1)+T(gx+110,gy+110,'+ DksA','mono mid f12'));
+    s+=G('a-fade',2.2,`<path d="M${gx+20} ${gy+10} L${gx+80} ${gy+50}" class="arrow"/>`+rnap(gx+110,gy+70,1.1)+T(gx+110,gy+110,'RNA polymerase + DksA','mono mid f12'));
     const rows=[['rRNA, tRNA, ribosomal proteins','↓'],['amino acid biosynthesis','↑'],['growth','slows'],['antibiotic tolerance','↑']];
     rows.forEach((r,i)=>s+=G('a-fade',(2.8+i*.3).toFixed(1),T(330,240+i*24,r[0],'lab start')+Tc(620,240+i*24,r[1],r[1]==='↓'?'#A4473A':'#4F7A3F',16,'mono end','600')));
     s+=G('a-fade',4.0,T(320,354,'Cashel & Gallant, 1969: the stringent response','note mid'));
     return {vb:wide(368),s};
   }
-  s+=G('a-fade',2.2,`<path d="M${gx} ${gy+18} v40" class="arrow"/>`+rnap(gx,gy+80,.9)+T(gx,gy+114,'+ DksA','mono mid f11'));
+  s+=G('a-fade',2.2,`<path d="M${gx} ${gy+18} v40" class="arrow"/>`+rnap(gx,gy+80,.9)+T(gx,gy+114,'RNAP + DksA','mono mid f12'));
   const rows=[['rRNA and tRNA genes','↓'],['amino acid synthesis','↑'],['growth','slows'],['antibiotic tolerance','↑']];
   rows.forEach((r,i)=>s+=G('a-fade',(2.8+i*.3).toFixed(1),T(14,my+50+i*24,r[0],'lab start f14')+Tc(340,my+50+i*24,r[1],r[1]==='↓'?'#A4473A':'#4F7A3F',15,'mono end','600')));
   s+=G('a-fade',4.0,T(180,my+50+4*24+8,'Cashel & Gallant, 1969','note mid'));
