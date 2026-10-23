@@ -203,7 +203,7 @@ function sub(x,y,k){return k;} // placeholder
 function trna(x,my,k,ac,aa,col=TRNA_C,o={}){
   const S=v=>v*k;
   let s=`<g opacity="${o.dim?.35:1}"><path d="M${x-S(10)} ${my-S(10)} V${my-S(70)} q0 ${-S(16)} ${S(10)} ${-S(22)} q${S(10)} ${S(6)} ${S(10)} ${S(22)} V${my-S(10)} Z" fill="${col}" stroke="${INK}" stroke-width="1" class="tint"/>`;
-  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',S(9),'mono mid','600');
+  if(ac)s+=Tc(x,my-S(13),ac,'#3A2E22',Math.max(S(9),8),'mono mid','600');
   if(aa)s+=`<circle cx="${x}" cy="${my-S(100)}" r="${S(8)}" fill="${o.aaCol||AA_C}" stroke="${INK}" class="tint"/>`+Tc(x,my-S(97),aa,'#F3EDE0',S(9),'mono mid','600');
   return s+'</g>';
 }
@@ -215,8 +215,8 @@ function ribosome(cx,my,k,o={}){
   if(o.small!==false)s+=`<path d="M${cx-S(120)} ${my+S(4)} C ${cx-S(126)} ${my+S(56)}, ${cx+S(126)} ${my+S(56)}, ${cx+S(120)} ${my+S(4)} C ${cx+S(80)} ${my-S(10)}, ${cx-S(80)} ${my-S(10)}, ${cx-S(120)} ${my+S(4)} Z" fill="${SSU}" opacity=".7" stroke="${INK}" stroke-width="1.2" class="tint"/>`;
   if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
   if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
-  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
-  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+Math.max(S(16),12),c,o.codonCol&&o.codonCol[site]||'#6A3E12',Math.max(S(11),10),'mono mid','600');});
+  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+Math.max(S(34),26),k2,'#2F5276',Math.max(S(12),11),'mono mid','600'));
   (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
   if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
   return s;
@@ -598,11 +598,11 @@ function scElong(n){
     ['Translocate','EF-G·GTP moves tRNAs and mRNA one codon',{trnas:[{site:'E',ac:'AAG',aa:'',dim:true},{site:'P',ac:'CCA',aa:''}],chainOn:'P',chainN:5,shift:true,g:true}]];
   let s='';
   P.forEach((p,i)=>{const [x,y]=pos[i],cx=x+W/2+(n?0:10),my=y+H-(n?26:32);
-    let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,p[0],'lab start f14')+T(x+14,y+38,p[1],'note start f11');
+    let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,p[0],'lab start f14')+T(x+14,y+38,p[1],'note start f12');
     const cod=p[2].shift?[['E','UUC'],['P','GGU'],['A','AAA']]:[['P','UUC'],['A','GGU'],['E','GCU']];
     g+=ribosome(cx,my,k,Object.assign({codons:cod},p[2]));
-    if(p[2].tu)g+=blob(cx+k*76,my-k*58,k*16,k*12,'#7FA59B')+Tc(cx+k*76,my-k*55,'EF-Tu','#3A2E22',k*10,'mono mid');
-    if(p[2].g)g+=blob(cx+k*62,my-k*40,k*18,k*14,'#B4766E')+Tc(cx+k*62,my-k*37,'EF-G','#3A2E22',k*10,'mono mid');
+    if(p[2].tu)g+=blob(cx+k*80,my-k*58,18,11,'#7FA59B')+Tc(cx+k*80,my-k*58+3,'EF-Tu','#3A2E22',9,'mono mid','600');
+    if(p[2].g)g+=blob(cx+k*62,my-k*40,18,12,'#B4766E')+Tc(cx+k*62,my-k*40+3,'EF-G','#3A2E22',9,'mono mid','600');
     s+=G('a-fade',(i*.8).toFixed(1),g);});
   const yb=n?pos[3][1]+H+24:2*(H+12)+26;
   s+=G('a-fade',3.4,T(n?180:320,yb,n?'~15–20 amino acids per second (E. coli)':'The cycle repeats about 15–20 times a second in E. coli','lab mid'));
