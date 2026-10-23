@@ -29,25 +29,28 @@ def roman(n):
     return r
 
 e = html.escape
-num = 0; total_plates = 0; total_int = 0; secs = []; rows = []
+num = 0; total_plates = 0; total_int = 0; int_decks = 0; secs = []; rows = []
 for g in groups:
     cards = []
     for d in g['decks']:
-        num += 1; I = info[d['slug']]; total_plates += I['n']; total_int += I['i']
+        num += 1; I = info[d['slug']]; total_plates += I['n']; total_int += I['i']; int_decks += bool(I['i'])
         meta = f"{I['n']} plates · {len(I['parts'])} parts" + (f" · {I['i']} interactive" if I['i'] else '')
         parts = ''.join(f'<li>{e(p)}</li>' for p in I['parts'])
         cards.append(f'<a class="card" href="decks/{d["slug"]}/"><div class="plate" aria-hidden="true"><span class="pno">{roman(num)}</span><span class="psub">{e(d["psub"])}</span></div><div class="cbody"><h3>{e(d["title"])}</h3><p class="sub">{e(d["sub"])}</p><p class="blurb">{e(d["blurb"])}</p><p class="meta">{meta}</p><ol class="parts">{parts}</ol></div></a>')
-        rows.append(f"| {roman(num)} | {d['title']} | {I['n']} | [`decks/{d['slug']}/`](decks/{d['slug']}/) |")
+        rows.append(f"| {roman(num)} | {d['title']} | {g['name']} | {I['n']} | {I['i']} | [`decks/{d['slug']}/`](decks/{d['slug']}/) |")
     secs.append(f'<section class="group"><div class="ghead"><h2>{e(g["name"])}</h2><p>{e(g["desc"])}</p></div><div class="grid">{"".join(cards)}</div></section>')
 
 idx = (ROOT / 'index.html').read_text()
 start = idx.index('<section class="group">'); end = idx.index('<footer>')
 idx = idx[:start] + ''.join(secs) + '\n' + idx[end:]
-idx = re.sub(r'<div class="stats">.*?</div></div>', f'<div class="stats"><div class="stat"><b>{num}</b><span>primers</span></div><div class="stat"><b>{total_plates}</b><span>plates</span></div><div class="stat"><b>{total_int}</b><span>interactive plates</span></div></div>', idx, flags=re.S)
+idx = re.sub(r'<div class="stats">.*?</div></div>', f'<div class="stats"><div class="stat"><b>{num}</b><span>primers</span></div><div class="stat"><b>{len(groups)}</b><span>sections</span></div><div class="stat"><b>{total_plates}</b><span>plates</span></div><div class="stat"><b>{total_int}</b><span>interactive plates</span></div><div class="stat"><b>{int_decks}</b><span>primers with interactive plates</span></div></div>', idx, flags=re.S)
 (ROOT / 'index.html').write_text(idx)
 
 rd = (ROOT / 'README.md').read_text()
 a = rd.index('| # | Primer'); b = rd.index('\n\n', a)
-rd = rd[:a] + '| # | Primer | Plates | Folder |\n|---|---|---|---|\n' + '\n'.join(rows) + rd[b:]
+rd = rd[:a] + '| # | Primer | Section | Plates | Interactive | Folder |\n|---|---|---|---|---|---|\n' + '\n'.join(rows) + rd[b:]
+summary = f'{num} primers in {len(groups)} sections: {total_plates} plates, {total_int} of them interactive, across {int_decks} primers.'
+rd = re.sub(r'(?m)^\d+ primers in \d+ sections:.*\n\n', '', rd)
+rd = rd.replace('| # | Primer |', summary + '\n\n| # | Primer |', 1)
 (ROOT / 'README.md').write_text(rd)
-print(num, 'primers,', total_plates, 'plates,', total_int, 'interactive')
+print(num, 'primers,', len(groups), 'sections,', total_plates, 'plates,', total_int, 'interactive plates in', int_decks, 'primers')
