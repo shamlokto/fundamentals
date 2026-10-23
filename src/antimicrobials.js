@@ -60,7 +60,7 @@ function scA3(n){
    ['Change the target','Mutated gyrase or RNA polymerase, methylated 23S rRNA (erm genes), or a wall precursor ending in D-Ala-D-Lac.'],
    ['Pump it out','Efflux pumps such as AcrAB–TolC in E. coli and MexAB–OprM in Pseudomonas expel many unrelated drugs.'],
    ['Keep it out','Losing or narrowing outer-membrane porins slows entry, adding to carbapenem resistance in Klebsiella and Pseudomonas.'],
-   ['Bypass the target','A second enzyme takes over: PBP2a in MRSA, or a drug-insensitive dihydrofolate reductase for trimethoprim.']],{gap:16,wn:46,bx:310,by:40});
+   ['Bypass the target','A second enzyme takes over: PBP2a in MRSA, or a drug-insensitive dihydrofolate reductase for trimethoprim.']],{gap:22,wn:46,bx:310,by:40});
 }
 function scA4(n){
   const rows=[['Point mutations','gyrA, parC: quinolones; rpoB: rifampicin; 23S rRNA: macrolides, linezolid','chromosome; arise during treatment and pass to descendants'],
@@ -74,13 +74,13 @@ function scA4(n){
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scA5(n){
-  const C=[.25,.5,1,2,4,8,16,32], sp=n?38:58, x0=n?30:60, by=n?110:118;
+  const C=[.25,.5,1,2,4,8,16,32], sp=n?38:66, x0=n?30:76, by=n?120:130;
   let s=G('a-fade',0,T(n?16:24,24,'broth dilution, twofold steps (mg/L)','note start f12'));
   let tb='';C.forEach((c,i)=>{const x=x0+i*sp;tb+=tube(x,by,{w:n?16:20,h:n?62:70,turbid:c<4,full:.6,seed:i+2})+T(x,by+18,String(c),'mono mid f10');});
   s+=G('a-fade',.2,tb);
-  const mx=x0+5*sp;
+  const mx=x0+4*sp;
   s+=G('a-fade',.6,arw(mx,by+56,mx,by+26,{w:1.6,red:1})+T(mx,by+70,'MIC = 4 mg/L','mono mid f12 acc'));
-  s+=G('a-fade',.4,T(x0+1.5*sp,by-(n?72:80),'growth (turbid)','note mid f11')+T(x0+5.5*sp,by-(n?72:80),'no growth (clear)','note mid f11'));
+  s+=G('a-fade',.4,T(x0+1.5*sp,by-(n?74:82),'growth (turbid)','note mid f11')+T(x0+5.5*sp,by-(n?74:82),'no growth (clear)','note mid f11'));
   const y2=by+100, bx=n?16:24, bw=n?328:592, kx=v=>bx+bw*(Math.log2(v)+2)/8;
   s+=G('a-fade',.9,T(bx,y2,'illustrative breakpoints','note start f12')+box(bx,y2+10,FX(kx(1)-bx),18,PAL.green,2)+box(FX(kx(1)),y2+10,FX(kx(4)-kx(1)),18,PAL.gold,2)+box(FX(kx(4)),y2+10,FX(bx+bw-kx(4)),18,PAL.rose,2)
     +T(FX((bx+kx(1))/2),y2+23,'S ≤ 1','mono mid f11')+T(FX((kx(1)+kx(4))/2),y2+23,'I','mono mid f11')+T(FX((kx(4)+bx+bw)/2),y2+23,'R > 4','mono mid f11'));
@@ -98,7 +98,7 @@ function scA6(n){
   g+=T(gx+3*c,gy+6*c+30,'drug A (× MIC alone)','note mid f12')+`<text transform="translate(${gx-42} ${gy+3*c}) rotate(-90)" class="note mid f12">drug B (× MIC alone)</text>`;
   let s=G('a-fade',0,g)+G('a-fade',.4,T(gx+6*c+4,gy+12,'turbid = growth','note start f11'));
   const fy=n?gy+6*c+60:gy+20, fx=n?16:330;
-  s+=G('a-fade',.6,T(fx,fy+(n?0:30),'FIC index = A/MICA + B/MICB','mono start '+(n?'f12':'f13')));
+  s+=G('a-fade',.6,T(fx,fy+(n?0:30),'FIC = A/MIC(A) + B/MIC(B)','mono start '+(n?'f12':'f13')));
   const items=[['Read the first clear well','The ringed well inhibits growth with a quarter of each drug’s MIC alone: FIC index 0.25 + 0.25 = 0.5.'],['Interpret','≤ 0.5 synergy; above 0.5 and up to 4 no interaction; > 4 antagonism.'],['Why it matters','A β-lactam damages the enterococcal wall and lets gentamicin in: the classic synergy behind endocarditis treatment.']];
   const b=n?bullets(24,fy+34,items,44,{d0:.8,gap:18}):bullets(346,fy+70,items,36,{d0:.8,gap:18});
   return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,gy+6*c+44)),s:s+b.s};
@@ -107,12 +107,12 @@ function scA7(n){
   const A=n?axes(54,30,270,170,{xr:[0,24],yr:[2,9],xt:[[0,'0'],[6,'6'],[12,'12'],[18,'18'],[24,'24 h']],yt:[[3,'10³'],[5,'10⁵'],[7,'10⁷'],[9,'10⁹']],xlab:'time in drug',ylab:'CFU per mL'})
     :axes(70,30,320,190,{xr:[0,24],yr:[2,9],xt:[[0,'0'],[6,'6'],[12,'12'],[18,'18'],[24,'24 h']],yt:[[3,'10³'],[5,'10⁵'],[7,'10⁷'],[9,'10⁹']],xlab:'time in drug',ylab:'CFU per mL'});
   const res=t=>Math.min(8.8,7+t*.16), sus=t=>Math.max(2.2,7-t*.9), tol=t=>Math.max(2.2,7-t*.28), per=t=>Math.max(2.2,Math.log10(Math.pow(10,7)*(.999*Math.exp(-t*1.4)+.001*Math.exp(-t*.05))));
-  let s=A.s+G('a-fade',.3,curve(A,res,{col:'#A4473A'})+curve(A,tol,{col:'#C17A2C',dash:'6 3'})+curve(A,per,{col:'#7D4A98'})+curve(A,sus,{col:'#2F5276',to:5.6}));
-  s+=G('a-fade',.6,T(FX(A.px(14)),FX(A.py(res(14))-8),'resistant','note mid f11 halo')+T(FX(A.px(16)),FX(A.py(tol(16))+16),'tolerant','note start f11 halo')+T(FX(A.px(23)),FX(A.py(per(23))-8),'persisters','note end f11 halo')+T(FX(A.px(3.2)),FX(A.py(sus(3.2))+2),'susceptible','note end f11 halo'));
+  let s=A.s+G('a-fade',.3,curve(A,res,{col:'#A4473A'})+curve(A,tol,{col:'#C17A2C',dash:'6 3',to:17})+curve(A,per,{col:'#7D4A98'})+curve(A,sus,{col:'#2F5276',to:5.6}));
+  s+=G('a-fade',.6,T(FX(A.px(14)),FX(A.py(res(14))-8),'resistant','note mid f11 halo')+T(FX(A.px(8.6)),FX(A.py(tol(8.6))-8),'tolerant','note start f11 halo')+T(FX(A.px(23)),FX(A.py(per(23))-8),'persisters','note end f11 halo')+T(FX(A.px(6)),FX(A.py(2.5)),'susceptible','note start f11 halo'));
   const items=[['Resistance','The MIC rises, so the drug no longer stops growth at usable doses.'],['Tolerance','The MIC is unchanged but the whole population dies more slowly: the minimum duration for killing 99% (MDK99) is longer.'],['Persistence','Most cells die fast; a small dormant subpopulation dies slowly, giving a biphasic curve and a long MDK99.99. Regrown, persisters give a normal sensitive culture.']];
   const b=n?bullets(24,A.y+A.h+58,items,44,{d0:.9,gap:18}):bullets(420,48,items,28,{d0:.9,gap:18});
   const H=n?b.y-6:Math.max(b.y-6,A.y+A.h+46);
-  const p=para(n?16:24,H+8,'The distinction, set out by Brauner and colleagues in 2016, matters because tolerance and persistence cause relapse and can be a stepping stone to resistance, yet a routine MIC cannot see them.',n?50:92,'note start f13',17,1.6);
+  const p=para(n?16:24,H+14,'The distinction, set out by Brauner and colleagues in 2016, matters because tolerance and persistence cause relapse and can be a stepping stone to resistance, yet a routine MIC cannot see them.',n?50:92,'note start f13',17,1.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+b.s+p.s};
 }
 function scA8(n){
@@ -121,27 +121,27 @@ function scA8(n){
   const C=t=>11.2*(Math.exp(-.3*t)-Math.exp(-2.2*t)), MIC=2;
   let d='M'+FX(A.px(0))+' '+FX(A.py(0));for(let i=0;i<=60;i++){const t=12*i/60;d+=' L'+FX(A.px(t))+' '+FX(A.py(C(t)));}d+=' L'+FX(A.px(12))+' '+FX(A.py(0))+'Z';
   let s=A.s+G('a-fade',.2,`<path d="${d}" fill="${PAL.blue}" opacity=".45"/>`+curve(A,C,{col:'#2F5276'}));
-  const t1=.13, t2=5.03, tm=Math.log(2.2/.3)/1.9, cm=C(tm);
+  const t1=.1, t2=5.74, tm=Math.log(2.2/.3)/1.9, cm=C(tm);
   s+=G('a-fade',.5,ln(A.x,FX(A.py(MIC)),A.x+A.w,FX(A.py(MIC)),RED,1.4,'5 3')+T(A.x+A.w,FX(A.py(MIC)-5),'MIC','mono end f11 halo')
     +ln(FX(A.px(tm)),FX(A.py(cm)),FX(A.px(tm)+46),FX(A.py(cm)),'#6A5B47',1,'2 2')+T(FX(A.px(tm)+50),FX(A.py(cm)+4),'Cmax','mono start f11 halo')
-    +T(FX(A.px(2.2)),FX(A.py(2.2)+2),'AUC','mono mid f12 halo'));
+    +T(FX(A.px(2.6)),FX(A.py(3.2)),'AUC','mono mid f12 halo'));
   const yb=FX(A.py(0)-14);
-  s+=G('a-fade',.8,`<path d="M${FX(A.px(t1))} ${FX(A.py(MIC)+8)} V${FX(A.py(MIC)+14)} H${FX(A.px(t2))} V${FX(A.py(MIC)+8)}" stroke="${INK}" stroke-width="1.2" fill="none"/>`+T(FX(A.px(7.6)),FX(A.py(MIC)+16),'time above MIC','note start f11 halo'));
+  s+=G('a-fade',.8,`<path d="M${FX(A.px(t1))} ${FX(A.py(MIC)+8)} V${FX(A.py(MIC)+14)} H${FX(A.px(t2))} V${FX(A.py(MIC)+8)}" stroke="${INK}" stroke-width="1.2" fill="none"/>`+T(FX(A.px((t1+t2)/2)),FX(A.py(MIC)+27),'time above MIC','note mid f11 halo'));
   const rows=[['Cmax/MIC','aminoglycosides; also daptomycin','once-daily high doses; peak around 8–10 × MIC'],['AUC/MIC','fluoroquinolones, vancomycin, azithromycin, tetracyclines, linezolid','total exposure; vancomycin AUC about 400–600 mg·h/L'],['Time above MIC','β-lactams','free drug above MIC for roughly 40–70% of the interval; frequent dosing or extended infusions']];
   const t=wtable(n,['Index','Drug classes','Dosing goal'],rows,n?[[10,10],[96,18],[226,16]]:[[24,16],[160,34],[400,32]],{y0:A.y+A.h+60,d0:1,R:n?354:620});
   return {vb:n?slim(t.y+6):wide(t.y+8),s:s+t.s};
 }
 function scA9(n){
   const ev=[['sulfonamides',1935],['penicillins',1942],['aminoglycosides',1946],['tetracyclines',1948],['chloramphenicol',1949],['macrolides',1952],['glycopeptides',1958],['quinolones',1962],['oxazolidinones',2000],['lipopeptides',2003],['diarylquinolines (TB)',2012],['triazaacenaphthylenes',2025]];
-  const lw=n?132:170, x0=(n?10:24)+lw, x1=n?340:430, y0=34, rh=n?17:18, yr=v=>x0+(v-1930)/(2030-1930)*(x1-x0);
+  const lw=n?132:170, x0=(n?10:24)+lw, x1=n?340:600, y0=34, rh=n?17:18, yr=v=>x0+(v-1930)/(2030-1930)*(x1-x0);
   let s=G('a-fade',0,T(n?10:24,20,'first clinical use of each class (approximate)','note start f12')+box(FX(yr(1962.5)),y0-6,FX(yr(1999.5)-yr(1962.5)),ev.length*rh+4,'#E7DEC9',2)
     +T(FX((yr(1962.5)+yr(1999.5))/2),y0+ev.length*rh+18,'few new classes','note mid f11'));
   ev.forEach((e,i)=>{const y=y0+i*rh+6;s+=G('a-fade',(.1+i*.06).toFixed(2),T(x0-8,y+4,e[0],'lab end '+(n?'f11':'f12'))+ln(x0,y,x1,y,'#C9BFAB',.6)+`<circle cx="${FX(yr(e[1]))}" cy="${y}" r="4" fill="${i<8?'#2F5276':RED}"/>`);});
   const ay=y0+ev.length*rh+26;
   s+=G('a-fade',.8,ln(x0,ay,x1,ay,'#6A5B47',1)+[1940,1980,2020].map(v=>T(FX(yr(v)),ay+14,String(v),'mono mid f10')).join(''));
   const items=[['Stewardship','The right drug, dose and duration; narrow spectrum once culture results are back; shorter courses where trials show they work; and less use in farming.'],['Why the pipeline is thin','Easy targets and soil producers were mined by the 1960s. Most new compounds cannot cross the Gram-negative envelope. A new drug held in reserve earns little: Achaogen went bankrupt in 2019, a year after its antibiotic was approved.'],['Fixes being tried','Payments decoupled from sales (the UK subscription model), public funders such as CARB-X, and new sources such as uncultured soil bacteria.']];
-  const b=n?bullets(24,ay+46,items,44,{d0:1,gap:18}):bullets(458,44,items,23,{d0:1,gap:16,fs:'f12'});
-  const H=n?b.y-6:Math.max(b.y-6,ay+24);
+  const b=bullets(n?24:30,ay+46,items,n?44:88,{d0:1,gap:18});
+  const H=b.y-6;
   const p=para(n?16:24,H+10,'Bacterial resistance was directly responsible for about 1.3 million deaths in 2019 and associated with about 5 million (GRAM study, Lancet 2022).',n?50:92,'note start f13',17,1.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+b.s+p.s};
 }

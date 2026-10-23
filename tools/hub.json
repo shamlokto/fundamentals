@@ -136,8 +136,8 @@
   ]
  },
  {
-  "name": "Genetics and genomes",
-  "desc": "Inheritance, evolution, mobile DNA and genome biology.",
+  "name": "Genetics, genomes and evolution",
+  "desc": "Inheritance, evolution, mobile DNA, genomes and the tree of life.",
   "decks": [
    {
     "slug": "bateson-epistasis",
@@ -173,6 +173,13 @@
     "title": "Bacterial Genomes",
     "sub": "How a bacterial genome is laid out",
     "blurb": "Size and density, organisation around replication, GC skew, codon usage, genome decay and pangenomes."
+   },
+   {
+    "slug": "phylogenetics",
+    "psub": "Systematics",
+    "title": "Phylogenetics and Taxonomy",
+    "sub": "Reading trees, naming microbes",
+    "blurb": "Alignments, substitution models, likelihood and Bayes, long-branch attraction, ANI and GTDB, and deep time."
    }
   ]
  },
@@ -231,9 +238,23 @@
   ]
  },
  {
-  "name": "Tools",
-  "desc": "Building, editing and screening DNA in the lab.",
+  "name": "Methods and tools",
+  "desc": "Seeing, growing, building, editing, sequencing and analysing.",
   "decks": [
+   {
+    "slug": "microscopy-structure",
+    "psub": "Microscopy",
+    "title": "Microscopy and Structure",
+    "sub": "From the diffraction limit to AlphaFold",
+    "blurb": "Light, super-resolution and electron microscopy, cryo-EM and tomography, crystallography and structure prediction."
+   },
+   {
+    "slug": "lab-methods",
+    "psub": "Lab methods",
+    "title": "Methods in the Lab",
+    "sub": "Growing, isolating and measuring microbes",
+    "blurb": "Pure culture, media and anaerobes, enrichment and culturomics, qPCR, omics, single-cell methods and reporters."
+   },
    {
     "slug": "molecular-cloning",
     "psub": "Molecular cloning",
@@ -261,6 +282,33 @@
     "title": "How Tn-seq Works",
     "sub": "Finding the genes a cell can’t live without",
     "blurb": "Transposon libraries, sequencing insertion sites, and calling essential genes."
+   },
+   {
+    "slug": "bioinformatics",
+    "psub": "Bioinformatics",
+    "title": "Bioinformatics",
+    "sub": "From raw reads to answers",
+    "blurb": "Quality control, mapping, assembly, annotation, metagenomic binning, differential abundance and reproducible pipelines."
+   }
+  ]
+ },
+ {
+  "name": "Antimicrobials and applications",
+  "desc": "Drugs and resistance, and microbes put to work.",
+  "decks": [
+   {
+    "slug": "antimicrobials",
+    "psub": "Antimicrobials",
+    "title": "Antimicrobials and Resistance",
+    "sub": "How drugs work, and how bacteria escape them",
+    "blurb": "Targets and selective toxicity, resistance mechanisms and genes, MIC and breakpoints, synergy, tolerance, PK/PD and the empty pipeline."
+   },
+   {
+    "slug": "applied-microbiology",
+    "psub": "Applied microbiology",
+    "title": "Applied Microbiology",
+    "sub": "Microbes at work",
+    "blurb": "Industrial fermentation, bioremediation, plant–microbe interactions, food safety, clinical diagnostics and synthetic biology."
    }
   ]
  },
