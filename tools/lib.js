@@ -39,7 +39,8 @@ function flow(nodes,edges,o={}){
     if(lab){const side=op.side||1, off=op.off==null?12:op.off;
       const px=(bd?(mx+qx)/2:mx)+nx*off*side+(op.lx||0), py=(bd?(my+qy)/2:my)+ny*off*side+(op.ly||0)+4;
       const anc=op.la||(Math.abs(nx*side)<.3?'mid':(nx*side>0?'start':'end'));
-      ls+=lines(lab).map((l,i)=>T(FX(px),FX(py+i*13),l,`${op.lc||'note'} ${anc} f11 halo`)).join('');}
+      const LL=lines(lab), up=(ny*side<-.3)?(LL.length-1)*13:(Math.abs(ny)<=.3?(LL.length-1)*6.5:0);
+      ls+=LL.map((l,i)=>T(FX(px),FX(py-up+i*13),l,`${op.lc||'note'} ${anc} f11 halo`)).join('');}
   });
   Object.values(nodes).forEach(N=>{ns+=nodeBox(N).s;});
   return es+ns+ls;
