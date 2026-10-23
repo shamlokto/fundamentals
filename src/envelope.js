@@ -73,21 +73,52 @@ function scV4(n){
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,y1+50)),s:s+b.s};
 }
 function scV5(n){
-  const N=n?{
-    a:{x:90,y:40,w:150,t:'UDP-GlcNAc'},b:{x:90,y:104,w:150,t:'UDP-MurNAc'},c:{x:90,y:168,w:150,t:'UDP-MurNAc-|pentapeptide'},
-    d:{x:270,y:168,w:110,t:'D-Ala–D-Ala'},e:{x:90,y:250,w:150,t:'lipid I',f:PAL.gold},f:{x:90,y:314,w:150,t:'lipid II',f:PAL.gold},
-    g:{x:270,y:314,w:110,t:'lipid II|outside',f:PAL.gold},h:{x:270,y:400,w:130,t:'cross-linked|wall',f:'#C6D3A8'}}
-   :{a:{x:65,y:50,w:110,t:'UDP-GlcNAc'},b:{x:205,y:50,w:110,t:'UDP-MurNAc'},c:{x:400,y:50,w:142,t:'UDP-MurNAc-|pentapeptide'},
-    d:{x:570,y:50,w:110,t:'D-Ala–D-Ala'},e:{x:400,y:180,w:120,t:'lipid I',f:PAL.gold},f:{x:570,y:180,w:110,t:'lipid II',f:PAL.gold},
-    g:{x:570,y:360,w:110,t:'lipid II|outside',f:PAL.gold},h:{x:250,y:360,w:140,t:'cross-linked|wall',f:'#C6D3A8'}};
-  const E=n?[['a','b','MurA ⊣ fosfomycin; MurB',{side:-1,la:'start',lx:80}],['b','c','MurC–F',{side:-1,la:'start',lx:80}],['d','c','',{}],['c','e','MraY + Und-P',{side:-1,la:'start',lx:80}],['e','f','MurG',{side:-1,la:'start',lx:80}],['f','g','MurJ flips'],['g','h','PBPs, SEDS|⊣ β-lactams|⊣ vancomycin',{side:1,la:'start',lx:20}]]
-    :[['a','b','MurA ⊣ fosfomycin|MurB',{side:-1,off:16}],['b','c','MurC–F',{side:-1,off:14}],['d','c','Ddl, Alr ⊣ cycloserine',{side:-1,off:34,lx:30}],['c','e','MraY + Und-P',{side:-1,la:'start'}],['e','f','MurG',{side:1}],['f','g','MurJ flips',{side:1}],['g','h','PBPs and SEDS polymerise and cross-link|⊣ β-lactams; vancomycin caps D-Ala–D-Ala',{side:1,off:20}]];
-  const my=n?280:280;
-  let s=G('a-fade',0,membraneBand(n?8:20,n?352:620,my-10,20)+T(n?12:24,my-16,'cytoplasm ↑','note start f11')+T(n?12:24,my+26,'outside ↓','note start f11'));
-  s+=G('a-fade',.3,flow(N,E.filter(e=>!(e[3]&&e[3].none))));
-  const H=n?430:420;
-  const p=para(n?16:24,H,'The wall is built inside the cell, flipped across the membrane on the lipid carrier undecaprenyl phosphate, and assembled outside. Almost every step is an antibiotic target.',n?50:92,'note start f13',17,1.4);
-  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+  // cytoplasmic steps above the membrane; lipid I and lipid II anchored in it by undecaprenyl pyrophosphate;
+  // inhibitors in red, pointing at the enzyme they block
+  const R='#A4473A';
+  const bx=(cx,cy,w,t,f=PAL.cream,h)=>{const L=t.split('|');h=h||(L.length>1?46:34);
+    return `<rect x="${cx-w/2}" y="${cy-h/2}" width="${w}" height="${h}" rx="6" fill="${f}" stroke="${INK}" stroke-width="1.2"/>`
+      +L.map((l,i)=>Tc(cx,cy+5+(i-(L.length-1)/2)*17,l,'#2A2118',14,'mono mid','600')).join('');};
+  const anch=(x,y1,y2)=>{let d=`M${x} ${y1}`;const st=(y2-y1)/6;for(let i=1;i<=6;i++)d+=` L${x+(i%2?4:-4)} ${FX(y1+i*st)}`;return `<path d="${d}" fill="none" stroke="#6A5B47" stroke-width="1.6"/>`;};
+  const lab=(x,y,t,a='start')=>T(x,y,t,`lab ${a} f14 halo`);
+  const red=(x,y,t,a='start')=>Tc(x,y,t,R,13,`note ${a} halo`,'600');
+  let s='';
+  if(!n){
+    const my=246, mh=30;
+    s+=G('a-fade',0,membraneBand(16,624,my,mh)+T(616,my-8,'cytoplasm','note end f13')+T(616,my+mh+18,'outside','note end f13'));
+    s+=G('a-fade',.2,bx(78,50,124,'UDP-GlcNAc')+bx(236,50,124,'UDP-MurNAc')+bx(480,50,180,'UDP-MurNAc-|pentapeptide',PAL.cream,50)
+      +arw(141,50,172,50)+lab(156,26,'MurA, B','mid')+red(156,82,'fosfomycin ⊣ MurA','mid')
+      +arw(299,50,388,50)+lab(344,40,'MurC, D, E','mid'));
+    s+=G('a-fade',.5,bx(78,150,96,'L-Ala')+bx(268,150,140,'D-Ala–D-Ala')+arw(127,150,196,150)+lab(162,140,'Alr, Ddl','mid')+red(162,176,'D-cycloserine ⊣','mid')+red(162,192,'Alr and Ddl','mid')
+      +arw(340,140,414,78)+lab(386,122,'MurF','start'));
+    s+=G('a-fade',.8,bx(480,my-24,110,'lipid I',PAL.gold)+anch(480,my-7,my+mh-4)
+      +arw(480,76,480,my-43)+lab(490,150,'MraY','start')+T(490,168,'adds Und-P','note start f13')
+      +bx(300,my-24,110,'lipid II',PAL.gold)+anch(300,my-7,my+mh-4)+arw(424,my-24,357,my-24)+lab(390,my-48,'MurG','mid'));
+    s+=G('a-fade',1.1,arw(357,my-14,357,my+mh+26,{q:[400,my+mh/2]})+lab(392,my+mh/2+5,'MurJ flips','start')
+      +bx(300,my+mh+40,110,'lipid II',PAL.gold)+anch(300,my+4,my+mh+22)
+      +bx(84,my+mh+40,130,'cross-linked|wall','#C6D3A8')+arw(244,my+mh+40,152,my+mh+40)+lab(198,my+mh+76,'PBPs, SEDS','mid')
+      +red(412,my+mh+46,'β-lactams ⊣ PBPs','start')+red(412,my+mh+64,'vancomycin binds the','start')+red(412,my+mh+80,'D-Ala–D-Ala of lipid II','start'));
+    const p=para(24,my+mh+108,'Wall synthesis starts in the cytoplasm, moves onto the membrane as lipid I and lipid II, is flipped to the outside by MurJ, and ends with polymerisation and cross-linking. The carrier, undecaprenyl pyrophosphate, is recycled; bacitracin blocks that step.',84,'note start f14',18,1.4);
+    return {vb:wide(p.y+8),s:s+p.s};
+  }
+  const my=330, mh=30;
+  s+=G('a-fade',0,membraneBand(8,352,my,mh)+T(12,my-8,'cytoplasm','note start f13')+T(12,my+mh+18,'outside','note start f13'));
+  const oy=my+mh+56;
+  s+=G('a-fade',.2,bx(110,40,190,'UDP-GlcNAc')+arw(110,58,110,96)+lab(120,74,'MurA, B')+red(120,90,'fosfomycin ⊣ MurA')
+    +bx(110,116,190,'UDP-MurNAc')+arw(110,134,110,170)+lab(120,156,'MurC, D, E')
+    +bx(110,196,190,'UDP-MurNAc-|pentapeptide',PAL.cream,50));
+  s+=G('a-fade',.5,bx(290,40,110,'L-Ala')+arw(290,58,290,96)+lab(284,72,'Alr,','end')+lab(284,88,'Ddl','end')
+    +bx(290,116,120,'D-Ala–|D-Ala',PAL.cream,46)+red(290,158,'D-cycloserine','mid')+red(290,174,'⊣ Alr and Ddl','mid')
+    +arw(260,140,206,180)+lab(250,196,'MurF','start'));
+  s+=G('a-fade',.8,arw(110,222,110,my-43)+lab(120,262,'MraY adds Und-P')
+    +bx(130,my-24,104,'lipid I',PAL.gold)+anch(130,my-7,my+mh-4)
+    +bx(276,my-24,104,'lipid II',PAL.gold)+anch(276,my-7,my+mh-4)+arw(183,my-24,223,my-24)+lab(203,my-48,'MurG','mid'));
+  s+=G('a-fade',1.1,arw(330,my-12,330,oy-16,{q:[352,(my+oy)/2]})+lab(322,my+mh+16,'MurJ','end')
+    +bx(276,oy,104,'lipid II',PAL.gold)+anch(276,my+4,oy-17)
+    +bx(86,oy,124,'cross-linked|wall','#C6D3A8')+arw(223,oy,150,oy)+lab(186,oy+38,'PBPs, SEDS','mid')
+    +red(16,oy+64,'β-lactams ⊣ PBPs')+red(16,oy+80,'vancomycin binds the D-Ala–D-Ala of lipid II'));
+  const p=para(16,oy+108,'Wall synthesis starts in the cytoplasm, moves onto the membrane as lipid I and lipid II, is flipped outside by MurJ, then polymerised and cross-linked. The carrier is recycled; bacitracin blocks that step.',44,'note start f14',18,1.4);
+  return {vb:slim(p.y+6),s:s+p.s};
 }
 function scV6(n){
   const items=[['Autolysins','Amidases, endopeptidases and lytic transglycosylases cut the wall so it can grow, divide and separate. Unchecked, they lyse the cell, which is part of how β-lactams kill.'],
@@ -127,7 +158,7 @@ const S=[
  {p:1,title:'The Gram stain',draw:scV2,text:"Hans Christian Gram's stain, from 1884, still sorts most bacteria into two groups in a few minutes. Crystal violet and iodine form a complex inside the cell; alcohol washes it out of thin-walled cells with an outer membrane, while thick walls hold it. The result reflects envelope structure."},
  {p:1,title:'Five envelopes compared',chips:'env',draw:scV3,text:"Pick an envelope to see its layers, an example organism, and what the design means in practice. The differences explain why some drugs reach their targets in one group and not another."},
  {p:2,title:'Peptidoglycan',draw:scV4,text:"Peptidoglycan is a single bag-shaped molecule: glycan strands of alternating GlcNAc and MurNAc, cross-linked through short peptides that contain D-amino acids. The cross-links give it strength, and the enzymes that make them, the penicillin-binding proteins, are the targets of β-lactams."},
- {p:2,title:'Building the wall',draw:scV5,text:"Wall synthesis starts in the cytoplasm with nucleotide-sugar precursors, moves onto the lipid carrier undecaprenyl phosphate as lipid I and lipid II, crosses the membrane through MurJ, and ends outside where glycosyltransferases polymerise and transpeptidases cross-link. Fosfomycin, cycloserine, vancomycin and the β-lactams each block a different step."},
+ {p:2,title:'Building the wall',draw:scV5,text:"Wall synthesis starts in the cytoplasm with nucleotide-sugar precursors, moves onto the lipid carrier undecaprenyl phosphate as lipid I and lipid II, crosses the membrane through MurJ, and ends outside where glycosyltransferases polymerise and transpeptidases cross-link. Each red label is a drug and the enzyme or substrate it blocks: fosfomycin inhibits MurA, D-cycloserine inhibits Alr and Ddl, β-lactams inhibit the PBPs, and vancomycin binds the D-Ala–D-Ala end of lipid II."},
  {p:2,title:'Turnover and recycling',draw:scV6,text:"A growing wall must be cut as well as made. Autolysins open it for insertion and separate daughter cells, Gram-negatives recycle much of their wall each generation, and the recycled fragments double as signals, both inside the cell and to the host immune system."},
  {p:3,title:'Lipopolysaccharide',draw:scV7,text:"The outer leaflet of the Gram-negative outer membrane is made of lipopolysaccharide: lipid A, a core oligosaccharide and a variable O-antigen. Lipid A is the endotoxin that triggers septic shock; the dense, cation-bridged layer is also what keeps many antibiotics out."},
  {p:3,title:'Teichoic and mycolic acids',draw:scV8,text:"Gram-positive walls are threaded with teichoic acids, anionic polymers that shape the cell and bind ions, proteins and phages. Mycobacteria instead attach arabinogalactan and very long mycolic acids, forming a waxy outer layer that is the target of several tuberculosis drugs."},
