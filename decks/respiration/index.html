@@ -668,7 +668,7 @@ function scB2(n){
   let s='';const y=n?120:120, x1=n?10:30, x2=n?350:610;
   s+=G('a-fade',0,membraneBand(x1,x2,y-12,24)+T(x1+4,y-40,'outside (periplasm)','note start f11')+T(x1+4,y+34,'cytoplasm','note start f11'));
   const cx=n?[70,150,230]:[120,230,340];
-  s+=G('a-fade',.3,cx.map((x,i)=>`<rect x="${x-22}" y="${y-22}" width="44" height="44" rx="8" fill="${['#A9C4DC','#C9A9D6','#E7A99B'][i]}" stroke="${INK}" class="tint"/>`+Tc(x,y+4,['I','III','IV'][i],'#3A2E22',12,'mono mid','600')+arw(x+8,y+28,x+8,y-34,{w:1.2,blue:1})).join(''));
+  s+=G('a-fade',.3,cx.map((x,i)=>`<rect x="${x-22}" y="${y-22}" width="44" height="44" rx="8" fill="${['#A9C4DC','#C9A9D6','#E7A99B'][i]}" stroke="${INK}" class="tint"/>`+Tc(x,y+4,['I','III','IV'][i],'#3A2E22',12,'mono mid','600')+arw(x+15,y+28,x+15,y-34,{w:1.2,blue:1})).join(''));
   const ax=n?310:500;
   s+=G('a-fade',.6,`<rect x="${ax-16}" y="${y-30}" width="32" height="60" rx="6" fill="${PAL.gold}" stroke="${INK}" class="tint"/><circle cx="${ax}" cy="${y+46}" r="18" fill="${PAL.gold}" stroke="${INK}"/>`+Tc(ax,y+50,'F₁','#3A2E22',11,'mono mid','600')+arw(ax-6,y-40,ax-6,y+24,{w:1.4,red:1})+T(ax+24,y+52,'ATP','mono start f12'));
   s+=G('a-fade',.9,T(n?180:240,y-50,n?'protons pumped out':'electron transport pumps protons out','note mid f11')+T(ax,y-46,'flow back','note mid f11'));

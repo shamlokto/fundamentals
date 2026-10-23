@@ -544,7 +544,7 @@ function scG3(n){
   s+=G('a-fade',1,`<circle cx="${FX(P.px(0))}" cy="${FX(P.py(0))}" r="4" fill="${METC}" stroke="${INK}"/>`
     +`<circle cx="${FX(P.px(52))}" cy="${FX(P.py(1))}" r="4" fill="${CLOUD}" stroke="${INK}"/>`
     +`<circle cx="${FX(P.px(100))}" cy="${FX(P.py(0))}" r="4" fill="${METC}" stroke="${INK}"/>`
-    +Tc(FX(P.px(0)),P.y-8,'oriC','#3A2E22',10,'mono mid','600')
+    +Tc(FX(P.px(0)+8),FX(P.py(0))+18,'oriC','#3A2E22',10,'mono start','600')+Tc(FX(P.px(100)-8),FX(P.py(0))+18,'oriC','#3A2E22',10,'mono end','600')
     +Tc(FX(P.px(52)),P.py(1)-10,'ter','#3A2E22',10,'mono mid','600'));
   let y=P.y+P.h+(n?52:56);
   const b=bullets(n?24:30,y,[['What is being counted','Along each strand, count G and C in a sliding window and plot (G − C)/(G + C). The leading strand is enriched in G and depleted in C; the lagging strand is the reverse. Plotting the running total from the origin gives a single peak: the minimum marks the origin and the maximum the terminus.'],
