@@ -596,12 +596,22 @@ function scRecBCD(n){
 }
 
 function recaD(k){return (x,y,w)=>{const n=22,dx=w/n,g=22,c=i=>x+i*dx+dx/2, ys=y+58;
-  if(k===0)return lad(x,y,10,{dx,g})+`<path d="M${FX(x+10*dx)} ${y+g} H${FX(x+20*dx)}" stroke="${BB}" stroke-width="2.6"/>`+recaFil(x+10*dx,x+20*dx,y+g)
+  if(k===0)return lad(x,y,10,{dx,g})+`<path d="M${FX(x+10*dx)} ${y+g} H${FX(x+20*dx)}" stroke="${BB}" stroke-width="2.6"/>`+recaFil(x+10*dx,x+20*dx,y+g)+Tc(FX(x+20*dx+3),y+g-6,'3′','#6A5B47',12,'mono start')
     +lad(x,ys,n,{dx,g})+`<path d="M${FX(c(15))} ${y+g+12} V${ys-8}" stroke="#2F5276" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#ahb)" marker-start="url(#ahb)"/>`+T(c(16),y+g+28,'homology search','note start f11');
   const loop=`<path d="M${FX(x+10*dx)} ${ys} Q${FX(c(14.5))} ${ys-30} ${FX(x+19*dx)} ${ys}" stroke="${BB}" stroke-width="2.6" fill="none"/>`;
   const link=`<path d="M${FX(x+10*dx)} ${y+g} C${FX(x+12*dx)} ${y+g}, ${FX(x+9*dx)} ${ys}, ${FX(x+10*dx)} ${ys}" stroke="${INV}" stroke-width="2.6" fill="none"/>`;
   if(k===1)return lad(x,y,10,{dx,g,bot:[[0,10,INV]]})+link+lad(x,ys,n,{dx,g,top:[[0,10],[10,19,INV],[19,n]],nick:[{i:10,s:'t'},{i:19,s:'t'}]})+loop+T(c(14.5),ys-24,'D-loop','note mid f11');
-  if(k===2)return lad(x,y,10,{dx,g,bot:[[0,10,INV]]})+link+lad(x,ys,n,{dx,g,top:[[0,10],[10,19,INV],[19,n,NEW]],nick:[{i:10,s:'t'}]})+prot(c(10),ys-14,20,10,E5,'RuvAB')+arw(c(12),ys-30,c(16),ys-30,{w:1.3});
+  if(k===2){
+    // Holliday junction at index 7: the invading strand (orange) crosses down, the recipient's displaced strand crosses up
+    // to pair with the broken arm's remaining strand, then continues as the single-stranded D-loop, which has grown as
+    // the polymerase extended the invading 3' end (blue).
+    const J=7, xa=x+(J-.5)*dx, xb=x+(J+.5)*dx;
+    return lad(x,y,10,{dx,g,bot:[[0,J-.5,INV],[J+.5,10]]})+lad(x,ys,n,{dx,g,top:[[0,J-.5],[J+.5,19,INV],[19,20.5,NEW],[21,n]]})
+      +`<path d="M${FX(xa)} ${y+g} C${FX(x+J*dx)} ${y+g}, ${FX(x+J*dx)} ${ys}, ${FX(xb)} ${ys}" stroke="${INV}" stroke-width="2.6" fill="none"/>`
+      +`<path d="M${FX(xa)} ${ys} C${FX(x+J*dx)} ${ys}, ${FX(x+J*dx)} ${y+g}, ${FX(xb)} ${y+g}" stroke="${BB}" stroke-width="2.6" fill="none"/>`
+      +`<path d="M${FX(x+10*dx)} ${y+g} C${FX(x+14*dx)} ${y+g-14}, ${FX(x+19*dx)} ${ys-26}, ${FX(x+21*dx)} ${ys}" stroke="${BB}" stroke-width="2.6" fill="none"/>`
+      +T(c(15.5),y+g-6,'D-loop','note mid f12')+prot(x+J*dx,(y+g+ys)/2,20,10,E5,'RuvAB')+T(c(3),y-8,'Holliday junction','note start f12')
+      +Tc(FX(x+20.5*dx+3),ys-5,'3′','#6A5B47',12,'mono start');}
   return lad(x,y,n,{dx,g,bot:[[0,10,INV],[10,n,NEW]]})+lad(x,ys,n,{dx,g})+G('a-move',.5,prot(c(10),ys-16,20,10,E3,'RuvC',{op:.7}),'--dx:30px')+T(c(16),y-8,'repaired','note mid f11');};}
 function scRecA(n){
   const st=[{h:'Search',t:'The RecA filament on the 3′ tail samples duplex DNA, looking for a match: usually the sister chromosome.',d:recaD(0),top:20,dh:90},

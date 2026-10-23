@@ -327,15 +327,18 @@ function scFamily(n){
 /* ===================== Part II · the machine ===================== */
 function scVs(n){
   const rows=[['Template','both strands','one strand'],['Primer','required','not needed'],['Building blocks','dNTPs (T)','NTPs (U)'],['Product','stays paired','peels off'],['Errors','~1 in 10⁹','~1 in 10⁴–10⁵'],['Speed (E. coli)','~1,000 nt/s','~40–80 nt/s']];
-  const x0=n?12:120, c1=n?126:320, c2=n?248:480, y0=n?40:46, dy=n?32:34;
+  const x0=n?12:120, c1=n?146:320, c2=n?266:480, y0=n?40:46, dy=n?32:34;
   let s=G('a-fade',0,T(c1,y0-14,'DNA polymerase','cname mid '+(n?'f14':''))+T(c2,y0-14,'RNA polymerase','cname mid '+(n?'f14':''))+ln(x0,y0-4,n?350:560,y0-4));
   rows.forEach((r,i)=>{const y=y0+20+i*dy;s+=G('a-fade',(.3+i*.3).toFixed(1),T(x0,y,r[0],'lab start '+(n?'f13':''))+T(c1,y,r[1],'note mid '+(n?'f13':''))+T(c2,y,r[2],'note mid '+(n?'f13':'')).replace('class="note mid','class="note mid acc'));});
   const yb=y0+20+rows.length*dy+(n?14:14);
   const tx1=n?20:120, tx2=n?340:560;
-  s+=G('a-fade',2.4,`<path d="M${tx1} ${yb+30} H${tx2}" stroke="${DNA}" stroke-width="2.4"/>`+T(tx1,yb+50,'template strand','note start f12'));
-  s+=G('a-fade',2.8,`<path d="M${tx1+(tx2-tx1)*.55} ${yb+22} H${tx2-20}" stroke="${RNAC}" stroke-width="2.6"/>`+rungs(tx1+(tx2-tx1)*.55,tx2-20,yb+22,yb+30)
-    +`<path d="M${tx1+(tx2-tx1)*.55} ${yb+22} C ${tx1+(tx2-tx1)*.45} ${yb+18}, ${tx1+(tx2-tx1)*.35} ${yb-4}, ${tx1+(tx2-tx1)*.2} ${yb-8}" stroke="${RNAC}" stroke-width="2.6" fill="none"/>`+T(tx1+(tx2-tx1)*.2,yb-16,'RNA leaves the template','note mid f12')+rnap(tx2-14,yb+24,n?.7:.85,false));
-  return {vb:n?slim(yb+62):wide(yb+64),s};
+  // a transcription bubble: duplex upstream, ~9-bp RNA–DNA hybrid at the polymerase, RNA 5' end peeling away
+  const hb=tx2-74, bs=tx2-92, rx=tx1+(tx2-tx1)*.2;
+  s+=G('a-fade',2.4,`<path d="M${tx1} ${yb+30} H${tx2}" stroke="${DNA}" stroke-width="2.4"/>`+`<path d="M${tx1} ${yb+40} H${bs} Q${bs+10} ${yb+52} ${bs+24} ${yb+52} H${tx2}" stroke="${DNA}" stroke-width="2.2" fill="none" opacity=".75"/>`+rungs(tx1,bs,yb+30,yb+40)
+    +T(tx1-4,yb+34,'3′','mono end f12')+T(tx1-4,yb+45,'5′','mono end f12')+T(tx1,yb+68,'below: non-template strand','note start f12')+T(tx1,yb+20,'template strand','note start f12'));
+  s+=G('a-fade',2.8,`<path d="M${hb} ${yb+22} H${tx2-20}" stroke="${RNAC}" stroke-width="2.6"/>`+rungs(hb,tx2-20,yb+22,yb+30)
+    +`<path d="M${hb} ${yb+22} C ${hb-30} ${yb+20}, ${rx+60} ${yb-6}, ${rx} ${yb-8}" stroke="${RNAC}" stroke-width="2.6" fill="none"/>`+T(rx-4,yb-4,'5′','mono end f12')+T(rx+(n?70:110),yb-16,'RNA leaves the template','note mid f12')+rnap(tx2-14,yb+26,n?.7:.85,false));
+  return {vb:n?slim(yb+76):wide(yb+78),s};
 }
 
 function stIcon(i,cx,cy,k){
@@ -438,7 +441,7 @@ function scBack(n){
     g+=`<ellipse cx="${(i===1?as-24:as)}" cy="${ty-10}" rx="${n?40:44}" ry="${n?22:28}" fill="${POLC}" opacity=".35" stroke="${INK}" stroke-width=".8"/>`;
     if(i===0)g+=`<rect x="${end-8}" y="${ty-16}" width="9" height="8" fill="${RED}"/>`;
     if(i===1)g+=`<path d="M${end-8} ${ty-12} q12 4 16 20" stroke="${RNAC}" stroke-width="2.6" fill="none"/><rect x="${end+5}" y="${ty+4}" width="8" height="8" fill="${RED}"/>`;
-    if(i===2)g+=`<text x="${as-8}" y="${ty+18}" class="mid" style="fill:${RED};font-size:16px">✂</text><rect x="${as+14}" y="${ty+8}" width="8" height="8" fill="${RED}" opacity=".5"/>`+blob(as+(n?34:28),ty-34,12,8,'#9C7FB0');
+    if(i===2)g+=`<text x="${as-8}" y="${ty+18}" class="mid" style="fill:${RED};font-size:16px">✂</text><rect x="${as+14}" y="${ty+8}" width="8" height="8" fill="${RED}" opacity=".5"/>`+blob(as+(n?44:36),ty+(n?12:24),12,8,'#9C7FB0')+(n?T(as+60,ty+16,'GreB','mono start f12'):T(as+36,ty+45,'GreB','mono mid f12'));
     s+=G('a-fade',(i*.9).toFixed(1),g);});
   const H=n?10+3*(ph+14):20+ph+16;
   s+=G('a-fade',2.8,T(n?180:320,H+8,n?'Accuracy: ~1 error in 10⁴–10⁵':'Backtracking and cleavage keep errors near 1 in 10⁴–10⁵','lab mid'));
@@ -540,7 +543,8 @@ function scActivators(n){
   const r1=n?92:96;
   s+=G('a-fade',0,T(x1,r1-62,n?'CAP at lac':'CAP–cAMP at the lac promoter','cname start '+(n?'f15':''))+`<path d="M${x1} ${r1} H${x2}" stroke="${OLD}" stroke-width="2.6"/>`+box(n?150:330,r1-6,n?30:40,12,'#7D4A98')+box(n?206:400,r1-6,n?30:40,12,'#7D4A98')+T(n?165:350,r1+24,'−35','mono mid f11')+T(n?221:420,r1+24,'−10','mono mid f11'));
   s+=G('a-pop',.6,blob(n?84:220,r1-14,n?22:28,13,'#C99A2E')+T(n?84:220,r1-10,'CAP','mono mid f12')+T(n?84:220,r1+24,'−61.5','mono mid f11'));
-  s+=G('a-pop',1.0,rnapCore(n?206:390,r1-40,n?.42:.55,{sigma:true})+`<path d="M${n?118:258} ${r1-16} C ${n?150:300} ${r1-6}, ${n?170:340} ${r1-10}, ${n?194:376} ${r1-20}" stroke="#8C7A55" stroke-width="1.6" fill="none"/>`+blob(n?115:257,r1-16,n?8:9,n?6:7,'#C9B892')+T(n?115:257,r1-30,n?'αCTD':'αCTD touches CAP','note mid f11'));
+  // holoenzyme sitting on the promoter: σ70 contacts the −35 and −10 boxes; αCTD reaches back to CAP
+  s+=G('a-pop',1.0,rnapCore(n?206:390,r1-(n?46:48),n?.42:.55,{})+`<ellipse cx="${n?193:385}" cy="${r1-11}" rx="${n?45:58}" ry="6" fill="${SIG}" stroke="${INK}" stroke-width="1"/>`+T(n?242:448,r1-10,'σ<tspan baseline-shift="super" font-size="70%">70</tspan>','lab start f14')+`<path d="M${n?118:258} ${r1-16} C ${n?150:300} ${r1-6}, ${n?170:340} ${r1-14}, ${n?190:372} ${r1-28}" stroke="#8C7A55" stroke-width="1.6" fill="none"/>`+blob(n?115:257,r1-16,n?8:9,n?6:7,'#C9B892')+T(n?115:257,r1-30,n?'αCTD':'αCTD touches CAP','note mid f11'));
   const r2=n?250:262;
   s+=G('a-fade',1.6,T(x1,r2-(n?98:108),n?'σ⁵⁴ and an enhancer':'σ⁵⁴ waits for an enhancer-binding protein','cname start '+(n?'f15':''))
     +`<path d="M${x1} ${r2} H${n?110:200} C ${n?150:260} ${r2}, ${n?150:260} ${r2-70}, ${n?200:330} ${r2-70} C ${n?250:400} ${r2-70}, ${n?250:400} ${r2}, ${n?290:470} ${r2} H${x2}" stroke="${OLD}" stroke-width="2.6" fill="none"/>`);
@@ -554,8 +558,8 @@ function scActivators(n){
 function scBactStruct(n){
   let s=G('a-pop',0,rnapCore(n?180:170,n?120:150,n?1:1.3,{labels:true}));
   const tx=n?14:330, ty=n?220:50;
-  const ev=[['1999','Seth Darst’s lab: core RNA polymerase of Thermus aquaticus, 3.3 Å'],['2002','Holoenzymes with σ, from the Darst and Yokoyama labs'],['2007','Elongation complexes with DNA, RNA and NTP in place']];
-  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:36);s+=G('a-fade',(.8+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+14;});
+  const ev=[['1999','Seth Darst’s lab: core RNA polymerase of Thermus aquaticus, 3.3 Å'],['2002','Holoenzymes with σ, from the Darst and Yokoyama labs'],['2007','Elongation complexes with DNA, RNA and NTP in place']];
+  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],40);s+=G('a-fade',(.8+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+14;});
   s+=G('a-fade',2.2,wrap(n?'A crab claw, made of β′ and β, around a cleft that holds the DNA. Pol II has the same core.':'A crab claw of β′ and β around the DNA-binding cleft. Bacterial RNAP and Pol II share the same core.',n?44:40).map((l,i)=>T(tx,yy+8+i*20,l,'lab start '+(n?'f14':''))).join(''));
   return {vb:n?slim(yy+52):wide(Math.max(290,yy+60)),s};
 }
@@ -624,7 +628,10 @@ function scSRNA(n){
   s+=G('a-fade',2.2,mrna(yB)
     +box(x1+w*.27,yB-7,w*.10,14,'#8FB1CF')+Tc(x1+w*.32,yB+4,'RBS','#1E2632',10,'mono mid','600')
     +box(x1+w*.44,yB-7,w*.30,14,BLUE)+Tc(x1+w*.59,yB+4,'gene','#F3EDE0',11,'mono mid','600'));
-  s+=G('a-fade',2.6,pair(x1+w*.11,x1+w*.26,yB)
+  // before: an upstream arm of the message folds back and pairs with the RBS (a hairpin); the sRNA then captures the arm
+  {let r='';for(let x=x1+w*.27+4;x<x1+w*.37;x+=7)r+=`M${x.toFixed(1)} ${yB-13} V${yB-7}`;
+   s+=G('a-fade',2.2,G('a-out',3.3,`<path d="M${x1+w*.11} ${yB} C ${x1+w*.11} ${yB-44}, ${x1+w*.25} ${yB-40}, ${x1+w*.27} ${yB-15} H${x1+w*.37}" stroke="${RNAC}" stroke-width="2.6" fill="none"/><path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/>`+T(x1+w*.38+4,yB-18,'hairpin hides the RBS','note start f12'),'--dy:-16px'));}
+  s+=G('a-fade',4.0,pair(x1+w*.11,x1+w*.26,yB)
     +Tc(x1+w*.11,yB-30,'sRNA','#7D4A98',11,'mono start','600')
     +ribo(x1+w*.32,yB+34,n?1.3:1.6)+mark(x1+w*.32+(n?20:24),yB+30,true,8)
     +T(x1,yB+(n?60:64),n?'it pairs with the arm that hid the RBS, so the RBS is free':'the sRNA pairs with the hairpin arm that hid the ribosome binding site: the site is freed and translation begins','note start f12'));
