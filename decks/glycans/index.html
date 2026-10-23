@@ -623,7 +623,7 @@ function scG8(n){
     return d;};
   let y;
   if(!n){cols.forEach((c,i)=>{const cx=110+i*210;s+=G('a-fade',(i*.6).toFixed(1),draw(i,cx,98)+T(cx,172,c[0],'cname mid f14')+wrap(c[1],30).map((l,j)=>T(cx,192+j*16,l,'note mid f12')).join('')+wrap(c[2],26).map((l,j)=>T(cx,192+4*16+j*15,l,'mono acc mid f11')).join(''));});y=320;}
-  else{y=20;cols.forEach((c,i)=>{const Lx=wrap(c[1],27);s+=G('a-fade',(i*.6).toFixed(1),T(16,y+8,c[0],'cname start f14')+Lx.map((l,j)=>T(16,y+28+j*15,l,'note start f12')).join('')+T(16,y+34+Lx.length*15,c[2],'mono acc start f10')+draw(i,272,y+66));y+=Math.max(148,50+Lx.length*15)+10;});}
+  else{y=20;cols.forEach((c,i)=>{const Lx=wrap(c[1],27);s+=G('a-fade',(i*.6).toFixed(1),T(16,y+8,c[0],'cname start f14')+Lx.map((l,j)=>T(16,y+28+j*15,l,'note start f12')).join('')+wrap(c[2],22).map((l,j)=>T(16,y+34+Lx.length*15+j*13,l,'mono acc start f10')).join('')+draw(i,272,y+66));y+=Math.max(148,50+Lx.length*15)+10;});}
   const p=para(n?16:24,y,'Bacteria make long surface polysaccharides in three ways. All begin from nucleotide sugars in the cytoplasm; they differ in where the chain is built and how it crosses the membrane. The pneumococcal capsule, next, almost always uses the Wzx/Wzy route.',n?50:92,'note start f13',17,2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
