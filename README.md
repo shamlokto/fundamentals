@@ -31,28 +31,31 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | XXIII | Central Carbon Metabolism | 7 | [`decks/central-metabolism/`](decks/central-metabolism/) |
 | XXIV | Respiration and Fermentation | 7 | [`decks/respiration/`](decks/respiration/) |
 | XXV | Autotrophy and the Element Cycles | 8 | [`decks/autotrophy-cycles/`](decks/autotrophy-cycles/) |
-| XXVI | Viruses | 8 | [`decks/virology/`](decks/virology/) |
-| XXVII | Immunity to Microbes | 9 | [`decks/immunity/`](decks/immunity/) |
-| XXVIII | Pathogenesis and Epidemiology | 9 | [`decks/pathogenesis/`](decks/pathogenesis/) |
-| XXIX | Microscopy and Structure | 9 | [`decks/microscopy-structure/`](decks/microscopy-structure/) |
-| XXX | Methods in the Lab | 9 | [`decks/lab-methods/`](decks/lab-methods/) |
-| XXXI | Tools for Molecular Cloning | 21 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
-| XXXII | How CRISPR–Cas9 Works | 13 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
-| XXXIII | Next-Generation Sequencing | 15 | [`decks/sequencing/`](decks/sequencing/) |
-| XXXIV | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
-| XXXV | Bioinformatics | 9 | [`decks/bioinformatics/`](decks/bioinformatics/) |
-| XXXVI | Antimicrobials and Resistance | 9 | [`decks/antimicrobials/`](decks/antimicrobials/) |
-| XXXVII | Applied Microbiology | 9 | [`decks/applied-microbiology/`](decks/applied-microbiology/) |
-| XXXVIII | Statistics for Microbiologists | 9 | [`decks/statistics/`](decks/statistics/) |
-| XXXIX | Models of Growth and Spread | 8 | [`decks/modelling/`](decks/modelling/) |
-| XL | Biosafety, Ethics and Good Practice | 9 | [`decks/biosafety-ethics/`](decks/biosafety-ethics/) |
-| XLI | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
-| XLII | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
-| XLIII | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
-| XLIV | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
-| XLV | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
-| XLVI | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
-| XLVII | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
+| XXVI | Microbial Growth | 8 | [`decks/growth/`](decks/growth/) |
+| XXVII | Stress, Biofilms and Extremes | 9 | [`decks/stress-biofilms/`](decks/stress-biofilms/) |
+| XXVIII | Microbial Ecology | 9 | [`decks/microbial-ecology/`](decks/microbial-ecology/) |
+| XXIX | Viruses | 8 | [`decks/virology/`](decks/virology/) |
+| XXX | Immunity to Microbes | 9 | [`decks/immunity/`](decks/immunity/) |
+| XXXI | Pathogenesis and Epidemiology | 9 | [`decks/pathogenesis/`](decks/pathogenesis/) |
+| XXXII | Microscopy and Structure | 9 | [`decks/microscopy-structure/`](decks/microscopy-structure/) |
+| XXXIII | Methods in the Lab | 9 | [`decks/lab-methods/`](decks/lab-methods/) |
+| XXXIV | Tools for Molecular Cloning | 21 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
+| XXXV | How CRISPR–Cas9 Works | 13 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
+| XXXVI | Next-Generation Sequencing | 15 | [`decks/sequencing/`](decks/sequencing/) |
+| XXXVII | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
+| XXXVIII | Bioinformatics | 9 | [`decks/bioinformatics/`](decks/bioinformatics/) |
+| XXXIX | Antimicrobials and Resistance | 9 | [`decks/antimicrobials/`](decks/antimicrobials/) |
+| XL | Applied Microbiology | 9 | [`decks/applied-microbiology/`](decks/applied-microbiology/) |
+| XLI | Statistics for Microbiologists | 9 | [`decks/statistics/`](decks/statistics/) |
+| XLII | Models of Growth and Spread | 8 | [`decks/modelling/`](decks/modelling/) |
+| XLIII | Biosafety, Ethics and Good Practice | 9 | [`decks/biosafety-ethics/`](decks/biosafety-ethics/) |
+| XLIV | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
+| XLV | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
+| XLVI | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
+| XLVII | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
+| XLVIII | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
+| XLIX | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
+| L | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
 
 Historical attributions, dates and figures are rounded for teaching and should be checked against primary sources.
 

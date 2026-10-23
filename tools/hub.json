@@ -211,6 +211,33 @@
   ]
  },
  {
+  "name": "Growth, physiology and ecology",
+  "desc": "How microbes grow, survive, live together and shape their world.",
+  "decks": [
+   {
+    "slug": "growth",
+    "psub": "Growth",
+    "title": "Microbial Growth",
+    "sub": "Batch, chemostat and growth laws",
+    "blurb": "The batch growth curve, exponential maths, measuring growth, the chemostat and Monod kinetics, maintenance, and the ribosome growth laws."
+   },
+   {
+    "slug": "stress-biofilms",
+    "psub": "Physiology",
+    "title": "Stress, Biofilms and Extremes",
+    "sub": "Surviving heat, starvation and saturated brine",
+    "blurb": "Stress responses, stationary phase and GASP, biofilms, dormancy and persistence, and the limits of life."
+   },
+   {
+    "slug": "microbial-ecology",
+    "psub": "Ecology",
+    "title": "Microbial Ecology",
+    "sub": "Communities, diversity and interactions",
+    "blurb": "Community assembly, diversity metrics and rarefaction, syntrophy, competition and predation, microbiomes, and why correlations are not causes."
+   }
+  ]
+ },
+ {
   "name": "Viruses, hosts and disease",
   "desc": "Viruses, the immune system, and how microbes cause disease.",
   "decks": [

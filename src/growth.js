@@ -22,8 +22,8 @@ function scG2(n){
   s+=A.s;
   s+=GPH.map(p=>T(FX((A.px(p.a)+A.px(p.b))/2),A.y-6,p.k==='Exponential'?(n?'exp.':'exponential'):p.k.toLowerCase(),'note mid f10')).join('');
   s+=G('a-fade',.2,curve(A,gcurve,{col:'#2F5276'}));
-  if(gphSel===3)s+=G('a-fade',.5,curve(A,t=>gcurve(t)-0.0,{col:'#2F5276',from:14,to:24})+T(FX(A.px(23.5)),FX(A.py(gcurve(23.5))-10),'survivors','note end f10 halo'));
-  if(gphSel===1)s+=G('a-fade',.5,ln(FX(A.px(3.5)),FX(A.py(gcurve(3.5))),FX(A.px(6.5)),FX(A.py(gcurve(3.5))),'#A4473A',1.2,'3 3')+ln(FX(A.px(6.5)),FX(A.py(gcurve(3.5))),FX(A.px(6.5)),FX(A.py(gcurve(6.5))),'#A4473A',1.2,'3 3')+T(FX(A.px(6.5)+6),FX((A.py(gcurve(3.5))+A.py(gcurve(6.5)))/2+4),'slope = μ','note start f11 halo'));
+  if(gphSel===3)s+=G('a-fade',.5,curve(A,t=>gcurve(16)-.55*(1-Math.exp(-(t-16)/2.5)),{col:'#A4473A',dash:'4 3',w:1.6,from:16,to:24})+T(FX(A.px(23.6)),FX(A.py(gcurve(16)-.5)-18),n?'survivors':'long-term survivors','note end f10 halo'));
+  if(gphSel===1)s+=G('a-fade',.5,ln(FX(A.px(4.2)),FX(A.py(gcurve(4.2))),FX(A.px(5.8)),FX(A.py(gcurve(4.2))),'#A4473A',1.2,'3 3')+ln(FX(A.px(5.8)),FX(A.py(gcurve(4.2))),FX(A.px(5.8)),FX(A.py(gcurve(5.8))),'#A4473A',1.2,'3 3')+T(FX(A.px(5.8)+6),FX((A.py(gcurve(4.2))+A.py(gcurve(5.8)))/2+4),'slope = μ','note start f11 halo'));
   const tx=n?16:428, ty=n?A.y+A.h+60:50;
   s+=G('a-fade',.3,T(tx,ty,ph.h,'cname start f15'));
   const p=para(tx,ty+22,ph.t,n?50:30,'note start f13',17,.5);
@@ -31,9 +31,9 @@ function scG2(n){
   return {vb:n?slim(H):wide(H),s:s+p.s};
 }
 function scG3(n){
-  const eq=[['N = N₀ · 2ⁿ','n generations; n = t / g, where g is the doubling time'],['μ = ln 2 / g ≈ 0.69 / g','specific growth rate, per hour'],['ln N = ln N₀ + μt','a straight line on a log plot, slope μ'],['n = 3.3 × (log₁₀ N − log₁₀ N₀)','generations from two counts']];
+  const eq=[['N = N₀ · 2ⁿ','n generations; n = t / g, where g is the doubling time'],['μ = ln 2 / g ≈ 0.69 / g','specific growth rate, per hour'],['ln N = ln N₀ + μt','a straight line on a log plot, slope μ'],['n = 3.3 (log₁₀N − log₁₀N₀)','generations from two counts']];
   let s='', y=34; const x=n?16:24;
-  eq.forEach((e,i)=>{s+=G('a-fade',(i*.25).toFixed(2),T(x,y,e[0],'mono start f14')+T(n?x:x+250,n?y+18:y,e[1],'note start f12'));y+=n?42:26;});
+  eq.forEach((e,i)=>{s+=G('a-fade',(i*.25).toFixed(2),T(x,y,e[0],'mono start f14')+T(n?x:x+282,n?y+18:y,e[1],'note start f12'));y+=n?42:26;});
   const ex=para(x,y+6,'Worked example: E. coli in rich broth at 37 °C doubles about every 20 minutes, so μ ≈ 2.1 per hour. Unchecked, one cell would leave about 4 × 10²¹ descendants in a day, and after two days they would outweigh the Earth. Exponential growth never lasts long.',n?50:92,'lab start f13',17,1);
   s+=ex.s;
   const items=[['Vibrio natriegens',1.0,PAL.green,'~10 min'],['E. coli, rich broth',1.3,PAL.green,'~20 min'],['E. coli, glucose minimal',1.78,PAL.blue,'~60 min'],['baker’s yeast',1.95,PAL.lilac,'~90 min'],['Mycobacterium tuberculosis',3.08,PAL.rose,'~20 h'],['Prochlorococcus, in the sea',3.16,PAL.rose,'~1 day']];
@@ -47,16 +47,17 @@ function scG4(n){
   for(let i=0;i<4;i++)s+=G('a-fade',(i*.15).toFixed(2),tube(x0+i*dx,y+28,{h:58,w:18,turbid:i<2,seed:3+i,label:labs[i]}));
   for(let i=0;i<3;i++)s+=arw(x0+i*dx+12,y-36,x0+(i+1)*dx-12,y-36,{q:[x0+i*dx+dx/2,y-54],w:1.2});
   s+=T(x0+1.5*dx,y-58,n?'0.1 mL into 0.9 mL':'1 mL into 9 mL each step','note mid f11 halo');
+  const cols=colonySet(42,11,n?30:36);
   const dx1=n?x0+3*dx+50:x0+3*dx+90;
-  s+=G('a-fade',.7,arw(x0+3*dx+14,y,dx1-34,y,{w:1.2})+dish(dx1+(n?6:10),y,n?30:36,colonySet(n?27:42,11,n?30:36),{label:n?'count':'42 colonies'}));
-  if(!n)s+=G('a-fade',.9,T(dx1+60,y-6,'0.1 mL plated from the','note start f11')+T(dx1+60,y+8,'1/1000 tube → 42 × 10 × 1000','note start f11')+T(dx1+60,y+22,'= 4.2 × 10⁵ CFU per mL','note start f11'));
+  s+=G('a-fade',.7,arw(x0+3*dx+14,y,dx1-34,y,{w:1.2})+dish(dx1+(n?6:10),y,n?30:36,cols,{label:n?'count':cols.length+' colonies'}));
+  if(!n)s+=G('a-fade',.9,T(dx1+60,y-6,'0.1 mL plated from the','note start f11')+T(dx1+60,y+8,'1/1000 tube → '+cols.length+' × 10 × 1000','note start f11')+T(dx1+60,y+22,'= '+(cols.length/10).toFixed(1)+' × 10⁵ CFU per mL','note start f11'));
   const rows=[['Optical density (OD₆₀₀)','light scattered by all cells, live or dead','fast and non-destructive; linear only at low OD; calibrate per instrument and organism (OD 1 is very roughly 10⁹ E. coli per mL)'],
    ['Viable count (CFU)','cells that can form a colony','serial dilution and plating; count plates with about 30–300 colonies; chains and clumps count as one'],
    ['Direct count','all cells in a counting chamber','Petroff–Hausser chamber or haemocytometer under the microscope; counts the dead too'],
    ['Flow cytometry','cells passing a laser, one at a time','fast counts and sizes; with DNA or live/dead stains; routine for marine plankton'],
    ['Most probable number','growth in replicate dilution tubes','a statistical estimate; used for coliforms in water'],
    ['Dry weight, protein','biomass','what yields are expressed in; says nothing about cell number']];
-  const t=wtable(n,['Method','Measures','Notes'],rows,n?[[10,12],[110,14],[220,17]]:[[24,18],[180,22],[350,40]],{y0:y+80,d0:.6,R:n?354:620});
+  const t=wtable(n,['Method','Measures','Notes'],rows,n?[[10,13],[98,15],[200,25]]:[[24,18],[180,22],[350,40]],{y0:y+80,d0:.6,R:n?354:620});
   return {vb:n?slim(t.y+6):wide(t.y+8),s:s+t.s};
 }
 /* ---------- chemostat ---------- */
@@ -85,10 +86,10 @@ function scG5(n){
   const A=axes(ax.x,ax.y,ax.w,ax.h,{xr:[0,200],yr:[0,1.1],xt:[[0,'0'],[100,'100'],[200,'200']],yt:[[0,'0'],[.5,'0.5'],[1,'1.0']],xlab:'substrate S (mg/L)',ylab:'μ (per h)'});
   s+=A.s+G('a-fade',.4,curve(A,monod,{col:'#2F5276'})+ln(A.x,FX(A.py(CH.mu)),A.x+A.w,FX(A.py(CH.mu)),'#6A5B47',.8,'2 3')+T(A.x+A.w,FX(A.py(CH.mu)-5),'μmax','note end f10 halo')
     +ln(A.x,FX(A.py(c.D)),FX(A.px(Math.min(ss.S,200))),FX(A.py(c.D)),'#A4473A',1.4,'4 3')+(ss.wash?'':`<circle cx="${FX(A.px(ss.S))}" cy="${FX(A.py(c.D))}" r="4.5" fill="#A4473A"/>`)
-    +T(FX(A.px(ss.wash?100:Math.max(ss.S,40))+8),FX(A.py(c.D)+(c.D>.85?16:-8)),ss.wash?'D above μ at any S':'μ = D at S*','note start f11 halo'));
+    +T(FX(A.px(ss.wash?60:ss.S)+10),FX(A.py(c.D)+(ss.wash?-8:18)),ss.wash?'D above μ at any S':'μ = D at S*','note start f11 halo'));
   const by=n?A.y+A.h+80:A.y+A.h+60;
-  const rows=ss.wash?[['Steady state','none: cells are washed out faster than they can divide'],['Residual substrate','S rises to the feed concentration, 200 mg/L'],['Critical D','μmax·S_R/(Ks+S_R) ≈ 0.95 per hour']]
-    :[['Growth rate','μ = D = '+c.D.toFixed(1)+' per h (doubling '+Math.round(60*Math.LN2/c.D)+' min)'],['Residual substrate','S* = Ks·D/(μmax − D) = '+FX(ss.S,1)+' mg/L'],['Biomass','X* = Y(S_R − S*) = '+FX(ss.X,0)+' mg/L'],['Productivity','D·X* = '+FX(ss.P,0)+' mg/L per h']];
+  const rows=ss.wash?[['Steady state','none: cells are washed out faster than they can divide'],['Residual substrate','S rises to the feed concentration, 200 mg/L'],['Critical D',(n?'':'μmax·S_R/(Ks+S_R) ')+'≈ 0.95 per hour']]
+    :[['Growth rate',(n?'μ = D = ':'μ = D = ')+c.D.toFixed(1)+' per h ('+Math.round(60*Math.LN2/c.D)+' min doubling)'],['Residual substrate',(n?'S* = ':'S* = Ks·D/(μmax − D) = ')+FX(ss.S,1)+' mg/L'],['Biomass',(n?'X* = ':'X* = Y(S_R − S*) = ')+FX(ss.X,0)+' mg/L'],['Productivity','D·X* = '+FX(ss.P,0)+' mg/L per h']];
   let yy=by;const kx=n?16:24, vx2=n?122:190;
   s+=G('a-fade',.5,T(kx,yy-22,'Steady state at '+c.k.replace(': washout',''),'cname start f15'));
   rows.forEach((r,i)=>{const L=wrap(r[1],n?29:56);s+=G('a-fade',(.6+i*.08).toFixed(2),T(kx,yy,r[0],'lab start f13')+L.map((l,j)=>T(vx2,yy+j*16,l,'mono start f12')).join(''));yy+=L.length*16+8;});
@@ -100,7 +101,7 @@ function scG6(n){
     :axes(70,40,280,180,{xr:[0,1],yr:[0,2.4],xt:[[0,'0'],[.5,'0.5'],[1,'1.0']],yt:[[0,'0'],[1,'1'],[2,'2']],xlab:'growth rate μ (per h)',ylab:'qS (g/g per h)'});
   const m=.25,Ym=.5;
   let s=A.s+G('a-fade',.3,curve(A,u=>u/Ym+m,{col:'#2F5276'})+curve(A,u=>u/Ym,{col:'#6A5B47',dash:'4 3',w:1.4}));
-  s+=G('a-fade',.6,`<circle cx="${A.x}" cy="${FX(A.py(m))}" r="4" fill="#A4473A"/>`+T(A.x+8,FX(A.py(m)-8),'m: maintenance','note start f11 halo')
+  s+=G('a-fade',.6,`<circle cx="${A.x}" cy="${FX(A.py(m))}" r="4" fill="#A4473A"/>`+T(FX(A.px(.14)),FX(A.py(.03)),'← m: maintenance','note start f11 halo')
     +T(FX(A.px(.62)),FX(A.py(.62/Ym+m)-10),'slope 1/Ymax','note end f11 halo')+T(FX(A.px(.78)),FX(A.py(.78/Ym)+18),'no maintenance','note start f11 halo'));
   const items=[['Pirt’s equation (1965)','qS = μ/Ymax + m. Substrate is spent on growth and on maintenance; dividing by μ gives 1/Yobs = 1/Ymax + m/μ, so the observed yield falls at low growth rates.'],['What maintenance pays for','Turnover of proteins and RNA, repair, motility, and keeping ion gradients against leaks. Measured from chemostats run at several dilution rates.'],['Typical yields','Aerobic E. coli on glucose makes about 0.5 g dry cells per g glucose; fermenting cells make far less. Per ATP, yields are about 10 g dry cells per mole (YATP, Bauchop and Elsden 1960).']];
   const b=n?bullets(24,A.y+A.h+64,items,44,{d0:.9,gap:20}):bullets(390,50,items,30,{d0:.9,gap:18});
@@ -115,7 +116,7 @@ function scG7(n){
   const meds=[.5,1.0,1.6];
   s+=G('a-fade',.4,meds.map(l=>`<circle cx="${FX(A.px(l))}" cy="${FX(A.py(r(l)))}" r="4" fill="#2F5276"/>`).join(''));
   s+=G('a-fade',.7,meds.map(l=>curve(A,u=>r(l)+(l-u)*(.5-r(l))/l,{col:'#A4473A',dash:'4 3',w:1.4,from:l*.25,to:l})).join(''));
-  s+=G('a-fade',.9,T(FX(A.px(1.95)),FX(A.py(r(1.9))+20),'richer media','note end f11 halo')+T(FX(A.px(.12)),FX(A.py(.56)),'+ chloramphenicol','note start f11 halo'));
+  s+=G('a-fade',.9,T(FX(A.px(1.62)),FX(A.py(r(1.6))+24),'richer media','note start f11 halo')+T(FX(A.px(.12)),FX(A.py(.56)),'+ chloramphenicol','note start f11 halo'));
   const items=[['Copenhagen, 1958','Schaechter, Maaløe and Kjeldgaard found that in Salmonella grown in different media, cell mass and RNA per cell rose exponentially with growth rate. Growth rate, not the medium itself, set cell composition.'],['A linear law, 2010','Scott, Hwa and colleagues showed that in E. coli the ribosome share of the proteome rises linearly with growth rate when nutrients are varied: faster growth needs more ribosomes, each working near full speed.'],['The other line','Slowing translation with chloramphenicol makes cells raise their ribosome share as growth falls (red). Together the lines describe a proteome split between ribosomes, metabolic enzymes and a fixed core.']];
   const b=n?bullets(24,A.y+A.h+62,items,44,{d0:1,gap:20}):bullets(400,50,items,29,{d0:1,gap:16});
   const H=n?b.y-4:Math.max(b.y-4,A.y+A.h+50);
@@ -125,7 +126,7 @@ function scG8(n){
   const A=n?axes(58,36,270,150,{xr:[.5,1.5],yr:[0,1.6],xt:[[.5,'small'],[1,'average'],[1.5,'large']],yt:[[0,'0'],[1,'1']],xlab:'size at birth',ylab:'size added'})
     :axes(70,40,270,180,{xr:[.5,1.5],yr:[0,1.6],xt:[[.5,'small'],[1,'average'],[1.5,'large']],yt:[[0,'0'],[1,'1']],xlab:'size at birth',ylab:'size added'});
   let s=A.s+G('a-fade',.3,curve(A,b=>b,{col:'#6A5B47',dash:'4 3',w:1.4})+curve(A,b=>2-b,{col:'#A4473A',dash:'4 3',w:1.4})+curve(A,b=>1,{col:'#2F5276',w:2.6}));
-  s+=G('a-fade',.6,T(FX(A.px(1.48)),FX(A.py(1.48)+16),'timer','note end f11 halo')+T(FX(A.px(1.48)),FX(A.py(.52)-8),'sizer','note end f11 halo')+T(FX(A.px(.56)),FX(A.py(1)-8),'adder (observed)','note start f11 halo'));
+  s+=G('a-fade',.6,T(FX(A.px(1.48)),FX(A.py(1.48)+16),'timer','note end f11 halo')+T(FX(A.px(1.48)),FX(A.py(.52)-8),'sizer','note end f11 halo')+T(FX(A.px(.53)),FX(A.py(1)-8),'adder','note start f11 halo'));
   const rng=rnd(4);let dots='';for(let i=0;i<26;i++){const b=.7+rng()*.6,d=1+(rng()-.5)*.28;dots+=`<circle cx="${FX(A.px(b))}" cy="${FX(A.py(d))}" r="2.4" fill="#2F5276" opacity=".55"/>`;}
   s+=G('a-fade',.5,dots);
   const items=[['The adder','E. coli, B. subtilis and Caulobacter add a roughly constant size between birth and division, whatever size they were born at (Campos and colleagues 2014; Taheri-Araghi and colleagues 2015). Deviations from average size shrink by half each generation.'],['Size and growth rate','Average cell size rises roughly exponentially with growth rate across media, as Schaechter and colleagues found. In the Cooper–Helmstetter picture, replication takes about 40 min and division about 20 min more, so fast-growing cells start new rounds before the last has finished.'],['Why not a sizer or a timer?','A timer would let size errors grow; a sizer would need a precise size sensor. An adder is simple and still keeps sizes stable.']];
