@@ -525,6 +525,31 @@ function scR1(n){
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 
+// The lac operon, two inputs
+const LAC=[
+ {k:'glucose, no lactose',r:'repressor bound',c:'cAMP low; CAP off',lvl:.01,t:'LacI sits on the operator and, with no inducer, blocks transcription. Expression is almost nil.'},
+ {k:'no glucose, no lactose',r:'repressor bound',c:'cAMP high; CAP on',lvl:.03,t:'CAP is ready to help, but the repressor still blocks the promoter. A few transcripts leak, which matters: they make the permease that lets the first lactose in.'},
+ {k:'glucose + lactose',r:'repressor released',c:'cAMP low; CAP off',lvl:.1,t:'Allolactose pulls the repressor off, but without CAP the weak lac promoter fires only modestly. Glucose is used first.'},
+ {k:'lactose only',r:'repressor released',c:'cAMP high; CAP on',lvl:1,t:'Repressor off and CAP–cAMP recruiting RNA polymerase: full induction, about a thousand-fold over the repressed level.'}];
+let lacSel=3;
+function operonDraw(cx,y,w,on,capOn){
+  const x1=cx-w/2;let s=dsDNA(x1,x1+w,y,DNA,8);
+  const seg=(a,b,f,t)=>box(x1+w*a,y-14,w*(b-a),36,f,3)+Tc(x1+w*(a+b)/2,y+8,t,'#3A2E22',11,'mono mid','600');
+  s+=seg(.0,.1,'#E0C88A','CAP')+seg(.1,.2,'#EFE6D2','P')+seg(.2,.28,'#C9A9D6','O')+seg(.3,.6,'#A9C4DC','lacZ')+seg(.6,.8,'#A9C4DC','lacY')+seg(.8,.95,'#A9C4DC','lacA');
+  if(!on)s+=blob(x1+w*.24,y-26,20,12,'#7D4A98')+T(x1+w*.24,y-44,'LacI','mono mid f11');
+  if(capOn)s+=blob(x1+w*.05,y-26,18,11,'#C99A2E')+T(x1+w*.05,y-44,'CAP','mono mid f11');
+  return s;}
+function scLac(n){
+  const c=LAC[lacSel], on=c.r==='repressor released', cap=c.c.includes('on');
+  let s=G('a-fade',0,operonDraw(n?180:250,64,n?320:440,on,cap));
+  const bx=n?16:24, by=118;
+  s+=G('a-fade',.3,T(bx,by,c.k,'cname start f16')+T(bx,by+22,c.r,'lab start f13')+T(bx,by+40,c.c,'lab start f13'));
+  const bw=n?320:420, lv=Math.max(4,bw*Math.log10(c.lvl*1000)/3);
+  s+=G('a-fade',.5,T(bx,by+70,'β-galactosidase (log scale)','note start f11')+`<rect x="${bx}" y="${by+78}" width="${bw}" height="16" fill="none" stroke="${INK}" stroke-dasharray="3 3"/>`+box(bx,by+78,FX(lv),16,'#A9C4DC',2));
+  const p=para(bx,by+124,c.t,n?50:90,'lab start f13',17,.7);
+  const q=para(bx,p.y+10,'Jacob and Monod’s operon model (1961) came from this system. Catabolite repression by glucose works mainly through cAMP–CAP and through inducer exclusion: the glucose transporter’s EIIA blocks the lactose permease.',n?50:92,'note start f13',17,1);
+  return {vb:n?slim(q.y+6):wide(q.y+8),s:s+p.s+q.s};
+}
 function scR2(n){
   let s='';const y=n?50:56;
   const mx=n?180:320;
@@ -758,6 +783,7 @@ function scR11(n){
 const NAR='Narrator';
 const S=[
  {p:1,title:'Operons, regulons, modulons',draw:scR1,text:"Regulation in bacteria is organised in nested layers: an operon is one message, a regulon is everything one regulator controls, and a modulon is everything that responds to one condition. A handful of global regulators account for half of all transcriptional control, and the hierarchy is shallow, because a long cascade is slow."},
+ {p:1,title:'The lac operon',chips:'lac',draw:scLac,text:"The lac operon reads two inputs. The repressor LacI reports whether lactose is present; CAP bound to cAMP reports whether glucose is scarce. Pick a condition to see how the two combine. Only lactose without glucose gives full expression."},
  {p:1,title:'Two-component systems',draw:scR2,text:"The standard bacterial sensor is a pair: a membrane kinase that autophosphorylates on a histidine, and a response regulator that receives the phosphate on an aspartate and binds DNA. Separating sensing from acting lets the same chemistry be reused for dozens of signals in one genome, with specificity enforced at the interface and by the kinase's own phosphatase activity."},
  {p:1,title:'Sigma factors',draw:scR3,text:"RNA polymerase core cannot recognise a promoter by itself. The sigma factor does that, so exchanging sigma factors replaces an entire programme in a single step. Sigmas compete for a limited pool of core enzyme, are held inactive by anti-sigma factors until needed, and can be arranged in cascades — which is what makes development possible."},
  {p:2,title:'Quorum sensing',draw:scR4,text:"A cell makes a small signal, releases it, and measures how much comes back. Gram-negatives use diffusible acyl-homoserine lactones and a cytoplasmic receptor; Gram-positives use peptides and a membrane kinase. The measurement reports cell density, but equally reports confinement and flow — which is why it is better thought of as asking whether a shared effort is worth starting."},
@@ -768,7 +794,7 @@ const S=[
  {p:3,title:'Other developmental programmes',draw:scR9,text:"Caulobacter divides asymmetrically every cycle under three master regulators; Myxococcus builds multicellular fruiting bodies on starvation; Streptomyces raises aerial hyphae and spore chains alongside antibiotic production; biofilms are spatially organised communities with regulated dispersal. Differentiation and commitment are not eukaryotic inventions."},
  {p:3,title:'What regulation costs',draw:scR10,text:"The number of transcription factors rises roughly as the square of genome size, because every new function must be coordinated with everything already present. That scaling is thought to set a practical ceiling on bacterial genome size, and in reverse it explains why reduced, host-restricted genomes shed regulators fastest."},
  {p:3,title:'Reading a regulatory phenotype',chips:'reg',draw:scR11,text:"The architecture of a circuit usually leaves a recognisable signature in its behaviour: how fast it responds, whether it filters transients, whether it is reversible, and whether new protein synthesis is required. Pick an observation to see what it points to."}];
-const CHIPS={reg:{list:REGQ.map((q,i)=>String(i+1)),get:()=>rSel2,set:k=>rSel2=k}};
+const CHIPS={lac:{list:LAC.map(l=>l.k),get:()=>lacSel,set:k=>lacSel=k},reg:{list:REGQ.map((q,i)=>String(i+1)),get:()=>rSel2,set:k=>rSel2=k}};
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

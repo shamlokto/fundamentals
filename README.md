@@ -21,7 +21,7 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | XIII | How Bacteria Divide | 18 | [`decks/cell-division/`](decks/cell-division/) |
 | XIV | Motility and Chemotaxis | 6 | [`decks/motility/`](decks/motility/) |
 | XV | Anatomy of a Prokaryotic Gene | 15 | [`decks/prokaryotic-gene/`](decks/prokaryotic-gene/) |
-| XVI | Regulation, Signalling and Development | 11 | [`decks/regulation/`](decks/regulation/) |
+| XVI | Regulation, Signalling and Development | 12 | [`decks/regulation/`](decks/regulation/) |
 | XVII | Epigenetics and Heterogeneity | 11 | [`decks/epigenetics/`](decks/epigenetics/) |
 | XVIII | Bateson's Epistasis | 15 | [`decks/bateson-epistasis/`](decks/bateson-epistasis/) |
 | XIX | Mutation, Selection and Drift | 11 | [`decks/evolution/`](decks/evolution/) |

@@ -131,7 +131,7 @@
     "psub": "Regulation",
     "title": "Regulation, Signalling and Development",
     "sub": "How bacteria decide what to do next",
-    "blurb": "Regulons and network motifs, two-component systems and sigma factors; quorum sensing, the stringent response and cyclic nucleotides; sporulation and other developmental programmes."
+    "blurb": "Regulons and network motifs, the lac operon, two-component systems and sigma factors; quorum sensing, the stringent response and cyclic nucleotides; sporulation and other developmental programmes."
    },
    {
     "slug": "epigenetics",
