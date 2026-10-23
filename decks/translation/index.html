@@ -553,21 +553,27 @@ function scReader(n){
 /* ===================== Part V · making a protein ===================== */
 function panelGrid(n,count,cols,W,H){const pos=[];for(let i=0;i<count;i++){const c=n?0:i%cols,r=n?i:Math.floor(i/cols);pos.push([10+c*(W+10),10+r*(H+12)]);}return pos;}
 function scInitB(n){
-  const W=n?340:200,H=n?160:220,pos=panelGrid(n,3,3,W,H),k=n?.66:.56;
-  const titles=[['Small subunit binds','SD pairs with 16S rRNA; IF1, IF3'],['Initiator arrives','fMet-tRNA with IF2·GTP at AUG'],['Large subunit joins','GTP hydrolysed; factors leave']];
+  // three panels; the mRNA (5'->3') runs across each panel, SD pairs with the 3' end of 16S rRNA upstream of the AUG,
+  // which sits in the P site; IF1 occupies the A site, IF3 sits by the E site; IF2-GTP brings fMet-tRNA
+  const W=n?340:200,H=n?196:206,pos=panelGrid(n,3,3,W,H),k=n?.8:.66;
+  const titles=[['Small subunit binds',n?'SD pairs with the 3′ end of 16S rRNA':'SD pairs with 16S rRNA 3′ end'],['Initiator arrives',n?'IF2·GTP brings fMet-tRNA to the P site':'IF2·GTP brings fMet-tRNA'],['Large subunit joins',n?'IF2 hydrolyses GTP; all factors leave':'GTP hydrolysed; factors leave']];
   let s='';
-  titles.forEach((t,i)=>{const [x,y]=pos[i],cx=x+W/2,my=y+H-(n?30:46);
-    let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,t[0],'lab start f14')+T(x+14,y+38,t[1],'note start f11');
-    g+=ribosome(cx,my,k,{large:i===2,codons:[['P','AUG'],['A','GCU']],trnas:i?[{site:'P',ac:'UAC',aa:'fM'}]:[]});
-    g+=Tc(cx-k*110,my+k*16,'AGGAGG','#2E7D78',k*11,'mono mid','600');
-    if(i<2)g+=blob(cx+k*50,my+k*30,k*14,k*10,'#9C7FB0')+blob(cx-k*86,my+k*28,k*12,k*9,'#7FA59B');
-    if(i===1)g+=blob(cx+k*18,my-k*70,k*14,k*10,SIG)+Tc(cx+k*18,my-k*67,'IF2','#3A2E22',k*10,'mono mid');
+  titles.forEach((t,i)=>{const [x,y]=pos[i],cx=x+W/2+(n?20:12),my=y+H-(n?56:62);
+    const sx={E:cx-50*k,P:cx,A:cx+50*k}, sd=cx-(n?110:74);
+    let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,t[0],'lab start f14')+T(x+14,y+38,t[1],'note start f12');
+    g+=ribosome(cx,my,k,{large:i===2,mrna:false,trnas:i?[{site:'P',ac:'',aa:'fM'}]:[]});
+    g+=`<path d="M${x+8} ${my} H${x+W-8}" stroke="${RNAC}" stroke-width="2.6"/>`+Tc(x+10,my-6,'5′','#6A5B47',11,'mono start')+Tc(x+W-10,my-6,'3′','#6A5B47',11,'mono end');
+    g+=Tc(sd,my+15,'AGGAGG','#2E7D78',10,'mono mid','600')+`<path d="M${sd-17} ${my+20} H${sd+17}" stroke="#2E7D78" stroke-width="2"/>`+Tc(sd,my+33,'16S 3′','#2E7D78',10,'mono mid');
+    g+=Tc(sx.P,my+15,'AUG','#4F7A3F',11,'mono mid','600')+Tc(sx.A,my+15,'GCU','#6A3E12',10,'mono mid','600');
+    g+=['E','P','A'].map(z=>Tc(sx[z],my+33,z,'#2F5276',11,'mono mid','600')).join('');
+    if(i<2)g+=blob(sx.A,my-14,9,8,'#9C7FB0')+T(sx.A+11,my-22,'IF1','mono start f11 halo')+blob(sx.E,my-12,9,8,'#7FA59B')+T(sx.E-11,my-22,'IF3','mono end f11 halo');
+    if(i===1)g+=blob(cx+22,my-62*k,15,10,SIG)+Tc(cx+22,my-62*k+4,'IF2','#3A2E22',10,'mono mid','600')+T(cx+40,my-62*k+4,'·GTP','mono start f11');
+    if(i===2)g+=T(sx.A+2,my-40,'A empty','note start f12 halo');
     s+=G('a-fade',(i*.9).toFixed(1),g);});
   const yb=n?pos[2][1]+H+24:H+42;
   s+=G('a-fade',2.8,T(n?180:320,yb,n?'The A site is empty and waiting':'The 70S initiation complex: fMet-tRNA in the P site, the A site empty and waiting','lab mid'));
   return {vb:n?slim(yb+12):wide(yb+14),s};
 }
-
 function scInitE(n){
   const x1=n?20:40, x2=n?344:600, my=n?170:190, aug=n?220:400;
   let s=G('a-fade',0,`<path d="M${x1+14} ${my} H${x2-60}" stroke="${RNAC}" stroke-width="3"/>`+`<circle cx="${x1+6}" cy="${my}" r="10" fill="#7D3F5A" stroke="${INK}" class="tint"/>`+Tc(x1+6,my+4,'G','#F3EDE0',10,'mono mid','600')
@@ -576,7 +582,7 @@ function scInitE(n){
   s+=G('a-pop',.6,blob(x2-30,my-14,14,10,'#C99A2E')+T(x2-30,my-30,'PABP','mono mid f11'));
   s+=G('a-fade',1.0,`<path d="M${x1+40} ${my-30} C ${x1+120} ${my-(n?130:150)}, ${x2-110} ${my-(n?130:150)}, ${x2-38} ${my-24}" stroke="#9C7FB0" stroke-width="1.4" stroke-dasharray="4 3" fill="none"/>`+T((x1+x2)/2,my-(n?110:124),n?'closed loop':'closed loop: cap and tail held together','note mid f12'));
   const k=n?.48:.6;
-  s+=G('a-slow',1.4,ribosome(aug,my,k,{large:false,mrna:false,trnas:[{site:'P',ac:'UAC',aa:'M'}]})+blob(aug+k*40,my+k*36,k*16,k*10,SIG)+Tc(aug+k*40,my+k*39,'eIF2','#3A2E22',k*11,'mono mid'),`--dx:${-(aug-x1-60)}px`);
+  s+=G('a-slow',1.4,ribosome(aug,my,k,{large:false,mrna:false,trnas:[{site:'P',ac:'UAC',aa:'M'}]})+blob(aug+k*40,my+k*36,17,10,SIG)+Tc(aug+k*40,my+k*36+4,'eIF2','#3A2E22',10,'mono mid','600'),`--dx:${-(aug-x1-60)}px`);
   s+=G('a-fade',1.4,`<path d="M${x1+70} ${my+50} H${aug-30}" stroke="${INK}" stroke-width="1.4" marker-end="url(#ahp)"/>`+T((x1+70+aug-30)/2,my+66,'43S complex scans 5′ → 3′','note mid f12'));
   s+=G('a-drop',4.0,`<path d="M${aug-k*130} ${my-k*22} C ${aug-k*156} ${my-k*160}, ${aug+k*156} ${my-k*160}, ${aug+k*130} ${my-k*22} Z" fill="${LSU}" opacity=".55" stroke="${INK}"/>`+(n?'':T(aug+k*124,my-k*64,'60S joins','note start f12')));
   s+=G('a-fade',4.4,T(n?180:320,my+(n?98:100),n?'Cap → scan → first good AUG':'Eukaryotic ribosomes load at the cap and scan for the first AUG in a good context','lab mid'));
