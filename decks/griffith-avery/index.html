@@ -377,11 +377,24 @@ function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y}
 /* A photograph, if one is supplied, is laid over the engraved bust inside the oval frame.
    Put a public-domain or openly licensed portrait at PHOTO.src (relative to this page) and fill in PHOTO.credit.
    If the file is missing the browser draws nothing for it and the engraved bust shows through. */
-const PHOTO={src:'portrait.jpg',credit:'',ok:false};
+const PHOTO={src:'avery.jpg',credit:'',ok:false};
 {const im=new Image();im.onload=()=>{PHOTO.ok=true;if(typeof cur!=='undefined'&&cur===0)render();};im.src=PHOTO.src;}
 function photo(cx,cy,k){if(!PHOTO.ok)return '';return `<g transform="translate(${cx} ${cy}) scale(${k})"><clipPath id="pclip"><ellipse rx="83" ry="101"/></clipPath>`
   +`<image href="${PHOTO.src}" x="-84" y="-102" width="168" height="204" preserveAspectRatio="xMidYMin slice" clip-path="url(#pclip)" style="filter:sepia(.55) contrast(1.05) brightness(.97)"/>`
   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="1.6"/><ellipse rx="90" ry="108" fill="none" stroke="#3A2E22" stroke-width=".7"/></g>`;}
+/* Smaller portraits of other people in the story, shown at the foot of their plate only if the file loads. */
+const CAMEOS={};
+function addCameo(key,src,credit){const c=CAMEOS[key]={src,credit,ok:false};const im=new Image();im.onload=()=>{c.ok=true;if(typeof render==='function'&&typeof cur!=='undefined')render();};im.src=src;}
+function cameo(n,x,y,key,name,dates,note){const c=CAMEOS[key];if(!c||!c.ok)return {s:'',y};
+  const k=.42, cx=x+38, cy=y+46;
+  let s=`<g transform="translate(${cx} ${cy}) scale(${k})"><clipPath id="cclip-${key}"><ellipse rx="83" ry="101"/></clipPath>`
+   +`<image href="${c.src}" x="-84" y="-102" width="168" height="204" preserveAspectRatio="xMidYMin slice" clip-path="url(#cclip-${key})" style="filter:sepia(.55) contrast(1.05) brightness(.97)"/>`
+   +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="2.4"/></g>`;
+  const tx=x+92;s+=T(tx,y+30,name,'cname start f14')+T(tx,y+48,dates,'note start f12');
+  let ty=y+48;if(note){const L=wrap(note,n?32:64);L.forEach((l,i)=>{s+=T(tx,y+66+i*15,l,'note start f12');});ty=y+66+(L.length-1)*15;}
+  if(c.credit)s+=T(tx,ty+18,c.credit,'note start f10');
+  return {s:G('a-fade',1.4,s),y:Math.max(y+96,ty+24)};}
+addCameo('griffith','griffith.jpg','');
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+photo(cx,cy,k)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12')+(PHOTO.ok&&PHOTO.credit?T(cx,cy+112*k+54,PHOTO.credit,'note mid f10'):'');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -453,7 +466,8 @@ function scA3(n){
       +(n?'':T(mx+40,y+12,r[3]?'dies':'lives','lab start f13'))+(r[4]?Tc(n?mx-20:mx+40,y+(n?40:28),r[4],'#7D4A98',10,'mono '+(n?'mid':'start'),'600'):''));
     y+=n?70:58;});
   const p=para(n?16:24,y+8,'Frederick Griffith, Ministry of Health, London, 1928. The decisive detail is the type: the R strain came from type II, but the bacteria recovered were type III, the type of the dead cells. The R cells had not simply reverted to their own parent type; something from the dead type III cells had changed them, heritably.',n?50:92,'note start f13',17,3);
-  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
+  const cm=cameo(n,n?16:24,p.y+10,'griffith','Frederick Griffith','1879–1941','Medical officer at the Ministry of Health’s pathology laboratory in London; killed in an air raid in 1941.');
+  return {vb:n?slim(cm.s?cm.y:p.y+6):wide(cm.s?cm.y:p.y+8),s:s+p.s+cm.s};
 }
 
 const GRIF={dh:110,dhn:110,
