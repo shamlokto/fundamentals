@@ -667,8 +667,8 @@ function capsuleScene(n,block){
     s+=G('a-fade',(.3+i*.45).toFixed(1),`<g opacity="${dim?.16:1}">${d}</g>`+Tc(X[i],16+4,String(i+1),'#2F5276',12,'mono mid','600')
       +`<g opacity="${dim?.3:1}">${Tc(nx[i],my+mh+(n?60:62),names[i],ncol[i],n?9.5:10,'mono mid','600')}</g>`);
     if(i<4){const adim=block!==undefined&&i>=block;s+=G('a-fade',(.5+i*.45).toFixed(1),`<g opacity="${adim?.16:1}">${arw(X[i]+(n?16:26),16,X[i+1]-(n?16:26),16,{w:1.1})}</g>`);}});
-  /* step 4 also shows CpsD beside Wzy */
-  s+=G('a-fade',1.9,`<g opacity="${block!==undefined&&3>block?.3:1}">${Tc(X[3]-(n?26:27),my+mh+(n?60:62),'CpsD','#8C5A1E',n?9:9.5,'mono mid','600')}</g>`);
+  /* step 4 also shows CpsC (membrane) with its kinase partner CpsD beside Wzy */
+  s+=G('a-fade',1.9,`<g opacity="${block!==undefined&&3>block?.3:1}">${Tc(X[3]-(n?26:27),my+mh+(n?60:62),'CpsC/D','#8C5A1E',n?9:9.5,'mono mid','600')}</g>`);
   /* point out the capsule on the extracellular side */
   const cdim=block!==undefined&&block<3;
   s+=G('a-fade',2.4,`<g opacity="${cdim?.3:1}">${T(lx,52,n?'capsule, outside':'capsule, outside the wall','lab start '+(n?'f11':'f12'))+arw(lx+(n?96:150),56,X[3]-14,72,{w:1.2})+(n?'':T(lx,66,'the chain grows out through the peptidoglycan','note start f10'))}</g>`);

@@ -642,13 +642,17 @@ function scP5(n){
 function scP6(n){
   let s='';const y=n?58:62, cx=n?180:320;
   const R=n?22:26;
-  s+=G('a-fade',0,pRing(cx-(n?100:170),y+R,R,{col:PLS,w:2.6})+T(cx-(n?100:170),y+2*R+22,'two monomers','note mid f11'));
+  const r=R*.6, d=r*1.15, mono=(c,lab)=>[-1,1].map(k=>pRing(c+k*d,y+R,r,{col:PLS,w:2.4,fw:6,feats:[{a0:k>0?-30:150,a1:k>0?30:210,col:INTC}]})).join('');
+  s+=G('a-fade',0,mono(cx-(n?100:170))+T(cx-(n?100:170),y+2*R+22,'two monomers','note mid f11'));
+  const ex=cx+(n?0:6), erx=R*1.5;
   s+=G('a-fade',.4,arw(cx-(n?64:122),y+R,cx-(n?40:86),y+R,{blue:1})
-    +`<ellipse cx="${cx+(n?0:6)}" cy="${y+R}" rx="${R*1.5}" ry="${R*.85}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
-    +T(cx+(n?0:6),y+2*R+22,n?'a dimer':'a dimer: one replicon, half the copies','note mid f11'));
+    +`<ellipse cx="${ex}" cy="${y+R}" rx="${erx}" ry="${R*.85}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
+    +`<path d="M${FX(ex-erx)} ${FX(y+R-7)} V${FX(y+R+7)} M${FX(ex+erx)} ${FX(y+R-7)} V${FX(y+R+7)}" stroke="${INTC}" stroke-width="6"/>`
+    +T(ex,y+2*R+22,n?'a dimer':'a dimer: one replicon, half the copies','note mid f11'));
   s+=G('a-fade',.9,arw(cx+(n?46:60),y+R,cx+(n?70:98),y+R,{blue:1})
-    +pRing(cx+(n?104:170),y+R,R,{col:PLS,w:2.6,feats:[{a0:-26,a1:26,col:INTC,lab:'cer'}]})
-    +T(cx+(n?104:170),y+2*R+22,n?'resolved':'XerCD resolves it','note mid f11'));
+    +mono(cx+(n?104:170))
+    +T(cx+(n?104:170),y+2*R+22,n?'resolved':'XerCD at cer: monomers again','note mid f11'));
+  s+=G('a-fade',1,Tc(cx+(n?120:200),y+(n?2:0),'cer','#2E7D78',10,'mono start','600'));
   if(n)s+=G('a-fade',1.2,Tc(20,y+2*R+44,'a dimer is one replicon with half the','#6A5B47',10,'mono start')
     +Tc(20,y+2*R+58,'copies; XerCD at cer resolves it','#6A5B47',10,'mono start'));
   let yy=y+2*R+(n?84:50);
