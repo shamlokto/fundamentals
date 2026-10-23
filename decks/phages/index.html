@@ -68,13 +68,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* SVG text */
 #stage .mid{text-anchor:middle} #stage .start{text-anchor:start} #stage .end{text-anchor:end}
 #stage .mono{font-family:var(--mono)}
-#stage .note{font-family:var(--plate);font-style:italic;font-size:14px;fill:var(--muted)}
-#stage .lab{font-family:var(--plate);font-size:16px}
-#stage .cname{font-family:var(--plate);font-size:17px}
+#stage .note{font-family:var(--plate);font-style:italic;font-size:15px;fill:var(--muted)}
+#stage .lab{font-family:var(--plate);font-size:17px}
+#stage .cname{font-family:var(--plate);font-size:18px}
 #stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
 #stage .acc{fill:var(--accent);font-weight:600}
 #stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
-#stage .f10{font-size:10px} #stage .f11{font-size:11px} #stage .f12{font-size:12px} #stage .f13{font-size:13px} #stage .f14{font-size:14px} #stage .f15{font-size:15px}
+#stage .f10{font-size:12px} #stage .f11{font-size:12.5px} #stage .f12{font-size:13.5px} #stage .f13{font-size:14.5px} #stage .f14{font-size:15.5px} #stage .f15{font-size:16.5px} #stage .f16{font-size:17.5px}
 #stage .card{fill:var(--surface2);stroke:var(--line)}
 #stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
 #stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
@@ -168,7 +168,7 @@ const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF
       RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
 const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
 const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
-const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${fs}px${w?';font-weight:'+w:''}">${s}</text>`;
+const Tc=(x,y,s,fill,fs,c='mono mid',w='')=>`<text x="${x}" y="${y}" class="${c}" style="fill:${fill};font-size:${Math.max(12,+(fs*1.12).toFixed(1))}px${w?';font-weight:'+w:''}">${s}</text>`;
 const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
 const R=(x,y,w,h,c,rx=8)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" class="${c}"/>`;
 const box=(x,y,w,h,fill,rx=3,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${INK}" stroke-width="1" ${extra}/>`;
