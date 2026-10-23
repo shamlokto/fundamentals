@@ -449,8 +449,10 @@ function scOvo(n){
   [[0,'new cell'],[0.45,'ring at midcell'],[0.95,'two ovals']].forEach((st,i)=>{
     s+=G('a-fade',(i*.5).toFixed(1),ovoCell(xs[i],y,W,H,st[0])+T(xs[i],y+H+(n?24:28),st[1],'note mid f12'));
     if(i===1)s+=G('a-pop',1,zring(xs[i],y,H-6,{n:6,w:6}));
-    if(i>0)s+=G('a-pop',(i*.5+.2).toFixed(1),[0,1].map(k=>`<circle cx="${xs[i]+(k?1:-1)*W*.3}" cy="${y}" r="5" fill="${MAPZ}" stroke="${INK}" stroke-width=".6"/>`).join(''));
-    if(i===0)s+=G('a-pop',.3,`<circle cx="${xs[i]}" cy="${y}" r="5" fill="${MAPZ}" stroke="${INK}" stroke-width=".6"/>`);
+    /* MapZ rings seen edge-on, as bands across the cell */
+    const mz=x=>`<path d="M${FX(x)} ${FX(y-H*.72)} V${FX(y+H*.72)}" stroke="${MAPZ}" stroke-width="4" stroke-linecap="round" stroke-dasharray="7 3"/>`;
+    if(i>0)s+=G('a-pop',(i*.5+.2).toFixed(1),[0,1].map(k=>mz(xs[i]+(k?1:-1)*W*.3)).join(''));
+    if(i===0)s+=G('a-pop',.3,mz(xs[i]));
   });
   s+=G('a-fade',1.8,T(n?180:320,n?44:48,'MapZ rings mark the site before FtsZ arrives','lab mid '+(n?'f14':''))
     +Tc(xs[0]+(n?14:16),y-(n?14:16),'MapZ',MAPZ,11,'mono start','600'));
@@ -472,7 +474,8 @@ function scSegregate(n){
     +T(cx,y2-R-12,'ParABS pushes them to opposite ends','note mid f12'));
   const y3=n?286:292;
   s+=G('a-fade',1.6,rodCell(cx,y3,L,R,.5)+tmProt(cx,y3-R+4,2*R-8,14,'#9C7FB0','',{})+Tc(cx+(n?26:30),y3,'FtsK','#3A2E22',11,'mono start','600')
-    +`<path d="M${cx-30} ${y3+R-14} h22 M${cx+30} ${y3+R-14} h-22" stroke="${DNAC}" stroke-width="2" marker-end="url(#ahp)"/>`
+    +`<path d="M${cx-54} ${y3+R-14} H${cx+54}" stroke="${DNAC}" stroke-width="2" fill="none"/>`
+    +[-1,1].map(d=>`<path d="M${cx+d*10} ${y3+R-22} h${d*30}" stroke="${INK}" stroke-width="1.4" fill="none" marker-end="url(#ahp)"/>`).join('')
     +T(cx,y3+R+(n?22:24),'FtsK pumps any trapped DNA out of the closing septum','note mid f12'));
   const ty=y3+R+(n?46:50);
   const items=[['ParABS','ParB coats parS sites near the origin; ParA, an ATPase on the nucleoid, moves the complex to the far pole. Most bacteria have it; E. coli does not.'],
@@ -553,7 +556,7 @@ function scTwoMachines(n){
   const t=cmpTable2(n,['','Elongasome','Divisome'],rows,{wc:[24,210,420],nc:[10,150,254]});
   let s=t.s;
   const dy=t.y+(n?18:24), L=n?120:150, R=n?30:34;
-  s+=G('a-fade',1.4,rodCell(n?92:170,dy+R+6,L,R,0)+[0,1,2].map(i=>`<path d="M${(n?92:170)-L*.25+i*L*.25} ${dy+6} v${2*R-12}" stroke="#C17A2C" stroke-width="3" opacity=".8"/>`).join('')
+  s+=G('a-fade',1.4,rodCell(n?92:170,dy+R+6,L,R,0)+[0,1,2,3,4].map(i=>{const mx=(n?92:170)-L*.32+i*L*.16, my=dy+6+(i%2?R*1.05:R*.35);return `<path d="M${FX(mx)} ${FX(my)} l${FX(R*.12)} ${FX(R*.55)}" stroke="#C17A2C" stroke-width="3.2" stroke-linecap="round" opacity=".85"/>`;}).join('')+T(n?92:170,dy-4,'short MreB filaments','note mid f11')
     +T(n?92:170,dy+2*R+(n?18:22),'elongation','note mid f12'));
   s+=G('a-fade',1.8,rodCell(n?258:430,dy+R+6,L,R,.35)+zring(n?258:430,dy+R+6,R-6,{n:5,w:6})+T(n?258:430,dy+2*R+(n?18:22),'division','note mid f12'));
   const ty=dy+2*R+(n?44:50);
@@ -609,7 +612,7 @@ function scSplit(n){
   const ty=n?y+2*(H+12)+14:y+H+28;
   const items=[['Amidases','AmiA, AmiB and AmiC in E. coli cut the peptide cross-links in the shared septal wall. They are kept off until FtsEX and their LytM activators switch them on, so the wall is never weakened early.'],
    ['Tol–Pal','in Gram-negatives, pulls the outer membrane inwards so it follows the constricting wall rather than lagging behind'],
-   ['Pneumococcus','LytB trims the septal wall to separate daughters; without it cells stay in long chains, which is also how some strains avoid being swept away']];
+   ['Pneumococcus','LytB trims the septal wall to separate daughters; without it cells stay in long chains, which stick better to host surfaces but are caught more easily by complement and phagocytes']];
   let yy=ty;items.forEach((it,i)=>{const L=wrap(it[1],n?44:76);
     s+=G('a-fade',(1.8+i*.3).toFixed(1),T(n?14:30,yy,it[0],'cname start '+(n?'f14':''))+L.map((l,j)=>T(n?14:30,yy+18+j*17,l,'note start f13')).join(''));yy+=L.length*17+32;});
   return {vb:n?slim(yy+8):wide(yy+10),s};
@@ -681,9 +684,10 @@ function scBreak(n){
     if(k==='sulA (induced)')s+=G('a-pop',.6,[0,1,2].map(i=>blob(cx-L*.28+i*L*.28,y,n?10:12,n?7:8,'#5E7F7A')).join('')+T(cx,y-R-14,'SulA holds FtsZ','note mid f11'));
     s+=G('a-fade',1,T(cx,y+R+(n?22:24),'a filament','note mid f12'));
   } else if(k==='minCDE'){
-    s+=G('a-fade',0,rodCell(cx,y,L,R,0)+nucleoid(cx,y,L*.3,R*.6,{seed:5})+zring(cx-L*.44,y,R-8,{n:4,w:5})+zring(cx,y,R-6,{n:5,w:6}));
-    s+=G('a-pop',.8,`<circle cx="${cx-L*.62}" cy="${y}" r="${R*.5}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`+T(Math.max(cx-L*.62,22),y+R*.5+(n?16:18),'minicell','note mid f11'));
-    s+=G('a-fade',1,T(cx+L*.2,y+R+(n?22:24),'rings at the poles too','note mid f12'));
+    const cm=cx+(n?22:44);
+    s+=G('a-fade',0,rodCell(cm,y,L,R,0)+nucleoid(cm,y,L*.3,R*.6,{seed:5})+zring(cm-L*.44,y,R-8,{n:4,w:5})+zring(cm,y,R-6,{n:5,w:6}));
+    s+=G('a-pop',.8,`<circle cx="${cm-L*.62}" cy="${y}" r="${R*.5}" fill="${CYTO}" stroke="${WALLE}" stroke-width="2"/>`+T(cm-L*.62,y+R*.5+(n?16:18),'minicell','note mid f11'));
+    s+=G('a-fade',1,T(cm+L*.2,y+R+(n?22:24),'rings at the poles too','note mid f12'));
   } else if(k==='slmA / noc'){
     s+=G('a-fade',0,rodCell(cx,y,L,R,.7)+nucleoid(cx,y,L*.26,R*.55,{seed:5})
       +`<path d="M${cx-4} ${y-R+6} v${2*R-12} M${cx+4} ${y-R+6} v${2*R-12}" stroke="${AMI}" stroke-width="2.4"/>`);
