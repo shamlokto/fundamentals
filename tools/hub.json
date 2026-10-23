@@ -116,8 +116,8 @@
   ]
  },
  {
-  "name": "Regulation",
-  "desc": "How a bacterial gene is built, and how cells decide which genes to use.",
+  "name": "Regulation and heterogeneity",
+  "desc": "How bacteria choose which genes to use, and why identical cells differ.",
   "decks": [
    {
     "slug": "prokaryotic-gene",
@@ -128,16 +128,23 @@
    },
    {
     "slug": "regulation",
-    "psub": "Gene regulation",
-    "title": "Bacterial Gene Regulation",
-    "sub": "How a cell decides which genes to use",
-    "blurb": "Operons and regulons, lac, two-component systems, small RNAs, quorum sensing, sporulation, phase variation and persisters."
+    "psub": "Regulation",
+    "title": "Regulation, Signalling and Development",
+    "sub": "How bacteria decide what to do next",
+    "blurb": "Regulons and network motifs, two-component systems and sigma factors; quorum sensing, the stringent response and cyclic nucleotides; sporulation and other developmental programmes."
+   },
+   {
+    "slug": "epigenetics",
+    "psub": "Epigenetics and heterogeneity",
+    "title": "Epigenetics and Heterogeneity",
+    "sub": "Why identical cells behave differently",
+    "blurb": "DNA methylation and what reads it; phase variation, phasevarions and pneumococcal opacity; bistability, persistence and why clonal populations hedge."
    }
   ]
  },
  {
   "name": "Genetics, genomes and evolution",
-  "desc": "Inheritance, evolution, mobile DNA, genomes and the tree of life.",
+  "desc": "Inheritance, evolution, gene flow, phages, genomes and the tree of life.",
   "decks": [
    {
     "slug": "bateson-epistasis",
@@ -147,32 +154,53 @@
     "blurb": "Bateson’s sweet-pea crosses, the 9:7 ratio, and the main kinds of epistasis."
    },
    {
-    "slug": "evolution-genetics",
-    "psub": "Population genetics",
+    "slug": "evolution",
+    "psub": "Evolution",
     "title": "Mutation, Selection and Drift",
-    "sub": "How bacterial populations evolve",
-    "blurb": "Mutation rates, drift, selection, recombination, the long-term evolution experiment, epistasis, clonal interference and the cost of resistance."
+    "sub": "How bacterial populations change",
+    "blurb": "Mutation, selection, drift and recombination; the fluctuation test, and what it does and does not prove."
    },
    {
-    "slug": "mobile-dna",
+    "slug": "lab-evolution",
+    "psub": "Experimental evolution",
+    "title": "Evolution in the Laboratory",
+    "sub": "Watching bacteria evolve in a flask",
+    "blurb": "The long-term evolution experiment, transfer bottlenecks, clonal interference, fitness landscapes and epistasis, and the cost of resistance."
+   },
+   {
+    "slug": "gene-transfer",
     "psub": "Horizontal gene transfer",
-    "title": "Mobile DNA and Plasmids",
-    "sub": "Genes that move between cells",
-    "blurb": "Transformation, conjugation and transduction; transposons, integrons and ICEs; plasmid replication, incompatibility and addiction."
+    "title": "Horizontal Gene Transfer",
+    "sub": "How bacteria acquire genes from one another",
+    "blurb": "Transformation, conjugation and transduction; insertion sequences, integrons and ICEs; and the barriers that make transfer rare."
    },
    {
-    "slug": "phage-defence",
-    "psub": "Phages and immunity",
-    "title": "Phages and Defences",
-    "sub": "Bacteriophages, and how bacteria fight them",
-    "blurb": "Lytic and temperate cycles, the λ decision, restriction–modification and the anti-phage arsenal, coevolution and phage therapy."
+    "slug": "plasmids",
+    "psub": "Plasmids",
+    "title": "Plasmid Biology",
+    "sub": "Replicons that are not the chromosome",
+    "blurb": "Replicons, copy number and incompatibility; partition, dimer resolution and addiction systems; cost, host range and what is on a vector."
+   },
+   {
+    "slug": "phages",
+    "psub": "Bacteriophages",
+    "title": "Bacteriophages",
+    "sub": "Viruses of bacteria, and what they taught us",
+    "blurb": "Lytic and temperate cycles, the λ decision, phages as tools of molecular biology, coevolution and phage therapy."
+   },
+   {
+    "slug": "defence-systems",
+    "psub": "Defence systems",
+    "title": "Bacterial Defence Systems",
+    "sub": "How bacteria fight phages",
+    "blurb": "Restriction–modification, CRISPR, abortive infection and the new anti-phage arsenal; second messengers, defence islands, and the counter-measures phages use."
    },
    {
     "slug": "genomes",
-    "psub": "Genome biology",
-    "title": "Bacterial Genomes",
-    "sub": "How a bacterial genome is laid out",
-    "blurb": "Size and density, organisation around replication, GC skew, codon usage, genome decay and pangenomes."
+    "psub": "Genome organization",
+    "title": "Genomes and Pangenomes",
+    "sub": "How a bacterial genome is arranged, and what a species contains",
+    "blurb": "Size and coding density, replichores, GC skew and codon usage; core, shell and cloud; open and closed pangenomes, genomic islands and genome reduction."
    },
    {
     "slug": "phylogenetics",

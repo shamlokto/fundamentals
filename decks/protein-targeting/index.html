@@ -521,6 +521,65 @@ function scUndP(n){
   return {vb:slim(cy+r+80+L.length*20),s};
 }
 
+function scChap(n){
+  const x=n?14:30, W=n?332:580;
+  let s=G('a-fade',0,T(x,28,n?'A nascent chain, three fates':'A nascent chain and the proteins that look after it','cname start '+(n?'f14':'f15')));
+  const y0=n?158:168;
+  s+=G('a-fade',.3,ribosome(n?130:200,y0,n?.5:.62,{mrna:true,tunnel:true,chainOn:'P',chainN:4}));
+  s+=G('a-fade',.8,blob(n?252:300,y0-(n?60:70),16,11,'#9DB4AE')+Tc(n?252:300,y0-(n?57:67),'TF','#1E2632',10,'mono mid','600')
+    +T(n?252:300,y0-(n?80:92),'trigger factor','note mid f11'));
+  const bx=n?92:420, by=n?y0+70:y0-40;
+  s+=G('a-fade',1.3,blob(bx,by,22,14,'#A9C4DC')+Tc(bx,by+3,'DnaK','#1E2632',10,'mono mid','600')
+    +blob(bx+(n?120:116),by,24,16,'#B9A0C8')+Tc(bx+(n?120:116),by+3,'GroEL','#1E2632',10,'mono mid','600')
+    +`<path d="M${bx+26} ${by} H${bx+(n?92:88)}" stroke="#6A5B47" stroke-width="1.6" marker-end="url(#ahp)"/>`);
+  s+=G('a-fade',1.8,T(x,n?by+36:y0+56,n?'folded, or handed on, or destroyed':'folded correctly, handed to the next chaperone, or tagged and destroyed','note start f12'));
+  let y=n?by+64:y0+86;
+  const items=[['Trigger factor','Sits on the ribosome at the exit tunnel and is the first thing a new chain meets. It holds exposed hydrophobic stretches and slows folding, buying time; it is not essential, because the system is layered and redundant.'],
+   ['DnaK (Hsp70), with DnaJ and GrpE','Binds short hydrophobic segments in an ATP-dependent cycle: DnaJ delivers the substrate and stimulates hydrolysis, GrpE exchanges the nucleotide. Each cycle gives the chain another chance to fold, so the chaperone does not fold anything — it prevents aggregation and keeps trying.'],
+   ['GroEL–GroES (Hsp60)','A double ring with a cavity. An unfolded chain enters, GroES caps it, and the chain folds in isolation for about ten seconds before release. Essential in E. coli, and the only chaperone most proteins cannot do without.'],
+   ['Hsp100: ClpB, with DnaK','Pulls polypeptides out of aggregates by threading them through its central pore. This is disaggregation rather than prevention, and it is what allows recovery after a heat shock.']];
+  items.forEach((it,i)=>{const L=wrap(it[1],n?44:84);
+    s+=G('a-fade',(2.2+i*.25).toFixed(2),badge(x+(n?8:10),y-4,i+1)
+      +T(x+(n?22:26),y,it[0],'cname start '+(n?'f13':'f14'))
+      +L.map((l,j)=>T(x+(n?22:26),y+17+j*16,l,'note start f12')).join(''));
+    y+=17+L.length*16+16;});
+  s+=G('a-fade',3.4,T(x,y+6,n?'Folding information is in the sequence':'Anfinsen: the information is in the sequence; chaperones change the kinetics','lab start '+(n?'f12':'')));
+  return {vb:n?`0 0 360 ${y+24}`:wide(y+26),s};
+}
+
+function scQC(n){
+  const x=n?14:30, W=n?332:580;
+  let s=G('a-fade',0,T(x,28,n?'When folding fails':'What happens when folding fails','cname start '+(n?'f14':'f15')));
+  let y=n?58:62;
+  const rows=[['Try again','DnaK and GroEL cycles','Most misfolded proteins are simply given another attempt. Only after repeated failures does the balance shift towards destruction.'],
+   ['Pull apart','ClpB with DnaK','Aggregates are not a dead end in bacteria. ClpB threads chains out of them so they can refold, which is why bacteria recover from heat shock rather than dying.'],
+   ['Destroy','ClpXP, ClpAP, Lon, HslUV, FtsH','An AAA+ unfoldase recognises an exposed tag or motif, unfolds the substrate using ATP, and feeds it into a sealed proteolytic chamber. Compartmentalisation is what keeps the protease from digesting the cell.'],
+   ['Tag it first','the ssrA tag, and adaptors','A ribosome stalled on a broken message is rescued by tmRNA, which adds an eleven-residue ssrA tag to the unfinished protein. The tag is a degron: ClpXP reads it directly, and the adaptor SspB delivers it faster.'],
+   ['Sense it','σ32 and σE','Unfolded protein in the cytoplasm titrates DnaK away from σ32, which is then stabilised and switches on the chaperones and proteases. Unfolded protein in the periplasm releases σE from its anti-sigma by regulated proteolysis. Quality control reports on itself.']];
+  s+=G('a-fade',.2,T(x,y,'Response','cname start '+(n?'f13':'f14'))
+    +T(x+(n?0:W*.22),y,n?'':'Machinery','cname start f14')
+    +T(x+(n?104:W*.50),y,n?'Machinery, and what happens':'What happens','cname start '+(n?'f13':'f14'))
+    +`<path d="M${x} ${y+7} H${x+W}" stroke="#6A5B47" stroke-width="1"/>`);
+  y+=26;
+  rows.forEach((r,i)=>{
+    const c1=wrap(r[0],n?14:12), c2=n?[]:wrap(r[1],22), c3=wrap(n?(r[1]+' — '+r[2]):r[2],n?38:44);
+    const h=Math.max(c1.length,c2.length,c3.length)*15+10;
+    s+=G('a-fade',(.4+i*.2).toFixed(2),(i%2?'':`<rect x="${x-6}" y="${y-14}" width="${W+10}" height="${h}" fill="#E7DEC9" opacity=".5"/>`)
+      +c1.map((l,j)=>T(x,y+j*15,l,'lab start '+(n?'f11':'f12'))).join('')
+      +c2.map((l,j)=>T(x+W*.22,y+j*15,l,'note start f12')).join('')
+      +c3.map((l,j)=>T(x+(n?104:W*.50),y+j*15,l,'note start '+(n?'f11':'f12'))).join(''));
+    y+=h;});
+  y+=16;
+  const notes=[['Proteolysis is regulation, not only disposal','Half-lives in bacteria are set deliberately. σ32, σS, SsrA-tagged products, the anti-sigma factors and many developmental regulators are destroyed on a schedule, and that timing is what makes irreversible decisions possible.'],
+   ['Which makes it a drug target','The ClpP chamber can be opened inappropriately: acyldepsipeptides force it to degrade unfolded protein without its partner unfoldase, killing the cell with its own protease. It is one of the few genuinely new antibacterial mechanisms of recent years.']];
+  notes.forEach((nt,i)=>{const L=wrap(nt[1],n?44:84);
+    s+=G('a-fade',(1.8+i*.3).toFixed(2),badge(x+(n?8:10),y-4,i+1)
+      +T(x+(n?22:26),y,nt[0],'cname start '+(n?'f13':'f14'))
+      +L.map((l,j)=>T(x+(n?22:26),y+17+j*16,l,'note start f12')).join(''));
+    y+=17+L.length*16+16;});
+  return {vb:n?`0 0 360 ${y+10}`:wide(y+12),s};
+}
+
 function scOther(n){
   const rows=[['Phosphorylation','kinase cascades','two-component His/Asp; Ser/Thr kinases such as pneumococcal StkP in division'],['Lipidation','prenyl, palmitoyl, GPI anchors','lipoproteins on a cysteine'],['Proteolytic maturation','prohormones, zymogens','propeptides; lantibiotic leaders removed'],['Acetylation','histones, N-termini','lysines and N-termini; regulates metabolism'],['Tagging for destruction','ubiquitin','Pup in mycobacteria; ssrA tag'],['Methylation','histones','chemoreceptors (CheR, CheB)']];
   const c=n?[12,0,12]:[24,200,400], y0=n?34:40;
@@ -628,6 +687,10 @@ const S=[
   text:"Bacteria also attach sugars to serine and threonine. Neisseria O-glycosylates its pilin with PglL, again from an undecaprenyl carrier. Streptococci, including the pneumococcus, glycosylate the long serine-rich repeats of SRR adhesins in the cytoplasm and export them through a dedicated SecA2–SecY2 system. Campylobacter cannot build a flagellum unless its flagellin is decorated with pseudaminic acid."},
  {p:5,title:'One carrier, many sugars',draw:scUndP,
   text:"In eukaryotes the glycan carrier is dolichol. In bacteria it is undecaprenyl phosphate, a 55-carbon lipid, and nearly every surface polymer is built on it: peptidoglycan through lipid II, capsules, O-antigen, teichoic acids, protein glycans and the enterobacterial common antigen. Most of the roughly 100 pneumococcal capsule types are assembled this way, flipped by Wzx and polymerised by Wzy. The antibiotic bacitracin works by trapping this carrier."},
+{p:5,title:'Folding and the chaperones',draw:scChap,
+  text:"A new chain leaves the ribosome unfolded and sticky. Trigger factor meets it first at the exit tunnel; DnaK with DnaJ and GrpE holds exposed hydrophobic segments through repeated ATP cycles; GroEL and GroES enclose a chain in a cavity where it can fold alone. None of them folds anything — the information is in the sequence, as Anfinsen showed. What chaperones do is keep the chain from aggregating long enough to find its own structure."},
+ {p:5,title:'Quality control',draw:scQC,
+  text:"When folding fails, bacteria try again, pull aggregates apart with ClpB, or destroy the protein. The AAA+ proteases — ClpXP, Lon, HslUV, FtsH — unfold substrates and feed them into a sealed chamber, recognising tags such as the ssrA peptide that tmRNA adds to the product of a stalled ribosome. The same machinery sets the half-lives of regulators on purpose, which is what makes timed, irreversible decisions possible."},
  {p:5,title:'Other finishing touches',draw:scOther,
   text:"Proteins carry many other modifications. Bacteria signal with two-component systems that phosphorylate histidine and aspartate, and with Ser/Thr kinases such as the pneumococcal division kinase StkP. They cut off propeptides and leader peptides, acetylate lysines, methylate chemoreceptors during chemotaxis, and in mycobacteria tag proteins for destruction with Pup, a functional counterpart of ubiquitin."},
  {p:6,title:'Where does it go?',chips:'route',draw:scRoute,

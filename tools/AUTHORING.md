@@ -8,8 +8,8 @@ The build wraps the source in the shared page (`tools/base_head.html`), the shar
 of the hand-built decks (`tools/base_helpers.js`), the generic helpers in `tools/lib.js`, and
 the runtime (`tools/base_runtime.html`), then syntax-checks the script with `node --check`.
 
-Good examples to copy: `src/energy-redox.js`, `src/regulation.js`, `src/motility.js`,
-`src/genomes.js`, `src/respiration.js`.
+Good examples to copy: `src/energy-redox.js`, `src/motility.js`,
+`src/respiration.js`, `src/central-metabolism.js`.
 
 ## File layout
 

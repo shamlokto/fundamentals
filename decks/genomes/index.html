@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bacterial Genomes</title>
-<meta name="description" content="Genome size and gene density, chromosome organisation, GC skew and strand bias, GC content and codon usage, mobile element load, and pangenomes.">
+<title>Genomes and Pangenomes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
 <style>
@@ -81,7 +80,6 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #stage .ax{stroke:#6A5B47;stroke-width:1.4}
 #stage .tint{filter:url(#plate)}
-#stage .halo{paint-order:stroke;stroke:#EFE8D8;stroke-width:3.5px;stroke-linejoin:round}
 #stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
 
 /* Motion */
@@ -140,13 +138,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 <div class="wrap">
   <a class="hubback" href="../../">← All primers</a>
   <header>
-    <p class="eyebrow">Genetics and genome biology · an animated primer</p>
-    <h1>How a bacterial genome is laid out</h1>
+    <p class="eyebrow">Genome organization · an animated primer</p>
+    <h1>How a bacterial genome is arranged, and what a species contains</h1>
   </header>
   <nav class="parts" aria-label="Parts">
-    <button id="part1" type="button">I · Organisation</button>
-    <button id="part2" type="button">II · Composition</button>
-    <button id="part3" type="button">III · Pangenomes</button>
+    <button id="part1" type="button">I · The chromosome</button>
+    <button id="part2" type="button">II · The pangenome</button>
+    <button id="part3" type="button">III · Reading genomes</button>
   </nav>
   <section class="stage" aria-live="polite">
     <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
@@ -160,9 +158,11 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <button id="replay" type="button">Replay</button>
     <button id="next" type="button" class="primary">Next</button>
   </div>
-  <p class="foot">Genome sizes and percentages are typical values; the skew plot is schematic. Sequencing and assembly are covered in the sequencing and bioinformatics primers.</p>
+  <p class="foot">Genome sizes, gene counts and pangenome figures are representative values from published analyses and depend heavily on sampling and on the annotation pipeline used.</p>
 </div>
 <script>
+
+
 const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
       RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
 const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
@@ -372,7 +372,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -415,296 +415,312 @@ function predictPlate(n,spec,sel){
 }
 /* generic text-and-picture plate helpers */
 function sideText(n,x,y,items,wn,o={}){return bullets(n?24:x,y,items,n?44:wn,o);}
-/* ===================== sequencing toolkit ===================== */
-const NB={A:'#4F7A3F',C:'#2F5276',G:'#8C6D46',T:'#A4473A',N:'#9A9384'};
-const ADP1='#7D4A98', ADP2='#C17A2C', IDX='#2E7D78', DNAC='#5A4632', SIGC='#2F5276', GLS='#7E8F92';
-/* double-stranded fragment, optionally with adapters/index blocks at each end */
-function frag(x,y,w,o={}){
-  const h=o.h||9, a=o.a||0;
+/* ===================== shared toolkit: evolution, HGT, plasmids, defence, genomes ===================== */
+const CHR='#5A4632', PLS='#7D4A98', PHG='#A4473A', TNC='#C17A2C', INTC='#2E7D78', RECC='#3E7FA8',
+      CELLF='#DCE2C9', CELLE='#8C7A52', CORE='#2F5276', SHELL='#8FB1CF', CLOUD='#C9BFAB', METC='#C99A2E';
+/* --- xy plot frame; returns mappers --- */
+function xyPlot(x,y,w,h,xr,yr,o={}){
+  const px=v=>x+(v-xr[0])/(xr[1]-xr[0])*w, py=v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h;
   let s='';
-  if(a){s+=`<rect x="${FX(x)}" y="${FX(y)}" width="${a}" height="${h}" fill="${ADP1}" stroke="${INK}" stroke-width=".7"/>`
-       +`<rect x="${FX(x+w-a)}" y="${FX(y)}" width="${a}" height="${h}" fill="${ADP2}" stroke="${INK}" stroke-width=".7"/>`;}
-  s+=`<rect x="${FX(x+a)}" y="${FX(y)}" width="${FX(w-2*a)}" height="${h}" fill="${o.fill||'#D9CDB0'}" stroke="${INK}" stroke-width=".8"/>`;
-  for(let xx=x+a+5;xx<x+w-a;xx+=7)s+=`<path d="M${FX(xx)} ${FX(y+1)} v${h-2}" stroke="${INK}" stroke-width=".5" opacity=".4"/>`;
-  if(o.idx)s+=`<rect x="${FX(x+a)}" y="${FX(y)}" width="12" height="${h}" fill="${IDX}" stroke="${INK}" stroke-width=".7"/>`;
-  if(o.label)s+=T(FX(x+w/2),FX(y+h+15),o.label,'note mid f11');
+  if(o.grid){const gx=o.grid[0]||4,gy=o.grid[1]||4;let g='';
+    for(let i=1;i<gx;i++)g+=`M${FX(x+w*i/gx)} ${y} V${y+h} `;
+    for(let i=1;i<gy;i++)g+=`M${x} ${FX(y+h*i/gy)} H${x+w} `;
+    s+=`<path d="${g}" stroke="${AXC}" stroke-width=".5" opacity=".25"/>`;}
+  s+=`<path d="M${x} ${y-4} V${y+h} H${x+w+6}" stroke="${AXC}" stroke-width="1.3" fill="none"/>`;
+  if(o.xlab)s+=T(x+w/2,y+h+(o.xdy||24),o.xlab,'note mid '+(o.fs||'f12'));
+  if(o.ylab)s+=`<text transform="translate(${x-(o.ydx||20)} ${y+h/2}) rotate(-90)" text-anchor="middle" class="note ${o.fs||'f12'}">${o.ylab}</text>`;
+  return {px,py,s,x,y,w,h,xr,yr};}
+function xyCurve(P,f,o={}){
+  const xr=o.xr||P.xr,n=o.n||80;let d='',on=false;
+  for(let i=0;i<=n;i++){const t=xr[0]+(xr[1]-xr[0])*i/n,v=f(t);
+    if(!isFinite(v)||v>P.yr[1]||v<P.yr[0]){on=false;continue;}
+    d+=(on?' L':' M')+FX(P.px(t))+' '+FX(P.py(v));on=true;}
+  return `<path d="${d.trim()}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;}
+function xyPts(P,pts,o={}){return pts.map(p=>`<circle cx="${FX(P.px(p[0]))}" cy="${FX(P.py(p[1]))}" r="${o.r||3.2}" fill="${o.col||CORE}" stroke="${INK}" stroke-width=".6"/>`).join('');}
+function xyLine(P,pts,o={}){let d='';pts.forEach((p,i)=>{d+=(i?' L':'M')+FX(P.px(p[0]))+' '+FX(P.py(p[1]));});
+  return `<path d="${d}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round"/>`;}
+/* --- horizontal bars with labels --- */
+function barRow(x,y,w,items,max,o={}){
+  let s='';items.forEach((it,i)=>{const yy=y+i*(o.rh||26);
+    s+=T(x,yy,it[0],'lab start '+(o.fs||'f12'))+`<rect x="${x+(o.bx||150)}" y="${yy-10}" width="${FX(Math.max(1,it[1]/max*w))}" height="13" rx="2" fill="${it[2]||CORE}" stroke="${INK}" stroke-width=".6"/>`
+      +(it[3]?Tc(x+(o.bx||150)+Math.max(1,it[1]/max*w)+6,yy,it[3],'#6A5B47',10,'mono start','600'):'');});
   return s;}
-/* flowcell surface: a lawn of short oligos */
-function lawn(x1,x2,y,o={}){
-  let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${o.h||8}" fill="#DCE6E8" stroke="${GLS}" stroke-width="1"/>`;
-  for(let x=x1+5;x<x2-2;x+=9)s+=`<path d="M${FX(x)} ${y} v-7" stroke="${x%18<9?ADP1:ADP2}" stroke-width="2" stroke-linecap="round"/>`;
+/* --- circular replicon; feats = [{a0,a1,col,lab}] angles in degrees --- */
+function pRing(cx,cy,r,o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${o.col||PLS}" stroke-width="${o.w||3}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  (o.feats||[]).forEach(f=>{const a0=f.a0*Math.PI/180,a1=f.a1*Math.PI/180,rr=r,big=(f.a1-f.a0)>180?1:0;
+    s+=`<path d="M${FX(cx+rr*Math.cos(a0))} ${FX(cy+rr*Math.sin(a0))} A${rr} ${rr} 0 ${big} 1 ${FX(cx+rr*Math.cos(a1))} ${FX(cy+rr*Math.sin(a1))}" stroke="${f.col}" stroke-width="${o.fw||9}" fill="none" stroke-linecap="butt"/>`;
+    if(f.lab){const am=(f.a0+f.a1)/2*Math.PI/180,lr=r+(o.lr||17);
+      s+=Tc(FX(cx+lr*Math.cos(am)),FX(cy+lr*Math.sin(am)+3),f.lab,f.lcol||'#3A2E22',o.lfs||10,'mono '+(Math.cos(am)>.3?'start':Math.cos(am)<-.3?'end':'mid'),'600');}});
+  if(o.label)s+=T(cx,cy+4,o.label,'note mid f11');
   return s;}
-/* a cluster of identical strands standing on the flowcell */
-function clust(cx,y,n,col,o={}){
-  let s='';const sp=o.sp||4.5;
-  for(let i=0;i<n;i++){const x=cx+(i-(n-1)/2)*sp;s+=`<path d="M${FX(x)} ${y} v-${o.h||20}" stroke="${col||DNAC}" stroke-width="1.6" stroke-linecap="round"/>`;}
-  if(o.dot)s+=`<circle cx="${cx}" cy="${FX(y-(o.h||20)-5)}" r="4.5" fill="${o.dot}" stroke="${INK}" stroke-width=".7"/>`;
-  if(o.label)s+=T(cx,y+16,o.label,'note mid f11');
+/* --- phage icon --- */
+function phIcon(cx,cy,k=1,col){const h=11*k,c=col||PHG;
+  return `<path d="M${cx} ${FX(cy-2*h)} l${FX(h*.9)} ${FX(h*.52)} v${FX(h)} l${FX(-h*.9)} ${FX(h*.52)} l${FX(-h*.9)} ${FX(-h*.52)} v${FX(-h)} z" fill="${c}" stroke="${INK}" stroke-width=".9"/>`
+   +`<rect x="${FX(cx-2.2*k)}" y="${cy}" width="${FX(4.4*k)}" height="${FX(12*k)}" fill="#D6CDB8" stroke="${INK}" stroke-width=".7"/>`
+   +`<path d="M${FX(cx-1.8*k)} ${FX(cy+12*k)} l${FX(-6*k)} ${FX(6*k)} M${FX(cx+1.8*k)} ${FX(cy+12*k)} l${FX(6*k)} ${FX(6*k)} M${cx} ${FX(cy+12*k)} v${FX(7*k)}" stroke="${INK}" stroke-width="${FX(1*k)}"/>`;}
+/* --- simple rod / oval cell with optional contents --- */
+function cellRod(cx,cy,L,R,o={}){
+  const x1=cx-L/2,x2=cx+L/2;
+  const d=`M${FX(x1)} ${FX(cy-R)} H${FX(x2)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x2)} ${FX(cy+R)} H${FX(x1)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x1)} ${FX(cy-R)} Z`;
+  let s=`<path d="${d}" fill="${o.fill||CELLF}" stroke="${o.stroke||CELLE}" stroke-width="${o.sw||2}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  if(o.chr)s+=`<ellipse cx="${cx}" cy="${cy}" rx="${FX(L*.26)}" ry="${FX(R*.5)}" fill="none" stroke="${CHR}" stroke-width="1.8"/>`;
+  if(o.label)s+=T(cx,cy+R+(o.ldy||18),o.label,'note mid f11');
   return s;}
-/* bead carrying clonal DNA */
-function bead(cx,cy,r,o={}){
-  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#C9BFAB'}" stroke="${INK}" stroke-width="1.1"/><ellipse cx="${FX(cx-r*.3)}" cy="${FX(cy-r*.35)}" rx="${r*.3}" ry="${r*.18}" fill="#FFF" opacity=".5"/>`;
-  if(o.dna!==false)for(let i=0;i<10;i++){const a=i/10*Math.PI*2;s+=`<path d="M${FX(cx+r*Math.cos(a))} ${FX(cy+r*Math.sin(a))} l${FX(7*Math.cos(a))} ${FX(7*Math.sin(a))}" stroke="${DNAC}" stroke-width="1.3"/>`;}
-  if(o.label)s+=T(cx,cy+r+(o.ldy||20),o.label,'note mid f11');
+/* --- gene arrow --- */
+function gArrow(x,y,w,label,fill,o={}){
+  const h=o.h||17;
+  return `<path d="M${x} ${FX(y-h/2)} h${FX(w-7)} l7 ${FX(h/2)} l-7 ${FX(h/2)} h${FX(-(w-7))}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
+   +(label?Tc(FX(x+(w-7)/2),FX(y+4),label,o.tc||'#3A2E22',o.fs||10,'mono mid','600'):'');}
+/* --- a grid of cells for population pictures: states = array of colour-or-null --- */
+function popGrid(x,y,cols,rows,states,o={}){
+  const d=o.d||13,g=o.g||4;let s='';
+  for(let i=0;i<cols*rows;i++){const c=i%cols,r=Math.floor(i/cols),st=states[i];
+    s+=`<rect x="${FX(x+c*(d+g))}" y="${FX(y+r*(d+g))}" width="${d}" height="${d}" rx="${FX(d*.38)}" fill="${st||'#E0DBCB'}" stroke="${INK}" stroke-width=".5" opacity="${st?1:.7}"/>`;}
   return s;}
-/* microwell holding a bead, with an ISFET sensor underneath */
-function well(cx,by,w,h,o={}){
-  let s=`<path d="M${cx-w/2} ${by-h} v${h} h${w} v${-h}" fill="#E8E3D4" stroke="${GLS}" stroke-width="1.6"/>`;
-  if(o.bead!==false)s+=bead(cx,by-w*.42,w*.3,{dna:false});
-  s+=`<rect x="${cx-w/2}" y="${by}" width="${w}" height="12" fill="${o.sense||'#B9C6CE'}" stroke="${INK}" stroke-width=".9"/>`;
-  if(o.label)s+=T(cx,by+26,o.label,'note mid f11');
+/* --- branching lineage tree; muts = [[gen, lane]] marks --- */
+function lineage(x,y,w,h,gens,lanes,marks,o={}){
+  const dx=w/gens,dy=h/(lanes-1||1);let s='';
+  for(let l=0;l<lanes;l++)s+=`<path d="M${x} ${FX(y+l*dy)} h${w}" stroke="${o.col||'#C9BFAB'}" stroke-width="1.6"/>`;
+  (marks||[]).forEach(m=>{s+=`<circle cx="${FX(x+m[0]*dx)}" cy="${FX(y+m[1]*dy)}" r="${o.r||4}" fill="${m[2]||PHG}" stroke="${INK}" stroke-width=".6"/>`;
+    if(m[3]!==false)s+=`<path d="M${FX(x+m[0]*dx)} ${FX(y+m[1]*dy)} h${FX(w-m[0]*dx)}" stroke="${m[2]||PHG}" stroke-width="2.4"/>`;});
   return s;}
-/* zero-mode waveguide: a well in metal film with polymerase at the floor */
-function zmw(cx,by,w,h,o={}){
-  let s=`<rect x="${cx-w/2-26}" y="${by-h}" width="${26}" height="${h}" fill="#B9AE96" stroke="${INK}" stroke-width=".8"/><rect x="${cx+w/2}" y="${by-h}" width="${26}" height="${h}" fill="#B9AE96" stroke="${INK}" stroke-width=".8"/>`;
-  s+=`<rect x="${cx-w/2}" y="${by-h}" width="${w}" height="${h}" fill="#E6EEF0" opacity=".55"/>`;
-  if(o.lit)s+=`<path d="M${cx-w/2} ${by} L${cx+w/2} ${by} L${cx+w/2-4} ${by-h*.55} L${cx-w/2+4} ${by-h*.55} Z" fill="#E0B84A" opacity=".35"/>`;
-  s+=prot(cx,by-9,13,9,'#9DB4AE','pol',{fs:9});
-  if(o.label)s+=T(cx,by+20,o.label,'note mid f11');
+/* --- key: colour swatch + label, in columns --- */
+function keyRow(x,y,items,o={}){
+  let s='';items.forEach((it,i)=>{const px=x+(o.cw?i*o.cw:0),py=y+(o.cw?0:i*(o.rh||17));
+    s+=`<rect x="${px}" y="${py-8}" width="12" height="11" rx="2" fill="${it[1]}" stroke="${INK}" stroke-width=".6"/>`+T(px+18,py,it[0],'note start '+(o.fs||'f11'));});
   return s;}
-/* membrane with a protein pore, motor protein and translocating strand */
-function poreMemb(cx,my,o={}){
-  const h=o.h||26;
-  let s=`<rect x="${cx-110}" y="${my}" width="220" height="${h}" fill="#EDE0B8"/><path d="M${cx-108} ${my+3} H${cx+108} M${cx-108} ${my+h-3} H${cx+108}" stroke="#B89A5E" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`;
-  s+=`<path d="M${cx-17} ${my-3} h34 l-7 ${h+6} h-20 z" fill="#9DB4AE" stroke="${INK}" stroke-width="1.1"/>`;
-  s+=`<path d="M${cx-70} ${my-30} q30 4 50 -8 q12 -7 20 2" stroke="${DNAC}" stroke-width="2.4" fill="none"/>`;
-  s+=`<path d="M${cx} ${my-16} V${my+h+22}" stroke="${DNAC}" stroke-width="2.2"/>`;
-  s+=prot(cx-26,my-18,15,10,'#C99A2E','motor',{fs:8.5});
-  if(o.label)s+=T(cx,my+h+40,o.label,'note mid f11');
-  return s;}
-/* generic trace: pts = array of y values 0..1, drawn in a box */
-function trace(x,y,w,h,pts,o={}){
-  let d='';pts.forEach((v,i)=>{const px=x+i*w/(pts.length-1),py=y+h-v*h;d+=(i?(o.step?`H${FX(px)} V${FX(py)}`:`L${FX(px)} ${FX(py)}`):`M${FX(px)} ${FX(py)}`);});
-  let s=o.frame===false?'':`<path d="M${x} ${y} V${y+h} H${x+w}" stroke="${AXC}" stroke-width="1.1" fill="none"/>`;
-  return s+`<path d="${d}" stroke="${o.col||SIGC}" stroke-width="${o.w||1.8}" fill="none" stroke-linejoin="round"/>`+(o.label?T(x+w/2,y+h+16,o.label,'note mid f11'):'');}
-/* sanger-style chromatogram: seq of bases as gaussian peaks */
-function chroma(x,y,w,h,seq,o={}){
-  const n=seq.length, dx=w/n;let s=`<path d="M${x} ${y+h} H${x+w}" stroke="${AXC}" stroke-width="1"/>`;
-  seq.split('').forEach((b,i)=>{const cx=x+dx*(i+.5);
-    let d=`M${FX(cx-dx*.5)} ${FX(y+h)}`;for(let t=-.5;t<=.5;t+=.1){const px=cx+t*dx,py=y+h-h*.82*Math.exp(-t*t*18);d+=` L${FX(px)} ${FX(py)}`;}
-    s+=`<path d="${d}" stroke="${NB[b]}" stroke-width="1.6" fill="none"/>`+Tc(FX(cx),FX(y+h+14),b,NB[b],o.fs||11,'mono mid','600');});
-  return s;}
-/* coloured base letters in a row */
-function baseSeq(x,y,seq,dx,o={}){
-  return seq.split('').map((b,i)=>Tc(FX(x+i*dx+dx/2),y,b,NB[b]||'#6A5B47',o.fs||12,'mono mid','600')).join('');}
-/* stacked reads aligned under a reference line */
-function pileup(x,y,w,reads,o={}){
-  let s=`<path d="M${x} ${y} H${x+w}" stroke="${BB}" stroke-width="2.6"/>`;
-  reads.forEach((r,i)=>{const rx=x+r[0]*w,rw=r[1]*w,ry=y+12+i*(o.gap||9);
-    s+=`<path d="M${FX(rx)} ${FX(ry)} h${FX(rw)}" stroke="${r[2]||'#8FB1CF'}" stroke-width="${o.sw||5}" stroke-linecap="round"/>`;});
-  return s;}
-
-/* clickable external link rendered inside the plate */
-function xlink(x,y,text,url,o={}){
-  return `<a href="${url}" target="_blank" rel="noopener"><text x="${FX(x)}" y="${FX(y)}" class="mono ${o.a||'start'} ${o.fs||'f11'}">${text} \u2197</text></a>`;}
-const VENDOR={
-  illumina:['Illumina: sequencing by synthesis, with animation','https://www.illumina.com/science/technology/next-generation-sequencing/sequencing-technology.html'],
-  ion:['Thermo Fisher: Ion Torrent semiconductor sequencing','https://www.thermofisher.com/sg/en/home/life-science/sequencing/next-generation-sequencing/ion-torrent-next-generation-sequencing-technology.html'],
-  mgi:['MGI: DNBSEQ technology, with figures','https://global-mgitech.com/technologies/dnbseq-technology'],
-  pacbio:['PacBio: the steps of SMRT sequencing','https://www.pacb.com/blog/steps-of-smrt-sequencing'],
-  hifi:['PacBio: HiFi reads','https://www.pacb.com/technology/hifi-sequencing/'],
-  ont:['Oxford Nanopore: how nanopore sequencing works','https://nanoporetech.com/platform/technology']};
-function vendorLine(n,y,keys){let s='',yy=y;keys.forEach(k=>{const v=VENDOR[k];s+=xlink(n?16:30,yy,n?v[0].replace(/, with (animation|figures)/,''):v[0],v[1],{fs:n?'f10':'f11'});yy+=16;});return {s,y:yy};}
-/* ===================== Part I · the idea ===================== */
-const OUT=[['Sanger capillary, 96 wells','c. 2000',7.7e4,'#9A9384'],['454 pyrosequencing','2005',2e7,'#B9AE96'],['Illumina Genome Analyzer','2007',1e9,'#8FB1CF'],
- ['Illumina HiSeq 2500','2013',6e11,'#5E87AD'],['Illumina NovaSeq X','2023',1.6e13,'#2F5276'],['Nanopore PromethION','2023',1.4e13,'#C17A2C']];
-
-/* ===================== shared library for the generated decks ===================== */
-const PAL={sand:'#E7DEC9',blue:'#A9C4DC',green:'#A9C49A',rose:'#E7A99B',gold:'#E0C88A',lilac:'#C9A9D6',teal:'#9DB4AE',grey:'#D8D2C2',cream:'#F3EEE2',ochre:'#D9B85A'};
-const lines=t=>String(t).split('|');
-/* opening plate without a portrait: art on the left (wide) or on top (narrow) */
-function introPlate(n,o){
-  let s='';const aw=n?328:220, ah=o.artH||200;
-  const ax=n?16:20, ay=n?14:30;
-  if(o.art)s+=G('a-fade',0,o.art(ax+aw/2,ay+ah/2,n));
-  let x=n?16:270, y=n?ay+ah+34:44;
-  s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
-  const Q=wrap(o.q,n?40:42);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
-  if(o.belief){s+=G('a-fade',1,T(x,y,o.bh||'Why it matters','mono acc start f12'));
-    const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;}
-  if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
-  const H=n?y+12:Math.max(y+14,ay+ah+20);
-  return {vb:n?slim(H):wide(H),s};
-}
-/* point where the segment from a box centre toward (tx,ty) leaves the box */
-function rectEdge(cx,cy,w,h,tx,ty,pad=4){const dx=tx-cx,dy=ty-cy;const sx=dx?(w/2+pad)/Math.abs(dx):1e9,sy=dy?(h/2+pad)/Math.abs(dy):1e9,t=Math.min(sx,sy,1);return [cx+dx*t,cy+dy*t];}
-/* node: {x,y,w,h,t,f,sub,fs,tc,r}  (x,y = centre); edge: [a,b,label,{bend,col,dash,lx,ly,la,w}] */
-function nodeBox(N){const h=N.h||(28+(lines(N.t).length-1)*15+(N.sub?13:0)), L=lines(N.t);
-  let s=box(N.x-N.w/2,N.y-h/2,N.w,h,N.f||'#EFE6D2',N.r==null?4:N.r);
-  const y0=N.y-h/2+18+(N.sub?0:Math.max(0,(h-28-(L.length-1)*15)/2));
-  s+=L.map((l,i)=>Tc(N.x,y0+i*15,l,N.tc||'#3A2E22',N.fs||12,'mono mid','600')).join('');
-  if(N.sub)s+=T(N.x,y0+(L.length-1)*15+14,N.sub,'note mid f10');
-  return {s,h};}
-function flow(nodes,edges,o={}){
-  const H={};Object.entries(nodes).forEach(([k,N])=>{H[k]=N.h||(28+(lines(N.t).length-1)*15+(N.sub?13:0));});
-  let es='',ls='',ns='';
-  edges.forEach(e=>{const [a,b,lab,op={}]=e, A=nodes[a], B=nodes[b];
-    let cx1=A.x,cy1=A.y,cx2=B.x,cy2=B.y;
-    const mx=(cx1+cx2)/2,my=(cy1+cy2)/2,dx=cx2-cx1,dy=cy2-cy1,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,bd=op.bend||0;
-    const qx=mx+nx*bd,qy=my+ny*bd;
-    const [x1,y1]=rectEdge(A.x,A.y,A.w,H[a],bd?qx:B.x,bd?qy:B.y,op.pad1==null?4:op.pad1);
-    const [x2,y2]=rectEdge(B.x,B.y,B.w,H[b],bd?qx:A.x,bd?qy:A.y,op.pad2==null?6:op.pad2);
-    const col=op.col||'#6A5B47', m=op.red?'ahr':op.blue?'ahb':'ahp';
-    const d=bd?`M${FX(x1)} ${FX(y1)} Q${FX(qx)} ${FX(qy)} ${FX(x2)} ${FX(y2)}`:`M${FX(x1)} ${FX(y1)} L${FX(x2)} ${FX(y2)}`;
-    es+=`<path d="${d}" stroke="${op.red?'#A4473A':op.blue?'#2F5276':col}" stroke-width="${op.w||1.5}" fill="none"${op.none?'':` marker-end="url(#${m})"`}${op.dash?` stroke-dasharray="${op.dash}"`:''}${op.both?` marker-start="url(#${m})"`:''}/>`;
-    if(lab){const side=op.side||(bd?Math.sign(bd):1), off=op.off==null?12:op.off;
-      const px=(bd?(mx+qx)/2:mx)+nx*off*side+(op.lx||0), py=(bd?(my+qy)/2:my)+ny*off*side+(op.ly||0)+4;
-      const anc=op.la||(Math.abs(nx*side)<.3?'mid':(nx*side>0?'start':'end'));
-      const LL=lines(lab), up=(ny*side<-.3)?(LL.length-1)*13:(ny*side>.3?-6:(LL.length-1)*6.5);
-      ls+=LL.map((l,i)=>T(FX(px),FX(py-up+i*13),l,`${op.lc||'note'} ${anc} f11 halo`)).join('');}
-  });
-  Object.values(nodes).forEach(N=>{ns+=nodeBox(N).s;});
-  return es+ns+ls;
-}
-/* boxes evenly on a circle joined by arcs; items [{t,f,w,sub}], arcs labelled outside by labs[i] (arc i -> i+1) */
-function cycle(cx,cy,R,items,o={}){
-  const k=items.length, a0=o.a0==null?-90:o.a0, ang=i=>(a0+i*360/k)*Math.PI/180, P=a=>[cx+R*Math.cos(a),cy+R*Math.sin(a)];
-  const H=it=>28+(lines(it.t).length-1)*15;
-  /* angular half-width of a box on the circle: step until the point leaves the padded box */
-  const half=(i)=>{const it=items[i],[bx,by]=P(ang(i)),hw=(it.w||70)/2+7,hh=H(it)/2+7;let d=0;while(d<Math.PI/k){const [x,y]=P(ang(i)+d);if(Math.abs(x-bx)>hw||Math.abs(y-by)>hh)break;d+=0.005;}return d;};
-  const hw=items.map((_,i)=>half(i));
-  let es='',ns='',ls='';
-  items.forEach((it,i)=>{const j=(i+1)%k;if(o.open&&j===0)return;
-    const A1=ang(i)+hw[i], A2=ang(i)+2*Math.PI/k-hw[j]-0.02;
-    if(A2-A1>0.03)es+=`<path d="M${FX(cx+R*Math.cos(A1))} ${FX(cy+R*Math.sin(A1))} A${R} ${R} 0 0 1 ${FX(cx+R*Math.cos(A2))} ${FX(cy+R*Math.sin(A2))}" stroke="#6A5B47" stroke-width="1.5" fill="none" marker-end="url(#ahp)"/>`;
-    if(o.labs&&o.labs[i]){const am=(A1+A2)/2, rr=R+(o.lr||18), lx=cx+rr*Math.cos(am), ly=cy+rr*Math.sin(am);
-      const anc=Math.cos(am)>.25?'start':Math.cos(am)<-.25?'end':'mid', L=lines(o.labs[i]);
-      ls+=L.map((l,q)=>T(FX(lx),FX(ly+4+q*13+(Math.sin(am)>.5?6:Math.sin(am)<-.5?-6-(L.length-1)*13:-(L.length-1)*6.5)),l,`note ${anc} f11 halo`)).join('');}
-  });
-  items.forEach((it,i)=>{const [x,y]=P(ang(i));ns+=nodeBox({x,y,w:it.w||70,t:it.t,f:it.f,sub:it.sub,fs:it.fs}).s;});
-  return es+ns+ls;
-}
-/* axes: returns {s,px,py,...}; o:{xr,yr,xlab,ylab,xt,yt,xfmt,yfmt,logx,logy} */
-function axes(x,y,w,h,o){
-  const lx=v=>o.logx?Math.log10(v):v, ly=v=>o.logy?Math.log10(v):v;
-  const X0=lx(o.xr[0]),X1=lx(o.xr[1]),Y0=ly(o.yr[0]),Y1=ly(o.yr[1]);
-  const px=v=>x+(lx(v)-X0)/(X1-X0)*w, py=v=>y+h-(ly(v)-Y0)/(Y1-Y0)*h;
-  let s=`<path d="M${x} ${y} V${y+h} H${x+w}" stroke="#6A5B47" stroke-width="1.3" fill="none"/>`;
-  (o.xt||[]).forEach(t=>{const v=Array.isArray(t)?t[0]:t,l=Array.isArray(t)?t[1]:t;s+=ln(FX(px(v)),y+h,FX(px(v)),y+h+4,'#6A5B47',1)+T(FX(px(v)),y+h+16,l,'note mid f10');});
-  (o.yt||[]).forEach(t=>{const v=Array.isArray(t)?t[0]:t,l=Array.isArray(t)?t[1]:t;s+=ln(x-4,FX(py(v)),x,FX(py(v)),'#6A5B47',1)+T(x-7,FX(py(v)+3.5),l,'note end f10');});
-  if(o.xlab)s+=T(x+w/2,y+h+(o.xt?32:18),o.xlab,'note mid f12');
-  if(o.ylab)s+=`<text transform="translate(${x-(o.yt?(o.ydx||34):14)} ${y+h/2}) rotate(-90)" class="note mid f12">${o.ylab}</text>`;
-  return {s,px,py,x,y,w,h,xr:o.xr,logx:o.logx};
-}
-function curve(A,f,o={}){const N=o.n||120,a=o.from==null?A.xr[0]:o.from,b=o.to==null?A.xr[1]:o.to;let d='';
-  for(let i=0;i<=N;i++){const v=A.logx?a*Math.pow(b/a,i/N):a+(b-a)*i/N, yv=f(v); if(!isFinite(yv))continue; d+=(d?' L':'M')+FX(A.px(v))+' '+FX(A.py(yv));}
-  return `<path d="${d}" stroke="${o.col||'#2F5276'}" stroke-width="${o.w||2.2}" fill="none"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
-/* horizontal bars: items [[label,value,colour,note]] */
-function hbars(n,x,y,w,items,o={}){const max=o.max||Math.max(...items.map(i=>i[1])), lw=o.lw||(n?96:150), bh=o.bh||16, gap=o.gap||10;let s='',yy=y;
-  items.forEach((it,i)=>{const bw=Math.max(2,(w-lw-(o.vw||46))*it[1]/max);
-    s+=G('a-fade',(i*.12).toFixed(2),T(x+lw-8,yy+bh-4,it[0],'lab end '+(n?'f11':'f12'))+box(x+lw,yy,FX(bw),bh,it[2]||PAL.blue,2)+T(FX(x+lw+bw+6),yy+bh-4,it[3]!=null?it[3]:it[1],'mono start f10'));yy+=bh+gap;});
-  return {s,y:yy};}
-/* grid of text cards with equalised row heights; items [[head,body,art?]] art(cx,cy) drawn in a band of artH */
-function cards(n,items,o={}){
-  const cols=n?(o.ncols||1):(o.cols||2), x0=o.x||(n?10:12), W=((n?340:616)-(cols-1)*(o.gap||12))/cols, artH=o.artH||0;
-  const cw=o.cw||6.4; let y=o.y||20, s='';
-  for(let r=0;r<items.length;r+=cols){const row=items.slice(r,r+cols);
-    const Ls=row.map(it=>wrap(it[1],Math.floor((W-24)/cw)));
-    const Hh=row.map(it=>lines(it[0]).length);
-    const h=Math.max(...row.map((it,i)=>30+(Hh[i]-1)*18+artH+Ls[i].length*16+10));
-    row.forEach((it,i)=>{const x=x0+i*(W+(o.gap||12)), num=o.num?r+i+1:0;
-      s+=G('a-fade',((r+i)*.25).toFixed(2),box(x,y,W,h,it[3]||o.fill||'#E7DEC9',4)+(num?badge(x+16,y+17,num):'')
-        +lines(it[0]).map((l,q)=>T(x+(num?32:12),y+22+q*18,l,'lab start f14')).join('')
-        +(it[2]&&artH?it[2](x+W/2,y+26+(Hh[i]-1)*18+artH/2,W):'')
-        +Ls[i].map((l,j)=>T(x+12,y+40+(Hh[i]-1)*18+artH+j*16,l,'note start f12')).join(''));});
-    y+=h+(o.vgap||10);}
-  return {s,y};}
-/* explorer card for a chips plate: it={h,sub,rows:[[k,v]],pros:[],cons:[],note,art:(cx,cy,n)=>svg,artH} */
-function explorer(n,it,o={}){
-  let s='',y=o.y||34;const x=n?16:24, R=n?344:616;
-  if(it.art){s+=G('a-fade',0,it.art(n?180:320,y+(it.artH||120)/2-6,n));y+=(it.artH||120)+8;}
-  s+=G('a-fade',.1,T(x,y,it.h,'cname start f16'));y+=18;
-  if(it.sub){s+=G('a-fade',.15,T(x,y,it.sub,'mono acc start f12'));y+=8;}
-  y+=14;
-  const kx=x, vx=n?x+104:x+180, vw=n?30:66;
-  (it.rows||[]).forEach((r,i)=>{const V=wrap(r[1],vw);s+=G('a-fade',(.2+i*.08).toFixed(2),T(kx,y,r[0],'lab start f13')+V.map((l,j)=>T(vx,y+j*16,l,'note start f13')).join(''));y+=V.length*16+10;});
-  if(it.pros||it.cons){y+=6;const cx2=n?x:x+300, cw=n?44:40;let ya=y,yb=y;
-    if(it.pros){s+=T(x,ya,it.ph||'Strengths','cname start f14');ya+=20;it.pros.forEach(p=>{const L=wrap(p,cw);s+=Tc(x+4,ya,'+','#4F7A3F',13,'mono start','600')+L.map((l,j)=>T(x+18,ya+j*16,l,'note start f12')).join('');ya+=L.length*16+6;});}
-    if(n)yb=ya+8;
-    if(it.cons){s+=T(cx2,yb,it.ch||'Limitations','cname start f14');yb+=20;it.cons.forEach(p=>{const L=wrap(p,cw);s+=Tc(cx2+4,yb,'−','#A4473A',13,'mono start','600')+L.map((l,j)=>T(cx2+18,yb+j*16,l,'note start f12')).join('');yb+=L.length*16+6;});}
-    y=Math.max(ya,yb)+6;}
-  if(it.note){const p=para(x,y+10,it.note,n?50:92,'lab start f13',17,.6);s+=p.s;y=p.y;}
-  return {vb:n?slim(y+10):wide(y+12),s};
-}
-/* rod-shaped cell outline */
-function rodCell2(cx,cy,L,R,o={}){return `<rect x="${cx-L/2}" y="${cy-R}" width="${L}" height="${2*R}" rx="${R}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.6}" ${o.tint===false?'':'class="tint"'}/>`;}
-function coccus(cx,cy,r,o={}){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.4}" class="tint"/>`;}
-function membraneBand(x1,x2,y,h=16,o={}){let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${o.fill||'#EDE0B8'}"/>`;
-  s+=`<path d="M${x1+3} ${y+3} H${x2} M${x1+3} ${y+h-3} H${x2}" stroke="${o.dot||'#B89A5E'}" stroke-width="4.5" stroke-dasharray="0.1 7" stroke-linecap="round"/>`;return s;}
-function pill(x,y,t,fill,tc='#F3EDE0',fs=11){const w=t.length*fs*.62+18;return `<rect x="${FX(x)}" y="${y-fs-3}" width="${FX(w)}" height="${fs+9}" rx="${(fs+9)/2}" fill="${fill}"/>`+Tc(FX(x+w/2),y+1,t,tc,fs,'mono mid','600');}
-/* simple two-column text plate for wide, stacked on narrow: art on left/top, bullets right/below */
-function artBullets(n,art,artW,artH,items,o={}){
-  let s='';s+=G('a-fade',0,art(n?180:(o.ax||20)+artW/2,(o.ay||24)+artH/2,n));
-  const b=n?bullets(24,(o.ay||24)+artH+30,items,44,{d0:.8,gap:o.gap||24}):bullets(o.bx||(artW+56),o.by||44,items,o.wn||Math.floor((600-artW-40)/7),{d0:.8,gap:o.gap||24});
-  s+=b.s;
-  let H=n?b.y:Math.max(b.y,(o.ay||24)+artH+16);
-  if(o.foot){const p=para(n?16:24,H+8,o.foot,n?50:92,'note start f13',17,2);s+=p.s;H=p.y;}
-  return {vb:n?slim(H+4):wide(H+6),s};
+/* ===================== Part I · the chromosome ===================== */
+function scG1(n){
+  const sp=[['Mycoplasma genitalium',0.58,'475 genes, an obligate parasite',PHG],
+   ['Streptococcus pneumoniae',2.1,'about 2,100 genes',CORE],
+   ['Escherichia coli K-12',4.6,'about 4,300 genes',CORE],
+   ['Pseudomonas aeruginosa',6.3,'about 5,700 genes',SHELL],
+   ['Sorangium cellulosum',13.0,'about 9,400 genes, a soil myxobacterium',INTC]];
+  let s=G('a-fade',0,T(n?16:24,28,'Genome size, in megabases','cname start f14'));
+  s+=G('a-fade',.3,barRow(n?16:24,60,n?110:260,sp.map(x=>[x[0],x[1],x[3],String(x[1])]),13.5,{bx:n?196:300,rh:n?38:34,fs:n?'f11':'f12'}));
+  if(!n)sp.forEach((x,i)=>{s+=G('a-fade',(.5+i*.15).toFixed(2),T(24,60+i*34+15,x[2],'note start f11'));});
+  else sp.forEach((x,i)=>{s+=G('a-fade',(.5+i*.15).toFixed(2),T(16,60+i*38+15,x[2],'note start f10'));});
+  let y=60+sp.length*(n?38:34)+(n?14:18);
+  const b=bullets(n?24:30,y,[['Coding density is nearly constant','Between about 85 and 90 percent of a bacterial chromosome is coding sequence, almost regardless of size. Intergenic regions are short, there are few introns, and gene number scales almost linearly with genome length — roughly one gene per kilobase.'],
+   ['Which means size is gene content','A bacterium with a larger genome does more things: more transport systems, more regulators, more secondary metabolism. The number of regulatory genes rises faster than linearly, which is thought to set a practical upper limit.'],
+   ['One chromosome, usually circular, but not always','Vibrio, Brucella and Burkholderia have two or three replicons; Borrelia and Streptomyces have linear chromosomes with telomeres. The single circular chromosome is the common case, not a rule.'],
+   ['Replication constrains everything else','The chromosome is copied from one origin in two directions, and that fact shapes gene orientation, skew, repeat content and where the highly expressed genes sit.']],n?44:88,{d0:1.4,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 
-/* ===================== deck ===================== */
-function scO1(n){return introPlate(n,{q:'What does a bacterial genome look like, and what can its layout tell you?',
-  belief:'Bacterial genomes are compact, gene-dense and organised around replication. Their composition records mutation pressures, selection on translation and the history of gene transfer, and comparing many genomes of one species reveals a shared core and a vast accessory pool.',
-  items:['Size and gene density','Organisation around the origin','GC skew and strand bias','GC content and codon usage','Mobile elements and genome decay','Core and accessory genes'],
-  art:(cx,cy)=>{let s=`<circle cx="${cx}" cy="${cy}" r="70" fill="none" stroke="${DNAC}" stroke-width="10" opacity=".25"/>`;for(let i=0;i<60;i++){const a=i/60*2*Math.PI, r=i%2?78:62, c=i%3?'#A9C4DC':'#E7A99B';s+=`<path d="M${FX(cx+r*Math.cos(a))} ${FX(cy+r*Math.sin(a))} L${FX(cx+(r+(i%2?8:-8))*Math.cos(a))} ${FX(cy+(r+(i%2?8:-8))*Math.sin(a))}" stroke="${c}" stroke-width="4"/>`;}
-    return s+T(cx,cy-80-8,'ori','mono mid f11')+T(cx,cy+100,'ter','mono mid f11');},artH:190});}
-function scO2(n){
-  const items=[['Carsonella ruddii',0.16,'#C9BFAB','0.16 Mb · insect endosymbiont'],['Mycoplasma genitalium',0.58,'#C9BFAB','0.58 Mb · 525 genes'],['Streptococcus pneumoniae',2.1,PAL.blue,'2.1 Mb'],['Escherichia coli K-12',4.6,PAL.blue,'4.6 Mb · ~4,300 genes'],['Pseudomonas aeruginosa',6.3,PAL.blue,'6.3 Mb'],['Streptomyces coelicolor',8.7,PAL.green,'8.7 Mb, linear'],['Sorangium cellulosum',14.8,PAL.green,'~13–15 Mb'],['human (for scale)',3100,'#E7A99B',n?'3,100 Mb':'3,100 Mb · ~1.5% coding']];
-  const top=para(n?16:24,30,'Genome size, log scale. Bacterial genomes span about a hundredfold; nearly 90% of the DNA codes for proteins, so gene number scales with size at about one gene per kilobase.',n?50:92,'lab start f13',17,0);
-  const h=hbars(n,n?10:24,top.y+12,n?340:600,items.map(i=>[i[0],Math.log10(i[1]*100),i[2],i[3]]),{max:Math.log10(310000),lw:n?130:170,vw:n?120:150});
-  const p=para(n?16:24,h.y+10,'Small genomes belong to endosymbionts and pathogens that rely on hosts; large ones to soil bacteria with complex lifestyles and many regulators. Most bacteria have one circular chromosome, but Vibrio has two, Borrelia a linear chromosome and many plasmids, and Streptomyces linear chromosomes with terminal proteins.',n?50:92,'note start f13',17,1);
-  return {vb:n?slim(p.y+6):wide(p.y+8),s:top.s+h.s+p.s};
+function scG2(n){
+  let s='';const cx=n?180:320, cy=n?118:124, R=n?82:96;
+  s+=G('a-fade',0,`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${CHR}" stroke-width="3"/>`);
+  s+=G('a-fade',.3,`<circle cx="${cx}" cy="${cy-R}" r="6" fill="${METC}" stroke="${INK}"/>`+Tc(cx,cy-R-16,'oriC','#3A2E22',11,'mono mid','600')
+    +`<circle cx="${cx}" cy="${cy+R}" r="6" fill="${CLOUD}" stroke="${INK}"/>`+Tc(cx,cy+R+22,'ter','#3A2E22',11,'mono mid','600'));
+  /* replichores */
+  s+=G('a-fade',.6,`<path d="M${cx} ${cy-R} A${R} ${R} 0 0 1 ${cx} ${cy+R}" fill="none" stroke="${CORE}" stroke-width="7" opacity=".4"/>`
+    +`<path d="M${cx} ${cy-R} A${R} ${R} 0 0 0 ${cx} ${cy+R}" fill="none" stroke="${PHG}" stroke-width="7" opacity=".4"/>`
+    +Tc(cx+R+(n?6:10),cy,n?'right':'right replichore','#2F5276',10,'mono start','600')
+    +Tc(cx-R-(n?6:10),cy,n?'left':'left replichore','#A4473A',10,'mono end','600'));
+  /* co-oriented genes */
+  const arcs=[[-70,PHG],[-40,PHG],[-10,PHG],[20,PHG],[50,PHG]];
+  s+=G('a-fade',1,[ -75,-50,-25,0,25,50,75].map(a=>{const r=(a-90)*Math.PI/180;
+      return `<path d="M${FX(cx+(R-10)*Math.cos(r))} ${FX(cy+(R-10)*Math.sin(r))} l${FX(7*Math.sin(r))} ${FX(-7*Math.cos(r))}" stroke="${CORE}" stroke-width="3.4" stroke-linecap="round"/>`;}).join(''));
+  s+=G('a-fade',1.3,[-75,-50,-25,0,25,50,75].map(a=>{const r=(90-a)*Math.PI/180;
+      return `<path d="M${FX(cx+(R-10)*Math.cos(r))} ${FX(cy+(R-10)*Math.sin(r))} l${FX(7*Math.sin(r))} ${FX(7*Math.cos(r))}" stroke="${PHG}" stroke-width="3.4" stroke-linecap="round"/>`;}).join(''));
+  s+=G('a-fade',1.6,Tc(cx,cy-4,'most genes point','#6A5B47',10,'mono mid')+Tc(cx,cy+10,'away from oriC','#6A5B47',10,'mono mid'));
+  let y=cy+R+(n?46:50);
+  const b=bullets(n?24:30,y,[['Two replichores, one origin','Replication starts at oriC and two forks travel in opposite directions, meeting near ter. The two arms are usually close to equal in length — large inversions that unbalance them are selected against.'],
+   ['Genes point away from the origin','In most bacteria 55 to 75 percent of genes, and almost all essential and highly expressed ones, are transcribed in the same direction as the replication fork travels. Head-on collisions between the replisome and RNA polymerase stall forks and cause breaks, so co-orientation is actively maintained.'],
+   ['Dosage follows position','During fast growth there are several replication forks at once, so sequence near the origin is present in more copies than sequence near ter. Ribosomal RNA operons and other highly expressed genes sit close to oriC, and moving them away measurably slows growth.'],
+   ['And the chromosome is organised in space','Ori and ter occupy defined cellular positions, macrodomains constrain mobility, and the whole structure is compacted by nucleoid-associated proteins and condensin-like SMC complexes rather than by histones.']],n?44:88,{d0:2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
-function scO3(n){
-  const cx=n?180:170, cy=140, R=n?80:96;
-  let s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${DNAC}" stroke-width="3"/>`;
-  s+=T(cx,cy-R-10,'oriC','mono mid f12')+T(cx,cy+R+20,'ter (dif)','mono mid f12');
-  s+=`<path d="M${cx+R*0.26} ${cy-R*0.97} A${R} ${R} 0 0 1 ${cx+R} ${cy}" stroke="#2F5276" stroke-width="4" fill="none" marker-end="url(#ahb)"/><path d="M${cx-R*0.26} ${cy-R*0.97} A${R} ${R} 0 0 0 ${cx-R} ${cy}" stroke="#2F5276" stroke-width="4" fill="none" marker-end="url(#ahb)"/>`;
-  s+=T(cx+R*.8,cy-R*.95,'replichore','note start f11')+T(cx-R*.8,cy-R*.95,'replichore','note end f11');
-  s=G('a-fade',0,s);
-  const b=n?bullets(24,cy+R+50,[['Genes face the fork','Highly expressed and essential genes sit mostly on the leading strand, co-oriented with replication, avoiding head-on collisions with RNA polymerase.'],['Dosage near the origin','In fast growth, origin-proximal genes have more copies; rRNA and ribosomal-protein genes cluster there.'],['Macrodomains','The E. coli chromosome folds into Ori, Ter, Left and Right macrodomains.']],44,{d0:.8,gap:20})
-    :bullets(330,52,[['Genes face the fork','Highly expressed and essential genes lie mostly on the leading strand, transcribed in the same direction as replication, which avoids head-on collisions with RNA polymerase.'],['Dosage near the origin','With overlapping replication rounds, genes near oriC have more copies; rRNA operons and ribosomal-protein genes cluster there.'],['Symmetry','Large inversions symmetric about the origin are common; asymmetric ones, which unbalance the replichores, are rare.'],['Macrodomains','The E. coli chromosome folds into Ori, Ter, Left and Right macrodomains, organised by MatP and MukBEF.']],38,{d0:.8,gap:20});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};
+
+function scG3(n){
+  const P=n?xyPlot(48,46,278,130,[0,100],[-1.1,1.1],{xlab:'position on the chromosome (%)',ylab:'cumulative GC skew',xdy:24,ydx:16})
+          :xyPlot(70,52,300,150,[0,100],[-1.1,1.1],{xlab:'position on the chromosome (%)',ylab:'cumulative GC skew',xdy:24,ydx:18});
+  let s=G('a-fade',0,P.s+`<path d="M${P.px(0)} ${FX(P.py(0))} H${FX(P.px(100))}" stroke="${AXC}" stroke-width=".8" opacity=".5" stroke-dasharray="4 3"/>`);
+  const skew=t=>t<52?-t/52:(t-52)/48-1;
+  s+=G('a-fade',.5,xyCurve(P,skew,{col:CORE,n:160}));
+  s+=G('a-fade',1,`<circle cx="${FX(P.px(0))}" cy="${FX(P.py(0))}" r="4" fill="${METC}" stroke="${INK}"/>`
+    +`<circle cx="${FX(P.px(52))}" cy="${FX(P.py(-1))}" r="4" fill="${CLOUD}" stroke="${INK}"/>`
+    +`<circle cx="${FX(P.px(100))}" cy="${FX(P.py(0))}" r="4" fill="${METC}" stroke="${INK}"/>`
+    +Tc(FX(P.px(0)),P.y-8,'oriC','#3A2E22',10,'mono mid','600')
+    +Tc(FX(P.px(52)),P.py(-1)-10,'ter','#3A2E22',10,'mono mid','600'));
+  let y=P.y+P.h+(n?52:56);
+  const b=bullets(n?24:30,y,[['What is being counted','Along each strand, count G and C in a sliding window and plot (G − C)/(G + C). The leading strand is enriched in G and depleted in C; the lagging strand is the reverse. Plotting the running total gives a V, and the two turning points are the origin and the terminus.'],
+   ['Why the strands differ','Cytosine deaminates to uracil far faster in single-stranded DNA, and the lagging strand spends longer single-stranded during discontinuous synthesis. Different mutational exposure, not different function, writes the skew.'],
+   ['Reading it as a diagnostic','A clean V means the assembly and the replication structure are both intact. Extra reversals mark recent inversions or a misassembly; a flat region often marks a recently acquired island that has not yet acquired the host’s skew.'],
+   ['It also locates the origin without an experiment','For a newly sequenced genome the skew minimum is usually the first and best estimate of ter, and the maximum of oriC — which is how origins are annotated in most draft genomes.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
-function scO4(n){
-  const A=n?axes(54,40,280,150,{xr:[0,4.6],yr:[-1,1],xt:[[0,'ori'],[2.3,'ter'],[4.6,'ori']],yt:[[-1,'min'],[0,'0'],[1,'max']],xlab:'position (Mb)',ylab:'cumulative GC skew'})
-    :axes(70,40,300,170,{xr:[0,4.6],yr:[-1,1],xt:[[0,'ori'],[2.3,'ter'],[4.6,'ori']],yt:[[-1,'min'],[0,'0'],[1,'max']],xlab:'position (Mb)',ylab:'cumulative GC skew'});
-  const f=x=>x<2.3?-(x/2.3)*1.8+0.9:((x-2.3)/2.3)*1.8-0.9;
-  let s;
-  s=A.s+G('a-fade',.3,curve(A,x=>-f(x),{col:'#A4473A',n:200})+T(FX(A.px(2.3)),FX(A.py(.9)-8),'maximum: terminus','note mid f10 halo'));
-  const b=n?bullets(24,A.y+A.h+60,[['(G − C)/(G + C)','The leading strand is richer in G than C, probably from mutation bias during replication.'],['Finding the origin','Cumulative skew is lowest at the origin and highest at the terminus.']],44,{d0:.8,gap:20})
-    :bullets(410,52,[['(G − C)/(G + C)','On the leading strand, G exceeds C slightly, probably from asymmetric mutation during replication and transcription.'],['Finding the origin','Plotted cumulatively along the chromosome, skew changes direction at the origin and the terminus, so the turning points locate both: the minimum marks the origin, the maximum the terminus.'],['Disruptions','Kinks reveal recent inversions or acquired DNA.']],28,{d0:.8,gap:20});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,A.y+A.h+50)),s:s+b.s};
+
+function scG4(n){
+  let s='';const y=n?50:56;
+  const bars=[['ribosomal proteins',0.72,CORE],['glycolytic enzymes',0.62,CORE],['average gene',0.42,SHELL],['regulators',0.36,CLOUD],['recently acquired genes',0.28,PHG]];
+  s+=G('a-fade',0,T(n?16:24,28,'Codon adaptation index, by gene class','cname start f14'));
+  s+=G('a-fade',.3,barRow(n?16:24,y+8,n?118:250,bars.map(b=>[b[0],b[1],b[2],b[1].toFixed(2)]),.8,{bx:n?182:260,rh:n?28:28,fs:n?'f11':'f12'}));
+  let yy=y+8+bars.length*28+(n?14:18);
+  const b=bullets(n?24:30,yy,[['Synonymous codons are not used equally','The genetic code is redundant, and in every genome some synonymous codons are preferred. In highly expressed genes the bias is strong and matches the abundant tRNAs; in the rest of the genome it is weak and reflects mutational pressure instead.'],
+   ['Translational selection, where growth is fast','Species that grow quickly — E. coli, Bacillus subtilis — show strong codon bias in ribosomal protein and glycolytic genes, with multiple rRNA operons and large tRNA sets to match. Slow-growing species such as Mycobacterium tuberculosis show almost none, because selection on translation speed is too weak relative to drift.'],
+   ['Which makes codon usage a detector of imported DNA','A gene whose composition and codon usage differ sharply from the rest of the genome is a candidate recent acquisition. The signal fades over time as the new sequence accumulates mutations under the host’s own biases — a process called amelioration — so it finds recent transfers and misses old ones.'],
+   ['And a practical lever','Expression of a heterologous gene often fails for codon reasons: rare codons, especially in runs near the 5′ end, stall ribosomes. Codon optimisation or a tRNA-supplementing host usually fixes it — and over-optimising can cause misfolding by removing the pauses the protein needed.']],n?44:88,{d0:1.4,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
-function scO5(n){
-  const items=[['GC content','Ranges from below 20% (some endosymbionts) to above 70% (Streptomyces, Micrococcus). Mutation is biased towards A+T in most bacteria; selection, recombination and repair pull back.'],['Codon usage bias','Highly expressed genes prefer codons read by abundant tRNAs; the codon adaptation index measures this. Weak bias in slow growers, strong in fast growers.'],['Spotting foreign genes','Recently acquired DNA often has a different GC content and codon usage from the host genome, until it is ameliorated by mutation.'],['Practical consequences','Expressing a gene from a GC-rich organism in E. coli may need codon optimisation or rare-tRNA strains such as Rosetta.']];
-  const c=cards(n,items,{y:20,num:1});
-  return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
+/* ===================== Part II · the pangenome ===================== */
+function scG5(n){
+  let s='';const cx=n?180:320, cy=n?112:118;
+  const R=n?92:108;
+  s+=G('a-fade',0,`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${CLOUD}" fill-opacity=".35" stroke="${CLOUD}" stroke-width="1.6"/>`);
+  s+=G('a-fade',.4,`<circle cx="${cx}" cy="${cy}" r="${R*.68}" fill="${SHELL}" fill-opacity=".45" stroke="${SHELL}" stroke-width="1.6"/>`);
+  s+=G('a-fade',.8,`<circle cx="${cx}" cy="${cy}" r="${R*.36}" fill="${CORE}" fill-opacity=".55" stroke="${CORE}" stroke-width="1.6"/>`);
+  s+=G('a-fade',1.2,Tc(cx,cy+4,'core','#F3EDE0',12,'mono mid','600')
+    +Tc(cx,cy-R*.52,'shell','#2F5276',11,'mono mid','600')
+    +Tc(cx,cy-R*.84,'cloud','#5A4632',11,'mono mid','600'));
+  const labs=[['core','in essentially every isolate','about 1,100 genes in the pneumococcus',CORE],
+   ['shell','in many but not all','a few thousand across the species',SHELL],
+   ['cloud','in one or a few isolates','the long tail, and most of the pangenome',CLOUD]];
+  let y=cy+R+(n?30:34);
+  if(!n){labs.forEach((l,i)=>{const x=40+i*200;
+    s+=G('a-fade',(1.4+i*.3).toFixed(1),`<rect x="${x}" y="${y-10}" width="12" height="11" rx="2" fill="${l[3]}" stroke="${INK}" stroke-width=".6"/>`
+      +T(x+18,y,l[0],'cname start f13')+T(x+18,y+16,l[1],'note start f11')+T(x+18,y+30,l[2],'note start f11'));});
+    y+=50;}
+  else{labs.forEach((l,i)=>{s+=G('a-fade',(1.4+i*.3).toFixed(1),`<rect x="20" y="${y-10}" width="12" height="11" rx="2" fill="${l[3]}" stroke="${INK}" stroke-width=".6"/>`
+      +T(38,y,l[0],'cname start f13')+T(38,y+15,l[1],'note start f11')+T(38,y+29,l[2],'note start f11'));y+=50;});}
+  const b=bullets(n?24:30,y+6,[['A species is not one genome','Two isolates of Streptococcus pneumoniae typically share around 1,100 core genes and differ in several hundred others. The pangenome — every gene found in any isolate — runs to five thousand or more families and keeps growing as more genomes are added.'],
+   ['The thresholds are arbitrary','“Core” is usually defined as present in 95 or 99 percent of isolates, not 100, because annotation errors, assembly gaps and genuine loss make strict universality rare. The number you report depends on the threshold you chose and on how many genomes you sampled.'],
+   ['Most of the accessory genome is rare','The distribution is strongly skewed: a few thousand gene families are present in one or two isolates. These cloud genes are mostly phage, mobile elements and hypothetical proteins, and are the hardest part to interpret.'],
+   ['Clustering choices matter as much as biology','Whether two divergent alleles are one gene family or two depends on the identity threshold in the clustering step. Comparing pangenome sizes between papers without matching those settings is not meaningful.']],n?44:88,{d0:2.2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
-function scO6(n){
-  const items=[['Mobile element load','Free-living bacteria typically carry a few to dozens of insertion sequences. Shigella, Yersinia pestis and Bordetella pertussis carry hundreds, a sign of recent host restriction.'],['Genome decay','After a switch to a host-restricted life, selection weakens, IS elements expand, genes become pseudogenes, and DNA is lost. Mycobacterium leprae has about 1,100 pseudogenes, nearly as many as functional genes.'],['Endosymbionts','Buchnera of aphids and Carsonella of psyllids retain only genes the host cannot supply, with very low GC and very small genomes.'],['Defence islands and prophages','Much of the variable DNA in a genome is phage, plasmid and defence-system DNA.']];
-  const c=cards(n,items,{y:20,num:1});
-  return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
+
+function scG6(n){
+  const P=n?xyPlot(50,46,276,140,[0,60],[0,6000],{xlab:'genomes sampled',ylab:'gene families',xdy:24,ydx:18})
+          :xyPlot(74,52,300,160,[0,60],[0,6000],{xlab:'genomes sampled',ylab:'gene families found',xdy:24,ydx:20});
+  let s=G('a-fade',0,P.s);
+  s+=G('a-fade',.4,xyCurve(P,t=>t<1?null:1700*Math.pow(t,0.287),{col:PHG,n:160}));
+  s+=G('a-fade',.9,xyCurve(P,t=>t<1?null:4000+260*(1-Math.exp(-t/7)),{col:CORE,n:160,dash:'6 4'}));
+  s+=G('a-fade',1.3,xyCurve(P,t=>t<1?null:1100+900*Math.exp(-t/4),{col:INTC,n:160}));
+  s+=G('a-fade',1.6,keyRow(n?22:P.x+6,P.y+P.h+(n?46:48),[['pangenome, open (S. pneumoniae)',PHG],['pangenome, closed (M. tuberculosis)',CORE],['core genome',INTC]],{rh:16,fs:'f11'}));
+  let y=P.y+P.h+(n?112:114);
+  const b=bullets(n?24:30,y,[['Open or closed','Add genomes one at a time and count the gene families seen so far. If the curve keeps rising, every new isolate brings new genes and the pangenome is open; if it saturates, the species has been sampled and the pangenome is closed.'],
+   ['Heaps’ law','The rising curve is well fitted by n^α. An exponent above zero means open; Streptococcus pneumoniae, E. coli and Helicobacter pylori are open, with α around 0.1 to 0.2 for new genes per genome. Mycobacterium tuberculosis and Bacillus anthracis are effectively closed.'],
+   ['Openness tracks lifestyle','Species that recombine freely, live in mixed communities and meet many mobile elements have open pangenomes. Recently emerged, host-restricted clones that pass through tight bottlenecks have closed ones. It is a statement about ecology and population history, not about how “advanced” the organism is.'],
+   ['The core curve falls, then flattens','As genomes are added the core shrinks, because any gene missing from any isolate drops out. With relaxed thresholds it stabilises quickly; with a strict definition it keeps eroding, which is another reason to state the threshold.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
-function scO7(n){
-  const A=n?axes(54,40,280,160,{xr:[1,100],yr:[0,30000],xt:[1,25,50,75,100],yt:[[0,'0'],[10000,'10k'],[20000,'20k'],[30000,'30k']],xlab:'genomes sampled',ylab:'gene families',ydx:40})
-    :axes(80,40,300,180,{xr:[1,100],yr:[0,30000],xt:[1,25,50,75,100],yt:[[0,'0'],[10000,'10k'],[20000,'20k'],[30000,'30k']],xlab:'genomes sampled',ylab:'gene families',ydx:44});
-  let s=A.s+G('a-fade',.3,curve(A,x=>4300+2400*(Math.sqrt(x)-1),{col:'#A4473A'})+T(FX(A.px(70)),FX(A.py(4300+2400*(Math.sqrt(70)-1))-10),'pangenome: still growing','note end f11 halo'))
-    +G('a-fade',.6,curve(A,x=>2500+1800*Math.exp(-(x-1)/12),{col:'#2F5276'})+T(FX(A.px(70)),FX(A.py(2500)-10),'core genome','note mid f11 halo'));
-  const b=n?bullets(24,A.y+A.h+60,[['Core','Genes in (nearly) every strain: housekeeping, often ~2,000–3,000 in E. coli.'],['Accessory','Genes in some strains: islands, prophages, plasmids, defence systems.'],['Open pangenomes','E. coli: more than 100,000 gene families across tens of thousands of genomes.']],44,{d0:1,gap:20})
-    :bullets(410,52,[['Core genome','Genes present in nearly every strain of a species: housekeeping, translation, central metabolism. About 2,000–3,000 families in E. coli.'],['Accessory genome','Genes in some strains only: islands, prophages, plasmids, defence systems and niche-specific metabolism.'],['Open and closed','In open pangenomes such as E. coli’s, new genomes keep adding new genes; tens of thousands of genomes reveal well over 100,000 gene families. Isolated specialists have closed pangenomes.']],28,{d0:1,gap:20});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,A.y+A.h+50)),s:s+b.s};
+
+function scG7(n){
+  let s='';const x=n?18:36, W=n?326:570, y=n?70:74;
+  s+=G('a-fade',0,T(n?16:24,28,'A genome with its accessory content marked','cname start f14'));
+  s+=G('a-fade',.2,`<path d="M${x} ${y} h${W}" stroke="#D6CDB8" stroke-width="12" stroke-linecap="round"/>`);
+  const f=[[.06,.09,PHG,'prophage'],[.22,.07,PLS,'ICE'],[.38,.05,TNC,'IS'],[.50,.10,METC,'island'],[.68,.04,TNC,'IS'],[.78,.08,PHG,'prophage']];
+  f.forEach((p,i)=>{s+=G('a-fade',(.4+i*.2).toFixed(2),`<rect x="${FX(x+p[0]*W)}" y="${FX(y-6)}" width="${FX(p[1]*W)}" height="12" fill="${p[2]}" stroke="${INK}" stroke-width=".6"/>`
+    +Tc(FX(x+(p[0]+p[1]/2)*W),y-14,p[3],'#3A2E22',n?8:9,'mono mid','600'));});
+  s+=G('a-fade',1.7,Tc(x,y+26,'often beside tRNA genes, flanked by direct repeats,','#6A5B47',10,'mono start')
+    +Tc(x,y+40,'and differing in GC content from the rest','#6A5B47',10,'mono start'));
+  let yy=y+(n?64:68);
+  const rows=[['Prophages','Integrated temperate phages, often several per genome, together making up a few percent of it. Many are defective. They carry toxins and defence systems, and they are the most variable part of many genomes.'],
+   ['ICEs and plasmids','Large, self-mobile, usually integrated beside a tRNA gene. These carry the biggest accessory cargoes, including most transferable resistance.'],
+   ['IS elements','Short, repeated, and the main cause of assembly breaks in short-read data. Their copy number is a good indicator of a genome’s recent history: expansion during host restriction, then loss during reduction.'],
+   ['Genomic islands','A descriptive term for any large block with atypical composition carrying a coherent function — virulence, metabolism, resistance. Detection relies on composition, on phylogenetic distribution, or on both.']];
+  const t=wtable(n,['What is there','Why it matters'],rows,n?[[10,13],[118,38]]:[[24,16],[190,54]],{y0:yy,d0:2});
+  const p=para(n?16:24,t.y+14,'Accessory content is not noise around a real genome; for many questions it is the answer. Virulence, resistance, host range and phage susceptibility are mostly accessory, while the core genome carries the housekeeping functions that are nearly identical between isolates.',n?50:92,'note start f13',17,2.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
 }
-const S=[
- {p:1,title:'Reading a genome',draw:scO1,text:"A bacterial genome is a compact text, mostly genes, organised around a single origin of replication. Its size reflects lifestyle, its layout reflects replication, and its composition records the mutation, selection and gene transfer that shaped it."},
- {p:1,title:'Size and gene density',draw:scO2,text:"Bacterial genomes range from about 110 kilobases in insect endosymbionts to over 13 megabases in soil myxobacteria. Almost nine-tenths of the sequence codes for proteins, so the number of genes rises in step with genome size."},
- {p:1,title:'Organised around replication',draw:scO3,text:"Replication runs both ways from the origin to the terminus, dividing the circle into two replichores. Essential and highly expressed genes tend to lie on the leading strand and near the origin, where they avoid collisions with the replisome and gain copies in fast growth."},
- {p:2,title:'GC skew',draw:scO4,text:"The two strands of a bacterial chromosome are not chemically identical: the leading strand carries a slight excess of G over C. Plotted cumulatively along the genome, this skew changes direction at the origin and the terminus, so it can be used to find them."},
- {p:2,title:'GC content and codon usage',draw:scO5,text:"Genomes differ widely in GC content, set by a balance of mutational bias and selection. Within a genome, highly expressed genes use codons matched to abundant tRNAs. Genes with unusual composition are often recent arrivals by horizontal transfer."},
- {p:2,title:'Mobile elements and genome decay',draw:scO6,text:"When a bacterium becomes restricted to a host, selection on many genes relaxes. Insertion sequences expand, genes decay into pseudogenes and the genome shrinks. Mycobacterium leprae and Yersinia pestis show the process under way; obligate endosymbionts show it complete."},
- {p:3,title:'Pangenomes',draw:scO7,text:"Sequencing many strains of one species shows a core of genes shared by all and a much larger accessory pool present in some. In species such as E. coli the pangenome keeps growing as more genomes are added; this accessory pool is where virulence and resistance genes live."}];
-const CHIPS={};
+
+function scG8(n){
+  let s='';const y=n?48:54;
+  const stages=[['Free-living ancestor','4–6 Mb, few pseudogenes, few IS copies',CORE],
+   ['Newly host-restricted','IS elements expand explosively, rearrangements, many pseudogenes',PHG],
+   ['Reduced','1–2 Mb, pseudogenes removed, IS copies lost again',TNC],
+   ['Obligate endosymbiont','0.15–0.8 Mb, no mobile elements, no repair genes, AT-rich',CLOUD]];
+  const bw=n?300:132;
+  if(!n){stages.forEach((st,i)=>{const x=24+i*152;
+    s+=G('a-fade',(i*.4).toFixed(1),`<rect x="${x}" y="${y}" width="${bw}" height="${FX(74-i*16)}" rx="4" fill="${st[2]}" fill-opacity=".4" stroke="${st[2]}" stroke-width="1.6"/>`
+      +T(x+bw/2,y+96,st[0],'cname mid f12')
+      +wrap(st[1],24).map((l,j)=>T(x+bw/2,y+114+j*14,l,'note mid f11')).join(''));
+    if(i<3)s+=G('a-fade',(.2+i*.4).toFixed(1),arw(x+bw+3,y+36,x+148,y+36,{blue:1}));});
+    var yy=y+114+Math.max(...stages.map(st=>wrap(st[1],24).length))*14+22;}
+  else{var yy=y;stages.forEach((st,i)=>{const L=wrap(st[1],38);
+    s+=G('a-fade',(i*.4).toFixed(1),`<rect x="20" y="${yy}" width="${FX(120-i*26)}" height="16" rx="3" fill="${st[2]}" fill-opacity=".4" stroke="${st[2]}" stroke-width="1.4"/>`
+      +T(150,yy+12,st[0],'cname start f12')
+      +L.map((l,j)=>T(20,yy+32+j*14,l,'note start f11')).join(''));
+    yy+=32+L.length*14+14;});}
+  const b=bullets(n?24:30,yy,[['Reduction follows a restricted lifestyle','Once a lineage lives only inside a host, genes for functions the host supplies are no longer maintained. They accumulate mutations, become pseudogenes, and are deleted — bacteria have a strong deletion bias, so unused DNA does not linger.'],
+   ['The IS expansion is a transient stage','A small, isolated population means weak selection and strong drift, so mobile elements proliferate before being lost with the regions they disrupt. Finding a genome full of IS copies and pseudogenes — Mycobacterium leprae, Bordetella pertussis, Yersinia pestis — is a sign of recent host restriction.'],
+   ['The end point is remarkable','Some insect endosymbionts are under 200 kb, with no recognisable DNA repair, no mobile elements, and a strong AT bias from unopposed mutation. They are at the boundary between an organism and an organelle.'],
+   ['The same logic runs in reverse for generalists','Soil bacteria with huge genomes live in variable environments where keeping an option is cheaper than losing it. Genome size is an ecological statement.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+/* ===================== Part III · reading genomes ===================== */
+function scG9(n){
+  const rows=[['“This gene is absent”','It may be present and unassembled, present and unannotated, or present as a divergent allele the clustering step put in another family. Check the reads, not the annotation, before claiming a deletion.'],
+   ['“The pangenome is open”','Only for the sampling you did. Add isolates from one new niche and a closed pangenome can open; sample one clonal outbreak and an open one looks closed.'],
+   ['“Hypothetical protein”','Between a quarter and a third of any bacterial genome. Some are real and uncharacterised, some are spurious short open reading frames called by the annotation software, and in the cloud genome the proportion of both is highest.'],
+   ['“Core genome phylogeny”','Correct only after recombinant regions are masked. In a species with high r/m an unmasked core alignment produces a confident and wrong tree.'],
+   ['“Reference genome”','One isolate, usually chosen decades ago for convenience, often carrying laboratory-specific mutations. Mapping everything to it hides exactly the accessory content that distinguishes your strains.']];
+  const t=wtable(n,['What a result says','What it may actually mean'],rows,n?[[10,15],[134,34]]:[[24,20],[230,48]],{y0:30});
+  const p=para(n?16:24,t.y+14,'None of these is a reason to distrust genomics; they are the standard places where a confident sentence hides a methodological choice. Stating the thresholds, the sampling and the assembly quality converts most of these from errors into caveats.',n?50:92,'note start f13',17,1.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+}
+
+function scG10(n){
+  let s='';const x=n?18:36, W=n?326:570, y=n?64:70;
+  s+=G('a-fade',0,T(n?16:24,28,'The pneumococcal genome, read as core and accessory','cname start '+(n?'f13':'f14')));
+  s+=G('a-fade',.2,`<path d="M${x} ${y} h${W}" stroke="#D6CDB8" stroke-width="12" stroke-linecap="round"/>`);
+  const f=[[.10,.06,METC,'cps'],[.30,.04,PHG,'pbp2x'],[.44,.04,PHG,'pbp1a'],[.56,.05,PLS,'Tn916'],[.70,.08,INTC,'prophage'],[.84,.05,TNC,'pilus'] ];
+  f.forEach((p,i)=>{s+=G('a-fade',(.4+i*.18).toFixed(2),`<rect x="${FX(x+p[0]*W)}" y="${FX(y-6)}" width="${FX(p[1]*W)}" height="12" fill="${p[2]}" stroke="${INK}" stroke-width=".6"/>`
+    +Tc(FX(x+(p[0]+p[1]/2)*W),y-14,p[3],'#3A2E22',n?8:9,'mono mid','600'));});
+  let yy=y+(n?36:40);
+  const b=bullets(n?24:30,yy,[['The capsule locus is accessory in the sense that matters','Every pneumococcus has a cps locus between dexB and aliA, but which one it carries defines the serotype, and it is exchanged by recombination. Capsule switching changes the vaccine target without changing the lineage, and it was detected in surveillance precisely because core-genome typing and serotyping disagreed.'],
+   ['Resistance is in the core, but mosaic','The penicillin-binding protein genes are core genes present in every isolate. Resistance comes from replacing blocks within them using DNA from commensal streptococci, so the gene is core and the allele is accessory — which is why gene presence and absence analysis misses β-lactam resistance entirely.'],
+   ['Lineages and the accessory genome','Global Pneumococcal Sequence Clusters are defined on the core genome, but what distinguishes them clinically — capsule, resistance elements, prophages, pilus islets — is largely accessory. Both views are needed: the lineage says where a strain came from, the accessory content says what it will do.'],
+   ['Vaccine escape is a pangenome phenomenon','After conjugate vaccines, the surviving population was assembled from the same lineages carrying different capsules and more resistance elements. Serotype replacement is the accessory genome being reshuffled under selection, which is only visible if accessory content is analysed.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+const GENQ=[
+ {q:'A 40 kb stretch has markedly lower GC content than the rest of the chromosome, sits beside a tRNA gene, and is flanked by 18 bp direct repeats.',a:'A recently acquired genomic island',t:'All three signals point the same way: atypical composition, integration at a tRNA locus, and the direct repeats left by site-specific integration. Look for an integrase at one end to tell an ICE or prophage from a passively acquired island.'},
+ {q:'The cumulative GC skew plot has four turning points instead of two.',a:'An inversion, or a misassembly',t:'A correct chromosome gives one maximum at the origin and one minimum at the terminus. Extra reversals mean a segment is in the wrong orientation — either genuinely, by inversion between inverted repeats, or because the assembler placed it wrongly across a repeat.'},
+ {q:'A gene is present in 94 percent of isolates and the paper calls it accessory; another paper calls the same gene core.',a:'A threshold difference, not a biological one',t:'Core is conventionally defined at 95 or 99 percent presence. A gene at 94 percent sits exactly where the two conventions disagree. Always report the threshold, and prefer showing the presence distribution over a binary label.'},
+ {q:'A genome contains 230 copies of IS elements and about 1,100 pseudogenes.',a:'Recent host restriction',t:'This is the signature of a lineage that has recently become dependent on a host and passed through severe bottlenecks: drift allows mobile elements to expand and lets genes decay before they are deleted. Mycobacterium leprae and Bordetella pertussis look like this.'},
+ {q:'The core-genome tree is strongly supported, but the branch lengths differ wildly between genes.',a:'Unmasked recombination',t:'Imported patches carry divergent sequence and inflate branch lengths locally. Detect and mask recombinant regions before building the tree, or the support values measure the consistency of the recombination, not of the descent.'},
+ {q:'Rare codons are concentrated in the first thirty codons of several highly expressed genes.',a:'Probably functional, not a defect',t:'Slow translation at the start of a message reduces ribosome traffic jams and helps folding. Optimising these codons away can lower yield or produce misfolded protein — a reason to be cautious with wholesale codon optimisation.'},
+ {q:'An essential, highly expressed operon has been moved experimentally from near oriC to near ter, and the strain grows more slowly.',a:'Gene dosage and orientation',t:'During fast growth, sequence near the origin is present in more copies than sequence near the terminus, and essential genes are usually co-oriented with the fork. Moving an operon changes both, and the growth cost is measurable.'},
+ {q:'Two isolates have 99.9 percent average nucleotide identity across the core, but one causes invasive disease and the other does not.',a:'The difference is accessory',t:'Near-identical core genomes tell you the isolates are close relatives, not that they behave alike. Capsule, prophages, resistance elements and surface protein alleles are where to look, and gene presence and absence analysis is the right tool.'}];
+let gSel=0;
+function scG11(n){
+  const q=GENQ[gSel];let s='',y=34;
+  const Q=wrap(q.q,n?36:60);
+  s+=G('a-fade',0,Q.map((l,i)=>T(n?16:24,y+i*22,l,'cname start')).join(''));y+=Q.length*22+14;
+  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="28" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +Tc(n?26:38,y+1,q.a,'#2F5276',n?11.5:14,'mono start','600'));
+  y+=28;
+  const p=para(n?16:24,y,q.t,n?50:92,'note start f13',17,.6);
+  let yy=p.y+16;
+  s+=G('a-fade',1.2,T(n?16:24,yy,'All the observations','mono acc start f11'));
+  yy+=18;
+  GENQ.forEach((x,i)=>{const L=wrap(x.q,n?42:76);
+    s+=G('a-fade',(1.3+i*.06).toFixed(2),(i===gSel?`<rect x="${n?10:18}" y="${yy-12}" width="${n?342:600}" height="${L.length*15+6}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`:'')
+      +`<circle cx="${n?22:30}" cy="${yy-5}" r="4" fill="${i===gSel?CORE:'#C9BFAB'}" stroke="${INK}" stroke-width=".6"/>`
+      +L.map((l,j)=>T(n?36:44,yy+j*15,l,'note start f12')).join(''));
+    yy+=L.length*15+8;});
+  return {vb:n?slim(yy+8):wide(yy+10),s:s+p.s};
+}
+
 const NAR='Narrator';
+const S=[
+ {p:1,title:'What a bacterial genome looks like',draw:scG1,text:"Bacterial genomes run from under a megabase to more than thirteen, and coding density stays near ninety percent throughout, so size is essentially gene content. A larger genome means more transport, more regulation and more metabolism — and the requirement for regulation is thought to set the upper limit."},
+ {p:1,title:'Replichores and orientation',draw:scG2,text:"Replication starts at a single origin and runs in both directions, and that fact organises the chromosome. Genes point away from the origin, essential and highly expressed genes sit close to it where copy number is highest during fast growth, and the two arms stay close to equal in length."},
+ {p:1,title:'GC skew',draw:scG3,text:"The leading and lagging strands are exposed to different mutational pressures, so they differ in G and C content. Plot the running total of that difference and you get a V whose turning points are the origin and the terminus — a free estimate of replication structure, and a sensitive detector of inversions and misassemblies."},
+ {p:1,title:'Codon usage',draw:scG4,text:"Synonymous codons are not used equally. In fast-growing species, highly expressed genes use the codons matching the abundant tRNAs, while the rest of the genome follows mutational pressure. That makes composition a detector of recently imported DNA — and it explains why heterologous expression so often fails for reasons that have nothing to do with the protein."},
+ {p:2,title:'Core, shell and cloud',draw:scG5,text:"A bacterial species is not a genome but a distribution. Some genes are in every isolate, some in many, and a long tail appear in one or two. For Streptococcus pneumoniae the core is around eleven hundred genes and the pangenome several thousand — with both numbers depending on thresholds that should always be stated."},
+ {p:2,title:'Open and closed pangenomes',draw:scG6,text:"Add genomes one at a time and count the gene families seen. If the curve keeps rising, every new isolate brings something new and the pangenome is open; if it saturates, it is closed. Openness reflects ecology and population history — free recombination and mixed communities against host restriction and bottlenecks."},
+ {p:2,title:'Where the accessory genome lives',draw:scG7,text:"Accessory content is not scattered evenly. It sits in prophages, ICEs, plasmids, IS elements and genomic islands, usually beside tRNA genes, flanked by direct repeats, and differing in composition from the rest. For questions about virulence, resistance and host range, this is the part of the genome that matters."},
+ {p:2,title:'Genome reduction',draw:scG8,text:"Lineages that become restricted to a host follow a recognisable trajectory: mobile elements expand, genes decay into pseudogenes, and both are then deleted, leaving a small, AT-rich genome with no repair systems and no mobile elements. Finding a genome mid-way through this process dates a lifestyle change."},
+ {p:3,title:'Five sentences to distrust',draw:scG9,text:"Most genomic claims hide a methodological choice. A gene called absent may be unassembled; an open pangenome may reflect the sampling; a core-genome tree is only valid once recombination is masked. The remedy is not scepticism about genomics but stating the thresholds, the sampling and the assembly quality."},
+ {p:3,title:'A worked example',draw:scG10,text:"In the pneumococcus the distinction between core and accessory cuts across the clinically important loci. The capsule locus is universal but its content defines the serotype and is exchanged by recombination; the penicillin-binding proteins are core genes with mosaic alleles. Neither can be understood by presence-and-absence analysis alone."},
+ {p:3,title:'Reading a feature',chips:'gen',draw:scG11,text:"Most features of a genome have a small number of plausible explanations, and the distinguishing evidence is usually already in the data. Pick an observation to see what it most likely means and what would confirm it."}];
+const CHIPS={gen:{list:GENQ.map((q,i)=>String(i+1)),get:()=>gSel,set:k=>gSel=k}};
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

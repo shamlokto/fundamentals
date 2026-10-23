@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mobile DNA and Plasmids</title>
-<meta name="description" content="Transformation, conjugation and transduction; transposons, integrons and ICEs; plasmid replication, incompatibility and toxin–antitoxin systems.">
+<title>Bacterial Defence Systems</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
 <style>
@@ -81,7 +80,6 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #stage .ax{stroke:#6A5B47;stroke-width:1.4}
 #stage .tint{filter:url(#plate)}
-#stage .halo{paint-order:stroke;stroke:#EFE8D8;stroke-width:3.5px;stroke-linejoin:round}
 #stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
 
 /* Motion */
@@ -140,13 +138,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 <div class="wrap">
   <a class="hubback" href="../../">← All primers</a>
   <header>
-    <p class="eyebrow">Genetics and genome biology · an animated primer</p>
-    <h1>Genes that move between cells and genomes</h1>
+    <p class="eyebrow">Defence systems · an animated primer</p>
+    <h1>How bacteria fight phages</h1>
   </header>
   <nav class="parts" aria-label="Parts">
-    <button id="part1" type="button">I · Transfer</button>
-    <button id="part2" type="button">II · Elements</button>
-    <button id="part3" type="button">III · Plasmids</button>
+    <button id="part1" type="button">I · Restriction and CRISPR</button>
+    <button id="part2" type="button">II · The wider arsenal</button>
+    <button id="part3" type="button">III · The arms race</button>
   </nav>
   <section class="stage" aria-live="polite">
     <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
@@ -160,9 +158,11 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <button id="replay" type="button">Replay</button>
     <button id="next" type="button" class="primary">Next</button>
   </div>
-  <p class="foot">Element sizes and frequencies are typical; classifications of mobile elements overlap and are still being revised. The classic transfer experiments are in the Griffith–Avery and Lederberg primers.</p>
+  <p class="foot">The anti-phage field is moving quickly; mechanisms for several recently described systems are still provisional.</p>
 </div>
 <script>
+
+
 const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
       RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
 const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
@@ -372,7 +372,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -415,299 +415,327 @@ function predictPlate(n,spec,sel){
 }
 /* generic text-and-picture plate helpers */
 function sideText(n,x,y,items,wn,o={}){return bullets(n?24:x,y,items,n?44:wn,o);}
-/* ===================== sequencing toolkit ===================== */
-const NB={A:'#4F7A3F',C:'#2F5276',G:'#8C6D46',T:'#A4473A',N:'#9A9384'};
-const ADP1='#7D4A98', ADP2='#C17A2C', IDX='#2E7D78', DNAC='#5A4632', SIGC='#2F5276', GLS='#7E8F92';
-/* double-stranded fragment, optionally with adapters/index blocks at each end */
-function frag(x,y,w,o={}){
-  const h=o.h||9, a=o.a||0;
+/* ===================== shared toolkit: evolution, HGT, plasmids, defence, genomes ===================== */
+const CHR='#5A4632', PLS='#7D4A98', PHG='#A4473A', TNC='#C17A2C', INTC='#2E7D78', RECC='#3E7FA8',
+      CELLF='#DCE2C9', CELLE='#8C7A52', CORE='#2F5276', SHELL='#8FB1CF', CLOUD='#C9BFAB', METC='#C99A2E';
+/* --- xy plot frame; returns mappers --- */
+function xyPlot(x,y,w,h,xr,yr,o={}){
+  const px=v=>x+(v-xr[0])/(xr[1]-xr[0])*w, py=v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h;
   let s='';
-  if(a){s+=`<rect x="${FX(x)}" y="${FX(y)}" width="${a}" height="${h}" fill="${ADP1}" stroke="${INK}" stroke-width=".7"/>`
-       +`<rect x="${FX(x+w-a)}" y="${FX(y)}" width="${a}" height="${h}" fill="${ADP2}" stroke="${INK}" stroke-width=".7"/>`;}
-  s+=`<rect x="${FX(x+a)}" y="${FX(y)}" width="${FX(w-2*a)}" height="${h}" fill="${o.fill||'#D9CDB0'}" stroke="${INK}" stroke-width=".8"/>`;
-  for(let xx=x+a+5;xx<x+w-a;xx+=7)s+=`<path d="M${FX(xx)} ${FX(y+1)} v${h-2}" stroke="${INK}" stroke-width=".5" opacity=".4"/>`;
-  if(o.idx)s+=`<rect x="${FX(x+a)}" y="${FX(y)}" width="12" height="${h}" fill="${IDX}" stroke="${INK}" stroke-width=".7"/>`;
-  if(o.label)s+=T(FX(x+w/2),FX(y+h+15),o.label,'note mid f11');
+  if(o.grid){const gx=o.grid[0]||4,gy=o.grid[1]||4;let g='';
+    for(let i=1;i<gx;i++)g+=`M${FX(x+w*i/gx)} ${y} V${y+h} `;
+    for(let i=1;i<gy;i++)g+=`M${x} ${FX(y+h*i/gy)} H${x+w} `;
+    s+=`<path d="${g}" stroke="${AXC}" stroke-width=".5" opacity=".25"/>`;}
+  s+=`<path d="M${x} ${y-4} V${y+h} H${x+w+6}" stroke="${AXC}" stroke-width="1.3" fill="none"/>`;
+  if(o.xlab)s+=T(x+w/2,y+h+(o.xdy||24),o.xlab,'note mid '+(o.fs||'f12'));
+  if(o.ylab)s+=`<text transform="translate(${x-(o.ydx||20)} ${y+h/2}) rotate(-90)" text-anchor="middle" class="note ${o.fs||'f12'}">${o.ylab}</text>`;
+  return {px,py,s,x,y,w,h,xr,yr};}
+function xyCurve(P,f,o={}){
+  const xr=o.xr||P.xr,n=o.n||80;let d='',on=false;
+  for(let i=0;i<=n;i++){const t=xr[0]+(xr[1]-xr[0])*i/n,v=f(t);
+    if(!isFinite(v)||v>P.yr[1]||v<P.yr[0]){on=false;continue;}
+    d+=(on?' L':' M')+FX(P.px(t))+' '+FX(P.py(v));on=true;}
+  return `<path d="${d.trim()}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;}
+function xyPts(P,pts,o={}){return pts.map(p=>`<circle cx="${FX(P.px(p[0]))}" cy="${FX(P.py(p[1]))}" r="${o.r||3.2}" fill="${o.col||CORE}" stroke="${INK}" stroke-width=".6"/>`).join('');}
+function xyLine(P,pts,o={}){let d='';pts.forEach((p,i)=>{d+=(i?' L':'M')+FX(P.px(p[0]))+' '+FX(P.py(p[1]));});
+  return `<path d="${d}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round"/>`;}
+/* --- horizontal bars with labels --- */
+function barRow(x,y,w,items,max,o={}){
+  let s='';items.forEach((it,i)=>{const yy=y+i*(o.rh||26);
+    s+=T(x,yy,it[0],'lab start '+(o.fs||'f12'))+`<rect x="${x+(o.bx||150)}" y="${yy-10}" width="${FX(Math.max(1,it[1]/max*w))}" height="13" rx="2" fill="${it[2]||CORE}" stroke="${INK}" stroke-width=".6"/>`
+      +(it[3]?Tc(x+(o.bx||150)+Math.max(1,it[1]/max*w)+6,yy,it[3],'#6A5B47',10,'mono start','600'):'');});
   return s;}
-/* flowcell surface: a lawn of short oligos */
-function lawn(x1,x2,y,o={}){
-  let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${o.h||8}" fill="#DCE6E8" stroke="${GLS}" stroke-width="1"/>`;
-  for(let x=x1+5;x<x2-2;x+=9)s+=`<path d="M${FX(x)} ${y} v-7" stroke="${x%18<9?ADP1:ADP2}" stroke-width="2" stroke-linecap="round"/>`;
+/* --- circular replicon; feats = [{a0,a1,col,lab}] angles in degrees --- */
+function pRing(cx,cy,r,o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${o.col||PLS}" stroke-width="${o.w||3}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  (o.feats||[]).forEach(f=>{const a0=f.a0*Math.PI/180,a1=f.a1*Math.PI/180,rr=r,big=(f.a1-f.a0)>180?1:0;
+    s+=`<path d="M${FX(cx+rr*Math.cos(a0))} ${FX(cy+rr*Math.sin(a0))} A${rr} ${rr} 0 ${big} 1 ${FX(cx+rr*Math.cos(a1))} ${FX(cy+rr*Math.sin(a1))}" stroke="${f.col}" stroke-width="${o.fw||9}" fill="none" stroke-linecap="butt"/>`;
+    if(f.lab){const am=(f.a0+f.a1)/2*Math.PI/180,lr=r+(o.lr||17);
+      s+=Tc(FX(cx+lr*Math.cos(am)),FX(cy+lr*Math.sin(am)+3),f.lab,f.lcol||'#3A2E22',o.lfs||10,'mono '+(Math.cos(am)>.3?'start':Math.cos(am)<-.3?'end':'mid'),'600');}});
+  if(o.label)s+=T(cx,cy+4,o.label,'note mid f11');
   return s;}
-/* a cluster of identical strands standing on the flowcell */
-function clust(cx,y,n,col,o={}){
-  let s='';const sp=o.sp||4.5;
-  for(let i=0;i<n;i++){const x=cx+(i-(n-1)/2)*sp;s+=`<path d="M${FX(x)} ${y} v-${o.h||20}" stroke="${col||DNAC}" stroke-width="1.6" stroke-linecap="round"/>`;}
-  if(o.dot)s+=`<circle cx="${cx}" cy="${FX(y-(o.h||20)-5)}" r="4.5" fill="${o.dot}" stroke="${INK}" stroke-width=".7"/>`;
-  if(o.label)s+=T(cx,y+16,o.label,'note mid f11');
+/* --- phage icon --- */
+function phIcon(cx,cy,k=1,col){const h=11*k,c=col||PHG;
+  return `<path d="M${cx} ${FX(cy-2*h)} l${FX(h*.9)} ${FX(h*.52)} v${FX(h)} l${FX(-h*.9)} ${FX(h*.52)} l${FX(-h*.9)} ${FX(-h*.52)} v${FX(-h)} z" fill="${c}" stroke="${INK}" stroke-width=".9"/>`
+   +`<rect x="${FX(cx-2.2*k)}" y="${cy}" width="${FX(4.4*k)}" height="${FX(12*k)}" fill="#D6CDB8" stroke="${INK}" stroke-width=".7"/>`
+   +`<path d="M${FX(cx-1.8*k)} ${FX(cy+12*k)} l${FX(-6*k)} ${FX(6*k)} M${FX(cx+1.8*k)} ${FX(cy+12*k)} l${FX(6*k)} ${FX(6*k)} M${cx} ${FX(cy+12*k)} v${FX(7*k)}" stroke="${INK}" stroke-width="${FX(1*k)}"/>`;}
+/* --- simple rod / oval cell with optional contents --- */
+function cellRod(cx,cy,L,R,o={}){
+  const x1=cx-L/2,x2=cx+L/2;
+  const d=`M${FX(x1)} ${FX(cy-R)} H${FX(x2)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x2)} ${FX(cy+R)} H${FX(x1)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x1)} ${FX(cy-R)} Z`;
+  let s=`<path d="${d}" fill="${o.fill||CELLF}" stroke="${o.stroke||CELLE}" stroke-width="${o.sw||2}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  if(o.chr)s+=`<ellipse cx="${cx}" cy="${cy}" rx="${FX(L*.26)}" ry="${FX(R*.5)}" fill="none" stroke="${CHR}" stroke-width="1.8"/>`;
+  if(o.label)s+=T(cx,cy+R+(o.ldy||18),o.label,'note mid f11');
   return s;}
-/* bead carrying clonal DNA */
-function bead(cx,cy,r,o={}){
-  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#C9BFAB'}" stroke="${INK}" stroke-width="1.1"/><ellipse cx="${FX(cx-r*.3)}" cy="${FX(cy-r*.35)}" rx="${r*.3}" ry="${r*.18}" fill="#FFF" opacity=".5"/>`;
-  if(o.dna!==false)for(let i=0;i<10;i++){const a=i/10*Math.PI*2;s+=`<path d="M${FX(cx+r*Math.cos(a))} ${FX(cy+r*Math.sin(a))} l${FX(7*Math.cos(a))} ${FX(7*Math.sin(a))}" stroke="${DNAC}" stroke-width="1.3"/>`;}
-  if(o.label)s+=T(cx,cy+r+(o.ldy||20),o.label,'note mid f11');
+/* --- gene arrow --- */
+function gArrow(x,y,w,label,fill,o={}){
+  const h=o.h||17;
+  return `<path d="M${x} ${FX(y-h/2)} h${FX(w-7)} l7 ${FX(h/2)} l-7 ${FX(h/2)} h${FX(-(w-7))}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
+   +(label?Tc(FX(x+(w-7)/2),FX(y+4),label,o.tc||'#3A2E22',o.fs||10,'mono mid','600'):'');}
+/* --- a grid of cells for population pictures: states = array of colour-or-null --- */
+function popGrid(x,y,cols,rows,states,o={}){
+  const d=o.d||13,g=o.g||4;let s='';
+  for(let i=0;i<cols*rows;i++){const c=i%cols,r=Math.floor(i/cols),st=states[i];
+    s+=`<rect x="${FX(x+c*(d+g))}" y="${FX(y+r*(d+g))}" width="${d}" height="${d}" rx="${FX(d*.38)}" fill="${st||'#E0DBCB'}" stroke="${INK}" stroke-width=".5" opacity="${st?1:.7}"/>`;}
   return s;}
-/* microwell holding a bead, with an ISFET sensor underneath */
-function well(cx,by,w,h,o={}){
-  let s=`<path d="M${cx-w/2} ${by-h} v${h} h${w} v${-h}" fill="#E8E3D4" stroke="${GLS}" stroke-width="1.6"/>`;
-  if(o.bead!==false)s+=bead(cx,by-w*.42,w*.3,{dna:false});
-  s+=`<rect x="${cx-w/2}" y="${by}" width="${w}" height="12" fill="${o.sense||'#B9C6CE'}" stroke="${INK}" stroke-width=".9"/>`;
-  if(o.label)s+=T(cx,by+26,o.label,'note mid f11');
+/* --- branching lineage tree; muts = [[gen, lane]] marks --- */
+function lineage(x,y,w,h,gens,lanes,marks,o={}){
+  const dx=w/gens,dy=h/(lanes-1||1);let s='';
+  for(let l=0;l<lanes;l++)s+=`<path d="M${x} ${FX(y+l*dy)} h${w}" stroke="${o.col||'#C9BFAB'}" stroke-width="1.6"/>`;
+  (marks||[]).forEach(m=>{s+=`<circle cx="${FX(x+m[0]*dx)}" cy="${FX(y+m[1]*dy)}" r="${o.r||4}" fill="${m[2]||PHG}" stroke="${INK}" stroke-width=".6"/>`;
+    if(m[3]!==false)s+=`<path d="M${FX(x+m[0]*dx)} ${FX(y+m[1]*dy)} h${FX(w-m[0]*dx)}" stroke="${m[2]||PHG}" stroke-width="2.4"/>`;});
   return s;}
-/* zero-mode waveguide: a well in metal film with polymerase at the floor */
-function zmw(cx,by,w,h,o={}){
-  let s=`<rect x="${cx-w/2-26}" y="${by-h}" width="${26}" height="${h}" fill="#B9AE96" stroke="${INK}" stroke-width=".8"/><rect x="${cx+w/2}" y="${by-h}" width="${26}" height="${h}" fill="#B9AE96" stroke="${INK}" stroke-width=".8"/>`;
-  s+=`<rect x="${cx-w/2}" y="${by-h}" width="${w}" height="${h}" fill="#E6EEF0" opacity=".55"/>`;
-  if(o.lit)s+=`<path d="M${cx-w/2} ${by} L${cx+w/2} ${by} L${cx+w/2-4} ${by-h*.55} L${cx-w/2+4} ${by-h*.55} Z" fill="#E0B84A" opacity=".35"/>`;
-  s+=prot(cx,by-9,13,9,'#9DB4AE','pol',{fs:9});
-  if(o.label)s+=T(cx,by+20,o.label,'note mid f11');
+/* --- key: colour swatch + label, in columns --- */
+function keyRow(x,y,items,o={}){
+  let s='';items.forEach((it,i)=>{const px=x+(o.cw?i*o.cw:0),py=y+(o.cw?0:i*(o.rh||17));
+    s+=`<rect x="${px}" y="${py-8}" width="12" height="11" rx="2" fill="${it[1]}" stroke="${INK}" stroke-width=".6"/>`+T(px+18,py,it[0],'note start '+(o.fs||'f11'));});
   return s;}
-/* membrane with a protein pore, motor protein and translocating strand */
-function poreMemb(cx,my,o={}){
-  const h=o.h||26;
-  let s=`<rect x="${cx-110}" y="${my}" width="220" height="${h}" fill="#EDE0B8"/><path d="M${cx-108} ${my+3} H${cx+108} M${cx-108} ${my+h-3} H${cx+108}" stroke="#B89A5E" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`;
-  s+=`<path d="M${cx-17} ${my-3} h34 l-7 ${h+6} h-20 z" fill="#9DB4AE" stroke="${INK}" stroke-width="1.1"/>`;
-  s+=`<path d="M${cx-70} ${my-30} q30 4 50 -8 q12 -7 20 2" stroke="${DNAC}" stroke-width="2.4" fill="none"/>`;
-  s+=`<path d="M${cx} ${my-16} V${my+h+22}" stroke="${DNAC}" stroke-width="2.2"/>`;
-  s+=prot(cx-26,my-18,15,10,'#C99A2E','motor',{fs:8.5});
-  if(o.label)s+=T(cx,my+h+40,o.label,'note mid f11');
-  return s;}
-/* generic trace: pts = array of y values 0..1, drawn in a box */
-function trace(x,y,w,h,pts,o={}){
-  let d='';pts.forEach((v,i)=>{const px=x+i*w/(pts.length-1),py=y+h-v*h;d+=(i?(o.step?`H${FX(px)} V${FX(py)}`:`L${FX(px)} ${FX(py)}`):`M${FX(px)} ${FX(py)}`);});
-  let s=o.frame===false?'':`<path d="M${x} ${y} V${y+h} H${x+w}" stroke="${AXC}" stroke-width="1.1" fill="none"/>`;
-  return s+`<path d="${d}" stroke="${o.col||SIGC}" stroke-width="${o.w||1.8}" fill="none" stroke-linejoin="round"/>`+(o.label?T(x+w/2,y+h+16,o.label,'note mid f11'):'');}
-/* sanger-style chromatogram: seq of bases as gaussian peaks */
-function chroma(x,y,w,h,seq,o={}){
-  const n=seq.length, dx=w/n;let s=`<path d="M${x} ${y+h} H${x+w}" stroke="${AXC}" stroke-width="1"/>`;
-  seq.split('').forEach((b,i)=>{const cx=x+dx*(i+.5);
-    let d=`M${FX(cx-dx*.5)} ${FX(y+h)}`;for(let t=-.5;t<=.5;t+=.1){const px=cx+t*dx,py=y+h-h*.82*Math.exp(-t*t*18);d+=` L${FX(px)} ${FX(py)}`;}
-    s+=`<path d="${d}" stroke="${NB[b]}" stroke-width="1.6" fill="none"/>`+Tc(FX(cx),FX(y+h+14),b,NB[b],o.fs||11,'mono mid','600');});
-  return s;}
-/* coloured base letters in a row */
-function baseSeq(x,y,seq,dx,o={}){
-  return seq.split('').map((b,i)=>Tc(FX(x+i*dx+dx/2),y,b,NB[b]||'#6A5B47',o.fs||12,'mono mid','600')).join('');}
-/* stacked reads aligned under a reference line */
-function pileup(x,y,w,reads,o={}){
-  let s=`<path d="M${x} ${y} H${x+w}" stroke="${BB}" stroke-width="2.6"/>`;
-  reads.forEach((r,i)=>{const rx=x+r[0]*w,rw=r[1]*w,ry=y+12+i*(o.gap||9);
-    s+=`<path d="M${FX(rx)} ${FX(ry)} h${FX(rw)}" stroke="${r[2]||'#8FB1CF'}" stroke-width="${o.sw||5}" stroke-linecap="round"/>`;});
-  return s;}
+/* ===================== Part I · restriction and CRISPR ===================== */
+const dLine=(x,w,y,col,sw)=>`<path d="M${x} ${y} h${w}" stroke="${col||'#D6CDB8'}" stroke-width="${sw||5}" stroke-linecap="round"/>`;
 
-/* clickable external link rendered inside the plate */
-function xlink(x,y,text,url,o={}){
-  return `<a href="${url}" target="_blank" rel="noopener"><text x="${FX(x)}" y="${FX(y)}" class="mono ${o.a||'start'} ${o.fs||'f11'}">${text} \u2197</text></a>`;}
-const VENDOR={
-  illumina:['Illumina: sequencing by synthesis, with animation','https://www.illumina.com/science/technology/next-generation-sequencing/sequencing-technology.html'],
-  ion:['Thermo Fisher: Ion Torrent semiconductor sequencing','https://www.thermofisher.com/sg/en/home/life-science/sequencing/next-generation-sequencing/ion-torrent-next-generation-sequencing-technology.html'],
-  mgi:['MGI: DNBSEQ technology, with figures','https://global-mgitech.com/technologies/dnbseq-technology'],
-  pacbio:['PacBio: the steps of SMRT sequencing','https://www.pacb.com/blog/steps-of-smrt-sequencing'],
-  hifi:['PacBio: HiFi reads','https://www.pacb.com/technology/hifi-sequencing/'],
-  ont:['Oxford Nanopore: how nanopore sequencing works','https://nanoporetech.com/platform/technology']};
-function vendorLine(n,y,keys){let s='',yy=y;keys.forEach(k=>{const v=VENDOR[k];s+=xlink(n?16:30,yy,n?v[0].replace(/, with (animation|figures)/,''):v[0],v[1],{fs:n?'f10':'f11'});yy+=16;});return {s,y:yy};}
-/* ===================== Part I · the idea ===================== */
-const OUT=[['Sanger capillary, 96 wells','c. 2000',7.7e4,'#9A9384'],['454 pyrosequencing','2005',2e7,'#B9AE96'],['Illumina Genome Analyzer','2007',1e9,'#8FB1CF'],
- ['Illumina HiSeq 2500','2013',6e11,'#5E87AD'],['Illumina NovaSeq X','2023',1.6e13,'#2F5276'],['Nanopore PromethION','2023',1.4e13,'#C17A2C']];
-
-/* ===================== shared library for the generated decks ===================== */
-const PAL={sand:'#E7DEC9',blue:'#A9C4DC',green:'#A9C49A',rose:'#E7A99B',gold:'#E0C88A',lilac:'#C9A9D6',teal:'#9DB4AE',grey:'#D8D2C2',cream:'#F3EEE2',ochre:'#D9B85A'};
-const lines=t=>String(t).split('|');
-/* opening plate without a portrait: art on the left (wide) or on top (narrow) */
-function introPlate(n,o){
-  let s='';const aw=n?328:220, ah=o.artH||200;
-  const ax=n?16:20, ay=n?14:30;
-  if(o.art)s+=G('a-fade',0,o.art(ax+aw/2,ay+ah/2,n));
-  let x=n?16:270, y=n?ay+ah+34:44;
-  s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
-  const Q=wrap(o.q,n?40:42);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
-  if(o.belief){s+=G('a-fade',1,T(x,y,o.bh||'Why it matters','mono acc start f12'));
-    const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;}
-  if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
-  const H=n?y+12:Math.max(y+14,ay+ah+20);
-  return {vb:n?slim(H):wide(H),s};
-}
-/* point where the segment from a box centre toward (tx,ty) leaves the box */
-function rectEdge(cx,cy,w,h,tx,ty,pad=4){const dx=tx-cx,dy=ty-cy;const sx=dx?(w/2+pad)/Math.abs(dx):1e9,sy=dy?(h/2+pad)/Math.abs(dy):1e9,t=Math.min(sx,sy,1);return [cx+dx*t,cy+dy*t];}
-/* node: {x,y,w,h,t,f,sub,fs,tc,r}  (x,y = centre); edge: [a,b,label,{bend,col,dash,lx,ly,la,w}] */
-function nodeBox(N){const h=N.h||(28+(lines(N.t).length-1)*15+(N.sub?13:0)), L=lines(N.t);
-  let s=box(N.x-N.w/2,N.y-h/2,N.w,h,N.f||'#EFE6D2',N.r==null?4:N.r);
-  const y0=N.y-h/2+18+(N.sub?0:Math.max(0,(h-28-(L.length-1)*15)/2));
-  s+=L.map((l,i)=>Tc(N.x,y0+i*15,l,N.tc||'#3A2E22',N.fs||12,'mono mid','600')).join('');
-  if(N.sub)s+=T(N.x,y0+(L.length-1)*15+14,N.sub,'note mid f10');
-  return {s,h};}
-function flow(nodes,edges,o={}){
-  const H={};Object.entries(nodes).forEach(([k,N])=>{H[k]=N.h||(28+(lines(N.t).length-1)*15+(N.sub?13:0));});
-  let es='',ls='',ns='';
-  edges.forEach(e=>{const [a,b,lab,op={}]=e, A=nodes[a], B=nodes[b];
-    let cx1=A.x,cy1=A.y,cx2=B.x,cy2=B.y;
-    const mx=(cx1+cx2)/2,my=(cy1+cy2)/2,dx=cx2-cx1,dy=cy2-cy1,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,bd=op.bend||0;
-    const qx=mx+nx*bd,qy=my+ny*bd;
-    const [x1,y1]=rectEdge(A.x,A.y,A.w,H[a],bd?qx:B.x,bd?qy:B.y,op.pad1==null?4:op.pad1);
-    const [x2,y2]=rectEdge(B.x,B.y,B.w,H[b],bd?qx:A.x,bd?qy:A.y,op.pad2==null?6:op.pad2);
-    const col=op.col||'#6A5B47', m=op.red?'ahr':op.blue?'ahb':'ahp';
-    const d=bd?`M${FX(x1)} ${FX(y1)} Q${FX(qx)} ${FX(qy)} ${FX(x2)} ${FX(y2)}`:`M${FX(x1)} ${FX(y1)} L${FX(x2)} ${FX(y2)}`;
-    es+=`<path d="${d}" stroke="${op.red?'#A4473A':op.blue?'#2F5276':col}" stroke-width="${op.w||1.5}" fill="none"${op.none?'':` marker-end="url(#${m})"`}${op.dash?` stroke-dasharray="${op.dash}"`:''}${op.both?` marker-start="url(#${m})"`:''}/>`;
-    if(lab){const side=op.side||(bd?Math.sign(bd):1), off=op.off==null?12:op.off;
-      const px=(bd?(mx+qx)/2:mx)+nx*off*side+(op.lx||0), py=(bd?(my+qy)/2:my)+ny*off*side+(op.ly||0)+4;
-      const anc=op.la||(Math.abs(nx*side)<.3?'mid':(nx*side>0?'start':'end'));
-      const LL=lines(lab), up=(ny*side<-.3)?(LL.length-1)*13:(ny*side>.3?-6:(LL.length-1)*6.5);
-      ls+=LL.map((l,i)=>T(FX(px),FX(py-up+i*13),l,`${op.lc||'note'} ${anc} f11 halo`)).join('');}
-  });
-  Object.values(nodes).forEach(N=>{ns+=nodeBox(N).s;});
-  return es+ns+ls;
-}
-/* boxes evenly on a circle joined by arcs; items [{t,f,w,sub}], arcs labelled outside by labs[i] (arc i -> i+1) */
-function cycle(cx,cy,R,items,o={}){
-  const k=items.length, a0=o.a0==null?-90:o.a0, ang=i=>(a0+i*360/k)*Math.PI/180, P=a=>[cx+R*Math.cos(a),cy+R*Math.sin(a)];
-  const H=it=>28+(lines(it.t).length-1)*15;
-  /* angular half-width of a box on the circle: step until the point leaves the padded box */
-  const half=(i)=>{const it=items[i],[bx,by]=P(ang(i)),hw=(it.w||70)/2+7,hh=H(it)/2+7;let d=0;while(d<Math.PI/k){const [x,y]=P(ang(i)+d);if(Math.abs(x-bx)>hw||Math.abs(y-by)>hh)break;d+=0.005;}return d;};
-  const hw=items.map((_,i)=>half(i));
-  let es='',ns='',ls='';
-  items.forEach((it,i)=>{const j=(i+1)%k;if(o.open&&j===0)return;
-    const A1=ang(i)+hw[i], A2=ang(i)+2*Math.PI/k-hw[j]-0.02;
-    if(A2-A1>0.03)es+=`<path d="M${FX(cx+R*Math.cos(A1))} ${FX(cy+R*Math.sin(A1))} A${R} ${R} 0 0 1 ${FX(cx+R*Math.cos(A2))} ${FX(cy+R*Math.sin(A2))}" stroke="#6A5B47" stroke-width="1.5" fill="none" marker-end="url(#ahp)"/>`;
-    if(o.labs&&o.labs[i]){const am=(A1+A2)/2, rr=R+(o.lr||18), lx=cx+rr*Math.cos(am), ly=cy+rr*Math.sin(am);
-      const anc=Math.cos(am)>.25?'start':Math.cos(am)<-.25?'end':'mid', L=lines(o.labs[i]);
-      ls+=L.map((l,q)=>T(FX(lx),FX(ly+4+q*13+(Math.sin(am)>.5?6:Math.sin(am)<-.5?-6-(L.length-1)*13:-(L.length-1)*6.5)),l,`note ${anc} f11 halo`)).join('');}
-  });
-  items.forEach((it,i)=>{const [x,y]=P(ang(i));ns+=nodeBox({x,y,w:it.w||70,t:it.t,f:it.f,sub:it.sub,fs:it.fs}).s;});
-  return es+ns+ls;
-}
-/* axes: returns {s,px,py,...}; o:{xr,yr,xlab,ylab,xt,yt,xfmt,yfmt,logx,logy} */
-function axes(x,y,w,h,o){
-  const lx=v=>o.logx?Math.log10(v):v, ly=v=>o.logy?Math.log10(v):v;
-  const X0=lx(o.xr[0]),X1=lx(o.xr[1]),Y0=ly(o.yr[0]),Y1=ly(o.yr[1]);
-  const px=v=>x+(lx(v)-X0)/(X1-X0)*w, py=v=>y+h-(ly(v)-Y0)/(Y1-Y0)*h;
-  let s=`<path d="M${x} ${y} V${y+h} H${x+w}" stroke="#6A5B47" stroke-width="1.3" fill="none"/>`;
-  (o.xt||[]).forEach(t=>{const v=Array.isArray(t)?t[0]:t,l=Array.isArray(t)?t[1]:t;s+=ln(FX(px(v)),y+h,FX(px(v)),y+h+4,'#6A5B47',1)+T(FX(px(v)),y+h+16,l,'note mid f10');});
-  (o.yt||[]).forEach(t=>{const v=Array.isArray(t)?t[0]:t,l=Array.isArray(t)?t[1]:t;s+=ln(x-4,FX(py(v)),x,FX(py(v)),'#6A5B47',1)+T(x-7,FX(py(v)+3.5),l,'note end f10');});
-  if(o.xlab)s+=T(x+w/2,y+h+(o.xt?32:18),o.xlab,'note mid f12');
-  if(o.ylab)s+=`<text transform="translate(${x-(o.yt?(o.ydx||34):14)} ${y+h/2}) rotate(-90)" class="note mid f12">${o.ylab}</text>`;
-  return {s,px,py,x,y,w,h,xr:o.xr,logx:o.logx};
-}
-function curve(A,f,o={}){const N=o.n||120,a=o.from==null?A.xr[0]:o.from,b=o.to==null?A.xr[1]:o.to;let d='';
-  for(let i=0;i<=N;i++){const v=A.logx?a*Math.pow(b/a,i/N):a+(b-a)*i/N, yv=f(v); if(!isFinite(yv))continue; d+=(d?' L':'M')+FX(A.px(v))+' '+FX(A.py(yv));}
-  return `<path d="${d}" stroke="${o.col||'#2F5276'}" stroke-width="${o.w||2.2}" fill="none"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
-/* horizontal bars: items [[label,value,colour,note]] */
-function hbars(n,x,y,w,items,o={}){const max=o.max||Math.max(...items.map(i=>i[1])), lw=o.lw||(n?96:150), bh=o.bh||16, gap=o.gap||10;let s='',yy=y;
-  items.forEach((it,i)=>{const bw=Math.max(2,(w-lw-(o.vw||46))*it[1]/max);
-    s+=G('a-fade',(i*.12).toFixed(2),T(x+lw-8,yy+bh-4,it[0],'lab end '+(n?'f11':'f12'))+box(x+lw,yy,FX(bw),bh,it[2]||PAL.blue,2)+T(FX(x+lw+bw+6),yy+bh-4,it[3]!=null?it[3]:it[1],'mono start f10'));yy+=bh+gap;});
-  return {s,y:yy};}
-/* grid of text cards with equalised row heights; items [[head,body,art?]] art(cx,cy) drawn in a band of artH */
-function cards(n,items,o={}){
-  const cols=n?(o.ncols||1):(o.cols||2), x0=o.x||(n?10:12), W=((n?340:616)-(cols-1)*(o.gap||12))/cols, artH=o.artH||0;
-  const cw=o.cw||6.4; let y=o.y||20, s='';
-  for(let r=0;r<items.length;r+=cols){const row=items.slice(r,r+cols);
-    const Ls=row.map(it=>wrap(it[1],Math.floor((W-24)/cw)));
-    const Hh=row.map(it=>lines(it[0]).length);
-    const h=Math.max(...row.map((it,i)=>30+(Hh[i]-1)*18+artH+Ls[i].length*16+10));
-    row.forEach((it,i)=>{const x=x0+i*(W+(o.gap||12)), num=o.num?r+i+1:0;
-      s+=G('a-fade',((r+i)*.25).toFixed(2),box(x,y,W,h,it[3]||o.fill||'#E7DEC9',4)+(num?badge(x+16,y+17,num):'')
-        +lines(it[0]).map((l,q)=>T(x+(num?32:12),y+22+q*18,l,'lab start f14')).join('')
-        +(it[2]&&artH?it[2](x+W/2,y+26+(Hh[i]-1)*18+artH/2,W):'')
-        +Ls[i].map((l,j)=>T(x+12,y+40+(Hh[i]-1)*18+artH+j*16,l,'note start f12')).join(''));});
-    y+=h+(o.vgap||10);}
-  return {s,y};}
-/* explorer card for a chips plate: it={h,sub,rows:[[k,v]],pros:[],cons:[],note,art:(cx,cy,n)=>svg,artH} */
-function explorer(n,it,o={}){
-  let s='',y=o.y||34;const x=n?16:24, R=n?344:616;
-  if(it.art){s+=G('a-fade',0,it.art(n?180:320,y+(it.artH||120)/2-6,n));y+=(it.artH||120)+8;}
-  s+=G('a-fade',.1,T(x,y,it.h,'cname start f16'));y+=18;
-  if(it.sub){s+=G('a-fade',.15,T(x,y,it.sub,'mono acc start f12'));y+=8;}
-  y+=14;
-  const kx=x, vx=n?x+104:x+180, vw=n?30:66;
-  (it.rows||[]).forEach((r,i)=>{const V=wrap(r[1],vw);s+=G('a-fade',(.2+i*.08).toFixed(2),T(kx,y,r[0],'lab start f13')+V.map((l,j)=>T(vx,y+j*16,l,'note start f13')).join(''));y+=V.length*16+10;});
-  if(it.pros||it.cons){y+=6;const cx2=n?x:x+300, cw=n?44:40;let ya=y,yb=y;
-    if(it.pros){s+=T(x,ya,it.ph||'Strengths','cname start f14');ya+=20;it.pros.forEach(p=>{const L=wrap(p,cw);s+=Tc(x+4,ya,'+','#4F7A3F',13,'mono start','600')+L.map((l,j)=>T(x+18,ya+j*16,l,'note start f12')).join('');ya+=L.length*16+6;});}
-    if(n)yb=ya+8;
-    if(it.cons){s+=T(cx2,yb,it.ch||'Limitations','cname start f14');yb+=20;it.cons.forEach(p=>{const L=wrap(p,cw);s+=Tc(cx2+4,yb,'−','#A4473A',13,'mono start','600')+L.map((l,j)=>T(cx2+18,yb+j*16,l,'note start f12')).join('');yb+=L.length*16+6;});}
-    y=Math.max(ya,yb)+6;}
-  if(it.note){const p=para(x,y+10,it.note,n?50:92,'lab start f13',17,.6);s+=p.s;y=p.y;}
-  return {vb:n?slim(y+10):wide(y+12),s};
-}
-/* rod-shaped cell outline */
-function rodCell2(cx,cy,L,R,o={}){return `<rect x="${cx-L/2}" y="${cy-R}" width="${L}" height="${2*R}" rx="${R}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.6}" ${o.tint===false?'':'class="tint"'}/>`;}
-function coccus(cx,cy,r,o={}){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.4}" class="tint"/>`;}
-function membraneBand(x1,x2,y,h=16,o={}){let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${o.fill||'#EDE0B8'}"/>`;
-  s+=`<path d="M${x1+3} ${y+3} H${x2} M${x1+3} ${y+h-3} H${x2}" stroke="${o.dot||'#B89A5E'}" stroke-width="4.5" stroke-dasharray="0.1 7" stroke-linecap="round"/>`;return s;}
-function pill(x,y,t,fill,tc='#F3EDE0',fs=11){const w=t.length*fs*.62+18;return `<rect x="${FX(x)}" y="${y-fs-3}" width="${FX(w)}" height="${fs+9}" rx="${(fs+9)/2}" fill="${fill}"/>`+Tc(FX(x+w/2),y+1,t,tc,fs,'mono mid','600');}
-/* simple two-column text plate for wide, stacked on narrow: art on left/top, bullets right/below */
-function artBullets(n,art,artW,artH,items,o={}){
-  let s='';s+=G('a-fade',0,art(n?180:(o.ax||20)+artW/2,(o.ay||24)+artH/2,n));
-  const b=n?bullets(24,(o.ay||24)+artH+30,items,44,{d0:.8,gap:o.gap||24}):bullets(o.bx||(artW+56),o.by||44,items,o.wn||Math.floor((600-artW-40)/7),{d0:.8,gap:o.gap||24});
-  s+=b.s;
-  let H=n?b.y:Math.max(b.y,(o.ay||24)+artH+16);
-  if(o.foot){const p=para(n?16:24,H+8,o.foot,n?50:92,'note start f13',17,2);s+=p.s;H=p.y;}
-  return {vb:n?slim(H+4):wide(H+6),s};
+function scD1(n){
+  let s='';const cy=n?84:92;
+  /* layered defence: phage meets a series of gates */
+  const gates=[['adsorption',"receptor loss, O-antigen, capsule",CELLE],
+               ['entry',"superinfection exclusion",INTC],
+               ['the genome',"restriction–modification, CRISPR, BREX",RECC],
+               ['replication',"abortive infection: the cell kills itself",PHG]];
+  if(!n){
+    s+=G('a-fade',0,phIcon(54,cy-18,.9));
+    gates.forEach((g,i)=>{const x=130+i*126;
+      s+=G('a-fade',(.3+i*.3).toFixed(1),`<rect x="${x}" y="${cy-44}" width="12" height="88" rx="3" fill="${g[2]}" fill-opacity=".5" stroke="${INK}"/>`
+        +Tc(x+6,cy-54,g[0],'#3A2E22',11,'mono mid','600')
+        +wrap(g[1],18).map((l,j)=>T(x+6,cy+60+j*14,l,'note mid f11')).join(''));});
+    s+=G('a-fade',1.6,arw(78,cy-18,118,cy-18,{blue:1}));
+  } else {
+    s+=G('a-fade',0,phIcon(42,44,.75));
+    gates.forEach((g,i)=>{const y=74+i*54;
+      s+=G('a-fade',(.3+i*.3).toFixed(1),`<rect x="24" y="${y}" width="96" height="14" rx="3" fill="${g[2]}" fill-opacity=".5" stroke="${INK}"/>`
+        +Tc(132,y+5,g[0],'#3A2E22',11,'mono start','600')
+        +wrap(g[1],30).map((l,j)=>T(132,y+22+j*14,l,'note start f11')).join(''));});
+  }
+  let y=n?74+4*54+22:cy+102;
+  const b=bullets(n?24:30,y,[['Defence is layered, and most of it is not CRISPR','A given strain typically carries several systems acting at different stages. Surveys of sequenced genomes find a median of five or six anti-phage systems per genome, and CRISPR is present in well under half of bacteria.'],
+   ['Two strategies, not one','Either destroy the invading nucleic acid and survive, or detect the infection and die before the phage finishes — abortive infection sacrifices the cell to protect its clonal neighbours. The second strategy only makes sense because the neighbours are relatives.'],
+   ['Defence systems cluster in the genome','They sit together in “defence islands”, next to each other and next to mobile elements. That observation is itself a discovery tool: genes of unknown function that repeatedly appear in those islands usually turn out to be new defence systems.'],
+   ['And defence systems are themselves mobile','They move on plasmids, prophages and ICEs, which is why closely related strains differ so much in what they can resist.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 
-/* ===================== deck ===================== */
-const HGT=[
- {k:'Transformation',art:(cx,cy)=>coccus(cx-30,cy,26)+[0,1,2].map(i=>`<path d="M${cx+30+i*14} ${cy-30+i*8} q 8 10 0 20" stroke="${DNAC}" stroke-width="2" fill="none"/>`).join('')+arw(cx+22,cy,cx-2,cy,{w:1.2}),rows:[['Vehicle','free DNA from dead cells'],['Needs','competence: a pilus and membrane channel that take up single strands; often quorum-signalled'],['Size','up to tens of kb, integrated by homologous recombination'],['Examples','Streptococcus pneumoniae, Neisseria, Haemophilus, Acinetobacter, Bacillus subtilis'],['Limits','needs homology; DNA from distant species rarely integrates']]},
- {k:'Conjugation',art:(cx,cy)=>rodCell2(cx-50,cy,70,18)+rodCell2(cx+50,cy,70,18)+`<path d="M${cx-15} ${cy} H${cx+15}" stroke="${INK}" stroke-width="3"/>`+`<circle cx="${cx-50}" cy="${cy}" r="8" fill="none" stroke="#A4473A" stroke-width="2"/>`,rows:[['Vehicle','a plasmid or ICE, through a type IV secretion system'],['Needs','cell contact; the relaxase nicks oriT and pilots one strand across'],['Size','up to hundreds of kb, including whole resistance arrays'],['Examples','F plasmid; IncF, IncI and IncX plasmids carrying ESBL and carbapenemase genes; Tn916 in Gram-positives'],['Range','some plasmids (IncP) move between almost any Gram-negatives, and even to yeast']]},
- {k:'Transduction',art:(cx,cy)=>`<polygon points="${cx-14},${cy-30} ${cx+14},${cy-30} ${cx+22},${cy-14} ${cx+14},${cy+2} ${cx-14},${cy+2} ${cx-22},${cy-14}" fill="#C9A9D6" stroke="${INK}"/><path d="M${cx} ${cy+2} V${cy+26}" stroke="${INK}" stroke-width="2"/>`+T(cx,cy-10,'host','note mid f10'),rows:[['Vehicle','a phage capsid carrying host DNA'],['Generalised','headful packaging of random host fragments (P22, P1): any gene, rarely'],['Specialised','imprecise prophage excision carries neighbouring genes (λ: gal or bio)'],['Lateral transduction','in S. aureus, prophages that package before excising move hundreds of kb at high frequency'],['Gene transfer agents','phage-like particles that package random host DNA, in Rhodobacter and others']]}];
-let hgtSel=0;
-function scH1(n){return introPlate(n,{q:'How do bacteria acquire genes from other cells, and what carries them?',
-  belief:'Bacterial genomes are mosaics. Alongside inherited genes they carry DNA brought in by transformation, conjugation and transduction, organised by transposons, integrons and integrative elements, and kept in plasmids. This mobile DNA is how antibiotic resistance spreads between species.',
-  items:['Three routes of transfer','Transposons and insertion sequences','Integrons and gene cassettes','ICEs and genomic islands','Plasmid replication and copy number','Incompatibility','Toxin–antitoxin systems'],
-  art:(cx,cy)=>rodCell2(cx,cy,180,46)+`<circle cx="${cx-40}" cy="${cy}" r="14" fill="none" stroke="#A4473A" stroke-width="2.4"/><circle cx="${cx+44}" cy="${cy-6}" r="10" fill="none" stroke="#2F5276" stroke-width="2.4"/>`+`<path d="M${cx-60} ${cy+22} q 60 -20 120 0" stroke="${DNAC}" stroke-width="2" fill="none"/>`+T(cx,cy+58,'chromosome, plasmids, elements','note mid f11'),artH:150});}
-function scH2(n){const h=HGT[hgtSel];return explorer(n,{h:h.k,rows:h.rows,art:(cx,cy)=>h.art(cx,cy),artH:90});}
-function scH3(n){
-  let s='';const x1=n?20:40,x2=n?340:600,y=60,w=x2-x1;
-  s+=G('a-fade',0,dsDNA(x1,x2,y,DNA,8)+box(x1+w*.3,y-12,w*.4,32,'#E0C88A',3)+Tc(x1+w*.5,y+8,'transposase','#3A2E22',11,'mono mid','600')
-    +`<polygon points="${x1+w*.3},${y-12} ${x1+w*.3+10},${y+4} ${x1+w*.3},${y+20}" fill="#7D4A98"/><polygon points="${x1+w*.7},${y-12} ${x1+w*.7-10},${y+4} ${x1+w*.7},${y+20}" fill="#7D4A98"/>`+T(x1+w*.3,y+38,'IR','mono mid f10')+T(x1+w*.7,y+38,'IR','mono mid f10')+T(x1+w*.5,y-22,'insertion sequence, 0.7–2.5 kb','note mid f11'));
-  const y2=y+90;
-  s+=G('a-fade',.4,dsDNA(x1,x2,y2,DNA,8)+box(x1+w*.1,y2-12,w*.16,32,'#E0C88A',3)+Tc(x1+w*.18,y2+8,'IS','#3A2E22',11,'mono mid','600')+box(x1+w*.3,y2-12,w*.4,32,'#E7A99B',3)+Tc(x1+w*.5,y2+8,n?'bla, aac…':'resistance genes','#3A2E22',11,'mono mid','600')+box(x1+w*.74,y2-12,w*.16,32,'#E0C88A',3)+Tc(x1+w*.82,y2+8,'IS','#3A2E22',11,'mono mid','600')+T(x1+w*.5,y2-22,'composite transposon: two IS elements carry genes between them','note mid f11'));
-  const b=bullets(n?24:30,y2+70,[['Cut and paste, or copy and paste','Most IS elements and composite transposons excise and reinsert; Tn3-family transposons replicate, leaving a copy behind. Both create a short target-site duplication.'],['Engines of rearrangement','IS copies recombine with each other, causing deletions and inversions, and an IS that lands upstream of a gene can switch it on with an outward-facing promoter (ISAba1 driving blaOXA-51 in Acinetobacter).'],['Moving resistance','Tn3 carries blaTEM; Tn10 tetracycline; Tn4401 carries blaKPC between plasmids. Mariner elements are the tool behind Tn-seq.']],n?44:88,{d0:1,gap:22});
-  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
+function scD2(n){
+  let s='';const x=n?18:40, W=n?324:560, y=n?52:58;
+  const site=(yy,meth,cut)=>{let t=dLine(x,W,yy,'#D6CDB8',5)
+    +`<rect x="${FX(x+W*.42)}" y="${FX(yy-8)}" width="${FX(W*.16)}" height="16" rx="2" fill="${INTC}" fill-opacity=".5" stroke="${INTC}" stroke-width="1.2"/>`;
+    if(meth)t+=`<circle cx="${FX(x+W*.46)}" cy="${FX(yy-13)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`
+      +`<circle cx="${FX(x+W*.54)}" cy="${FX(yy+13)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`;
+    if(cut)t+=`<path d="M${FX(x+W*.44)} ${FX(yy-12)} V${FX(yy+12)}" stroke="${PHG}" stroke-width="2.4"/>`;
+    return t;};
+  s+=G('a-fade',0,site(y,true,false)+T(x,y-26,'host DNA: the site is methylated — left alone','note start f11'));
+  s+=G('a-fade',.6,site(y+58,false,true)+T(x,y+58-26,'incoming phage DNA: unmethylated — cut','note start f11'));
+  let yy=y+(n?96:100);
+  const rows=[['Type I','one complex does both','EcoKI and relatives: a three-subunit enzyme recognises a bipartite site, then translocates DNA until it collides with another and cuts far away. Needs ATP and SAM.'],
+   ['Type II','separate enzyme and methylase','Short palindromic site, cut at a fixed position, no ATP needed. The cloning workhorses: EcoRI, BamHI, and every other enzyme in the freezer.'],
+   ['Type III','a pair of sites in head-to-head orientation','Cuts a short distance from the site; requires two unmethylated sites in the correct relative orientation, so a single site is not enough.'],
+   ['Type IV','cuts modified DNA instead','McrBC and GmrSD recognise methylated or glucosylated-hydroxymethyl DNA — a counter-defence against phages that modify their own genomes to evade types I–III.']];
+  const t=n?wtable(n,['Type','How it works'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,8],[80,44]],{y0:yy,d0:1})
+         :wtable(n,['Type','Logic','Detail'],rows,[[24,10],[110,22],[320,44]],{y0:yy,d0:1});
+  const b=bullets(n?24:30,t.y+14,[['Self and non-self by methylation pattern','Restriction–modification is not sequence-specific immunity; it is a tag. Everything made in this cell carries the tag, everything that arrives does not. The system has no memory of what it has seen.'],
+   ['Which also makes it a barrier to your cloning','Transforming an unmethylated plasmid into a strain with an active restriction system fails. Passage through a dam dcm host, in vitro methylation, or using a restriction-deficient strain are all ways round it.'],
+   ['And it writes the methylome','The same methyltransferases mark thousands of sites across the chromosome, and those marks regulate genes. Restriction–modification is where bacterial epigenetics comes from.']],n?44:88,{d0:2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
 }
-function scH4(n){
-  let s='';const x1=n?20:40,x2=n?340:600,y=70,w=x2-x1;
-  s+=G('a-fade',0,dsDNA(x1,x2,y,DNA,8)+box(x1,y-12,w*.16,32,'#C9A9D6',3)+Tc(x1+w*.08,y+8,'intI','#3A2E22',11,'mono mid','600')+`<path d="M${x1+w*.2} ${y-16} v-14 h12" stroke="${INK}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`+T(x1+w*.2,y-36,'Pc','mono mid f10')+`<circle cx="${x1+w*.25}" cy="${y+4}" r="5" fill="#A4473A"/>`+T(x1+w*.25,y+38,'attI','mono mid f10'));
-  ['aadA','blaOXA','dfrA','qacE'].forEach((g,i)=>{const gx=x1+w*(.3+i*.17);s+=G('a-fade',(.3+i*.2).toFixed(1),box(gx,y-12,w*.13,32,'#E7A99B',3)+Tc(gx+w*.065,y+8,g,'#3A2E22',n?9:11,'mono mid','600')+`<circle cx="${gx+w*.145}" cy="${y+4}" r="4" fill="#2F5276"/>`);});
-  s+=G('a-fade',1.2,T(x1+w*.6,y+38,'gene cassettes, each ending in an attC site','note mid f11'));
-  const b=bullets(n?24:30,y+80,[['Capture','The integrase IntI recombines circular cassettes into attI, so new genes join at the front, nearest the promoter Pc, and are expressed most strongly.'],['Shuffle on demand','Integrase expression is switched on by the SOS response, so antibiotic stress itself reorders cassettes.'],['Class 1 integrons','Found on transposons and plasmids in most multidrug-resistant Gram-negatives; often end with qacEΔ1 and sul1. Superintegrons in Vibrio carry hundreds of cassettes.']],n?44:88,{d0:1.4,gap:22});
-  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
+
+function scD3(n){
+  let s='';const x=n?18:40, y=n?54:60, W=n?320:560;
+  /* CRISPR array */
+  const unit=W/7;
+  s+=G('a-fade',0,gArrow(x,y,unit*1.5,'cas genes',RECC,{h:17}));
+  for(let i=0;i<4;i++){const cx0=x+unit*1.7+i*unit*1.2;
+    s+=G('a-fade',(.3+i*.2).toFixed(1),`<path d="M${FX(cx0)} ${FX(y-9)} l${FX(unit*.34)} 9 l${FX(-unit*.34)} 9 z" fill="${CLOUD}" stroke="${INK}" stroke-width=".6"/>`
+      +`<rect x="${FX(cx0+unit*.4)}" y="${FX(y-9)}" width="${FX(unit*.66)}" height="18" rx="2" fill="${[PHG,INTC,METC,PLS][i]}" fill-opacity=".75" stroke="${INK}" stroke-width=".6"/>`);}
+  s+=G('a-fade',1.2,Tc(x,y-24,'cas operon','#3E7FA8',10,'mono start','600')
+    +Tc(x+unit*1.8,y-24,n?'repeat + spacer …':'repeat + spacer, repeat + spacer …','#6A5B47',10,'mono start')
+    +Tc(x,y+30,n?'each spacer: a remembered invader':'each spacer is a remembered piece of an invader','#6A5B47',10,'mono start'));
+  let yy=y+(n?58:62);
+  const steps=[['Adaptation','Cas1–Cas2 cut a piece out of the invading genome and insert it as a new spacer at the leader end of the array. A PAM next to the protospacer is required, which is how the system knows the fragment came from outside.'],
+   ['Expression','The array is transcribed and processed into small crRNAs, each carrying one spacer. In type II this needs a tracrRNA and host RNase III; in types I and III a dedicated Cas endoribonuclease does it.'],
+   ['Interference','The crRNA guides an effector — Cascade plus Cas3, Cas9, Cas12, Cas13 — to a matching sequence. Base pairing beside a correct PAM licenses cleavage; the same sequence inside the array has no PAM, so the cell does not cut itself.']];
+  if(n){steps.forEach((st,i)=>{const b=boxItem(16,yy,332,st[0],st[1],{num:i+1,cw:6.1});s+=G('a-fade',(1.4+i*.3).toFixed(1),b.s);yy+=b.h+9;});}
+  else{steps.forEach((st,i)=>{const b=boxItem(24,yy,592,st[0],st[1],{num:i+1,cw:6.3});s+=G('a-fade',(1.4+i*.3).toFixed(1),b.s);yy+=b.h+10;});}
+  const b2=bullets(n?24:30,yy+8,[['Two classes, six types','Class 1 systems — types I, III and IV — use a multi-subunit effector complex and account for most CRISPR in nature. Class 2 — types II, V and VI — use a single protein, which is precisely why Cas9 and Cas12a became tools.'],
+   ['Heritable, sequence-specific, and acquired','This is the only bacterial defence system with a memory. A population records the phages it has met, and that record is readable: spacer content dates and orders past encounters, and matches spacers to the phages circulating in the same environment.'],
+   ['Not only phages','CRISPR targets plasmids and ICEs as well, which makes it a genuine barrier to horizontal gene transfer — and a cost, when the element being excluded carries something useful.']],n?44:88,{d0:2.4,gap:24});
+  return {vb:n?slim(b2.y-6):wide(b2.y-6),s:s+b2.s};
 }
-function scH5(n){
-  const items=[['Integrative and conjugative elements','ICEs live in the chromosome, excise as a circle, conjugate to a new cell and integrate again. Tn916 (tetracycline resistance) and SXT in Vibrio cholerae are classic examples; ICEs may be more common than conjugative plasmids.'],['Genomic islands','Blocks of horizontally acquired DNA, often with odd GC content and next to tRNA genes. Pathogenicity islands carry virulence genes: SPI-1 and SPI-2 in Salmonella, the LEE in enteropathogenic E. coli.'],['Prophages','Temperate phages integrated in the chromosome can carry toxins: cholera toxin (CTXφ), Shiga toxin, diphtheria toxin. Lysogenic conversion turns a harmless strain virulent.'],['Mobile, then fixed','Elements lose the ability to move over time, decaying into islands that are inherited vertically.']];
-  const c=cards(n,items,{y:20,num:1});
-  return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
+/* ===================== Part II · the wider arsenal ===================== */
+function scD4(n){
+  let s='';const y=n?50:56;
+  const cells=(x,yy,states,lab1,lab2)=>{let t='';
+    states.forEach((st,i)=>{t+=cellRod(x+i*(n?0:0),yy,0,0,{});});
+    return t;};
+  /* picture: one infected cell dies, neighbours survive */
+  const cx=n?180:320;
+  const grid=[[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]];
+  const dxs=n?96:150, dys=n?62:70;
+  const x0=cx-dxs, y0=y+26;
+  grid.forEach((g,i)=>{const px=x0+g[0]*dxs, py=y0+g[1]*dys, dead=(i===1);
+    s+=G('a-fade',(i*.18).toFixed(2),cellRod(px,py,n?70:96,n?16:19,{fill:dead?'#E0D3C4':CELLF,dash:dead?'4 3':''})
+      +(dead?phIcon(px,py-(n?26:30),.5):''));});
+  s+=G('a-fade',1.3,Tc(cx,y0+dys+(n?34:40),'the infected cell dies before the phage matures;','#6A5B47',10,'mono mid')
+    +Tc(cx,y0+dys+(n?48:54),'its clonal neighbours are spared','#6A5B47',10,'mono mid'));
+  let yy=y0+dys+(n?74:80);
+  const b=bullets(n?24:30,yy,[['Abortive infection is altruistic suicide','The cell detects that infection is under way and triggers something lethal: membrane depolarisation, NAD⁺ depletion, degradation of an essential tRNA, or arrest of translation. No phage progeny are released, so the clone survives even though the individual does not.'],
+   ['Kin selection makes it work','In a colony or a biofilm the surrounding cells are near-identical, so a gene that kills its host to protect its neighbours is still favoured. This is one of the clearest cases of kin selection in bacteria.'],
+   ['Classic examples','The Rex system of λ lysogens depolarises the membrane on infection by a second phage; PrrC cleaves tRNA^Lys when phage T4 inactivates a restriction enzyme; Lit cuts translation elongation factor EF-Tu in response to a T4 capsid peptide.'],
+   [n?'Toxin–antitoxin pairs do this too':'Toxin–antitoxin pairs double as abortive infection systems','Many chromosomal TA systems are triggered by phage infection: the phage shuts down host transcription, the unstable antitoxin disappears, and the toxin stops the cell. The same mechanism that keeps a plasmid can defend a chromosome.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
-function scH6(n){
-  const items=[['Replicons','A plasmid’s origin and its control system: iteron-controlled, RNA-controlled (ColE1) or rolling-circle (small Gram-positive plasmids).'],['Copy number','ColE1-type plasmids are controlled by RNA I, an antisense RNA that blocks the RNA II primer; more plasmid means more inhibitor. High-copy cloning vectors carry mutations that weaken this.'],['Partition','Low-copy plasmids such as F use ParA/ParB-type systems, like chromosomes, to segregate copies to both daughters.'],['Host range','Narrow-range plasmids replicate only in close relatives; broad-range ones (IncP, IncQ, IncW) in many Gram-negatives.']];
-  const c=cards(n,items,{y:20,num:1});
-  return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
+
+function scD5(n){
+  const rows=[['BREX','methylation-based, no cleavage','Marks host DNA like restriction–modification but blocks phage DNA replication rather than cutting it. Six genes, widespread, and invisible to a standard restriction assay.'],
+   ['DISARM','methylation plus a helicase','Related in logic to BREX: self-marking by methylation, with a DRM helicase and phospholipase-like protein doing the blocking.'],
+   ['CBASS','cyclic nucleotide signalling','A cGAS-like enzyme makes a cyclic oligonucleotide on infection; that second messenger activates an effector — a nuclease, a phospholipase, a pore — which kills the cell. The ancestor of animal cGAS–STING.'],
+   ['Thoeris','NAD⁺ depletion','ThsB, a TIR-domain protein, senses infection and makes cyclic ADP-ribose isomers; ThsA then destroys the cell’s NAD⁺. TIR domains do the same thing in plant and animal immunity.'],
+   ['Gabija, Hachiman, Lamassu, Zorya','nuclease and membrane effectors','A family of two- and three-gene systems found by looking in defence islands; most act by abortive infection, several by degrading the host genome once infection is detected.'],
+   ['Retrons','reverse transcriptase plus RNA','A reverse-transcribed msDNA guards an effector; tampering with the complex by a phage protein releases a toxin. Known as a curiosity for thirty years before their function was found.'],
+   ['Prokaryotic Argonautes','guide-directed nuclease','Use short DNA guides rather than RNA, and cleave invading DNA or trigger abortive infection. The ancestors of eukaryotic RNA interference.'],
+   ['Wadjet / JetABCD','SMC-like, plasmid-specific','Recognises small circular DNA and cuts it, defending specifically against plasmids rather than phages.']];
+  const t=n?wtable(n,['System','What it does'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,12],[110,40]],{y0:30})
+         :wtable(n,['System','Principle','How it works'],rows,[[24,16],[180,22],[380,42]],{y0:30});
+  const b=bullets(n?24:30,t.y+14,[['Most of this was discovered after 2018','Systematic searches of defence islands, followed by cloning candidate operons into a naive host and challenging with phage, turned dozens of hypothetical proteins into named systems in a few years. The arsenal is certainly not complete.'],
+   ['The same chemistry keeps reappearing','TIR domains, cyclic nucleotide messengers, NAD⁺ destruction, gasdermin-like pore formation and Argonaute proteins are all present in bacterial defence and in plant and animal innate immunity. Innate immunity appears to be older than eukaryotes.']],n?44:88,{d0:2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:t.s+b.s};
 }
-function scH7(n){
-  let s='';const xs=n?[80,270]:[160,460], y=80;
-  s+=G('a-fade',0,rodCell2(xs[0],y,130,40)+`<circle cx="${xs[0]-26}" cy="${y}" r="10" fill="none" stroke="#A4473A" stroke-width="2.4"/><circle cx="${xs[0]+26}" cy="${y}" r="10" fill="none" stroke="#A4473A" stroke-width="2.4" stroke-dasharray="3 2"/>`+T(xs[0],y+40,'same replicon: IncX + IncX','note mid f11'));
-  s+=G('a-fade',.4,rodCell2(xs[1],y,130,40)+`<circle cx="${xs[1]-26}" cy="${y}" r="10" fill="none" stroke="#A4473A" stroke-width="2.4"/><circle cx="${xs[1]+26}" cy="${y}" r="10" fill="none" stroke="#2F5276" stroke-width="2.4"/>`+T(xs[1],y+40,'different replicons: compatible','note mid f11'));
-  s+=G('a-fade',.8,arw(xs[0],y+52,xs[0],y+80,{w:1.2})+T(xs[0],y+98,'one is lost in some daughters','note mid f11')+arw(xs[1],y+52,xs[1],y+80,{w:1.2})+T(xs[1],y+98,'both stably kept','note mid f11'));
-  const b=bullets(n?24:30,y+130,[['Why','Two plasmids sharing replication or partition control are counted as one; random segregation then loses one or the other.'],['Inc groups','Incompatibility groups (IncF, IncI, IncN, IncX…) classify plasmids, now usually by replicon sequence (PlasmidFinder).'],['Practical use','Plasmids in a two-plasmid experiment must have compatible origins, such as ColE1 with p15A.']],n?44:88,{d0:1.2,gap:22});
-  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
+
+function scD6(n){
+  let s='';const y=n?52:58, cx=n?180:320;
+  const stepW=n?104:168;
+  const nodes=[['sensor','detects infection',INTC],[n?'messenger':'second messenger','a cyclic nucleotide',METC],['effector','kills the cell or the phage',PHG]];
+  nodes.forEach((nd,i)=>{const x=cx+(i-1)*stepW;
+    s+=G('a-fade',(i*.4).toFixed(1),`<rect x="${FX(x-(n?44:66))}" y="${y}" width="${n?88:132}" height="${n?42:44}" rx="5" fill="#E7DEC9" stroke="${INK}"/>`
+      +Tc(x,y+(n?18:20),nd[0],'#3A2E22',n?11:12,'mono mid','600')
+      +wrap(nd[1],n?16:22).map((l,j)=>T(x,y+(n?32:36)+j*13,l,'note mid f10')).join(''));
+    if(i<2)s+=G('a-fade',(.3+i*.4).toFixed(1),arw(x+(n?46:68),y+(n?21:22),x+stepW-(n?46:68),y+(n?21:22),{blue:1}));});
+  s+=G('a-fade',1.4,`<circle cx="${cx}" cy="${y+(n?66:72)}" r="7" fill="${METC}" fill-opacity=".6" stroke="${INK}"/>`
+    +Tc(cx,y+(n?90:96),'cGAMP, cyclic tri-AMP, cyclic ADP-ribose','#6A5B47',10,'mono mid'));
+  let yy=y+(n?112:120);
+  const rows=[['CBASS','a cGAS/DncV-like cyclase','cyclic di- or tri-nucleotide','phospholipase, nuclease, or a transmembrane pore'],
+   ['Thoeris','a TIR-domain protein','cyclic ADP-ribose isomer','a SIR2 domain that destroys NAD⁺'],
+   ['Type III CRISPR','Cas10, on target recognition','cyclic oligoadenylate','Csm6/Csx1, a promiscuous RNase'],
+   ['Pycsar','a pyrimidine cyclase','cyclic CMP or UMP','membrane effectors and NADases']];
+  const t=n?wtable(n,['System','Sensor → messenger → effector'],rows.map(r=>[r[0],r[1]+' → '+r[2]+' → '+r[3]]),[[10,14],[122,36]],{y0:yy,d0:1.8})
+         :wtable(n,['System','Sensor','Messenger','Effector'],rows,[[24,14],[150,20],[320,18],[470,22]],{y0:yy,d0:1.8});
+  const b=bullets(n?24:30,t.y+14,[['Why a second messenger at all','It separates detection from killing. One sensor molecule can make many messengers, so a single recognition event produces a fast, amplified, all-or-nothing response — exactly what abortive infection needs, since a half-hearted response releases phage.'],
+   ['And it allows the phage a target','Several phages encode “sponge” proteins or nucleases that degrade the messenger, which is a clean demonstration that the messenger is the signal and not a by-product.']],n?44:88,{d0:2.4,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
 }
-function scH8(n){
-  const N=n?{p:{x:180,y:40,w:220,t:'plasmid: toxin + antitoxin'},k:{x:90,y:140,w:150,t:'keeps plasmid',f:'#C6D3A8'},l:{x:270,y:140,w:150,t:'loses plasmid',f:'#E7A99B'},a:{x:270,y:240,w:150,t:'antitoxin decays|(unstable)'},d:{x:270,y:340,w:150,t:'stable toxin|kills the cell',f:'#E7A99B'}}
-    :{p:{x:110,y:70,w:180,t:'plasmid with toxin|and antitoxin genes'},k:{x:330,y:40,w:140,t:'keeps plasmid',f:'#C6D3A8'},l:{x:330,y:130,w:140,t:'loses plasmid',f:'#E7A99B'},a:{x:500,y:130,w:130,t:'antitoxin|degraded'},d:{x:500,y:220,w:130,t:'toxin free:|cell dies',f:'#E7A99B'}};
-  const E=n?[['p','k','division',{side:-1}],['p','l',''],['l','a',''],['a','d','']]:[['p','k','division'],['p','l','',{}],['l','a',''],['a','d','']];
-  let s=G('a-fade',0,flow(N,E));
-  const by=n?400:270;
-  const b=bullets(n?24:30,by,[['Post-segregational killing','Cells that lose the plasmid are killed by the long-lived toxin once the short-lived antitoxin is gone: plasmid addiction (ccdAB of F, hok/sok of R1).'],['Types','Type I: an antisense RNA antitoxin; type II: a protein antitoxin binding the toxin (MazEF, RelBE, HipBA); further types act in other ways.'],['On chromosomes too','Chromosomal TA systems are numerous; their roles in stress, phage defence and persistence are still argued.']],n?44:88,{d0:1.2,gap:22});
-  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
+
+function scD7(n){
+  let s='';const x=n?18:40, W=n?324:564, y=n?60:66;
+  s+=G('a-fade',0,T(n?16:24,28,'A defence island, and how it is read','cname start f14'));
+  s+=G('a-fade',.2,dLine(x,W,y,'#D6CDB8',5));
+  const H=n?'':'hyp';
+  const g=[['RM',RECC,.00,.13],[H,CLOUD,.14,.08],['abiE',PHG,.23,.11],[H,CLOUD,.35,.08],['cas',INTC,.44,.16],[H,CLOUD,.61,.08],['TA',METC,.70,.10],[H,CLOUD,.81,.08],['BREX',PLS,.90,.10]];
+  g.forEach((p,i)=>{s+=G('a-fade',(.3+i*.12).toFixed(2),gArrow(x+p[2]*W,y,p[3]*W-4,p[0],p[1],{h:16,fs:n?8:10}));});
+  s+=G('a-fade',1.6,Tc(x,y+28,n?'known systems in colour; others grey':'known systems in colour; genes of unknown function in grey','#6A5B47',10,'mono start'));
+  let yy=y+(n?52:56);
+  const b=bullets(n?24:30,yy,[['Guilt by association','Defence systems cluster. If a hypothetical gene family sits inside defence islands far more often than chance allows, across thousands of genomes, it is probably a defence system — and the prediction can be tested directly by cloning it into a naive strain and challenging with phage.'],
+   ['That is how the field was opened','Doron and colleagues used exactly this logic in 2018 to predict ten candidate systems and confirm nine. The same approach has since produced more than a hundred.'],
+   ['Islands are also where the elements are','Defence islands sit in prophages, ICEs and plasmids, so defence systems are among the most horizontally mobile genes in bacteria. A strain’s resistance profile against phages is largely accessory genome.'],
+   ['And the phages carry counter-measures in the same way','Anti-CRISPR and anti-restriction genes cluster in phage genomes, often beside each other, and can be found by the same guilt-by-association argument run in reverse.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
-const S=[
- {p:1,title:'Genes on the move',draw:scH1,text:"A bacterial genome is not only inherited from its parent. It also contains DNA picked up from other cells and other species, moved by mobile elements and carried on plasmids. Horizontal gene transfer is the main way antibiotic resistance and virulence spread."},
- {p:1,title:'Three routes into a cell',chips:'hgt',draw:scH2,text:"DNA enters bacteria in three ways: as free DNA taken up by competent cells, through a conjugation pore from a donor, or packaged inside a phage. Pick a route to see what carries the DNA, how much can move, and where it is common."},
- {p:2,title:'Transposons and insertion sequences',draw:scH3,text:"Insertion sequences are the simplest mobile elements: a transposase gene between inverted repeats. Two of them can carry any genes between them as a composite transposon. Transposition rearranges genomes, switches genes on, and shuttles resistance genes between plasmids and chromosomes."},
- {p:2,title:'Integrons',draw:scH4,text:"An integron is a platform for collecting genes. Its integrase captures circular gene cassettes at a fixed site next to a promoter, so newly captured resistance genes are expressed. Integrase expression is induced by the SOS response, so antibiotic stress itself reshuffles the array."},
- {p:2,title:'ICEs, islands and prophages',draw:scH5,text:"Some mobile elements live in the chromosome and move by excising and conjugating; others are prophages carrying toxin genes. Over time, elements lose mobility and remain as genomic islands, recognisable by their unusual composition and position next to tRNA genes."},
- {p:3,title:'Plasmid replication',draw:scH6,text:"Plasmids replicate from their own origins and control their copy number, often with antisense RNAs. Low-copy plasmids partition actively at division. The origin also decides host range: some plasmids live only in E. coli, others in almost any Gram-negative bacterium."},
- {p:3,title:'Incompatibility',draw:scH7,text:"Two plasmids that share a replication or partition system cannot be stably maintained together, because the cell cannot tell them apart. This incompatibility defines the Inc groups used to classify plasmids, and is why two-plasmid experiments need different origins."},
- {p:3,title:'Toxin–antitoxin systems',draw:scH8,text:"Many plasmids carry a toxin and a less stable antitoxin. Daughter cells that lose the plasmid lose the supply of antitoxin and are killed by the remaining toxin, so the plasmid is maintained by addiction. Chromosomal toxin–antitoxin systems are common, and some protect against phage."}];
-const CHIPS={hgt:{list:HGT.map(h=>h.k),get:()=>hgtSel,set:k=>hgtSel=k}};
+/* ===================== Part III · the arms race ===================== */
+function scD8(n){
+  const rows=[['Avoid the site','lose or modify the recognition sequence','Phages under restriction pressure lose sites by point mutation; genomes of phages that infect heavily restricting hosts are measurably depleted of common recognition sequences.'],
+   ['Mask the genome','modify every base','T-even phages glucosylate hydroxymethyl-cytosine; others carry their own methyltransferase and methylate the injected genome before the host can cut it. This is what type IV enzymes evolved to counter.'],
+   ['Block the enzyme','a protein decoy','Ocr of phage T7 is a DNA mimic: a highly acidic dimer the shape and charge of bent B-DNA that occupies type I restriction enzymes. ArdA proteins on conjugative plasmids do the same job for incoming plasmid DNA.'],
+   ['Block CRISPR','anti-CRISPR proteins','Small, unrelated proteins that bind the effector, block PAM recognition, occupy the DNA-binding groove, or enzymatically degrade the cyclic messenger. More than a hundred families are known, and none resemble one another.'],
+   ['Degrade the signal','sponge the messenger','Phage proteins that bind or hydrolyse cyclic nucleotides neutralise CBASS, Thoeris and type III CRISPR by removing the second messenger.'],
+   ['Hide in time','nucleus-like compartments','Jumbo phages of Pseudomonas build a proteinaceous shell around the replicating phage genome that excludes host nucleases entirely — physical, not biochemical, evasion.']];
+  const t=n?wtable(n,['Counter-measure','How it works'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,14],[122,37]],{y0:30})
+         :wtable(n,['Counter-measure','Strategy','How it works'],rows,[[24,14],[150,20],[320,44]],{y0:30});
+  const p=para(n?16:24,t.y+14,'Every defence has a counter-measure, and several counter-measures have counter-counter-measures. This is not an argument that defence is futile: it is the reason both sides carry so many systems at once, and the reason defence genes are among the fastest-evolving in any genome.',n?50:92,'note start f13',17,1.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+}
+
+function scD9(n){
+  let s='';const y=n?48:54;
+  const items=[['Autoimmunity',PHG,'A CRISPR spacer matching the host chromosome is lethal. Self-targeting spacers are found in real genomes, and are usually accompanied by an inactivated cas operon or an anti-CRISPR-carrying prophage.'],
+   ['Lost opportunities',TNC,'Defence excludes useful DNA as readily as harmful DNA. A strain with an active restriction system or a matching CRISPR spacer cannot easily acquire a resistance plasmid — which is good for us and bad for the strain.'],
+   ['Direct cost',CORE,'Expressing several systems costs resources, and abortive infection kills cells. In the absence of phage, defence genes are lost, which is why carriage is patchy even within a species.'],
+   ['Autoimmune accidents',INTC,'Restriction systems kill the cell if methylation falls behind replication; CBASS and TA systems can fire spuriously. Several systems are tightly repressed until infection is detected for exactly this reason.']];
+  if(!n){items.forEach((it,i)=>{const cx=88+i*156;
+    s+=G('a-fade',(i*.35).toFixed(2),`<circle cx="${cx}" cy="${y+26}" r="22" fill="${it[1]}" fill-opacity=".25" stroke="${it[1]}" stroke-width="2"/>`
+      +T(cx,y+68,it[0],'cname mid f13')
+      +wrap(it[2],26).map((l,j)=>T(cx,y+88+j*15,l,'note mid f11')).join(''));});
+    const maxL=Math.max(...items.map(it=>wrap(it[2],26).length));
+    var yy=y+88+maxL*15+22;}
+  else{var yy=y;items.forEach((it,i)=>{const L=wrap(it[2],44);
+    s+=G('a-fade',(i*.35).toFixed(2),`<circle cx="30" cy="${yy+4}" r="12" fill="${it[1]}" fill-opacity=".25" stroke="${it[1]}" stroke-width="1.8"/>`
+      +T(50,yy+8,it[0],'cname start f13')
+      +L.map((l,j)=>T(16,yy+30+j*15,l,'note start f11')).join(''));
+    yy+=36+L.length*15+12;});}
+  const b=bullets(n?24:30,yy,[['Defence is regulated, not constitutive','Many systems are kept off until infection is sensed, and some are phase-variable: an invertible promoter or a phase-variable methyltransferase switches defence on in part of the population. The colony hedges rather than committing.'],
+   ['Which is why phage resistance looks so variable','Two isolates of the same clone can differ completely in which phages they resist, because the systems sit on mobile elements and several of them are switched stochastically.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+function scD10(n){
+  let s='';const y=n?30:32;
+  const rows=[['Phage therapy','Resistance to a therapeutic phage arises by every route on the previous plates. Cocktails, phages targeting essential receptors, and deliberately chosen receptor–virulence trade-offs are the practical responses.'],
+   ['Fermentation and dairy','Phage infection of starter cultures is a major industrial problem. Strain rotation is built around defence profiles, and some of the earliest CRISPR work came from Streptococcus thermophilus cultures for exactly this reason.'],
+   ['Genome editing','Cas9, Cas12a and base editors all come from class 2 CRISPR; restriction enzymes built molecular cloning; Argonautes, retrons and recombineering systems are all defence or counter-defence in origin.'],
+   ['Building strains','A strain with its restriction systems deleted takes up DNA orders of magnitude better. Conversely, adding a CRISPR system targeting a resistance gene has been proposed as a way to resensitise populations.'],
+   ['Reading genomes','Spacer content records past infections, and defence-system content predicts which phages a strain will resist. Both are now routine annotations, and tools such as PADLOC and DefenseFinder make them a single step.']];
+  const t=wtable(n,['Where it matters','Why'],rows,n?[[10,13],[114,38]]:[[24,16],[190,54]],{y0:y});
+  const p=para(n?16:24,t.y+14,'Every tool in the first half of this collection — restriction enzymes, Cas9, reverse transcriptase, recombineering — was taken from this arms race. The systems being described now are the next set of tools, and the reason to follow the field even if phages are not your subject.',n?50:92,'note start f13',17,1.6);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+}
+
+const DEFQ=[
+ {q:'Plasmid DNA prepared from E. coli transforms a clinical isolate a thousand times worse than DNA prepared from that isolate.',a:'Restriction–modification',t:'The marker is the methylation pattern, not the sequence. DNA made in the wrong host lacks the right marks and is cut. Passage through a strain carrying the recipient’s methyltransferases, or use of a restriction-deficient derivative, restores the efficiency.'},
+ {q:'Phage adsorbs and injects normally, no progeny are produced, and the infected cells lyse early and release nothing.',a:'Abortive infection',t:'The infection is detected after entry and the cell commits suicide before the phage matures. Nothing has to recognise a specific sequence; the trigger is usually some general consequence of infection, such as host shut-off.'},
+ {q:'A strain resists one particular phage completely, and sequencing finds a 32 bp match to that phage in a repeat array.',a:'CRISPR–Cas',t:'Sequence-specific, heritable, and acquired. The spacer length and the flanking repeats are the giveaway. Escape mutants of the phage will carry point mutations in the protospacer or its PAM.'},
+ {q:'A small circular plasmid is destroyed on entry, but phages infect normally.',a:'Wadjet',t:'A plasmid-specific system: the JetABCD complex recognises small circular DNA topologically rather than by sequence, so it defends against plasmids and leaves linear phage genomes alone.'},
+ {q:'Infected cells survive but stop growing, and their NAD⁺ pool is gone.',a:'Thoeris, or another NADase system',t:'TIR-domain sensors making cyclic ADP-ribose, which activates a SIR2 NADase, deplete NAD⁺ and arrest the cell. The same TIR–NADase chemistry appears in plant and animal immunity.'},
+ {q:'Resistance is present in about half the cells of a clonal culture, and the proportion changes over time.',a:'Phase-variable defence',t:'An invertible promoter or a phase-variable methyltransferase switches the system stochastically. The population hedges: some cells pay the cost and are protected, others do not. This is heterogeneity, not mutation.'},
+ {q:'The phage genome is not cut, and does not replicate either.',a:'BREX, or a related methylation-based system',t:'BREX marks the host genome by methylation but blocks phage DNA replication rather than cleaving it. A standard restriction assay, which looks for cut DNA, sees nothing — which is why these systems were missed for so long.'},
+ {q:'A phage that was restricted for several generations suddenly propagates freely on the same strain.',a:'Acquired modification, not mutation',t:'A phage that escapes restriction once is methylated by the host system during that round and its progeny are then protected on that host — but not on a different one. The classic observation of host-controlled restriction and modification, and the reason it was named that way.'}];
+let dSel=0;
+function scD11(n){
+  const q=DEFQ[dSel];let s='',y=34;
+  const Q=wrap(q.q,n?36:60);
+  s+=G('a-fade',0,Q.map((l,i)=>T(n?16:24,y+i*22,l,'cname start')).join(''));y+=Q.length*22+14;
+  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="28" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +Tc(n?26:38,y+1,q.a,'#2F5276',n?11.5:14,'mono start','600'));
+  y+=28;
+  const p=para(n?16:24,y,q.t,n?50:92,'note start f13',17,.6);
+  let yy=p.y+16;
+  s+=G('a-fade',1.2,T(n?16:24,yy,'All the observations','mono acc start f11'));
+  yy+=18;
+  DEFQ.forEach((x,i)=>{const L=wrap(x.q,n?42:76);
+    s+=G('a-fade',(1.3+i*.06).toFixed(2),(i===dSel?`<rect x="${n?10:18}" y="${yy-12}" width="${n?342:600}" height="${L.length*15+6}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`:'')
+      +`<circle cx="${n?22:30}" cy="${yy-5}" r="4" fill="${i===dSel?PHG:'#C9BFAB'}" stroke="${INK}" stroke-width=".6"/>`
+      +L.map((l,j)=>T(n?36:44,yy+j*15,l,'note start f12')).join(''));
+    yy+=L.length*15+8;});
+  return {vb:n?slim(yy+8):wide(yy+10),s:s+p.s};
+}
+
 const NAR='Narrator';
+const S=[
+ {p:1,title:'A layered problem',draw:scD1,text:"Phages outnumber bacteria in most environments, and a bacterium carries not one defence but several, acting at different stages: before adsorption, at entry, against the injected genome, and finally by killing the infected cell outright. A typical genome carries five or six systems, and fewer than half carry CRISPR at all."},
+ {p:1,title:'Restriction and modification',draw:scD2,text:"The oldest known defence distinguishes self from non-self by a methylation tag rather than by sequence memory. Everything replicated in this cell is marked; anything that arrives unmarked is cut. The same methyltransferases write marks across the chromosome, which is where bacterial epigenetics comes from."},
+ {p:1,title:'CRISPR–Cas',draw:scD3,text:"CRISPR is the one system with a memory. Fragments of past invaders are stored as spacers between repeats, transcribed into guide RNAs, and used to direct a nuclease to matching sequences. Six types are known in two classes; the single-protein class 2 effectors are the ones that became laboratory tools."},
+ {p:2,title:'Abortive infection',draw:scD4,text:"If the invading genome cannot be destroyed, the cell can still deny the phage a harvest by killing itself. Membrane depolarisation, NAD⁺ depletion, tRNA cleavage and translation arrest are all used. It only makes evolutionary sense because the neighbouring cells are clonal relatives, and it is one of the clearest cases of kin selection in bacteria."},
+ {p:2,title:'The new arsenal',draw:scD5,text:"Since 2018, systematic searching of defence islands has turned dozens of hypothetical operons into named anti-phage systems: BREX, DISARM, CBASS, Thoeris, Gabija, Zorya, retrons, prokaryotic Argonautes and more. Several use chemistry that reappears, unmistakably, in plant and animal innate immunity."},
+ {p:2,title:'Second messengers',draw:scD6,text:"Several of the new systems share an architecture: a sensor detects infection, makes a cyclic nucleotide, and that messenger activates an effector that destroys the cell. CBASS, Thoeris, type III CRISPR and Pycsar all work this way — and CBASS is the direct ancestor of the cGAS–STING pathway of animals."},
+ {p:2,title:'Defence islands',draw:scD7,text:"Defence systems cluster together in the genome, beside each other and beside mobile elements. That clustering is the main reason the recent wave of discovery was possible: a hypothetical gene that keeps turning up in defence islands is probably a defence gene, and the prediction can be tested directly."},
+ {p:3,title:'What the phages do about it',draw:scD8,text:"Every defence has a counter-measure. Phages lose recognition sites, modify every base in their genomes, carry DNA-mimicking decoys, encode anti-CRISPR proteins, degrade second messengers, and in the case of jumbo phages build a physical shell around their replicating genome. The counter-measures in turn provoked systems that target modified DNA."},
+ {p:3,title:'The cost of defence',draw:scD9,text:"Defence is not free. CRISPR spacers that match the host are lethal; restriction systems kill cells when methylation falls behind; and every system excludes useful DNA along with harmful DNA. Most defence genes are lost when phage pressure is relaxed, and several are switched on in only part of the population."},
+ {p:3,title:'Why this matters at the bench',draw:scD10,text:"Restriction enzymes, Cas9, reverse transcriptase and recombineering all came out of this arms race, and so will the next generation of tools. More immediately: defence systems explain why a construct will not transform into a clinical isolate, and why a phage cocktail stops working after a week."},
+ {p:3,title:'Which system is this?',chips:'def',draw:scD11,text:"The systems can usually be told apart from the pattern of the phenotype: whether the DNA is cut, whether the cell survives, whether resistance is specific to one phage, and whether it is heritable. Pick an observation to see what it points to."}];
+const CHIPS={def:{list:DEFQ.map((q,i)=>String(i+1)),get:()=>dSel,set:k=>dSel=k}};
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

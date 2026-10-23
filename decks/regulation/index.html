@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bacterial Gene Regulation</title>
-<meta name="description" content="Operons and regulons, the lac operon, two-component systems, small RNAs, quorum sensing, sporulation, DNA methylation, phase variation, bistability and persistence.">
+<title>Regulation, Signalling and Development</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
 <style>
@@ -81,7 +80,6 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .tick{stroke:#F3EDE0;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 #stage .ax{stroke:#6A5B47;stroke-width:1.4}
 #stage .tint{filter:url(#plate)}
-#stage .halo{paint-order:stroke;stroke:#EFE8D8;stroke-width:3.5px;stroke-linejoin:round}
 #stage a text{fill:var(--accent);text-decoration:underline;cursor:pointer} #stage a:hover text{fill:#1E3F66}
 
 /* Motion */
@@ -140,14 +138,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 <div class="wrap">
   <a class="hubback" href="../../">← All primers</a>
   <header>
-    <p class="eyebrow">Central dogma and its regulation · an animated primer</p>
-    <h1>How a bacterium decides which genes to use</h1>
+    <p class="eyebrow">Regulation · an animated primer</p>
+    <h1>How bacteria decide what to do next</h1>
   </header>
   <nav class="parts" aria-label="Parts">
-    <button id="part1" type="button">I · Circuits</button>
+    <button id="part1" type="button">I · Regulons and networks</button>
     <button id="part2" type="button">II · Signals</button>
-    <button id="part3" type="button">III · Programs</button>
-    <button id="part4" type="button">IV · Memory and chance</button>
+    <button id="part3" type="button">III · Development</button>
   </nav>
   <section class="stage" aria-live="polite">
     <div class="scene-head"><span class="scene-no" id="sceneNo"></span><h2 id="sceneTitle"></h2></div>
@@ -161,9 +158,11 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <button id="replay" type="button">Replay</button>
     <button id="next" type="button" class="primary">Next</button>
   </div>
-  <p class="foot">Circuits are simplified; most real regulons involve several overlapping inputs. Sigma factors, attenuation and riboswitches are covered in the transcription primer, and the stringent response in the translation primer.</p>
+  <p class="foot">Regulator names and regulon sizes are examples from well-studied species; the architecture generalises, the details do not.</p>
 </div>
 <script>
+
+
 const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
       RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
 const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
@@ -373,7 +372,7 @@ function rod(cx,cy,l,w,ang=0,col='#8C6D46'){return `<rect x="${FX(cx-l/2)}" y="$
 function pneumo(cx,cy,k=1,caps=true,col='#9DB4AE'){
   let s=caps?`<ellipse cx="${cx}" cy="${cy}" rx="${22*k}" ry="${12*k}" fill="${CAPS}" fill-opacity=".55" stroke="#7D4A98" stroke-width=".8" stroke-dasharray="2 2"/>`:'';
   return s+`<ellipse cx="${cx-8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/><ellipse cx="${cx+8*k}" cy="${cy}" rx="${8.5*k}" ry="${6.5*k}" fill="${col}" stroke="${INK}" stroke-width=".9"/>`;}
-function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><path d="M${x} ${y-8} v16 M${x} ${y} h-10" stroke="${GLASSE}" stroke-width="1.6"/><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x+len} ${y} h14" stroke="${GLASSE}" stroke-width="1.6"/></g>`;} // needle points right
+function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y})"><rect x="${x}" y="${y-5}" width="${len}" height="10" rx="2" fill="#EEF3F3" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${x} ${y} h-14" stroke="${GLASSE}" stroke-width="1.6"/><path d="M${x+len} ${y-8} v16 M${x+len} ${y} h10" stroke="${GLASSE}" stroke-width="1.6"/></g>`;}
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
@@ -416,331 +415,360 @@ function predictPlate(n,spec,sel){
 }
 /* generic text-and-picture plate helpers */
 function sideText(n,x,y,items,wn,o={}){return bullets(n?24:x,y,items,n?44:wn,o);}
-/* ===================== sequencing toolkit ===================== */
-const NB={A:'#4F7A3F',C:'#2F5276',G:'#8C6D46',T:'#A4473A',N:'#9A9384'};
-const ADP1='#7D4A98', ADP2='#C17A2C', IDX='#2E7D78', DNAC='#5A4632', SIGC='#2F5276', GLS='#7E8F92';
-/* double-stranded fragment, optionally with adapters/index blocks at each end */
-function frag(x,y,w,o={}){
-  const h=o.h||9, a=o.a||0;
+/* ===================== shared toolkit: evolution, HGT, plasmids, defence, genomes ===================== */
+const CHR='#5A4632', PLS='#7D4A98', PHG='#A4473A', TNC='#C17A2C', INTC='#2E7D78', RECC='#3E7FA8',
+      CELLF='#DCE2C9', CELLE='#8C7A52', CORE='#2F5276', SHELL='#8FB1CF', CLOUD='#C9BFAB', METC='#C99A2E';
+/* --- xy plot frame; returns mappers --- */
+function xyPlot(x,y,w,h,xr,yr,o={}){
+  const px=v=>x+(v-xr[0])/(xr[1]-xr[0])*w, py=v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h;
   let s='';
-  if(a){s+=`<rect x="${FX(x)}" y="${FX(y)}" width="${a}" height="${h}" fill="${ADP1}" stroke="${INK}" stroke-width=".7"/>`
-       +`<rect x="${FX(x+w-a)}" y="${FX(y)}" width="${a}" height="${h}" fill="${ADP2}" stroke="${INK}" stroke-width=".7"/>`;}
-  s+=`<rect x="${FX(x+a)}" y="${FX(y)}" width="${FX(w-2*a)}" height="${h}" fill="${o.fill||'#D9CDB0'}" stroke="${INK}" stroke-width=".8"/>`;
-  for(let xx=x+a+5;xx<x+w-a;xx+=7)s+=`<path d="M${FX(xx)} ${FX(y+1)} v${h-2}" stroke="${INK}" stroke-width=".5" opacity=".4"/>`;
-  if(o.idx)s+=`<rect x="${FX(x+a)}" y="${FX(y)}" width="12" height="${h}" fill="${IDX}" stroke="${INK}" stroke-width=".7"/>`;
-  if(o.label)s+=T(FX(x+w/2),FX(y+h+15),o.label,'note mid f11');
+  if(o.grid){const gx=o.grid[0]||4,gy=o.grid[1]||4;let g='';
+    for(let i=1;i<gx;i++)g+=`M${FX(x+w*i/gx)} ${y} V${y+h} `;
+    for(let i=1;i<gy;i++)g+=`M${x} ${FX(y+h*i/gy)} H${x+w} `;
+    s+=`<path d="${g}" stroke="${AXC}" stroke-width=".5" opacity=".25"/>`;}
+  s+=`<path d="M${x} ${y-4} V${y+h} H${x+w+6}" stroke="${AXC}" stroke-width="1.3" fill="none"/>`;
+  if(o.xlab)s+=T(x+w/2,y+h+(o.xdy||24),o.xlab,'note mid '+(o.fs||'f12'));
+  if(o.ylab)s+=`<text transform="translate(${x-(o.ydx||20)} ${y+h/2}) rotate(-90)" text-anchor="middle" class="note ${o.fs||'f12'}">${o.ylab}</text>`;
+  return {px,py,s,x,y,w,h,xr,yr};}
+function xyCurve(P,f,o={}){
+  const xr=o.xr||P.xr,n=o.n||80;let d='',on=false;
+  for(let i=0;i<=n;i++){const t=xr[0]+(xr[1]-xr[0])*i/n,v=f(t);
+    if(!isFinite(v)||v>P.yr[1]||v<P.yr[0]){on=false;continue;}
+    d+=(on?' L':' M')+FX(P.px(t))+' '+FX(P.py(v));on=true;}
+  return `<path d="${d.trim()}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`;}
+function xyPts(P,pts,o={}){return pts.map(p=>`<circle cx="${FX(P.px(p[0]))}" cy="${FX(P.py(p[1]))}" r="${o.r||3.2}" fill="${o.col||CORE}" stroke="${INK}" stroke-width=".6"/>`).join('');}
+function xyLine(P,pts,o={}){let d='';pts.forEach((p,i)=>{d+=(i?' L':'M')+FX(P.px(p[0]))+' '+FX(P.py(p[1]));});
+  return `<path d="${d}" fill="none" stroke="${o.col||CORE}" stroke-width="${o.w||2.2}"${o.dash?` stroke-dasharray="${o.dash}"`:''} stroke-linejoin="round"/>`;}
+/* --- horizontal bars with labels --- */
+function barRow(x,y,w,items,max,o={}){
+  let s='';items.forEach((it,i)=>{const yy=y+i*(o.rh||26);
+    s+=T(x,yy,it[0],'lab start '+(o.fs||'f12'))+`<rect x="${x+(o.bx||150)}" y="${yy-10}" width="${FX(Math.max(1,it[1]/max*w))}" height="13" rx="2" fill="${it[2]||CORE}" stroke="${INK}" stroke-width=".6"/>`
+      +(it[3]?Tc(x+(o.bx||150)+Math.max(1,it[1]/max*w)+6,yy,it[3],'#6A5B47',10,'mono start','600'):'');});
   return s;}
-/* flowcell surface: a lawn of short oligos */
-function lawn(x1,x2,y,o={}){
-  let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${o.h||8}" fill="#DCE6E8" stroke="${GLS}" stroke-width="1"/>`;
-  for(let x=x1+5;x<x2-2;x+=9)s+=`<path d="M${FX(x)} ${y} v-7" stroke="${x%18<9?ADP1:ADP2}" stroke-width="2" stroke-linecap="round"/>`;
+/* --- circular replicon; feats = [{a0,a1,col,lab}] angles in degrees --- */
+function pRing(cx,cy,r,o={}){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${o.col||PLS}" stroke-width="${o.w||3}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  (o.feats||[]).forEach(f=>{const a0=f.a0*Math.PI/180,a1=f.a1*Math.PI/180,rr=r,big=(f.a1-f.a0)>180?1:0;
+    s+=`<path d="M${FX(cx+rr*Math.cos(a0))} ${FX(cy+rr*Math.sin(a0))} A${rr} ${rr} 0 ${big} 1 ${FX(cx+rr*Math.cos(a1))} ${FX(cy+rr*Math.sin(a1))}" stroke="${f.col}" stroke-width="${o.fw||9}" fill="none" stroke-linecap="butt"/>`;
+    if(f.lab){const am=(f.a0+f.a1)/2*Math.PI/180,lr=r+(o.lr||17);
+      s+=Tc(FX(cx+lr*Math.cos(am)),FX(cy+lr*Math.sin(am)+3),f.lab,f.lcol||'#3A2E22',o.lfs||10,'mono '+(Math.cos(am)>.3?'start':Math.cos(am)<-.3?'end':'mid'),'600');}});
+  if(o.label)s+=T(cx,cy+4,o.label,'note mid f11');
   return s;}
-/* a cluster of identical strands standing on the flowcell */
-function clust(cx,y,n,col,o={}){
-  let s='';const sp=o.sp||4.5;
-  for(let i=0;i<n;i++){const x=cx+(i-(n-1)/2)*sp;s+=`<path d="M${FX(x)} ${y} v-${o.h||20}" stroke="${col||DNAC}" stroke-width="1.6" stroke-linecap="round"/>`;}
-  if(o.dot)s+=`<circle cx="${cx}" cy="${FX(y-(o.h||20)-5)}" r="4.5" fill="${o.dot}" stroke="${INK}" stroke-width=".7"/>`;
-  if(o.label)s+=T(cx,y+16,o.label,'note mid f11');
+/* --- phage icon --- */
+function phIcon(cx,cy,k=1,col){const h=11*k,c=col||PHG;
+  return `<path d="M${cx} ${FX(cy-2*h)} l${FX(h*.9)} ${FX(h*.52)} v${FX(h)} l${FX(-h*.9)} ${FX(h*.52)} l${FX(-h*.9)} ${FX(-h*.52)} v${FX(-h)} z" fill="${c}" stroke="${INK}" stroke-width=".9"/>`
+   +`<rect x="${FX(cx-2.2*k)}" y="${cy}" width="${FX(4.4*k)}" height="${FX(12*k)}" fill="#D6CDB8" stroke="${INK}" stroke-width=".7"/>`
+   +`<path d="M${FX(cx-1.8*k)} ${FX(cy+12*k)} l${FX(-6*k)} ${FX(6*k)} M${FX(cx+1.8*k)} ${FX(cy+12*k)} l${FX(6*k)} ${FX(6*k)} M${cx} ${FX(cy+12*k)} v${FX(7*k)}" stroke="${INK}" stroke-width="${FX(1*k)}"/>`;}
+/* --- simple rod / oval cell with optional contents --- */
+function cellRod(cx,cy,L,R,o={}){
+  const x1=cx-L/2,x2=cx+L/2;
+  const d=`M${FX(x1)} ${FX(cy-R)} H${FX(x2)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x2)} ${FX(cy+R)} H${FX(x1)} A${FX(R*.62)} ${FX(R)} 0 0 1 ${FX(x1)} ${FX(cy-R)} Z`;
+  let s=`<path d="${d}" fill="${o.fill||CELLF}" stroke="${o.stroke||CELLE}" stroke-width="${o.sw||2}"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  if(o.chr)s+=`<ellipse cx="${cx}" cy="${cy}" rx="${FX(L*.26)}" ry="${FX(R*.5)}" fill="none" stroke="${CHR}" stroke-width="1.8"/>`;
+  if(o.label)s+=T(cx,cy+R+(o.ldy||18),o.label,'note mid f11');
   return s;}
-/* bead carrying clonal DNA */
-function bead(cx,cy,r,o={}){
-  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#C9BFAB'}" stroke="${INK}" stroke-width="1.1"/><ellipse cx="${FX(cx-r*.3)}" cy="${FX(cy-r*.35)}" rx="${r*.3}" ry="${r*.18}" fill="#FFF" opacity=".5"/>`;
-  if(o.dna!==false)for(let i=0;i<10;i++){const a=i/10*Math.PI*2;s+=`<path d="M${FX(cx+r*Math.cos(a))} ${FX(cy+r*Math.sin(a))} l${FX(7*Math.cos(a))} ${FX(7*Math.sin(a))}" stroke="${DNAC}" stroke-width="1.3"/>`;}
-  if(o.label)s+=T(cx,cy+r+(o.ldy||20),o.label,'note mid f11');
+/* --- gene arrow --- */
+function gArrow(x,y,w,label,fill,o={}){
+  const h=o.h||17;
+  return `<path d="M${x} ${FX(y-h/2)} h${FX(w-7)} l7 ${FX(h/2)} l-7 ${FX(h/2)} h${FX(-(w-7))}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
+   +(label?Tc(FX(x+(w-7)/2),FX(y+4),label,o.tc||'#3A2E22',o.fs||10,'mono mid','600'):'');}
+/* --- a grid of cells for population pictures: states = array of colour-or-null --- */
+function popGrid(x,y,cols,rows,states,o={}){
+  const d=o.d||13,g=o.g||4;let s='';
+  for(let i=0;i<cols*rows;i++){const c=i%cols,r=Math.floor(i/cols),st=states[i];
+    s+=`<rect x="${FX(x+c*(d+g))}" y="${FX(y+r*(d+g))}" width="${d}" height="${d}" rx="${FX(d*.38)}" fill="${st||'#E0DBCB'}" stroke="${INK}" stroke-width=".5" opacity="${st?1:.7}"/>`;}
   return s;}
-/* microwell holding a bead, with an ISFET sensor underneath */
-function well(cx,by,w,h,o={}){
-  let s=`<path d="M${cx-w/2} ${by-h} v${h} h${w} v${-h}" fill="#E8E3D4" stroke="${GLS}" stroke-width="1.6"/>`;
-  if(o.bead!==false)s+=bead(cx,by-w*.42,w*.3,{dna:false});
-  s+=`<rect x="${cx-w/2}" y="${by}" width="${w}" height="12" fill="${o.sense||'#B9C6CE'}" stroke="${INK}" stroke-width=".9"/>`;
-  if(o.label)s+=T(cx,by+26,o.label,'note mid f11');
+/* --- branching lineage tree; muts = [[gen, lane]] marks --- */
+function lineage(x,y,w,h,gens,lanes,marks,o={}){
+  const dx=w/gens,dy=h/(lanes-1||1);let s='';
+  for(let l=0;l<lanes;l++)s+=`<path d="M${x} ${FX(y+l*dy)} h${w}" stroke="${o.col||'#C9BFAB'}" stroke-width="1.6"/>`;
+  (marks||[]).forEach(m=>{s+=`<circle cx="${FX(x+m[0]*dx)}" cy="${FX(y+m[1]*dy)}" r="${o.r||4}" fill="${m[2]||PHG}" stroke="${INK}" stroke-width=".6"/>`;
+    if(m[3]!==false)s+=`<path d="M${FX(x+m[0]*dx)} ${FX(y+m[1]*dy)} h${FX(w-m[0]*dx)}" stroke="${m[2]||PHG}" stroke-width="2.4"/>`;});
   return s;}
-/* zero-mode waveguide: a well in metal film with polymerase at the floor */
-function zmw(cx,by,w,h,o={}){
-  let s=`<rect x="${cx-w/2-26}" y="${by-h}" width="${26}" height="${h}" fill="#B9AE96" stroke="${INK}" stroke-width=".8"/><rect x="${cx+w/2}" y="${by-h}" width="${26}" height="${h}" fill="#B9AE96" stroke="${INK}" stroke-width=".8"/>`;
-  s+=`<rect x="${cx-w/2}" y="${by-h}" width="${w}" height="${h}" fill="#E6EEF0" opacity=".55"/>`;
-  if(o.lit)s+=`<path d="M${cx-w/2} ${by} L${cx+w/2} ${by} L${cx+w/2-4} ${by-h*.55} L${cx-w/2+4} ${by-h*.55} Z" fill="#E0B84A" opacity=".35"/>`;
-  s+=prot(cx,by-9,13,9,'#9DB4AE','pol',{fs:9});
-  if(o.label)s+=T(cx,by+20,o.label,'note mid f11');
+/* --- key: colour swatch + label, in columns --- */
+function keyRow(x,y,items,o={}){
+  let s='';items.forEach((it,i)=>{const px=x+(o.cw?i*o.cw:0),py=y+(o.cw?0:i*(o.rh||17));
+    s+=`<rect x="${px}" y="${py-8}" width="12" height="11" rx="2" fill="${it[1]}" stroke="${INK}" stroke-width=".6"/>`+T(px+18,py,it[0],'note start '+(o.fs||'f11'));});
   return s;}
-/* membrane with a protein pore, motor protein and translocating strand */
-function poreMemb(cx,my,o={}){
-  const h=o.h||26;
-  let s=`<rect x="${cx-110}" y="${my}" width="220" height="${h}" fill="#EDE0B8"/><path d="M${cx-108} ${my+3} H${cx+108} M${cx-108} ${my+h-3} H${cx+108}" stroke="#B89A5E" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`;
-  s+=`<path d="M${cx-17} ${my-3} h34 l-7 ${h+6} h-20 z" fill="#9DB4AE" stroke="${INK}" stroke-width="1.1"/>`;
-  s+=`<path d="M${cx-70} ${my-30} q30 4 50 -8 q12 -7 20 2" stroke="${DNAC}" stroke-width="2.4" fill="none"/>`;
-  s+=`<path d="M${cx} ${my-16} V${my+h+22}" stroke="${DNAC}" stroke-width="2.2"/>`;
-  s+=prot(cx-26,my-18,15,10,'#C99A2E','motor',{fs:8.5});
-  if(o.label)s+=T(cx,my+h+40,o.label,'note mid f11');
-  return s;}
-/* generic trace: pts = array of y values 0..1, drawn in a box */
-function trace(x,y,w,h,pts,o={}){
-  let d='';pts.forEach((v,i)=>{const px=x+i*w/(pts.length-1),py=y+h-v*h;d+=(i?(o.step?`H${FX(px)} V${FX(py)}`:`L${FX(px)} ${FX(py)}`):`M${FX(px)} ${FX(py)}`);});
-  let s=o.frame===false?'':`<path d="M${x} ${y} V${y+h} H${x+w}" stroke="${AXC}" stroke-width="1.1" fill="none"/>`;
-  return s+`<path d="${d}" stroke="${o.col||SIGC}" stroke-width="${o.w||1.8}" fill="none" stroke-linejoin="round"/>`+(o.label?T(x+w/2,y+h+16,o.label,'note mid f11'):'');}
-/* sanger-style chromatogram: seq of bases as gaussian peaks */
-function chroma(x,y,w,h,seq,o={}){
-  const n=seq.length, dx=w/n;let s=`<path d="M${x} ${y+h} H${x+w}" stroke="${AXC}" stroke-width="1"/>`;
-  seq.split('').forEach((b,i)=>{const cx=x+dx*(i+.5);
-    let d=`M${FX(cx-dx*.5)} ${FX(y+h)}`;for(let t=-.5;t<=.5;t+=.1){const px=cx+t*dx,py=y+h-h*.82*Math.exp(-t*t*18);d+=` L${FX(px)} ${FX(py)}`;}
-    s+=`<path d="${d}" stroke="${NB[b]}" stroke-width="1.6" fill="none"/>`+Tc(FX(cx),FX(y+h+14),b,NB[b],o.fs||11,'mono mid','600');});
-  return s;}
-/* coloured base letters in a row */
-function baseSeq(x,y,seq,dx,o={}){
-  return seq.split('').map((b,i)=>Tc(FX(x+i*dx+dx/2),y,b,NB[b]||'#6A5B47',o.fs||12,'mono mid','600')).join('');}
-/* stacked reads aligned under a reference line */
-function pileup(x,y,w,reads,o={}){
-  let s=`<path d="M${x} ${y} H${x+w}" stroke="${BB}" stroke-width="2.6"/>`;
-  reads.forEach((r,i)=>{const rx=x+r[0]*w,rw=r[1]*w,ry=y+12+i*(o.gap||9);
-    s+=`<path d="M${FX(rx)} ${FX(ry)} h${FX(rw)}" stroke="${r[2]||'#8FB1CF'}" stroke-width="${o.sw||5}" stroke-linecap="round"/>`;});
-  return s;}
+/* ===================== Part I · regulons and networks ===================== */
+const rLine=(x,w,y,col,sw)=>`<path d="M${x} ${y} h${w}" stroke="${col||'#D6CDB8'}" stroke-width="${sw||5}" stroke-linecap="round"/>`;
 
-/* clickable external link rendered inside the plate */
-function xlink(x,y,text,url,o={}){
-  return `<a href="${url}" target="_blank" rel="noopener"><text x="${FX(x)}" y="${FX(y)}" class="mono ${o.a||'start'} ${o.fs||'f11'}">${text} \u2197</text></a>`;}
-const VENDOR={
-  illumina:['Illumina: sequencing by synthesis, with animation','https://www.illumina.com/science/technology/next-generation-sequencing/sequencing-technology.html'],
-  ion:['Thermo Fisher: Ion Torrent semiconductor sequencing','https://www.thermofisher.com/sg/en/home/life-science/sequencing/next-generation-sequencing/ion-torrent-next-generation-sequencing-technology.html'],
-  mgi:['MGI: DNBSEQ technology, with figures','https://global-mgitech.com/technologies/dnbseq-technology'],
-  pacbio:['PacBio: the steps of SMRT sequencing','https://www.pacb.com/blog/steps-of-smrt-sequencing'],
-  hifi:['PacBio: HiFi reads','https://www.pacb.com/technology/hifi-sequencing/'],
-  ont:['Oxford Nanopore: how nanopore sequencing works','https://nanoporetech.com/platform/technology']};
-function vendorLine(n,y,keys){let s='',yy=y;keys.forEach(k=>{const v=VENDOR[k];s+=xlink(n?16:30,yy,n?v[0].replace(/, with (animation|figures)/,''):v[0],v[1],{fs:n?'f10':'f11'});yy+=16;});return {s,y:yy};}
-/* ===================== Part I · the idea ===================== */
-const OUT=[['Sanger capillary, 96 wells','c. 2000',7.7e4,'#9A9384'],['454 pyrosequencing','2005',2e7,'#B9AE96'],['Illumina Genome Analyzer','2007',1e9,'#8FB1CF'],
- ['Illumina HiSeq 2500','2013',6e11,'#5E87AD'],['Illumina NovaSeq X','2023',1.6e13,'#2F5276'],['Nanopore PromethION','2023',1.4e13,'#C17A2C']];
-
-/* ===================== shared library for the generated decks ===================== */
-const PAL={sand:'#E7DEC9',blue:'#A9C4DC',green:'#A9C49A',rose:'#E7A99B',gold:'#E0C88A',lilac:'#C9A9D6',teal:'#9DB4AE',grey:'#D8D2C2',cream:'#F3EEE2',ochre:'#D9B85A'};
-const lines=t=>String(t).split('|');
-/* opening plate without a portrait: art on the left (wide) or on top (narrow) */
-function introPlate(n,o){
-  let s='';const aw=n?328:220, ah=o.artH||200;
-  const ax=n?16:20, ay=n?14:30;
-  if(o.art)s+=G('a-fade',0,o.art(ax+aw/2,ay+ah/2,n));
-  let x=n?16:270, y=n?ay+ah+34:44;
-  s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
-  const Q=wrap(o.q,n?40:42);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
-  if(o.belief){s+=G('a-fade',1,T(x,y,o.bh||'Why it matters','mono acc start f12'));
-    const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;}
-  if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
-  const H=n?y+12:Math.max(y+14,ay+ah+20);
-  return {vb:n?slim(H):wide(H),s};
-}
-/* point where the segment from a box centre toward (tx,ty) leaves the box */
-function rectEdge(cx,cy,w,h,tx,ty,pad=4){const dx=tx-cx,dy=ty-cy;const sx=dx?(w/2+pad)/Math.abs(dx):1e9,sy=dy?(h/2+pad)/Math.abs(dy):1e9,t=Math.min(sx,sy,1);return [cx+dx*t,cy+dy*t];}
-/* node: {x,y,w,h,t,f,sub,fs,tc,r}  (x,y = centre); edge: [a,b,label,{bend,col,dash,lx,ly,la,w}] */
-function nodeBox(N){const h=N.h||(28+(lines(N.t).length-1)*15+(N.sub?13:0)), L=lines(N.t);
-  let s=box(N.x-N.w/2,N.y-h/2,N.w,h,N.f||'#EFE6D2',N.r==null?4:N.r);
-  const y0=N.y-h/2+18+(N.sub?0:Math.max(0,(h-28-(L.length-1)*15)/2));
-  s+=L.map((l,i)=>Tc(N.x,y0+i*15,l,N.tc||'#3A2E22',N.fs||12,'mono mid','600')).join('');
-  if(N.sub)s+=T(N.x,y0+(L.length-1)*15+14,N.sub,'note mid f10');
-  return {s,h};}
-function flow(nodes,edges,o={}){
-  const H={};Object.entries(nodes).forEach(([k,N])=>{H[k]=N.h||(28+(lines(N.t).length-1)*15+(N.sub?13:0));});
-  let es='',ls='',ns='';
-  edges.forEach(e=>{const [a,b,lab,op={}]=e, A=nodes[a], B=nodes[b];
-    let cx1=A.x,cy1=A.y,cx2=B.x,cy2=B.y;
-    const mx=(cx1+cx2)/2,my=(cy1+cy2)/2,dx=cx2-cx1,dy=cy2-cy1,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,bd=op.bend||0;
-    const qx=mx+nx*bd,qy=my+ny*bd;
-    const [x1,y1]=rectEdge(A.x,A.y,A.w,H[a],bd?qx:B.x,bd?qy:B.y,op.pad1==null?4:op.pad1);
-    const [x2,y2]=rectEdge(B.x,B.y,B.w,H[b],bd?qx:A.x,bd?qy:A.y,op.pad2==null?6:op.pad2);
-    const col=op.col||'#6A5B47', m=op.red?'ahr':op.blue?'ahb':'ahp';
-    const d=bd?`M${FX(x1)} ${FX(y1)} Q${FX(qx)} ${FX(qy)} ${FX(x2)} ${FX(y2)}`:`M${FX(x1)} ${FX(y1)} L${FX(x2)} ${FX(y2)}`;
-    es+=`<path d="${d}" stroke="${op.red?'#A4473A':op.blue?'#2F5276':col}" stroke-width="${op.w||1.5}" fill="none"${op.none?'':` marker-end="url(#${m})"`}${op.dash?` stroke-dasharray="${op.dash}"`:''}${op.both?` marker-start="url(#${m})"`:''}/>`;
-    if(lab){const side=op.side||(bd?Math.sign(bd):1), off=op.off==null?12:op.off;
-      const px=(bd?(mx+qx)/2:mx)+nx*off*side+(op.lx||0), py=(bd?(my+qy)/2:my)+ny*off*side+(op.ly||0)+4;
-      const anc=op.la||(Math.abs(nx*side)<.3?'mid':(nx*side>0?'start':'end'));
-      const LL=lines(lab), up=(ny*side<-.3)?(LL.length-1)*13:(ny*side>.3?-6:(LL.length-1)*6.5);
-      ls+=LL.map((l,i)=>T(FX(px),FX(py-up+i*13),l,`${op.lc||'note'} ${anc} f11 halo`)).join('');}
-  });
-  Object.values(nodes).forEach(N=>{ns+=nodeBox(N).s;});
-  return es+ns+ls;
-}
-/* boxes evenly on a circle joined by arcs; items [{t,f,w,sub}], arcs labelled outside by labs[i] (arc i -> i+1) */
-function cycle(cx,cy,R,items,o={}){
-  const k=items.length, a0=o.a0==null?-90:o.a0, ang=i=>(a0+i*360/k)*Math.PI/180, P=a=>[cx+R*Math.cos(a),cy+R*Math.sin(a)];
-  const H=it=>28+(lines(it.t).length-1)*15;
-  /* angular half-width of a box on the circle: step until the point leaves the padded box */
-  const half=(i)=>{const it=items[i],[bx,by]=P(ang(i)),hw=(it.w||70)/2+7,hh=H(it)/2+7;let d=0;while(d<Math.PI/k){const [x,y]=P(ang(i)+d);if(Math.abs(x-bx)>hw||Math.abs(y-by)>hh)break;d+=0.005;}return d;};
-  const hw=items.map((_,i)=>half(i));
-  let es='',ns='',ls='';
-  items.forEach((it,i)=>{const j=(i+1)%k;if(o.open&&j===0)return;
-    const A1=ang(i)+hw[i], A2=ang(i)+2*Math.PI/k-hw[j]-0.02;
-    if(A2-A1>0.03)es+=`<path d="M${FX(cx+R*Math.cos(A1))} ${FX(cy+R*Math.sin(A1))} A${R} ${R} 0 0 1 ${FX(cx+R*Math.cos(A2))} ${FX(cy+R*Math.sin(A2))}" stroke="#6A5B47" stroke-width="1.5" fill="none" marker-end="url(#ahp)"/>`;
-    if(o.labs&&o.labs[i]){const am=(A1+A2)/2, rr=R+(o.lr||18), lx=cx+rr*Math.cos(am), ly=cy+rr*Math.sin(am);
-      const anc=Math.cos(am)>.25?'start':Math.cos(am)<-.25?'end':'mid', L=lines(o.labs[i]);
-      ls+=L.map((l,q)=>T(FX(lx),FX(ly+4+q*13+(Math.sin(am)>.5?6:Math.sin(am)<-.5?-6-(L.length-1)*13:-(L.length-1)*6.5)),l,`note ${anc} f11 halo`)).join('');}
-  });
-  items.forEach((it,i)=>{const [x,y]=P(ang(i));ns+=nodeBox({x,y,w:it.w||70,t:it.t,f:it.f,sub:it.sub,fs:it.fs}).s;});
-  return es+ns+ls;
-}
-/* axes: returns {s,px,py,...}; o:{xr,yr,xlab,ylab,xt,yt,xfmt,yfmt,logx,logy} */
-function axes(x,y,w,h,o){
-  const lx=v=>o.logx?Math.log10(v):v, ly=v=>o.logy?Math.log10(v):v;
-  const X0=lx(o.xr[0]),X1=lx(o.xr[1]),Y0=ly(o.yr[0]),Y1=ly(o.yr[1]);
-  const px=v=>x+(lx(v)-X0)/(X1-X0)*w, py=v=>y+h-(ly(v)-Y0)/(Y1-Y0)*h;
-  let s=`<path d="M${x} ${y} V${y+h} H${x+w}" stroke="#6A5B47" stroke-width="1.3" fill="none"/>`;
-  (o.xt||[]).forEach(t=>{const v=Array.isArray(t)?t[0]:t,l=Array.isArray(t)?t[1]:t;s+=ln(FX(px(v)),y+h,FX(px(v)),y+h+4,'#6A5B47',1)+T(FX(px(v)),y+h+16,l,'note mid f10');});
-  (o.yt||[]).forEach(t=>{const v=Array.isArray(t)?t[0]:t,l=Array.isArray(t)?t[1]:t;s+=ln(x-4,FX(py(v)),x,FX(py(v)),'#6A5B47',1)+T(x-7,FX(py(v)+3.5),l,'note end f10');});
-  if(o.xlab)s+=T(x+w/2,y+h+(o.xt?32:18),o.xlab,'note mid f12');
-  if(o.ylab)s+=`<text transform="translate(${x-(o.yt?(o.ydx||34):14)} ${y+h/2}) rotate(-90)" class="note mid f12">${o.ylab}</text>`;
-  return {s,px,py,x,y,w,h,xr:o.xr,logx:o.logx};
-}
-function curve(A,f,o={}){const N=o.n||120,a=o.from==null?A.xr[0]:o.from,b=o.to==null?A.xr[1]:o.to;let d='';
-  for(let i=0;i<=N;i++){const v=A.logx?a*Math.pow(b/a,i/N):a+(b-a)*i/N, yv=f(v); if(!isFinite(yv))continue; d+=(d?' L':'M')+FX(A.px(v))+' '+FX(A.py(yv));}
-  return `<path d="${d}" stroke="${o.col||'#2F5276'}" stroke-width="${o.w||2.2}" fill="none"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
-/* horizontal bars: items [[label,value,colour,note]] */
-function hbars(n,x,y,w,items,o={}){const max=o.max||Math.max(...items.map(i=>i[1])), lw=o.lw||(n?96:150), bh=o.bh||16, gap=o.gap||10;let s='',yy=y;
-  items.forEach((it,i)=>{const bw=Math.max(2,(w-lw-(o.vw||46))*it[1]/max);
-    s+=G('a-fade',(i*.12).toFixed(2),T(x+lw-8,yy+bh-4,it[0],'lab end '+(n?'f11':'f12'))+box(x+lw,yy,FX(bw),bh,it[2]||PAL.blue,2)+T(FX(x+lw+bw+6),yy+bh-4,it[3]!=null?it[3]:it[1],'mono start f10'));yy+=bh+gap;});
-  return {s,y:yy};}
-/* grid of text cards with equalised row heights; items [[head,body,art?]] art(cx,cy) drawn in a band of artH */
-function cards(n,items,o={}){
-  const cols=n?(o.ncols||1):(o.cols||2), x0=o.x||(n?10:12), W=((n?340:616)-(cols-1)*(o.gap||12))/cols, artH=o.artH||0;
-  const cw=o.cw||6.4; let y=o.y||20, s='';
-  for(let r=0;r<items.length;r+=cols){const row=items.slice(r,r+cols);
-    const Ls=row.map(it=>wrap(it[1],Math.floor((W-24)/cw)));
-    const Hh=row.map(it=>lines(it[0]).length);
-    const h=Math.max(...row.map((it,i)=>30+(Hh[i]-1)*18+artH+Ls[i].length*16+10));
-    row.forEach((it,i)=>{const x=x0+i*(W+(o.gap||12)), num=o.num?r+i+1:0;
-      s+=G('a-fade',((r+i)*.25).toFixed(2),box(x,y,W,h,it[3]||o.fill||'#E7DEC9',4)+(num?badge(x+16,y+17,num):'')
-        +lines(it[0]).map((l,q)=>T(x+(num?32:12),y+22+q*18,l,'lab start f14')).join('')
-        +(it[2]&&artH?it[2](x+W/2,y+26+(Hh[i]-1)*18+artH/2,W):'')
-        +Ls[i].map((l,j)=>T(x+12,y+40+(Hh[i]-1)*18+artH+j*16,l,'note start f12')).join(''));});
-    y+=h+(o.vgap||10);}
-  return {s,y};}
-/* explorer card for a chips plate: it={h,sub,rows:[[k,v]],pros:[],cons:[],note,art:(cx,cy,n)=>svg,artH} */
-function explorer(n,it,o={}){
-  let s='',y=o.y||34;const x=n?16:24, R=n?344:616;
-  if(it.art){s+=G('a-fade',0,it.art(n?180:320,y+(it.artH||120)/2-6,n));y+=(it.artH||120)+8;}
-  s+=G('a-fade',.1,T(x,y,it.h,'cname start f16'));y+=18;
-  if(it.sub){s+=G('a-fade',.15,T(x,y,it.sub,'mono acc start f12'));y+=8;}
-  y+=14;
-  const kx=x, vx=n?x+104:x+180, vw=n?30:66;
-  (it.rows||[]).forEach((r,i)=>{const V=wrap(r[1],vw);s+=G('a-fade',(.2+i*.08).toFixed(2),T(kx,y,r[0],'lab start f13')+V.map((l,j)=>T(vx,y+j*16,l,'note start f13')).join(''));y+=V.length*16+10;});
-  if(it.pros||it.cons){y+=6;const cx2=n?x:x+300, cw=n?44:40;let ya=y,yb=y;
-    if(it.pros){s+=T(x,ya,it.ph||'Strengths','cname start f14');ya+=20;it.pros.forEach(p=>{const L=wrap(p,cw);s+=Tc(x+4,ya,'+','#4F7A3F',13,'mono start','600')+L.map((l,j)=>T(x+18,ya+j*16,l,'note start f12')).join('');ya+=L.length*16+6;});}
-    if(n)yb=ya+8;
-    if(it.cons){s+=T(cx2,yb,it.ch||'Limitations','cname start f14');yb+=20;it.cons.forEach(p=>{const L=wrap(p,cw);s+=Tc(cx2+4,yb,'−','#A4473A',13,'mono start','600')+L.map((l,j)=>T(cx2+18,yb+j*16,l,'note start f12')).join('');yb+=L.length*16+6;});}
-    y=Math.max(ya,yb)+6;}
-  if(it.note){const p=para(x,y+10,it.note,n?50:92,'lab start f13',17,.6);s+=p.s;y=p.y;}
-  return {vb:n?slim(y+10):wide(y+12),s};
-}
-/* rod-shaped cell outline */
-function rodCell2(cx,cy,L,R,o={}){return `<rect x="${cx-L/2}" y="${cy-R}" width="${L}" height="${2*R}" rx="${R}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.6}" ${o.tint===false?'':'class="tint"'}/>`;}
-function coccus(cx,cy,r,o={}){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.4}" class="tint"/>`;}
-function membraneBand(x1,x2,y,h=16,o={}){let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${o.fill||'#EDE0B8'}"/>`;
-  s+=`<path d="M${x1+3} ${y+3} H${x2} M${x1+3} ${y+h-3} H${x2}" stroke="${o.dot||'#B89A5E'}" stroke-width="4.5" stroke-dasharray="0.1 7" stroke-linecap="round"/>`;return s;}
-function pill(x,y,t,fill,tc='#F3EDE0',fs=11){const w=t.length*fs*.62+18;return `<rect x="${FX(x)}" y="${y-fs-3}" width="${FX(w)}" height="${fs+9}" rx="${(fs+9)/2}" fill="${fill}"/>`+Tc(FX(x+w/2),y+1,t,tc,fs,'mono mid','600');}
-/* simple two-column text plate for wide, stacked on narrow: art on left/top, bullets right/below */
-function artBullets(n,art,artW,artH,items,o={}){
-  let s='';s+=G('a-fade',0,art(n?180:(o.ax||20)+artW/2,(o.ay||24)+artH/2,n));
-  const b=n?bullets(24,(o.ay||24)+artH+30,items,44,{d0:.8,gap:o.gap||24}):bullets(o.bx||(artW+56),o.by||44,items,o.wn||Math.floor((600-artW-40)/7),{d0:.8,gap:o.gap||24});
-  s+=b.s;
-  let H=n?b.y:Math.max(b.y,(o.ay||24)+artH+16);
-  if(o.foot){const p=para(n?16:24,H+8,o.foot,n?50:92,'note start f13',17,2);s+=p.s;H=p.y;}
-  return {vb:n?slim(H+4):wide(H+6),s};
+function scR1(n){
+  let s='';const y=n?48:54;
+  /* nested levels */
+  const lv=[['operon','genes transcribed from one promoter, as one message',CORE],
+   ['regulon','all the operons controlled by one regulator, wherever they sit',SHELL],
+   ['modulon','everything that responds to one condition, through several regulators',CLOUD]];
+  if(!n){
+    const cx=180, cy=y+78;
+    s+=G('a-fade',0,`<ellipse cx="${cx}" cy="${cy}" rx="140" ry="76" fill="${CLOUD}" fill-opacity=".35" stroke="${CLOUD}" stroke-width="1.6"/>`);
+    s+=G('a-fade',.4,`<ellipse cx="${cx}" cy="${cy}" rx="100" ry="54" fill="${SHELL}" fill-opacity=".45" stroke="${SHELL}" stroke-width="1.6"/>`);
+    s+=G('a-fade',.8,`<ellipse cx="${cx}" cy="${cy}" rx="56" ry="28" fill="${CORE}" fill-opacity=".5" stroke="${CORE}" stroke-width="1.6"/>`);
+    s+=G('a-fade',1.1,Tc(cx,cy+4,'operon','#F3EDE0',12,'mono mid','600')
+      +Tc(cx,cy-38,'regulon','#2F5276',11,'mono mid','600')+Tc(cx,cy-62,'modulon','#5A4632',11,'mono mid','600'));
+    lv.forEach((l,i)=>{s+=G('a-fade',(1.3+i*.25).toFixed(2),`<rect x="352" y="${y+16+i*54-10}" width="12" height="11" rx="2" fill="${l[2]}" stroke="${INK}" stroke-width=".6"/>`
+      +T(372,y+16+i*54,l[0],'cname start f13')
+      +wrap(l[1],38).map((m,j)=>T(372,y+32+i*54+j*15,m,'note start f11')).join(''));});
+    var yy=y+180;
+  } else {
+    var yy=y;
+    lv.forEach((l,i)=>{const L=wrap(l[1],42);
+      s+=G('a-fade',(i*.3).toFixed(2),`<rect x="18" y="${yy-10}" width="${FX(60+i*64)}" height="14" rx="3" fill="${l[2]}" fill-opacity=".5" stroke="${l[2]}" stroke-width="1.4"/>`
+        +T(18,yy+28,l[0],'cname start f13')
+        +L.map((m,j)=>T(18,yy+44+j*15,m,'note start f11')).join(''));
+      yy+=44+L.length*15+16;});
+  }
+  const b=bullets(n?24:30,yy,[['Global regulators sit on top','A handful of proteins control hundreds of genes each: CRP for carbon, Fnr for oxygen, Fur for iron, LexA for DNA damage, and the nucleoid-associated proteins H-NS and Lrp as general silencers. Roughly half of all transcription units in E. coli respond to one of about seven of them.'],
+   ['The architecture is a shallow hierarchy, not a chain','Most genes are two or three steps from a sensor. There is no deep cascade in most responses, because a long chain is slow, and bacteria are optimising for speed.'],
+   ['Motifs recur','Negative autoregulation speeds up the response and holds the level steady. The coherent feed-forward loop requires a signal to persist before the output comes on, filtering transient noise. The incoherent one makes a pulse. The same few motifs appear across unrelated networks because they do useful things.'],
+   ['And regulation is not only transcription','Attenuation, riboswitches, small RNAs, proteolysis, and post-translational modification all act after the promoter. The promoter is simply the easiest layer to measure, which is why it dominates the literature.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 
-/* ===================== deck ===================== */
-const LAC=[
- {k:'glucose, no lactose',r:'repressor bound',c:'cAMP low; CAP off',lvl:.01,t:'LacI sits on the operator and, with no inducer, blocks transcription. Expression is almost nil.'},
- {k:'no glucose, no lactose',r:'repressor bound',c:'cAMP high; CAP on',lvl:.03,t:'CAP is ready to help, but the repressor still blocks the promoter. A few transcripts leak, which matters: they make the permease that lets the first lactose in.'},
- {k:'glucose + lactose',r:'repressor released',c:'cAMP low; CAP off',lvl:.1,t:'Allolactose pulls the repressor off, but without CAP the weak lac promoter fires only modestly. Glucose is used first.'},
- {k:'lactose only',r:'repressor released',c:'cAMP high; CAP on',lvl:1,t:'Repressor off and CAP–cAMP recruiting RNA polymerase: full induction, about a thousand-fold over the repressed level.'}];
-let lacSel=3;
-function operonDraw(cx,y,w,on,capOn){
-  const x1=cx-w/2;let s=dsDNA(x1,x1+w,y,DNA,8);
-  const seg=(a,b,f,t)=>box(x1+w*a,y-14,w*(b-a),36,f,3)+Tc(x1+w*(a+b)/2,y+8,t,'#3A2E22',11,'mono mid','600');
-  s+=seg(.0,.1,'#E0C88A','CAP')+seg(.1,.2,'#EFE6D2','P')+seg(.2,.28,'#C9A9D6','O')+seg(.3,.6,'#A9C4DC','lacZ')+seg(.6,.8,'#A9C4DC','lacY')+seg(.8,.95,'#A9C4DC','lacA');
-  if(!on)s+=blob(x1+w*.24,y-26,20,12,'#7D4A98')+T(x1+w*.24,y-44,'LacI','mono mid f11');
-  if(capOn)s+=blob(x1+w*.05,y-26,18,11,'#C99A2E')+T(x1+w*.05,y-44,'CAP','mono mid f11');
-  return s;}
-function scR1(n){return introPlate(n,{q:'How does a cell with a few thousand genes decide which to use, and when?',
-  belief:'A bacterium cannot afford to make every protein all the time. It reads its environment through repressors and activators, sensor kinases, small RNAs and secreted signals, and some decisions become developmental programs or heritable states that outlast the signal.',
-  items:['Operons, regulons and stimulons','The lac operon, again','Two-component systems','Small RNAs','Quorum sensing','Sporulation','Methylation, phase variation, bistability, persisters'],
-  art:(cx,cy)=>operonDraw(cx,cy,210,true,true)+T(cx,cy+46,'the lac operon, induced','note mid f11'),artH:150});}
 function scR2(n){
-  const rows=[['Operon','genes under one promoter, one transcript','lacZYA'],['Regulon','operons scattered around the genome controlled by one regulator','the LexA (SOS) regulon, ~40 genes'],['Modulon','several regulons under one global regulator','CRP–cAMP: hundreds of genes'],['Stimulon','everything that changes in response to one stimulus, whatever the mechanism','the heat-shock stimulon'],['Global regulators','proteins with hundreds of targets, often nucleoid-associated','CRP, FNR, ArcA, Lrp, H-NS, Fis, IHF']];
-  const t=wtable(n,['Unit','What it is','Example'],rows,n?[[10,10],[90,20],[240,14]]:[[24,16],[150,44],[440,26]],{y0:30,R:n?354:620});
-  const p=para(n?16:24,t.y+12,'Regulators act at every step: σ factor choice, repressors and activators at the promoter, attenuation and riboswitches during elongation, small RNAs at translation, and proteases afterwards.',n?50:92,'note start f13',17,1);
-  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+  let s='';const y=n?50:56;
+  const mx=n?180:320;
+  /* membrane */
+  const my=n?80:86;
+  s+=G('a-fade',0,`<path d="M${n?16:30} ${my} H${n?344:610}" stroke="${CELLE}" stroke-width="9" opacity=".5"/>`
+    +Tc(n?16:30,my-22,'outside','#6A5B47',10,'mono start')+Tc(n?16:30,my+26,'cytoplasm','#6A5B47',10,'mono start'));
+  /* sensor kinase */
+  s+=G('a-fade',.3,`<rect x="${mx-(n?26:30)}" y="${my-(n?22:24)}" width="${n?52:60}" height="${n?58:64}" rx="6" fill="${INTC}" fill-opacity=".55" stroke="${INK}"/>`
+    +Tc(mx,my+(n?2:3),'sensor','#3A2E22',n?10:11,'mono mid','600')
+    +Tc(mx,my+(n?16:18),'kinase','#3A2E22',n?10:11,'mono mid','600')
+    +arw(mx-(n?56:80),my-(n?16:18),mx-(n?30:34),my-(n?16:18),{blue:1})
+    +Tc(mx-(n?60:84),my-(n?20:22),'signal','#6A5B47',10,'mono end'));
+  s+=G('a-fade',.8,Tc(mx,my+(n?46:58),'ATP → His~P','#2F5276',10,'mono mid','600'));
+  /* response regulator */
+  s+=G('a-fade',1.1,prot(mx+(n?92:130),my+(n?52:52),n?26:30,n?16:18,RECC,'regulator')
+    +arw(mx+(n?30:34),my+(n?46:46),mx+(n?62:96),my+(n?50:50),{blue:1})
+    +Tc(mx+(n?46:64),my+(n?34:30),'Asp~P','#2F5276',10,'mono mid','600'));
+  s+=G('a-fade',1.5,rLine(mx+(n?44:84),n?126:190,my+(n?100:100),'#D6CDB8',5)
+    +gArrow(mx+(n?58:100),my+(n?100:100),n?98:150,'target operon',METC,{h:16})
+    +arw(mx+(n?92:130),my+(n?72:72),mx+(n?92:130),my+(n?90:90),{blue:1}));
+  let yy=my+(n?134:140);
+  const rows=[['CiaRH','cell wall stress and β-lactams','Streptococcus pneumoniae: controls the HtrA protease and small RNAs; mutations in it raise β-lactam tolerance and lower competence.'],
+   ['ComDE','the peptide CSP','The competence circuit: ComD is the receptor for CSP, ComE switches on the early competence genes including comX.'],
+   ['WalRK (VicRK)','cell wall metabolism','Essential in most Firmicutes; controls autolysins and wall hydrolases, and so couples division to wall synthesis.'],
+   ['PhoPQ, EnvZ-OmpR','magnesium, osmolarity','The textbook Gram-negative pairs, and the systems in which cross-talk, phosphatase activity and signal integration were first worked out.']];
+  const t=n?wtable(n,['System','What it senses, and does'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,10],[96,41]],{y0:yy,d0:1.8})
+         :wtable(n,['System','Signal','What it controls'],rows,[[24,10],[120,22],[330,44]],{y0:yy,d0:1.8});
+  const b=bullets(n?24:30,t.y+14,[['One protein senses, another acts','The kinase autophosphorylates on a histidine and passes the phosphate to an aspartate on its partner, which then binds DNA. Separating sensing from acting lets the same signalling chemistry be reused: a genome typically carries twenty to seventy of these pairs, and they are mostly encoded as adjacent gene pairs.'],
+   ['Specificity is in the interface, and in the phosphatase','Cross-talk between pairs is rare in vivo, because the kinase–regulator interface has co-evolved and because most kinases also dephosphorylate their own partner, actively draining any phosphate that arrives from elsewhere.'],
+   ['They are drug targets and they are essential','WalRK is essential in Firmicutes, which makes it attractive; but because the output is a phosphorylation state rather than a stable product, inhibiting one is harder than it looks.']],n?44:88,{d0:2.4,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
 }
+
 function scR3(n){
-  const c=LAC[lacSel], on=c.r==='repressor released', cap=c.c.includes('on');
-  let s=G('a-fade',0,operonDraw(n?180:250,64,n?320:440,on,cap));
-  const bx=n?16:24, by=118;
-  s+=G('a-fade',.3,T(bx,by,c.k,'cname start f16')+T(bx,by+22,c.r,'lab start f13')+T(bx,by+40,c.c,'lab start f13'));
-  const bw=n?320:420, lv=Math.max(4,bw*Math.log10(c.lvl*1000)/3);
-  s+=G('a-fade',.5,T(bx,by+70,'β-galactosidase (log scale)','note start f11')+`<rect x="${bx}" y="${by+78}" width="${bw}" height="16" fill="none" stroke="${INK}" stroke-dasharray="3 3"/>`+box(bx,by+78,FX(lv),16,'#A9C4DC',2));
-  const p=para(bx,by+124,c.t,n?50:90,'lab start f13',17,.7);
-  const q=para(bx,p.y+10,'Jacob and Monod’s operon model (1961) came from this system. Catabolite repression by glucose works mainly through cAMP–CAP and through inducer exclusion: the glucose transporter’s EIIA blocks the lactose permease.',n?50:92,'note start f13',17,1);
-  return {vb:n?slim(q.y+6):wide(q.y+8),s:s+p.s+q.s};
+  let s='';const y=n?52:58;
+  const x=n?18:40, W=n?324:560;
+  const sig=[['σ70 / σA','housekeeping','the default; most promoters',CORE],
+   ['σS (RpoS)','stationary phase, stress','general stress response in enterics',TNC],
+   ['σ32 (RpoH)','heat','chaperones and proteases',PHG],
+   ['σE','envelope stress','periplasmic quality control',INTC],
+   ['σ54 (RpoN)','nitrogen, and more','needs an activator and ATP: a true enhancer-dependent promoter',PLS],
+   ['ECF sigmas','a specific stress','held by an anti-sigma in the membrane until released',METC]];
+  let yy=y;
+  sig.forEach((g,i)=>{const L=wrap(g[2],n?30:44);
+    s+=G('a-fade',(i*.22).toFixed(2),`<rect x="${x}" y="${yy-11}" width="${n?14:16}" height="${n?14:16}" rx="3" fill="${g[3]}" fill-opacity=".6" stroke="${INK}" stroke-width=".7"/>`
+      +T(x+(n?22:26),yy,g[0],'cname start f13')+T(x+(n?96:120),yy,g[1],'mono acc start f11')
+      +L.map((l,j)=>T(x+(n?22:26),yy+16+j*14,l,'note start f11')).join(''));
+    yy+=16+L.length*14+(n?12:12);});
+  const b=bullets(n?24:30,yy+8,[['A sigma factor is a promoter-recognition subunit','RNA polymerase core has no sequence specificity of its own. Which promoters are read depends on which sigma is bound, so swapping sigma factors replaces an entire transcriptional programme in one step.'],
+   ['Competition for a limited pool','There is not enough core polymerase for all the sigmas at once, so they compete, and the anti-sigma factors, the alarmone ppGpp and the protein Crl all shift the balance. Induction of one regulon is partly the repression of another.'],
+   ['Anti-sigma factors make the switch fast','Keeping a sigma pre-made but sequestered, and releasing it by proteolysis of its anti-sigma, gives a response in seconds. The extracytoplasmic function sigmas and their regulated intramembrane proteolysis are the clearest case.'],
+   ['And cascades of sigmas make development possible','If one sigma switches on the gene for the next, and that one for the next, the cell gets an ordered sequence of programmes — which is exactly how sporulation works.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
+/* ===================== Part II · signals ===================== */
 function scR4(n){
-  const N=n?{sig:{x:70,y:40,w:110,t:'signal'},hk:{x:250,y:40,w:150,t:'sensor kinase|(HK)',f:'#A9C4DC'},hp:{x:250,y:140,w:110,t:'HK~P (His)',f:'#A9C4DC'},rr:{x:250,y:240,w:150,t:'response|regulator~P (Asp)',f:'#E7A99B'},dna:{x:180,y:340,w:200,t:'DNA: genes on or off'}}
-   :{sig:{x:70,y:60,w:100,t:'signal'},hk:{x:230,y:60,w:150,t:'sensor kinase (HK)',f:'#A9C4DC'},hp:{x:420,y:60,w:120,t:'HK~P (His)',f:'#A9C4DC'},rr:{x:420,y:170,w:180,t:'response regulator~P|(Asp)',f:'#E7A99B'},dna:{x:180,y:170,w:180,t:'genes on or off'}};
-  const E=n?[['sig','hk','',{}],['hk','hp','ATP → ADP',{side:-1}],['hp','rr','phosphotransfer',{side:-1}],['rr','dna','binds DNA',{side:-1}]]
-    :[['sig','hk','binds'],['hk','hp','autophosphorylation|ATP → ADP'],['hp','rr','phosphotransfer',{side:-1}],['rr','dna','binds promoters',{side:-1}]];
-  let s=G('a-fade',0,flow(N,E));
-  const rows=[['EnvZ–OmpR','osmolarity','porin balance OmpF / OmpC'],['PhoR–PhoB','phosphate starvation','phosphate scavenging'],['ArcB–ArcA','respiratory state','aerobic vs anaerobic metabolism'],['PhoQ–PhoP','Mg²⁺, antimicrobial peptides','Salmonella virulence, LPS changes'],['ComD–ComE','CSP peptide','pneumococcal competence'],['VanS–VanR','vancomycin','vanHAX resistance']];
-  const t=wtable(n,['System','Senses','Controls'],rows,n?[[10,12],[110,14],[220,16]]:[[24,16],[200,26],[400,32]],{y0:n?390:240,d0:.8,R:n?354:620});
-  return {vb:n?slim(t.y+6):wide(t.y+8),s:s+t.s};
+  let s='';const y=n?46:52;
+  const cx=n?180:320;
+  /* low density vs high density */
+  const panel=(ox,oy,dens,lab)=>{let t='';
+    const r=rnd(dens===3?5:11), k=dens===3?3:9;
+    for(let i=0;i<k;i++){const px=ox+(n?10:14)+r()*(n?120:180), py=oy+10+r()*(n?64:76);
+      t+=cellRod(px,py,n?20:26,n?6:7,{});
+      t+=`<circle cx="${FX(px)}" cy="${FX(py-(n?9:11))}" r="2.4" fill="${METC}" opacity=".8"/>`;}
+    t+=`<rect x="${ox}" y="${oy}" width="${n?150:220}" height="${n?88:100}" rx="6" fill="none" stroke="${CELLE}" stroke-width="1.4" stroke-dasharray="4 3"/>`;
+    t+=T(ox+(n?75:110),oy+(n?106:120),lab,'note mid f11');
+    return t;};
+  s+=G('a-fade',0,panel(n?16:40,y,3,n?'low density':'low density: signal diffuses away'));
+  s+=G('a-fade',.6,panel(n?194:380,y,9,n?'high density':'high density: signal accumulates, receptor fires'));
+  if(n)s+=G('a-fade',1,Tc(16,y+128,'below threshold the signal diffuses away;','#6A5B47',10,'mono start')
+    +Tc(16,y+142,'above it, the receptor fires','#6A5B47',10,'mono start'));
+  let yy=y+(n?168:148);
+  const rows=[['Gram-negative','acyl-homoserine lactones','Made by a LuxI-type synthase, diffuse freely across the membrane, bind a cytoplasmic LuxR-type regulator. Chain length and substitution give specificity between species.'],
+   ['Gram-positive','short peptides','Made as a precursor, cleaved and exported, detected outside by a membrane histidine kinase. The peptide cannot cross the membrane, so a two-component system is required — ComDE and AgrCA are the models.'],
+   ['Between species','AI-2, from LuxS','A furanosyl borate diester made by an enzyme in the activated methyl cycle. Whether it is a genuine interspecies signal or largely a metabolic by-product is still argued.'],
+   ['Within the host','host signals','Many systems also respond to host molecules — catecholamines, bile, mucin — so the circuit integrates “how many of us” with “where are we”.']];
+  const t=n?wtable(n,['Where','Signal, and how it works'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,12],[110,39]],{y0:yy,d0:1.2})
+         :wtable(n,['Where','Signal','How it works'],rows,[[24,14],[150,22],[330,44]],{y0:yy,d0:1.2});
+  const b=bullets(n?24:30,t.y+14,[['It is not only about counting cells','The same measurement — how much of my own signal comes back — also reports how confined the space is and how fast the medium is flowing. Diffusion sensing and efficiency sensing are alternative readings of exactly the same circuit, and in a biofilm or a host compartment they matter more than cell number.'],
+   [n?'The output is a shared effort':'The output is usually something only worth doing together','Exoenzymes, siderophores, bioluminescence, virulence factors, competence, biofilm matrix. These are public goods: useless from one cell, effective from many — and therefore exploitable by cheats that stop producing and keep responding.']],n?44:88,{d0:2.2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
 }
+
 function scR5(n){
-  const items=[['Trans-acting sRNAs','50–300 nucleotides, base-pair imperfectly with target mRNAs near the ribosome binding site, blocking translation or marking the duplex for RNase E. In Gram-negatives the chaperone Hfq helps them pair.'],['Many targets, fast','One sRNA regulates many mRNAs. RyhB, made during iron starvation, shuts off iron-using proteins so iron goes where it is needed.'],['Porins and stress','MicF, MicA and MicC repress porin mRNAs when the envelope is stressed; RprA and DsrA activate the σS mRNA by opening an inhibitory structure.'],['Antisense and CRISPR','Cis-encoded antisense RNAs control plasmid copy number and toxin–antitoxin systems; crRNAs guide CRISPR nucleases.']];
-  const c=cards(n,items,{y:20,num:1});
-  return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
+  let s='';const x=n?20:44, y=n?50:56;
+  const stepY=n?42:44;
+  const chain=[['comC','made as a precursor peptide',CORE],
+   ['ComAB','cleaves and exports it as CSP',INTC],
+   ['CSP outside','accumulates with cell density',METC],
+   ['ComD → ComE~P','the receptor kinase fires',RECC],
+   ['early genes, comX','ComE switches them on',PLS],
+   ['ComX (σX)','an alternative sigma: about 80 late genes',PHG],
+   ['uptake machinery, RecA, CbpD','DNA uptake — and fratricide',TNC]];
+  chain.forEach((c,i)=>{const yy=y+i*stepY;
+    s+=G('a-fade',(i*.25).toFixed(2),`<rect x="${x}" y="${yy}" width="${n?12:14}" height="${n?26:28}" rx="3" fill="${c[2]}" fill-opacity=".6" stroke="${INK}" stroke-width=".7"/>`
+      +T(x+(n?22:26),yy+(n?12:13),c[0],'cname start f13')
+      +T(x+(n?22:26),yy+(n?26:28),c[1],'note start f11')
+      +(i<chain.length-1?`<path d="M${FX(x+(n?6:7))} ${FX(yy+(n?26:28))} V${FX(yy+stepY)}" stroke="${AXC}" stroke-width="1.6"/>`:''));});
+  let yy=y+chain.length*stepY+(n?8:10);
+  const b=bullets(n?24:30,yy,[['A positive feedback loop with a twenty-minute window','ComE~P switches on comAB and comC as well as comX, so the signal amplifies itself and the whole population becomes competent almost at once. ComX is then degraded and the window closes; the cells cannot be induced again for a while.'],
+   ['Competence is a general stress response as well','Antibiotics that damage DNA or inhibit replication induce competence, and the CiaRH system holds it down. Calling it “a system for taking up DNA” understates it: the ComX regulon includes stress genes, and competent cells are physiologically distinct.'],
+   ['Fratricide supplies the substrate','Competent cells release CbpD, which with LytA and LytC lyses the non-competent members of the population. The DNA released is homologous, which is exactly what transformation needs — and the released cell contents include virulence factors.'],
+   ['The same architecture runs the bacteriocins','The blp locus uses a near-identical peptide–kinase–regulator circuit to control bacteriocin production, and is partly induced by CSP. Signal and response have been duplicated and re-used.']],n?44:88,{d0:2,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
+
 function scR6(n){
-  const A=n?axes(54,40,280,150,{xr:[0,10],yr:[0,1],xt:[[0,'few'],[10,'many']],yt:[[0,'off'],[1,'on']],xlab:'cell density',ylab:'target genes'})
-    :axes(70,40,300,170,{xr:[0,10],yr:[0,1],xt:[[0,'few'],[10,'many']],yt:[[0,'off'],[1,'on']],xlab:'cell density',ylab:'target genes'});
-  let s=A.s+G('a-fade',.3,curve(A,x=>1/(1+Math.exp(-(x-6)*2)),{col:'#2F5276'})+ln(FX(A.px(6)),A.y,FX(A.px(6)),A.y+A.h,'#A4473A',1,'4 3')+T(FX(A.px(6)-4),A.y+12,'threshold','note end f11 halo'));
-  const rows=[['Vibrio fischeri','LuxI/LuxR, acyl-homoserine lactone','light in the squid light organ'],['Pseudomonas aeruginosa','LasI/R, RhlI/R, PQS','elastase, pyocyanin, biofilm'],['Staphylococcus aureus','AgrD peptide, AgrC/A two-component','toxins, decreased adhesion'],['Streptococcus pneumoniae','CSP peptide, ComD/E','competence for transformation'],['Vibrio cholerae','CAI-1 and AI-2, via a phosphorelay','biofilm off, toxin off at high density']];
-  const t=wtable(n,['Organism','Signal','Output'],rows,n?[[10,12],[110,16],[240,14]]:[[24,18],[200,30],[430,26]],{y0:A.y+A.h+56,d0:.6,R:n?354:620});
-  if(!n)s+=G('a-fade',.5,bullets(410,52,[['Talk by diffusion','Each cell secretes a small signal; only when many cells are present does it reach the threshold.'],['Gram-negatives use AHLs','Gram-positives use peptides, sensed by two-component systems.']],28,{gap:22}).s);
-  return {vb:n?slim(t.y+6):wide(t.y+8),s:s+t.s};
+  let s='';const y=n?48:54, cx=n?180:320;
+  s+=G('a-fade',0,ribo(cx-(n?90:140),y+34,n?1.1:1.3)
+    +Tc(cx-(n?90:140),y+(n?68:74),'a ribosome stalls','#6A5B47',10,'mono mid'));
+  s+=G('a-fade',.4,prot(cx-(n?16:20),y+34,n?24:28,n?14:16,RECC,'RelA')
+    +arw(cx-(n?64:106),y+34,cx-(n?42:52),y+34,{blue:1}));
+  s+=G('a-fade',.9,`<circle cx="${cx+(n?54:80)}" cy="${y+34}" r="${n?12:14}" fill="${METC}" fill-opacity=".7" stroke="${INK}"/>`
+    +Tc(cx+(n?54:80),y+38,'ppGpp','#3A2E22',n?9:10,'mono mid','600')
+    +arw(cx+(n?12:14),y+34,cx+(n?38:62),y+34,{blue:1}));
+  s+=G('a-fade',1.3,Tc(cx+(n?54:80),y+(n?68:74),'the alarmone','#6A5B47',10,'mono mid'));
+  let yy=y+(n?92:100);
+  const rows=[['Down','rRNA and tRNA synthesis','ppGpp with DksA binds RNA polymerase and destabilises open complexes at promoters with a GC-rich discriminator — which is exactly what ribosomal RNA promoters have. Ribosome synthesis stops within seconds.'],
+   ['Down','replication initiation, and elongation','In Firmicutes ppGpp also lowers the GTP pool directly, which blocks initiation at oriC and slows the fork.'],
+   ['Up','amino-acid biosynthesis, stress regulons','Sigma factor competition shifts towards σS and the alternative sigmas as σ70 holdings are released, so the general stress response comes on.'],
+   ['Up','tolerance and persistence','Slow growth makes most antibiotics less effective. ppGpp is central to antibiotic tolerance and to persister formation, though the simple story that it alone makes persisters has not survived scrutiny.']];
+  const t=n?wtable(n,['','What changes'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,5],[52,45]],{y0:yy,d0:1.6})
+         :wtable(n,['','What changes','How'],rows,[[24,6],[80,22],[290,48]],{y0:yy,d0:1.6});
+  const b=bullets(n?24:30,t.y+14,[['One molecule, the whole physiology','RelA on the ribosome makes ppGpp when an uncharged tRNA enters the A site — the direct signal of amino-acid starvation. SpoT, and the single bifunctional Rel of Firmicutes, add and remove it in response to other limitations. The alarmone then reaches polymerase, replication, translation and the sigma pool at once.'],
+   ['It is the switch between growth and survival','Everything about fast growth — ribosomes, nucleotides, flagella — is expensive and useless under starvation. The stringent response is the one decision that reconfigures all of it, which is why it sits upstream of sporulation, competence, virulence and persistence in different species.']],n?44:88,{d0:2.4,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
 }
+
 function scR7(n){
-  const N=n?{v:{x:180,y:40,w:220,t:'vegetative cell'},s0:{x:180,y:120,w:220,t:'Spo0A~P (phosphorelay)',f:'#E7A99B'},a:{x:180,y:200,w:240,t:'asymmetric septum',f:'#E0C88A'},
-     f:{x:90,y:290,w:140,t:'forespore|σF → σG',f:'#A9C4DC'},m:{x:270,y:290,w:140,t:'mother cell|σE → σK',f:'#C9A9D6'},sp:{x:180,y:380,w:200,t:'mature spore released'}}
-   :{v:{x:70,y:70,w:110,t:'vegetative|cell'},s0:{x:260,y:70,w:140,t:'Spo0A~P|phosphorelay',f:'#E7A99B'},a:{x:470,y:70,w:140,t:'asymmetric|septum',f:'#E0C88A'},
-     f:{x:360,y:190,w:140,t:'forespore|σF → σG',f:'#A9C4DC'},m:{x:580,y:190,w:110,t:'mother cell|σE → σK',f:'#C9A9D6'},sp:{x:470,y:310,w:200,t:'mature spore released'}};
-  const E=n?[['v','s0','starvation, density',{side:-1}],['s0','a','',{}],['a','f','',{}],['a','m','',{}],['f','m','signals',{both:1,side:1}],['m','sp','engulfment, coat',{side:1}]]
-    :[['v','s0','starvation,|density',{side:-1}],['s0','a',''],['a','f',''],['a','m',''],['f','m','signals',{both:1,side:-1}],['m','sp','engulfment,|cortex, coat',{side:-1}],['f','sp','',{}]];
-  let s=G('a-fade',0,flow(N,E));
-  const by=n?430:350;
-  const b=bullets(n?24:30,by,[['A cascade of σ factors','σF in the forespore, then σE in the mother cell, then σG and σK. Each stage checks the last through signals across the septum: criss-cross regulation.'],['A last resort','Sporulation takes about 8 hours and is irreversible after the septum forms; cells first try other options, even cannibalising siblings.'],['Remarkably durable','Spores survive heat, desiccation and radiation for years, protected by dipicolinic acid, small acid-soluble proteins and a thick coat.']],n?44:88,{d0:1.2,gap:22});
-  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
+  let s='';const y=n?48:54, cx=n?180:320;
+  const L=n?96:130;
+  s+=G('a-fade',0,cellRod(cx-(n?84:130),y+36,L,n?17:20,{})
+    +[0,1,2].map(i=>`<path d="M${FX(cx-(n?84:130)-L/2-4)} ${FX(y+30+i*6)} q-10 -4 -18 2" stroke="${INK}" stroke-width="1.4" fill="none"/>`).join('')
+    +T(cx-(n?84:130),y+(n?70:76),'motile, single cells','note mid f11'));
+  s+=G('a-fade',.6,arw(cx-(n?18:40),y+36,cx+(n?18:40),y+36,{blue:1})
+    +Tc(cx,y+24,'c-di-GMP','#2F5276',n?10:11,'mono mid','600'));
+  s+=G('a-fade',1,[[0,0],[1,0],[0,1],[1,1],[2,0]].map((g,i)=>cellRod(cx+(n?64:110)+g[0]*(n?26:34),y+26+g[1]*(n?16:20),n?22:28,n?6:7,{})).join('')
+    +`<path d="M${cx+(n?48:92)} ${y+52} q${n?40:60} 10 ${n?80:120} 0" stroke="${METC}" stroke-width="4" fill="none" opacity=".6"/>`
+    +T(cx+(n?84:130),y+(n?70:76),'sessile, matrix, biofilm','note mid f11'));
+  let yy=y+(n?96:104);
+  const b=bullets(n?24:30,yy,[['A second messenger with one job','Cyclic di-GMP is made by GGDEF-domain diguanylate cyclases and destroyed by EAL or HD-GYP phosphodiesterases. High levels favour attachment, matrix production and biofilm; low levels favour motility and dispersal. The decision is almost universal in Gram-negatives.'],
+   ['Dozens of enzymes, local pools','A single genome may encode fifty GGDEF and EAL proteins. They are not redundant: many act locally, delivering or removing c-di-GMP at a specific effector, so the cell runs several private pools rather than one global concentration. This is why deleting one enzyme often does nothing.'],
+   ['Effectors are everywhere','PilZ domains, degenerate GGDEF proteins that have lost catalysis and become receptors, transcription factors, and riboswitches in the 5′ leaders of target messages. The same messenger is read at the level of protein activity and of transcription.'],
+   ['The Firmicute picture is different','Cyclic di-AMP, not c-di-GMP, is the dominant messenger in most Gram-positives, where it reports potassium and osmotic state and is essential in many species — including the pneumococcus. The chemistry is similar; the question being answered is not.']],n?44:88,{d0:1.6,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
+/* ===================== Part III · development ===================== */
 function scR8(n){
-  const items=[['Dam methylation','Dam methylates GATC in E. coli. Hemimethylated DNA after replication marks the new strand for mismatch repair and delays re-initiation at oriC (SeqA).'],['CcrM and the cell cycle','In Caulobacter, CcrM methylation switches between states as the chromosome replicates, timing gene expression to the cycle.'],['Phase variation by methylation','The pap pili of uropathogenic E. coli switch ON or OFF depending on which GATC sites Dam and the Lrp protein protect; the state is inherited for generations.'],['Phase variation by DNA','Salmonella flips a promoter by site-specific inversion to swap flagellins (Hin); slipped-strand mispairing in repeats switches Neisseria and Haemophilus surface genes.'],['Phasevarions','Phase-variable methyltransferases change methylation genome-wide, switching whole sets of genes at once.'],['Why vary at random?','A population that keeps a few cells in each state survives sudden changes, such as an immune response that recognises one surface type.']];
-  const c=cards(n,items,{y:20,cw:6.5});
-  return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
+  let s='';const y=n?46:52, cx=n?180:320;
+  /* asymmetric septum picture */
+  const cell=(ox,oy,k)=>{let t=cellRod(ox,oy,n?108:140,n?26:30,{});
+    if(k>=1)t+=`<path d="M${FX(ox-(n?22:28))} ${FX(oy-(n?26:30))} V${FX(oy+(n?26:30))}" stroke="${CELLE}" stroke-width="3"/>`;
+    if(k>=2)t+=`<ellipse cx="${FX(ox-(n?2:0))}" cy="${oy}" rx="${n?22:26}" ry="${n?18:21}" fill="${METC}" fill-opacity=".45" stroke="${METC}" stroke-width="1.6"/>`;
+    if(k>=3)t+=`<ellipse cx="${FX(ox-(n?2:0))}" cy="${oy}" rx="${n?24:28}" ry="${n?20:23}" fill="none" stroke="${TNC}" stroke-width="3"/>`;
+    return t;};
+  const labs=['asymmetric septum','engulfment','cortex and coat','mother cell lyses'];
+  if(!n){[0,1,2,3].forEach(k=>{const ox=104+k*148;
+    s+=G('a-fade',(k*.5).toFixed(1),cell(ox,y+34,k)+T(ox,y+74,labs[k],'note mid f11'));});
+    var yy=y+100;}
+  else{[0,1,2,3].forEach(k=>{const oy=y+30+k*66;
+    s+=G('a-fade',(k*.5).toFixed(1),cell(110,oy,k)+T(240,oy+4,labs[k],'note start f11'));});
+    var yy=y+30+4*66+10;}
+  const stages=[['Spo0A~P','A phosphorelay — KinA–E, Spo0F, Spo0B — integrates starvation, cell density and the state of the chromosome. Only when Spo0A phosphorylation passes a threshold does the cell commit. Up to that point the decision is reversible.'],
+   ['σH, then σF and σE','σH prepares the cell; the asymmetric septum then separates a small forespore from a large mother cell. σF becomes active only in the forespore, σE only in the mother cell — compartment-specific from the first division.'],
+   ['σG and σK','σF switches on the signal that activates σE; σE switches on the signal that activates σG; σG switches on the signal that activates σK. Each compartment licenses the next step in the other — criss-cross regulation, and the reason the sequence cannot run out of order.'],
+   ['Coat, cortex, lysis','The mother cell engulfs the forespore, builds the cortex and deposits the coat, then lyses to release a dormant spore that can survive heat, desiccation and years of starvation.']];
+  if(n){stages.forEach((st,i)=>{const b=boxItem(16,yy,332,st[0],st[1],{num:i+1,cw:6.1});s+=G('a-fade',(2+i*.3).toFixed(1),b.s);yy+=b.h+9;});}
+  else{stages.forEach((st,i)=>{const b=boxItem(24,yy,592,st[0],st[1],{num:i+1,cw:6.3});s+=G('a-fade',(2+i*.3).toFixed(1),b.s);yy+=b.h+10;});}
+  const p=para(n?16:24,yy+8,'Sporulation is the clearest developmental programme in bacteria: an irreversible commitment, an asymmetric division, two cell types with different transcriptional programmes, and a signalling exchange that enforces the order of events. Everything in it is built from the regulatory parts in the first part of this deck.',n?50:92,'note start f13',17,3.2);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
+
 function scR9(n){
-  const A=n?axes(54,40,280,140,{xr:[0,10],yr:[0,1],xt:[[1.5,'off'],[8.5,'on']],yt:[],xlab:'expression level',ylab:'cells'})
-    :axes(70,40,300,160,{xr:[0,10],yr:[0,1],xt:[[1.5,'off'],[8.5,'on']],yt:[],xlab:'expression level',ylab:'cells'});
-  const g=(x,m,sd,h)=>h*Math.exp(-((x-m)**2)/(2*sd*sd));
-  let s=A.s+G('a-fade',.3,curve(A,x=>g(x,1.5,.8,.9)+g(x,8.5,.9,.35),{col:'#2F5276',n:200}));
-  s+=G('a-fade',.6,T(FX(A.px(1.5)),FX(A.py(.92)-6),'most cells','note mid f11 halo')+T(FX(A.px(8.5)),FX(A.py(.37)-6),'a few cells','note mid f11 halo'));
-  const b=n?bullets(24,A.y+A.h+60,[['Bistability','Positive feedback makes two stable states; noise decides which a cell takes.'],['Competence in B. subtilis','About 10% of cells turn on ComK and become competent.'],['Persisters','A small fraction, often slow-growing, survive antibiotics that kill the rest; regrown, they give an ordinary sensitive population. Tolerance, not resistance.'],['Bet-hedging','Keeping some cells in an unlikely state is insurance against change.']],44,{d0:1,gap:20})
-    :bullets(410,52,[['Bistability','Positive feedback can make two stable states. Random noise in gene expression then decides which one a cell adopts.'],['Competence in B. subtilis','About one cell in ten switches on ComK and becomes competent; the rest do not.'],['Persisters','A small fraction of a population survives antibiotics that kill the rest, often because it is dormant. Regrown, they give an ordinary sensitive population: tolerance, not resistance.'],['Bet-hedging','Keeping a few cells in an unlikely state insures the population against sudden change.']],28,{d0:1,gap:20});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,A.y+A.h+50)),s:s+b.s};
+  const rows=[['Caulobacter crescentus','an asymmetric cell cycle','Every division makes a stalked cell and a motile swarmer. Three master regulators — CtrA, GcrA and DnaA — are made and destroyed in sequence, and CtrA is both a transcription factor and a block on replication initiation. The cycle is driven by regulated proteolysis as much as by transcription.'],
+   ['Myxococcus xanthus','multicellular fruiting bodies','On starvation, tens of thousands of cells move together, mound up, and a fraction differentiate into myxospores while the rest lyse. Coordination uses contact-dependent C-signalling and a travelling wave of motility reversals.'],
+   ['Streptomyces','hyphae, aerial growth, spore chains','A mycelium grows, then raises aerial hyphae that septate into chains of spores; antibiotics are made as part of the same programme, under bld and whi gene control. Development and secondary metabolism are one regulatory problem.'],
+   ['Biofilms','a structured community','Matrix production, channels, and distinct subpopulations with different expression. Not a programme in the sporulation sense, but it is coordinated, spatially organised and developmentally staged, with dispersal as a regulated final step.']];
+  const t=n?wtable(n,['Organism','The programme'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,13],[118,38]],{y0:30})
+         :wtable(n,['Organism','Programme','What is interesting about it'],rows,[[24,16],[190,20],[370,42]],{y0:30});
+  const b=bullets(n?24:30,t.y+14,[['Development is not a eukaryotic invention','Cell-type differentiation, irreversible commitment, spatial patterning and programmed lysis are all present in bacteria, and in several unrelated lineages. What is absent is a germ line and the long developmental cascades of animals.'],
+   ['Proteolysis is as important as transcription','ClpXP and its adaptors set the timing in Caulobacter, in sporulation, and in the heat-shock response. A programme that must be fast and irreversible usually ends in regulated destruction of a protein rather than in a change of promoter activity.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:t.s+b.s};
 }
-const S=[
- {p:1,title:'Choosing genes',draw:scR1,text:"Gene regulation lets a bacterium make what it needs when it needs it. Signals from outside and inside the cell are read by regulatory proteins and RNAs that act on transcription, translation and protein stability. Some decisions are reversible within minutes; others commit the cell to a program or a heritable state."},
- {p:1,title:'Operons, regulons and global regulators',draw:scR2,text:"Bacterial genes are organised for regulation at several scales. An operon puts related genes under one promoter; a regulon gathers operons under one regulator; global regulators control hundreds of genes and tie metabolism to the state of the cell."},
- {p:1,title:'The lac operon',chips:'lac',draw:scR3,text:"The lac operon reads two inputs. The repressor LacI reports whether lactose is present; CAP bound to cAMP reports whether glucose is scarce. Pick a condition to see how the two combine. Only lactose without glucose gives full expression."},
- {p:2,title:'Two-component systems',draw:scR4,text:"A typical bacterium has dozens of two-component systems. A membrane sensor kinase detects a signal and phosphorylates itself on histidine, then passes the phosphate to an aspartate on its partner response regulator, which binds DNA. Many are essential for virulence and for antibiotic resistance."},
- {p:2,title:'Small RNAs',draw:scR5,text:"Bacteria also regulate with small RNAs that pair with messenger RNAs. They act quickly, can hit many targets at once, and often control translation or mRNA decay. In Gram-negative bacteria the chaperone Hfq helps them find their targets."},
- {p:2,title:'Quorum sensing',draw:scR6,text:"Many bacteria secrete small signal molecules and respond only when the signal accumulates past a threshold, which happens when cells are numerous. This quorum sensing coordinates behaviours that pay only in groups, such as light production, virulence, competence and biofilm formation."},
- {p:3,title:'Sporulation',draw:scR7,text:"Starved Bacillus subtilis can build a dormant spore. The master regulator Spo0A, activated by a phosphorelay, triggers an asymmetric division; the forespore and mother cell then run separate programs of sigma factors that check on each other across the septum until the mother cell lyses to release the spore."},
- {p:4,title:'Methylation and phase variation',draw:scR8,text:"DNA methylation in bacteria marks new strands, times the cell cycle and controls gene expression. Combined with DNA inversions and slipped-strand repeats, it lets bacteria switch surface structures on and off at random, a heritable variation that helps populations evade immunity."},
- {p:4,title:'Bistability and persistence',draw:scR9,text:"Genetically identical cells in the same environment can behave differently. Positive feedback loops create two stable states, and chance decides which each cell takes. Persisters, a small dormant fraction that survives antibiotic treatment, are the clinically important example."}];
-const CHIPS={lac:{list:LAC.map(l=>l.k),get:()=>lacSel,set:k=>lacSel=k}};
+
+function scR10(n){
+  const P=n?xyPlot(48,46,278,130,[0,10],[0,110],{xlab:'genome size (Mb)',ylab:'regulators (per genome)',xdy:24,ydx:16})
+          :xyPlot(70,52,300,150,[0,10],[0,110],{xlab:'genome size (Mb)',ylab:'transcription regulators (relative)',xdy:24,ydx:18});
+  let s=G('a-fade',0,P.s);
+  s+=G('a-fade',.4,xyCurve(P,t=>t*t*1.05,{col:CORE,n:120}));
+  s+=G('a-fade',.9,xyCurve(P,t=>t*10.5,{col:CLOUD,n:60,dash:'6 4'}));
+  s+=G('a-fade',1.3,xyPts(P,[[0.6,0.4],[2.1,4.6],[4.6,22],[6.3,42],[9.1,88]],{col:PHG,r:3.6}));
+  s+=G('a-fade',1.6,keyRow(n?22:P.x+8,P.y+P.h+(n?44:46),[['observed: roughly the square of genome size',CORE],['linear, for comparison',CLOUD]],{rh:16,fs:'f11'}));
+  let y=P.y+P.h+(n?94:96);
+  const b=bullets(n?24:30,y,[['Regulation scales faster than gene number','Across sequenced bacteria the number of transcription factors rises roughly as the square of genome size. A genome twice as large has about four times as many regulators — because each new function has to be coordinated with everything already there.'],
+   ['Which puts a ceiling on genome size','Extrapolating the relationship, regulators would consume the whole genome somewhere around ten to twelve megabases, which is close to the largest bacterial genomes observed. Whether this is a genuine limit or a coincidence of sampling is still argued, but the scaling itself is robust.'],
+   ['Regulation is also expensive to run','Transcription factors must be made, and promoters must be bound. Unused regulatory capacity is lost quickly: reduced genomes lose regulators faster than they lose metabolic genes, because a small, constant environment needs few decisions.'],
+   ['And this is why specialists look simple','An obligate intracellular pathogen in a constant environment can run most of its genome constitutively. Complexity of regulation is a statement about the variability of the environment, not about the sophistication of the organism.']],n?44:88,{d0:1.8,gap:24});
+  return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
+}
+
+const REGQ=[
+ {q:'A response comes on only if the inducing signal is present for more than about twenty minutes, and switches off immediately when it goes.',a:'A coherent feed-forward loop',t:'The regulator acts both directly and through a slow intermediate, and the target needs both. Persistence is required to turn on, because the intermediate has to accumulate; removal is immediate, because the direct input disappears at once. It is a noise filter.'},
+ {q:'A gene is induced by a peptide that cannot cross the membrane.',a:'A two-component system',t:'If the signal stays outside, the sensing must happen outside. A membrane histidine kinase detects it and passes a phosphate to a cytoplasmic response regulator. This is why Gram-positive quorum sensing uses two-component systems while Gram-negative AHL systems do not.'},
+ {q:'An entire transcriptional programme is replaced within a minute of the stress, with no new protein synthesis needed.',a:'An anti-sigma factor released',t:'The sigma factor was already made and held inactive. Proteolysis of its anti-sigma releases it, and it competes for core polymerase immediately. Requiring new synthesis would take far longer.'},
+ {q:'Ribosomal RNA synthesis stops within seconds of amino-acid starvation.',a:'The stringent response',t:'An uncharged tRNA in the ribosomal A site activates RelA, which makes ppGpp. With DksA it destabilises open complexes at rRNA promoters, which have a GC-rich discriminator. Nothing else acts that fast on that specific promoter class.'},
+ {q:'Deleting one of fifty diguanylate cyclases in a genome produces a clear and specific biofilm defect.',a:'Local signalling',t:'If c-di-GMP were a single global pool, one of fifty enzymes would barely matter. Specific phenotypes from single deletions are evidence that the enzyme acts locally, delivering the messenger to a particular effector.'},
+ {q:'A developmental step in one compartment cannot begin until a step in the other compartment has finished.',a:'Criss-cross regulation',t:'Sporulation enforces order by making each compartment produce the signal that activates the next sigma factor in the other. The sequence cannot run ahead of itself because the licence to proceed comes from the other cell.'},
+ {q:'Competence appears in almost the whole population at once, then disappears, and cannot be re-induced for some time.',a:'Positive feedback with a built-in shut-off',t:'The peptide signal induces its own synthesis and export, so once the threshold is crossed the whole population is recruited within minutes. ComX is then degraded and the window closes — a pulse, not a steady state.'},
+ {q:'A reduced, host-restricted genome has lost a far higher proportion of its regulators than of its metabolic genes.',a:'Regulation is for variable environments',t:'In a constant environment most genes can be expressed constitutively, so regulatory capacity is the first thing to become dispensable. The same scaling in reverse explains why large soil genomes are so regulator-rich.'}];
+let rSel2=0;
+function scR11(n){
+  const q=REGQ[rSel2];let s='',y=34;
+  const Q=wrap(q.q,n?36:60);
+  s+=G('a-fade',0,Q.map((l,i)=>T(n?16:24,y+i*22,l,'cname start')).join(''));y+=Q.length*22+14;
+  s+=G('a-fade',.3,`<rect x="${n?14:24}" y="${y-18}" width="${n?332:592}" height="28" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
+    +Tc(n?26:38,y+1,q.a,'#2F5276',n?13:14,'mono start','600'));
+  y+=28;
+  const p=para(n?16:24,y,q.t,n?50:92,'note start f13',17,.6);
+  let yy=p.y+16;
+  s+=G('a-fade',1.2,T(n?16:24,yy,'All the observations','mono acc start f11'));
+  yy+=18;
+  REGQ.forEach((x,i)=>{const L=wrap(x.q,n?42:76);
+    s+=G('a-fade',(1.3+i*.06).toFixed(2),(i===rSel2?`<rect x="${n?10:18}" y="${yy-12}" width="${n?342:600}" height="${L.length*15+6}" rx="3" fill="#E7DEC9" stroke="${INK}" stroke-width="1"/>`:'')
+      +`<circle cx="${n?22:30}" cy="${yy-5}" r="4" fill="${i===rSel2?RECC:'#C9BFAB'}" stroke="${INK}" stroke-width=".6"/>`
+      +L.map((l,j)=>T(n?36:44,yy+j*15,l,'note start f12')).join(''));
+    yy+=L.length*15+8;});
+  return {vb:n?slim(yy+8):wide(yy+10),s:s+p.s};
+}
+
 const NAR='Narrator';
+const S=[
+ {p:1,title:'Operons, regulons, modulons',draw:scR1,text:"Regulation in bacteria is organised in nested layers: an operon is one message, a regulon is everything one regulator controls, and a modulon is everything that responds to one condition. A handful of global regulators account for half of all transcriptional control, and the hierarchy is shallow, because a long cascade is slow."},
+ {p:1,title:'Two-component systems',draw:scR2,text:"The standard bacterial sensor is a pair: a membrane kinase that autophosphorylates on a histidine, and a response regulator that receives the phosphate on an aspartate and binds DNA. Separating sensing from acting lets the same chemistry be reused for dozens of signals in one genome, with specificity enforced at the interface and by the kinase's own phosphatase activity."},
+ {p:1,title:'Sigma factors',draw:scR3,text:"RNA polymerase core cannot recognise a promoter by itself. The sigma factor does that, so exchanging sigma factors replaces an entire programme in a single step. Sigmas compete for a limited pool of core enzyme, are held inactive by anti-sigma factors until needed, and can be arranged in cascades — which is what makes development possible."},
+ {p:2,title:'Quorum sensing',draw:scR4,text:"A cell makes a small signal, releases it, and measures how much comes back. Gram-negatives use diffusible acyl-homoserine lactones and a cytoplasmic receptor; Gram-positives use peptides and a membrane kinase. The measurement reports cell density, but equally reports confinement and flow — which is why it is better thought of as asking whether a shared effort is worth starting."},
+ {p:2,title:'The pneumococcal competence circuit',draw:scR5,text:"Competence in Streptococcus pneumoniae is a quorum circuit with positive feedback and a timer. The peptide CSP accumulates, ComD and ComE switch on the early genes including the alternative sigma factor ComX, about eighty late genes follow, and the window closes after twenty minutes. The same circuit also triggers fratricide, which supplies the DNA."},
+ {p:2,title:'The stringent response',draw:scR6,text:"When an uncharged tRNA enters the ribosomal A site, RelA makes ppGpp. That one molecule stops ribosomal RNA synthesis within seconds, slows replication, shifts the sigma factor balance towards stress regulons, and shifts the cell from growth to survival. It sits upstream of sporulation, virulence, competence and antibiotic tolerance in different species."},
+ {p:2,title:'Cyclic nucleotide messengers',draw:scR7,text:"Cyclic di-GMP controls the choice between swimming and settling: high levels mean attachment, matrix and biofilm, low levels mean motility. A genome may encode fifty enzymes that make or destroy it, acting in local pools delivered to specific effectors. In most Gram-positives, cyclic di-AMP plays the dominant role instead, reporting potassium and osmotic state."},
+ {p:3,title:'Sporulation',draw:scR8,text:"Sporulation is the clearest developmental programme in bacteria. A phosphorelay integrates several inputs until the cell commits; an asymmetric septum creates two cells with different fates; and four sigma factors act in sequence, each compartment producing the signal that licenses the next step in the other. The order cannot be broken."},
+ {p:3,title:'Other developmental programmes',draw:scR9,text:"Caulobacter divides asymmetrically every cycle under three master regulators; Myxococcus builds multicellular fruiting bodies on starvation; Streptomyces raises aerial hyphae and spore chains alongside antibiotic production; biofilms are spatially organised communities with regulated dispersal. Differentiation and commitment are not eukaryotic inventions."},
+ {p:3,title:'What regulation costs',draw:scR10,text:"The number of transcription factors rises roughly as the square of genome size, because every new function must be coordinated with everything already present. That scaling is thought to set a practical ceiling on bacterial genome size, and in reverse it explains why reduced, host-restricted genomes shed regulators fastest."},
+ {p:3,title:'Reading a regulatory phenotype',chips:'reg',draw:scR11,text:"The architecture of a circuit usually leaves a recognisable signature in its behaviour: how fast it responds, whether it filters transients, whether it is reversible, and whether new protein synthesis is required. Pick an observation to see what it points to."}];
+const CHIPS={reg:{list:REGQ.map((q,i)=>String(i+1)),get:()=>rSel2,set:k=>rSel2=k}};
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));
