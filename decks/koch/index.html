@@ -452,9 +452,9 @@ function scK2(n){
 }
 
 function scK3(n){
-  const N=n?5:8, x0=n?30:44, dx=n?62:74, y0=n?60:66;
+  const N=n?4:8, x0=n?36:44, dx=n?56:60, y0=n?60:66;
   let s=G('a-fade',0,mouse(x0,y0,0.9,{dead:true})+T(x0,y0+34,'anthrax blood','note mid f11'));
-  for(let i=0;i<N;i++){const x=x0+50+i*dx;s+=G('a-fade',(.3+i*.25).toFixed(2),arw(x-30,y0,x-16,y0,{w:1.2})+field(x+8,y0,18,chainRods(x-6,y0,2,0))+Tc(x+8,y0+32,n?['1','2','3','…','8th'][i]:i===N-1?'8th':String(i+1),'#2F5276',10,'mono mid','600'));}
+  for(let i=0;i<N;i++){const x=x0+50+i*dx;s+=G('a-fade',(.3+i*.25).toFixed(2),arw(x-30,y0,x-16,y0,{w:1.2})+field(x+8,y0,18,chainRods(x-6,y0,2,0))+Tc(x+8,y0+32,n?['1','2','…','8th'][i]:i===N-1?'8th':String(i+1),'#2F5276',10,'mono mid','600'));}
   const xe=x0+50+N*dx;
   s+=G('a-fade',(.4+N*.25).toFixed(2),arw(xe-26,y0,xe-10,y0)+mouse(xe+18,y0,.9,{dead:true}));
   const y=y0+70;
@@ -468,7 +468,7 @@ function scK3(n){
 }
 
 function scK4(n){
-  const C=[['Potato slices, 1881','A cut potato, steamed: the first solid surface. Colonies stay apart.',(cx,cy)=>potato(cx,cy+6,110,[[-26,-2,5],[0,-8,4],[22,0,6,'#B4766E'],[-8,10,4],[30,12,3,'#9DB4AE']])],
+  const C=[['Potato slices, 1881','A cut, steamed potato, as Joseph Schröter had used in 1872 for pigmented bacteria. Colonies stay apart.',(cx,cy)=>potato(cx,cy+6,110,[[-26,-2,5],[0,-8,4],[22,0,6,'#B4766E'],[-8,10,4],[30,12,3,'#9DB4AE']])],
    ['Gelatin plates','Nutrient gelatin on glass. But it melts at body temperature, and many bacteria digest it.',(cx,cy)=>`<rect x="${cx-56}" y="${cy-18}" width="112" height="44" rx="3" fill="${GLASSF}" stroke="${GLASSE}" stroke-width="1.4"/><path d="M${cx-48} ${cy+12} q20 -16 40 -4 q20 12 50 -6 v18 h-90z" fill="#E9DDB8" opacity=".9"/>`+T(cx,cy+40,'melts at 37 °C','note mid f11')],
    ['Agar, 1881–82','Fanny Hesse suggested the jelly she used in her kitchen. Agar stays solid at 37 °C and few microbes eat it.',(cx,cy)=>dish(cx,cy+4,36,colonySet(10,4,36))],
    ['Petri’s dish, 1887','Julius Petri’s shallow lidded dish. Streaked out, single cells give single colonies: a pure culture.',(cx,cy)=>dish(cx,cy+4,36,[[-18,-14,2.4],[-10,-8,2.6],[-2,-2,2.8],[6,4,3],[14,10,3.6],[22,16,3]].concat(colonySet(5,9,10).map(c=>[c[0]-20,c[1]-16,1.6])))]];
@@ -535,8 +535,8 @@ function scK8(n){
   y+=14;
   rows.forEach((r,i)=>{const yy=y+i*62;
     let gene=`<path d="M${gx} ${yy+8} H${gx+(n?150:240)}" stroke="${BB}" stroke-width="3"/>`;
-    if(i===1)gene+=`<path d="M${gx+40} ${yy} h60 l8 8 l-8 8 h-60z" fill="#E9C9C1" stroke="${INK}"/><path d="M${gx+52} ${yy+2} l36 12 m0 -12 l-36 12" stroke="${LESU}" stroke-width="2"/>`;
-    else gene+=`<path d="M${gx+40} ${yy} h60 l8 8 l-8 8 h-60z" fill="${i===2?'#D9E2D3':'#E3B26B'}" stroke="${INK}"/>`;
+    if(i>=1)gene+=`<path d="M${gx+40} ${yy} h60 l8 8 l-8 8 h-60z" fill="#E9C9C1" stroke="${INK}"/><path d="M${gx+52} ${yy+2} l36 12 m0 -12 l-36 12" stroke="${LESU}" stroke-width="2"/>`;
+    else gene+=`<path d="M${gx+40} ${yy} h60 l8 8 l-8 8 h-60z" fill="#E3B26B" stroke="${INK}"/>`;
     if(i===2)gene+=`<path d="M${gx+(n?120:170)} ${yy} h44 l8 8 l-8 8 h-44z" fill="#E3B26B" stroke="${INK}"/>`+T(gx+(n?146:196),yy+28,'copy supplied','note mid f11');
     s+=G('a-fade',(.4+i*.6).toFixed(1),gene+T(gx,yy-8,r[0],'lab start f13')+mouse(mx,yy+10,.9,{dead:r[2]===1})+T(mx+(n?0:60),yy+(n?36:14),r[1],'note '+(n?'mid':'start')+' f12'));});
   y+=3*62+20;

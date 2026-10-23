@@ -65,7 +65,7 @@ function scA3(n){
 function scA4(n){
   const rows=[['Point mutations','gyrA, parC: quinolones; rpoB: rifampicin; 23S rRNA: macrolides, linezolid','chromosome; arise during treatment and pass to descendants'],
    ['ESBLs (CTX-M, TEM and SHV variants)','penicillins and third-generation cephalosporins','plasmids, mostly E. coli and Klebsiella'],
-   ['Carbapenemases (KPC, NDM, OXA-48, VIM, IMP)','carbapenems and nearly all other β-lactams','plasmids; Enterobacterales, Acinetobacter, Pseudomonas'],
+   ['Carbapenemases (KPC, NDM, OXA-48, VIM, IMP)','carbapenems and most other β-lactams (OXA-48 spares third-generation cephalosporins; metallo-enzymes spare aztreonam)','plasmids; Enterobacterales, Acinetobacter, Pseudomonas'],
    ['mecA','PBP2a, a transpeptidase that β-lactams barely bind: MRSA','SCCmec cassette in the staphylococcal chromosome'],
    ['vanA','rebuilds the wall precursor to end in D-Ala-D-Lac, which binds vancomycin about 1000-fold less well','transposon Tn1546 on plasmids; enterococci, rarely S. aureus'],
    ['mcr-1','adds phosphoethanolamine to lipid A: colistin','plasmid, first reported from China in 2015']];
