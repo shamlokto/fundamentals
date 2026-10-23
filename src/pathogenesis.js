@@ -45,19 +45,51 @@ function scP4(n){
     note:'Exotoxins are secreted proteins, often extremely potent and specific, and many are carried on phages or plasmids. Endotoxin is different: it is the LPS of the Gram-negative wall itself, released on lysis, and causes harm through the host’s own inflammatory response rather than a targeted action.'},{y:n?34:40});
   return ex;
 }
+function secStack(n,y0){
+  // layered envelope, host on top: host cytoplasm | host membrane | outside | OM | periplasm | IM | bacterial cytoplasm
+  const x1=n?96:150, x2=n?354:620, L=n?8:24;
+  const Y={hc:y0,hm:y0+44,out:y0+54,om:y0+96,pp:y0+108,im:y0+136,bc:y0+148,end:y0+196};
+  let s=`<rect x="${x1}" y="${Y.hc}" width="${x2-x1}" height="44" fill="${PAL.rose}" opacity=".18"/>`
+    +`<rect x="${x1}" y="${Y.bc}" width="${x2-x1}" height="${Y.end-Y.bc}" fill="${PAL.green}" opacity=".18"/>`
+    +membraneBand(x1,x2,Y.hm,10)+membraneBand(x1,x2,Y.om,12)+membraneBand(x1,x2,Y.im,12)
+    +ln(x1,Y.pp+14,x2,Y.pp+14,'#8C6D46',2.2,'3 3');
+  const lab=(y,a,b)=>b?T(L,y-3,a,'note start f12')+T(L,y+11,b,'note start f12'):T(L,y+4,a,'note start f12');
+  s+=n?lab(Y.hc+22,'host','cytoplasm')+lab(Y.hm+5,'host memb.')+lab(Y.out+21,'outside')+lab(Y.om+6,'outer memb.')+lab(Y.pp+14,'periplasm')+lab(Y.im+6,'inner memb.')+lab(Y.bc+24,'bacterial','cytoplasm')
+      :lab(Y.hc+22,'host cytoplasm')+lab(Y.hm+5,'host membrane')+lab(Y.out+21,'outside the cell')+lab(Y.om+6,'outer membrane')+lab(Y.pp+14,'periplasm (PG)')+lab(Y.im+6,'inner membrane')+lab(Y.bc+24,'bacterial cytoplasm');
+  return {s,Y,x1,x2};}
+function eff(x,y){return `<circle cx="${FX(x)}" cy="${FX(y)}" r="4.2" fill="${PAL.gold}" stroke="${INK}" stroke-width=".8"/>`;}
 function scP5(n){
-  const N=n?{t3:{x:95,y:40,w:160,t:'T3SS "injectisome"',f:PAL.blue},ho:{x:95,y:150,w:160,t:'host cytoskeleton',f:PAL.gold},
-     t4:{x:265,y:40,w:160,t:'T4SS',f:PAL.rose},va:{x:265,y:150,w:160,t:'vacuole remodelled',f:PAL.green}}
-   :{t3:{x:150,y:60,w:170,t:'T3SS injectisome|(needle)',f:PAL.blue},ho:{x:150,y:175,w:170,t:'host cytoskeleton|rearranged',f:PAL.gold},
-     t4:{x:470,y:60,w:170,t:'T4SS|(pilus-like)',f:PAL.rose},va:{x:470,y:175,w:170,t:'vacuole made|habitable',f:PAL.green}};
-  const E=[['t3','ho','effectors injected'],['t4','va','effectors injected']];
-  let s=G('a-fade',0,flow(N,E));
-  const b=bullets(n?24:30,n?250:290,[
+  const y0=n?40:46, st=secStack(n,y0), Y=st.Y;
+  const a=n?150:250, b=n?282:480; // T3SS and T4SS centres
+  // T3SS: basal body with IM and OM rings, needle across the gap, translocon pore in the host membrane
+  let t3=`<rect x="${a-9}" y="${Y.om-4}" width="18" height="${Y.im+16-Y.om}" fill="${PAL.blue}" stroke="${INK}" stroke-width="1" class="tint"/>`
+    +`<rect x="${a-18}" y="${Y.im-2}" width="36" height="16" rx="4" fill="${PAL.blue}" stroke="${INK}" stroke-width="1" class="tint"/>`
+    +`<rect x="${a-16}" y="${Y.om-3}" width="32" height="18" rx="4" fill="${PAL.blue}" stroke="${INK}" stroke-width="1" class="tint"/>`
+    +`<rect x="${a-3}" y="${Y.hm+8}" width="6" height="${Y.om-3-Y.hm-8}" fill="${PAL.blue}" stroke="${INK}" stroke-width=".9"/>`
+    +`<rect x="${a-11}" y="${Y.hm-3}" width="7" height="16" rx="3" fill="${PAL.rose}" stroke="${INK}" stroke-width=".9"/><rect x="${a+4}" y="${Y.hm-3}" width="7" height="16" rx="3" fill="${PAL.rose}" stroke="${INK}" stroke-width=".9"/>`
+    +eff(a+8,Y.bc+34)+eff(a-10,Y.bc+40)+eff(a,Y.pp+8)+eff(a,Y.out+20)+eff(a+22,Y.hc+12)+eff(a+36,Y.hc+26);
+  t3+=arw(a+3,Y.hm-4,a+17,Y.hc+16,{blue:1,w:1.3});
+  const tl=(x,y,t,an)=>T(x,y,t,'note '+(an||'start')+' f12 halo');
+  t3+=n?tl(a-18,Y.out+20,'needle','end')+tl(a,y0-8,'T3SS','mid')
+       :tl(a+48,Y.hc+22,'effectors','start')+tl(a-20,Y.out+16,'needle','end')+tl(a-16,Y.hm-6,'translocon pore','end')+tl(a-24,Y.im+30,'basal body','end')+tl(a,y0-10,'type III (injectisome)','mid');
+  // T4SS: core complex spanning both membranes, short pilus to the host membrane
+  let t4=`<rect x="${b-14}" y="${Y.om-4}" width="28" height="${Y.im+16-Y.om}" rx="5" fill="${PAL.lilac}" stroke="${INK}" stroke-width="1" class="tint"/>`
+    +`<rect x="${b-4}" y="${Y.hm+10}" width="8" height="${Y.om-4-Y.hm-10}" fill="${PAL.lilac}" stroke="${INK}" stroke-width=".9"/>`
+    +`<rect x="${b-12}" y="${Y.im+14}" width="24" height="12" rx="3" fill="${PAL.lilac}" stroke="${INK}" stroke-width=".9"/>`
+    +eff(b-6,Y.bc+38)+eff(b+10,Y.bc+44)+eff(b,Y.pp+8)+eff(b,Y.out+22)+eff(b-20,Y.hc+12)+eff(b-36,Y.hc+26);
+  t4+=arw(b-3,Y.hm-2,b-15,Y.hc+16,{blue:1,w:1.3});
+  t4+=n?tl(b,y0-8,'T4SS','mid')
+       :tl(b+22,Y.out+20,'pilus','start')+tl(b+20,Y.pp+8,'core complex','start')+tl(b,y0-10,'type IV (Dot/Icm, Cag)','mid');
+  let s=G('a-fade',0,st.s)+G('a-fade',.3,t3)+G('a-fade',.6,t4);
+  const yn=Y.end+18;
+  const pn=para(n?16:24,yn,'Effector proteins (gold) cross both bacterial membranes and the host membrane in one step. For Legionella the host membrane is the membrane of the vacuole it lives in.',n?52:96,'note start f13',17,.8);
+  s+=pn.s;
+  const bl=bullets(n?24:30,pn.y+14,[
     ['Type III secretion','A molecular syringe, evolutionarily kin to the flagellum, that injects effector proteins straight into a host cell. Salmonella and Shigella use it to force their own uptake and reshape the gut; Yersinia uses Yops to shut down phagocytes.'],
     ['Type IV secretion','Related to conjugation machinery, it moves proteins and even DNA. Legionella delivers hundreds of effectors through its Dot/Icm T4SS to build a replicative vacuole inside macrophages; Helicobacter injects CagA; Agrobacterium transfers DNA into plants.'],
     ['A shared logic','Rather than brute force, these systems reprogramme the host cell from within, switching off its defences and rebuilding a niche the microbe can live in.']],
     n?44:82,{d0:.6,gap:22});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,310)),s:s+b.s};
+  return {vb:n?slim(bl.y-4):wide(bl.y-4),s:s+bl.s};
 }
 function scP6(n){
   const items=[
@@ -95,9 +127,9 @@ function scP8(n){
   const point=x=>22*Math.exp(-((x-5)**2)/8);
   const prop=x=>7*Math.exp(-((x-6)**2)/4)+12*Math.exp(-((x-13)**2)/6)+16*Math.exp(-((x-19)**2)/8);
   let s=A.s;
-  s+=G('a-fade',.3,curve(A,point,{col:'#2F5276',from:0,to:n?20:24})+(n?'':T(FX(A.px(5)),FX(A.py(22)-6),'point source','note mid f10 halo')));
-  s+=G('a-fade',.5,curve(A,prop,{col:'#A4473A',dash:'5 4',from:0,to:n?20:24})+(n?'':T(FX(A.px(19)),FX(A.py(16)-6),'propagated','note mid f10 halo')));
-  if(n)s+=G('a-fade',.6,T(60,A.y+10,'— point source','note start f10')+T(60,A.y+24,'- - propagated','note start f10'));
+  s+=G('a-fade',.3,curve(A,point,{col:'#2F5276',from:0,to:n?20:24})+(n?'':T(FX(A.px(5)),FX(A.py(22)-6),'point source','note mid f12 halo')));
+  s+=G('a-fade',.5,curve(A,prop,{col:'#A4473A',dash:'5 4',from:0,to:n?20:24})+(n?'':T(FX(A.px(19)),FX(A.py(16)-6),'propagated','note mid f12 halo')));
+  if(n)s+=G('a-fade',.6,T(200,A.y+10,'— point source','note start f12')+T(200,A.y+26,'- - propagated','note start f12'));
   const b=bullets(n?24:400,n?A.y+A.h+54:52,[
     ['The epidemic curve','Plotting cases by date of onset reveals the shape of an outbreak. A single sharp peak suggests a point source (one contaminated meal); successive rising waves, each one incubation period apart, suggest person-to-person (propagated) spread.'],
     ['Investigation steps','Confirm the diagnosis and that an outbreak exists; define a case and count; describe by person, place and time; form and test a hypothesis (often a case-control study); then control the source and communicate.'],

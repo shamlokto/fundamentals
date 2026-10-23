@@ -203,7 +203,7 @@ function scMap(n){
 }
 
 function scPromoter(n){
-  const P=n?{x1:10,x2:350,y:124,b35:[20,84],b10:[176,240],p1:290,bw:64,fs:12,sc:.95,H:300}:{x1:30,x2:610,y:124,b35:[80,168],b10:[330,418],p1:480,bw:88,fs:15,sc:1.25,H:318};
+  const P=n?{x1:22,x2:338,y:124,b35:[30,94],b10:[176,240],p1:290,bw:64,fs:12,sc:.95,H:300}:{x1:30,x2:610,y:124,b35:[80,168],b10:[330,418],p1:480,bw:88,fs:15,sc:1.25,H:318};
   const {y}=P;
   let s=G('a-fade',0,dsDNA(P.x1,P.x2,y,INK,9));
   s+=G('a-pop',.3,box(P.b35[0],y-7,P.bw,23,PROM)+Tc((P.b35[0]+P.b35[1])/2,y+9,'TTGACA','#F3EDE0',P.fs,'mono mid','600')+T((P.b35[0]+P.b35[1])/2,y-16,'−35','mono mid f12'));
@@ -217,7 +217,10 @@ function scPromoter(n){
   const bx1=P.b10[0]+P.bw*.4, bx2=P.p1+8, by=y+(n?112:120);
   s+=G('a-fade',2.6,T(P.x1+4,by-28,n?'Open complex:':'Then the DNA melts at −10 into an open complex:','note start'));
   s+=G('a-fade',2.9,`<path d="M${P.x1} ${by} H${bx1} q${(bx2-bx1)/2} -22 ${bx2-bx1} 0 H${P.x2}" stroke="${INK}" stroke-width="2" fill="none"/><path d="M${P.x1} ${by+9} H${bx1} q${(bx2-bx1)/2} 26 ${bx2-bx1} 0 H${P.x2}" stroke="${INK}" stroke-width="2" fill="none"/>`
-    +T((bx1+bx2)/2,by+5,'bubble','note mid f12')+T(P.x2-4,by+36,n?'template strand read 3′→5′':'template strand read 3′→5′; RNA made 5′→3′','note end f12'));
+    +T((bx1+bx2)/2,by+5,'bubble','note mid f12')
+    +T(P.x1-2,by+1,'5′','mono end f12')+T(P.x2+2,by+1,'3′','mono start f12')+T(P.x1-2,by+18,'3′','mono end f12')+T(P.x2+2,by+18,'5′','mono start f12')
+    +T(P.x1+4,by-6,'coding strand','note start f12')+T(P.x1+4,by+26,'template strand','note start f12')
+    +T(P.x2-4,by+36,n?'template read 3′→5′':'template strand read 3′→5′; RNA made 5′→3′','note end f12'));
   return {vb:n?slim(P.H):wide(P.H),s};
 }
 
@@ -280,7 +283,7 @@ function scTerm(n){
   const A=n?{ox:14,oy:24,dy:120,x2:346}:{ox:20,oy:28,dy:150,x2:300};
   s+=G('a-fade',0,panel(A.ox,A.oy,0,'Intrinsic terminator')+dsDNA(A.ox,A.x2,A.dy,INK,8));
   const hx=n?150:130;
-  s+=G('a-fade',.5,wave(A.ox+10,hx,A.dy-30,MR,2.4)+hairpin(hx,A.dy-30,n?40:50,14)+Tc(hx+38,A.dy-28,'UUUUUUU',MR,n?11:12,'mono start','600'));
+  s+=G('a-fade',.5,wave(A.ox+10,hx,A.dy-30,MR,2.4)+hairpin(hx,A.dy-30,n?40:50,14)+`<path d="M${hx+14} ${A.dy-30} H${hx+37}" stroke="${MR}" stroke-width="2.4"/>`+Tc(hx+38,A.dy-28,'UUUUUUU',MR,n?11:12,'mono start','600'));
   s+=G('a-fade',.8,T(hx-8,A.dy-(n?58:64),'GC-rich hairpin','note end f12')+T(hx+(n?78:84),A.dy-42,'U-tract','note mid f12'));
   s+=G('a-out',1.6,rnap(hx+(n?110:110),A.dy-4,n?.8:.9,false),'--dx:30px;--dy:-30px');
   s+=G('a-fade',2.2,T(A.ox,A.dy+34,n?'Hairpin pulls RNA from the weak rU–dA hybrid':'Hairpin + weak rU–dA hybrid: RNA and polymerase release','note start f12'));
@@ -323,10 +326,10 @@ function scOperon(n){
 function scCoupled(n){
   const y=n?190:200, x1=n?10:20, x2=n?350:620, px=n?296:540;
   let s=G('a-fade',0,dsDNA(x1,x2,y,INK,8)+bend(x1+20,y-6,16,12));
-  s+=G('a-fade',.3,`<path d="M${x1+26} ${y-2} C ${x1+60} ${y-120}, ${px-120} ${y-130}, ${px-26} ${y-12}" stroke="${MR}" stroke-width="2.6" fill="none"/>`+T(x1+2,y-74,'mRNA','note start'));
+  s+=G('a-fade',.3,`<path d="M${x1+40} ${y-34} C ${x1+60} ${y-120}, ${px-120} ${y-130}, ${px-26} ${y-12}" stroke="${MR}" stroke-width="2.6" fill="none"/>`+T(x1+34,y-30,'5′','mono end f12')+T(x1+2,y-74,'mRNA','note start'));
   s+=G('a-move',.2,rnap(px,y+4,n?.95:1.1,false),`--dx:${-(px-x1-60)}px`);
   const t=[.14,.34,.54,.74,.9];
-  const bez=(tt)=>{const p0=[x1+26,y-2],p1=[x1+60,y-120],p2=[px-120,y-130],p3=[px-26,y-12];const u=1-tt;return [0,1].map(k=>u*u*u*p0[k]+3*u*u*tt*p1[k]+3*u*tt*tt*p2[k]+tt*tt*tt*p3[k]);};
+  const bez=(tt)=>{const p0=[x1+40,y-34],p1=[x1+60,y-120],p2=[px-120,y-130],p3=[px-26,y-12];const u=1-tt;return [0,1].map(k=>u*u*u*p0[k]+3*u*u*tt*p1[k]+3*u*tt*tt*p2[k]+tt*tt*tt*p3[k]);};
   t.forEach((tt,i)=>{const [bx,by]=bez(tt);s+=G('a-pop',(1.0+i*.25).toFixed(2),ribo(bx,by,n?.75:.95));});
   const [lx,ly]=bez(.9);
   s+=G('a-fade',2.4,`<path d="M${lx-(n?44:52)} ${ly+30} L${lx-14} ${ly+6}" class="arrow"/>`+T(lx-(n?48:56),ly+36,'leading ribosome','note end f12'));
@@ -359,11 +362,11 @@ function scRho(n){
   s+=G('a-pop',.4,`<path d="M${stopx} ${y-18} v34" stroke="${STOPC}" stroke-width="2.4"/>`+Tc(stopx,y-22,'UAG','#A4473A',n?11:12,'mono mid','600'));
   const my=y+(n?60:70), rnapx=P.yy[0]-(n?12:16);
   s+=G('a-fade',.8,wave(P.p+16,rnapx-26,my)+T(P.p+12,my+4,'5′','mono end f11'));
-  s+=G('a-pop',.6,rnap(rnapx,my+2,n?.8:1,false));
+  s+=G('a-pop',.6,rnap(rnapx,y+4,n?.8:1,false)+`<path d="M${rnapx-26} ${my} Q${rnapx-12} ${my} ${rnapx-8} ${y+16}" stroke="${MR}" stroke-width="2.2" fill="none"/>`);
   (n?[0,1]:[0,1,2]).forEach(i=>s+=G('a-pop',(1.0+i*.2).toFixed(2),ribo(stopx-(n?12:16)-i*(n?20:28),my-2,n?.7:.9)));
   s+=G('a-fade',1.6,`<rect x="${stopx+6}" y="${my-14}" width="${rnapx-stopx-(n?34:40)}" height="26" rx="4" fill="${RHO}" opacity=".1"/>`+T((stopx+rnapx)/2-10,my+(n?32:36),n?'bare RNA, no ribosomes':'bare RNA: ribosomes released at the stop codon','note mid f12'));
   s+=G('a-slow',2.1,rho(rnapx-(n?30:36),my-16,n?.9:1.1),`--dx:${-(rnapx-(n?30:36)-(stopx+14))}px`);
-  s+=G('a-pop',4.5,mark(rnapx,my-34,false,9));
+  s+=G('a-pop',4.5,mark(rnapx+(n?20:26),y-24,false,9));
   s+=G('a-fade',4.7,T(n?(P.yy[0]+P.a[1])/2:(P.yy[0]+P.a[1])/2,y-26,n?'never transcribed':'never transcribed','note mid f12'));
   const gy=my+(n?66:74);
   s+=G('a-fade',5.0,T(n?180:320,gy,n?'Early stop → long bare stretch → strong polarity':'Early stop → long bare stretch → strong polarity','lab mid')+T(n?180:320,gy+20,n?'Late stop → short stretch → weak polarity':'Stop near the 3′ end → little bare RNA → weak polarity','note mid'));
@@ -374,11 +377,11 @@ function scInsert(n){
   const y=n?70:80, L=lacMap(n,y,{dim:{1:true,2:true}}), P=L.P;
   let s=G('a-fade',0,L.s);
   const ix=P.z[0]+(P.z[1]-P.z[0])*.45, iw=n?50:76;
-  s+=G('a-drop',.4,`<rect x="${ix-iw/2}" y="${y-30}" width="${iw}" height="22" rx="3" fill="url(#hatch)" stroke="${INK}"/>`+termIcon(ix+iw/2-10,y-8,.9)+T(ix-4,y-38,n?'insertion':'transposon or cassette','note mid f12')+`<path d="M${ix} ${y-8} V${y-2}" stroke="${STOPC}" stroke-width="2"/>`);
+  s+=G('a-drop',.4,`<rect x="${ix-iw/2}" y="${y-17}" width="${iw}" height="34" rx="2" fill="${PAPER}" stroke="none"/><rect x="${ix-iw/2}" y="${y-17}" width="${iw}" height="34" rx="2" fill="url(#hatch)" stroke="${INK}"/>`+termIcon(ix+iw/2-10,y-17,.9)+T(ix-4,y-36,n?'insertion in lacZ':'transposon or cassette, inserted in lacZ','note mid f12'));
   const my=y+(n?60:70);
   s+=G('a-fade',.9,wave(P.p+16,ix+iw/2-14,my)+T(P.p+12,my+4,'5′','mono end f11'));
   s+=G('a-out',1.5,rnap(ix+iw/2-2,my+2,n?.8:1,false),'--dx:20px;--dy:-24px');
-  s+=G('a-fade',2.0,T(ix+iw/2+(n?34:40),my+6,n?'terminator':'insert’s own terminator','note start f12'));
+  s+=G('a-fade',2.0,T(ix+iw/2+(n?34:40),my+6,n?'stops at its terminator':'transcript stops at the insert’s terminator','note start f12'));
   const by=my+(n?52:58);
   s+=G('a-fade',2.4,R(n?12:40,by,n?336:560,n?96:84,'card',6)
     +T(n?24:58,by+24,'A caution for knockouts and Tn-seq','cname start')

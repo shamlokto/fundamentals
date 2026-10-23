@@ -518,19 +518,31 @@ function scE1(n){
 }
 
 function scE2(n){
-  let s='';const x=n?20:44, W=n?320:552, y=n?56:62;
-  const strand=(yy,topMe,botMe,lab)=>{let t=eLine(x,W,yy,'#D6CDB8',3.4)+eLine(x,W,yy+14,'#D6CDB8',3.4);
-    [0.2,0.46,0.74].forEach(f=>{
+  /* two strands with 5'/3' ends; GATC sites methylated on both strands, then hemimethylated behind the fork; MutS–MutL–MutH nick the unmethylated new strand */
+  let s='';const x=n?24:52, W=n?268:520, y=n?58:62, F=[.16,.38,.8], fm=.58;
+  const strand=(yy,topMe,botMe,lab,names)=>{let t=eLine(x,W,yy,'#B9AC92',3.4)+eLine(x,W,yy+14,'#B9AC92',3.4)
+      +T(x-6,yy+4,'5′','mono end f12')+T(x-6,yy+18,'3′','mono end f12')+T(x+W+6,yy+4,names?names[0]:'3′','mono start f12')+T(x+W+6,yy+18,names?names[1]:'5′','mono start f12');
+    F.forEach(f=>{
       if(topMe)t+=`<circle cx="${FX(x+f*W)}" cy="${FX(yy-7)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`;
       if(botMe)t+=`<circle cx="${FX(x+f*W)}" cy="${FX(yy+21)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`;});
-    t+=T(x,yy-20,lab,'note start f11');
+    t+=T(x,yy-20,lab,'note start f12');
     return t;};
-  s+=G('a-fade',0,strand(y,true,true,'fully methylated: the steady state'));
-  s+=G('a-fade',.6,strand(y+64,true,false,n?'just after replication: hemimethylated':'just after replication: hemimethylated — old strand marked, new strand not yet')
-    +`<path d="M${FX(x+.46*W)} ${FX(y+64+7)} l0 0" stroke="${PHG}"/>`
-    +`<rect x="${FX(x+.58*W)}" y="${FX(y+64+10)}" width="10" height="9" fill="${PHG}" stroke="${INK}" stroke-width=".6"/>`
-    +Tc(FX(x+.58*W)+22,y+64+18,'a mismatch','#A4473A',10,'mono start','600'));
-  let yy=y+(n?118:122);
+  s+=G('a-fade',0,strand(y,true,true,n?'before replication: GATC methylated on both strands':'before replication: every GATC methylated on both strands (m6A)')
+    +T(FX(x+F[0]*W+8),y-4,'CH₃','note start f12'));
+  const y2=y+(n?78:76);
+  s+=G('a-fade',.6,strand(y2,true,false,n?'after replication: hemimethylated':'just behind the fork: hemimethylated, old strand marked, new strand not yet',['3′ old','5′ new'])
+    +`<rect x="${FX(x+fm*W-5)}" y="${FX(y2+3)}" width="10" height="9" fill="${PHG}" stroke="${INK}" stroke-width=".6"/>`
+    +T(FX(x+fm*W+8),y2-4,n?'G·T':'G·T mismatch','note start f12 halo'));
+  /* repair proteins */
+  const py=y2+40, hx=x+F[1]*W, sx2=x+fm*W;
+  s+=G('a-fade',1.2,blob(FX(sx2),py,n?19:22,11,'#9DB4AE')+Tc(FX(sx2),py+4,'MutS','#3A2E22',12,'mono mid','600')
+    +(n?'':blob(FX((hx+sx2)/2),py,20,10,'#C9BFAB')+Tc(FX((hx+sx2)/2),py+4,'MutL','#3A2E22',12,'mono mid','600'))
+    +blob(FX(hx),py,n?19:22,11,'#E0B84A')+Tc(FX(hx),py+4,'MutH','#3A2E22',12,'mono mid','600')
+    +ln(sx2,py-11,sx2,y2+16,INK,.8)+ln(hx,py-11,hx,y2+18,INK,.8));
+  s+=G('a-fade',1.7,`<path d="M${FX(hx)} ${y2+7} V${y2+22}" stroke="${PHG}" stroke-width="2.4"/>`
+    +`<path d="M${FX(hx+3)} ${y2+14} H${FX(sx2+8)}" stroke="${PHG}" stroke-width="3.4" stroke-dasharray="4 3"/>`
+    +para(x,py+(n?30:32),'MutH nicks the unmethylated new strand at the nearest GATC (red tick); the stretch from the nick to the mismatch (dashed) is removed and resynthesised on the methylated template.',n?52:92,'note start f12',15,1.7).s);
+  let yy=y2+(n?134:116);
   const rows=[['Mismatch repair','which strand is wrong','MutS finds the mismatch, MutH cuts the unmethylated strand at the nearest GATC. Only the new strand is cut, so the old sequence is used as the template for repair. Without Dam the system cannot tell the strands apart and repairs at random.'],
    ['Initiation of replication','when to fire oriC again','The origin is full of GATC sites and stays hemimethylated for about a third of a generation, bound by SeqA, which prevents immediate re-initiation. Methylation timing is the refractory period.'],
    ['Gene expression','a timed switch at a promoter','A regulator that binds only unmethylated DNA competes with Dam for the site. Which wins depends on whether the regulator is present when the fork passes, which is how the pap pilus operon of uropathogenic E. coli sets a heritable on or off state.'],
@@ -556,48 +568,41 @@ function scE3(n){
 /* ===================== Part II · switching ===================== */
 function scE4(n){
   let s='';const x=n?18:40, W=n?326:566, y=n?58:64;
-  /* slipped strand mispairing */
+  /* four panels: each shows the DNA, the gene it controls, and the ON and OFF states */
   s+=G('a-fade',0,T(n?16:24,28,'Four ways to switch a gene on and off, reversibly','cname start '+(n?'f13':'f14')));
-  const rep=(yy,k,lab)=>{let t=eLine(x,W*.46,yy,'#D6CDB8',5);
-    for(let i=0;i<k;i++)t+=`<rect x="${FX(x+14+i*13)}" y="${FX(yy-6)}" width="10" height="12" rx="2" fill="${TNC}" fill-opacity=".75" stroke="${INK}" stroke-width=".5"/>`;
-    t+=Tc(x+14+k*13+8,yy+4,lab,'#6A5B47',10,'mono start');
-    return t;};
-  s+=G('a-fade',.3,rep(y,7,'7 repeats: in frame, ON')+rep(y+34,6,'6 repeats: frameshift, OFF'));
-  s+=G('a-fade',.8,T(x,y-16,'slipped-strand mispairing in a short repeat tract','note start f11'));
-  /* inversion */
-  const iy=y+(n?96:92);
-  const inv=(yy,dir)=>eLine(x,W*.46,yy,'#D6CDB8',5)
-    +`<path d="M${FX(x+30)} ${FX(yy-7)} l9 7 l-9 7 z" fill="${INTC}" stroke="${INK}" stroke-width=".6"/>`
-    +`<path d="M${FX(x+W*.40)} ${FX(yy-7)} l-9 7 l9 7 z" fill="${INTC}" stroke="${INK}" stroke-width=".6"/>`
-    +(dir>0?gArrow(x+46,yy,W*.06,'P',METC,{h:14,fs:9})
-      :`<path d="M${FX(x+W*.34+W*.06)} ${FX(yy-7)} h${FX(-(W*.06-7))} l-7 7 l7 7 h${FX(W*.06-7)}z" fill="${METC}" stroke="${INK}" stroke-width=".8"/>`+Tc(FX(x+W*.34+7+(W*.06-7)/2),FX(yy+4),'P','#3A2E22',9,'mono mid','600'))
-    +Tc(x+W*.46+(n?8:4),yy+4,dir>0?'ON':'OFF','#6A5B47',10,'mono start');
-  s+=G('a-fade',1.2,inv(iy,1)+inv(iy+34,-1)+T(x,iy-16,'site-specific inversion of a promoter','note start f11'));
-  /* right column in wide: methylation and cassettes */
-  const x2=n?x:x+W*.52, by=n?iy+78:y;
-  if(!n){
-    s+=G('a-fade',1.6,eLine(x2,W*.46,y,'#D6CDB8',5)
-      +[0.2,0.5,0.8].map(f=>`<circle cx="${FX(x2+f*W*.46)}" cy="${FX(y-9)}" r="4.5" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`).join('')
-      +eLine(x2,W*.46,y+34,'#D6CDB8',5)
-      +T(x2,y-16,'methylation blocks or permits a regulator','note start f11')
-      +Tc(x2,y+50,'unmethylated: the regulator binds','#6A5B47',10,'mono start'));
-    s+=G('a-fade',2,eLine(x2,W*.46,iy,'#D6CDB8',5)
-      +gArrow(x2+6,iy,W*.16,'expressed',PHG,{h:14,fs:9})
-      +[0,1,2].map(i=>`<rect x="${FX(x2+W*.20+i*W*.085)}" y="${FX(iy-6)}" width="${FX(W*.07)}" height="12" fill="${CLOUD}" stroke="${INK}" stroke-width=".5"/>`).join('')
-      +T(x2,iy-16,'recombination from silent cassettes','note start f11')
-      +Tc(x2,iy+28,'silent copies supply new sequence','#6A5B47',10,'mono start'));
-    var yy=iy+56;
-  } else {
-    s+=G('a-fade',1.6,eLine(x,W*.46,by,'#D6CDB8',5)
-      +[0.2,0.5,0.8].map(f=>`<circle cx="${FX(x+f*W*.46)}" cy="${FX(by-9)}" r="4.5" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`).join('')
-      +T(x,by-18,'methylation blocks a regulator','note start f11'));
-    s+=G('a-fade',2,eLine(x,W*.46,by+40,'#D6CDB8',5)
-      +gArrow(x+6,by+40,W*.16,'expressed',PHG,{h:14,fs:9})
-      +[0,1,2].map(i=>`<rect x="${FX(x+W*.20+i*W*.085)}" y="${FX(by+34)}" width="${FX(W*.07)}" height="12" fill="${CLOUD}" stroke="${INK}" stroke-width=".5"/>`).join('')
-      +T(x,by+22,'recombination from silent cassettes','note start f11'));
-    var yy=by+64;
-  }
-  const b=bullets(n?24:30,yy+8,[['All four are reversible and heritable','That is what distinguishes phase variation from mutation in the ordinary sense. The switch happens at a measurable rate — often between 10⁻² and 10⁻⁵ per cell per generation, far above the point mutation rate — and switches back at a comparable rate.'],
+  const pw=n?320:274, PH=n?112:116, pos=k=>n?[20,58+k*PH]:[[40,64],[346,64],[40,64+PH],[346,64+PH]][k];
+  const dna=(x,yy,w)=>eLine(x,w,yy,'#D6CDB8',5);
+  const lab=(x,yy,t,c)=>T(x,yy,t,'note start f12'+(c?' acc':''));
+  const panel=(k,inner,title,d)=>{const [px,py]=pos(k);s+=G('a-fade',d,T(px,py-14,title,'note start f12')+inner(px,py));};
+  /* 1 slipped-strand mispairing: repeats inside the start of the reading frame */
+  panel(0,(px,py)=>{let t='';[[7,'7 repeats: in frame, ON',py+8],[6,'6 repeats: frameshift, OFF',py+44]].forEach(([k,l,yy])=>{
+      t+=dna(px,yy,pw*.62)+gArrow(px+8,yy,pw*.58,'',k===7?'#A9C4DC':'#E3DCCD',{h:16});
+      for(let i=0;i<k;i++)t+=`<rect x="${FX(px+14+i*11)}" y="${FX(yy-5)}" width="8" height="10" rx="2" fill="${TNC}" stroke="${INK}" stroke-width=".5"/>`;
+      if(k===6)t+=`<path d="M${FX(px+pw*.38)} ${yy-9} l10 18 M${FX(px+pw*.38+10)} ${yy-9} l-10 18" stroke="${PHG}" stroke-width="1.6"/>`;
+      t+=lab(px+pw*.62+8,yy+4,l,k===7);});
+    return t+T(px,py+72,n?'slippage at replication adds or removes a repeat':'slippage adds or removes a repeat','note start f12');},'slipped-strand mispairing in a repeat tract',.3);
+  /* 2 inversion of an element carrying the promoter, flanked by inverted repeats; gene outside */
+  panel(1,(px,py)=>{let t='';[[1,py+8],[-1,py+44]].forEach(([dir,yy])=>{const i1=px+4, i2=px+pw*.40;
+      t+=dna(px,yy,pw*.72)+`<path d="M${FX(i1)} ${yy-7} l9 7 l-9 7 z" fill="${INTC}" stroke="${INK}" stroke-width=".6"/><path d="M${FX(i2)} ${yy-7} l-9 7 l9 7 z" fill="${INTC}" stroke="${INK}" stroke-width=".6"/>`
+        +(dir>0?gArrow(px+pw*.14,yy,pw*.18,'P',METC,{h:16,fs:12}):`<path d="M${FX(px+pw*.32)} ${yy-8} h${FX(-(pw*.18-7))} l-7 8 l7 8 h${FX(pw*.18-7)}z" fill="${METC}" stroke="${INK}" stroke-width=".8"/>`+Tc(FX(px+pw*.23+3),yy+4,'P','#3A2E22',12,'mono mid','600'))
+        +gArrow(px+pw*.44,yy,pw*.26,'fimA',dir>0?'#A9C4DC':'#E3DCCD',{h:16,fs:12})+lab(px+pw*.72+8,yy+4,dir>0?'ON':'OFF',dir>0);});
+    return t+T(px,py+72,n?'a recombinase flips the promoter segment':'a recombinase flips the segment','note start f12');},'site-specific inversion (fim switch)',.8);
+  /* 3 methylation: a regulator that binds only unmethylated DNA competes with Dam for the same GATC sites */
+  panel(2,(px,py)=>{let t='';const sx=px+pw*.18;
+    [[true,py+8],[false,py+44]].forEach(([me,yy])=>{t+=dna(px,yy,pw*.62)+`<rect x="${FX(sx-14)}" y="${yy-6}" width="28" height="12" rx="2" fill="#EFE6D2" stroke="${INK}" stroke-width=".6"/>`
+        +gArrow(px+pw*.32,yy,pw*.28,'pap',me?'#E3DCCD':'#A9C4DC',{h:16,fs:12});
+      if(me)t+=`<circle cx="${FX(sx-6)}" cy="${yy-11}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/><circle cx="${FX(sx+6)}" cy="${yy-11}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`;
+      else t+=blob(FX(sx),yy-13,16,8,RECC)+Tc(FX(sx),yy-10,'Lrp','#3A2E22',12,'mono mid','600');
+      t+=lab(px+pw*.62+8,yy+4,me?(n?'methylated: no Lrp':'GATC methylated: Lrp excluded'):'unmethylated: Lrp bound',!me);});
+    return t+T(px,py+72,'whoever reaches the site after the fork wins','note start f12');},'methylation-dependent switching (pap)',1.3);
+  /* 4 gene conversion from silent cassettes */
+  panel(3,(px,py)=>{let t=dna(px,py+30,pw*.9)+gArrow(px+4,py+30,pw*.3,'pilE',PHG,{h:16,fs:12});
+    [0,1,2].forEach(i=>t+=`<rect x="${FX(px+pw*.4+i*pw*.17)}" y="${py+24}" width="${FX(pw*.13)}" height="12" fill="${CLOUD}" stroke="${INK}" stroke-width=".5"/>`);
+    t+=`<path d="M${FX(px+pw*.4+pw*.17+pw*.065)} ${py+20} Q${FX(px+pw*.36)} ${py-4} ${FX(px+pw*.2)} ${py+18}" stroke="#2F5276" stroke-width="1.4" fill="none" marker-end="url(#ahb)"/>`
+      +T(FX(px+pw*.4),py+56,'silent pilS copies','note start f12')+T(px,py+72,'a segment is copied into the expressed gene','note start f12');
+    return t;},'recombination from silent cassettes',1.8);
+  var yy=n?58+4*PH-10:64+2*PH-6;
+  const b=bullets(n?24:30,yy+8,[['All four are reversible and heritable','That is what distinguishes phase variation from mutation in the ordinary sense. The switch happens at a measurable rate — often between 1 in 100 and 1 in 100,000 per cell per generation, far above the point mutation rate — and switches back at a comparable rate.'],
    ['The rate is encoded, and it is selected','Longer repeat tracts slip more often, so tract length sets the switching rate and can itself evolve. Loci with this architecture are called contingency loci: the genome has evolved to be unstable at particular sites.'],
    ['Surface and defence genes, almost always','Capsule, pili, adhesins, lipopolysaccharide modification, restriction systems. These are the things an immune system or a phage learns to recognise, and a population that varies them cannot be recognised all at once.'],
    ['Not an adaptive response','The switching is blind and continuous; selection then acts on whichever state fits. A population arriving in a new environment already contains both, which is why phase variation works faster than any sensing system could.']],n?44:88,{d0:2.4,gap:24});
@@ -645,13 +650,22 @@ function scE6(n){
 /* ===================== Part III · heterogeneity ===================== */
 function scE7(n){
   let s='';const y=n?48:54;
-  const P=n?xyPlot(48,y,276,120,[0,10],[0,10],{xlab:'input signal',ylab:'expression',xdy:24,ydx:16})
-          :xyPlot(70,y,280,140,[0,10],[0,10],{xlab:'input signal',ylab:'expression of the target',xdy:24,ydx:18});
+  /* steady states of a self-activating regulator: dx/dt = s + 6.5·x⁸/(5⁸+x⁸) − x. Plotted as expression against input s:
+     two stable branches (solid) joined by an unstable one (dashed); the switch-on and switch-off thresholds differ (hysteresis) */
+  const P=n?xyPlot(48,y,276,130,[0,6],[0,13],{xlab:'input signal',ylab:'expression',xdy:24,ydx:16})
+          :xyPlot(70,y,300,150,[0,6],[0,13],{xlab:'input signal',ylab:'expression of the target',xdy:24,ydx:18});
   s+=G('a-fade',0,P.s);
-  const hill=(k,nn)=>t=>9.6*Math.pow(t,nn)/(Math.pow(k,nn)+Math.pow(t,nn));
-  s+=G('a-fade',.4,xyCurve(P,hill(5,1),{col:CLOUD,n:140,dash:'6 4'}));
-  s+=G('a-fade',.9,xyCurve(P,hill(5,8),{col:CORE,n:200}));
-  s+=G('a-fade',1.3,keyRow(n?22:P.x+6,P.y+P.h+(n?44:46),[['no cooperativity: graded',CLOUD],['strong feedback: switch-like',CORE]],{rh:16,fs:'f11'}));
+  const sg=x=>x-6.5*Math.pow(x,8)/(Math.pow(5,8)+Math.pow(x,8));
+  const br=(a,b)=>{const pts=[];for(let i=0;i<=120;i++){const x=a+(b-a)*i/120, v=sg(x);if(v>=0&&v<=6)pts.push([v,x]);}return pts;};
+  const up=3.17, dn=0.68;
+  s+=G('a-fade',.3,`<rect x="${FX(P.px(dn))}" y="${P.y}" width="${FX(P.px(up)-P.px(dn))}" height="${P.h}" fill="${METC}" opacity=".12"/>`
+    +T(FX((P.px(dn)+P.px(up))/2),P.y+12,'bistable','note mid f12'));
+  s+=G('a-fade',.5,xyCurve(P,t=>9.6*t/(2+t)*1.1,{col:CLOUD,n:140,dash:'6 4'}));
+  s+=G('a-fade',.9,xyLine(P,br(0,3.66),{col:CORE})+xyLine(P,br(6.27,12.6),{col:CORE})+xyLine(P,br(3.66,6.27),{col:CORE,w:1.4,dash:'3 3'}));
+  s+=G('a-fade',1.3,arw(FX(P.px(up)),FX(P.py(3.9)),FX(P.px(up)),FX(P.py(11.6)),{red:1})
+    +arw(FX(P.px(dn)),FX(P.py(6.6)),FX(P.px(dn)),FX(P.py(.9)),{red:1})
+    +T(FX(P.px(up)+6),FX(P.py(7.6)),'switches on','note start f12 halo')+T(FX(P.px(dn)+6),FX(P.py(3.2)),n?'off':'switches off','note start f12 halo'));
+  s+=G('a-fade',1.5,keyRow(n?22:P.x+6,P.y+P.h+(n?44:46),[['graded response, no feedback',CLOUD],['positive feedback: two stable states (dashed: unstable)',CORE]],{rh:16,fs:'f12'}));
   let yy=P.y+P.h+(n?92:94);
   const b=bullets(n?24:30,yy,[['Bistability needs feedback and nonlinearity','A regulator that activates its own promoter, with a response steeper than linear, gives a system with two stable states and an unstable one between them. Individual cells sit in one or the other, and noise occasionally pushes a cell across. The population is bimodal; the average is a value no cell actually has.'],
    ['Hysteresis is the test','If the state depends on the history of the signal — cells stay on as the signal falls below the level that turned them on — the circuit is genuinely bistable rather than simply steep. Measuring hysteresis requires single cells and a controlled signal, which is why microfluidics mattered here.'],

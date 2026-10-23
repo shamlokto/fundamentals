@@ -662,8 +662,11 @@ function scM2(n){
   const items=[['covalent C–C bond',350,'#A4473A','~350'],['salt bridge, buried',20,PAL.gold,'10–30'],['hydrogen bond',15,PAL.blue,'5–30'],['salt bridge in water',5,PAL.gold,'~5'],['hydrophobic effect, per CH₂',3,PAL.green,'~3'],['van der Waals contact',2,PAL.green,'0.5–4'],['thermal energy, RT',2.5,'#C9BFAB','2.5']];
   const top=para(n?16:24,30,'Bond energies in kJ/mol (log scale). Only covalent bonds are much stronger than thermal jostling; everything that shapes a macromolecule is within a factor of ten of RT.',n?50:92,'lab start f13',17,0);
   const h=hbars(n,n?10:30,top.y+14,n?340:560,items.map(i=>[i[0],Math.log10(i[1]*10),i[2],i[3]]),{max:Math.log10(3500),lw:n?150:190});
+  const bx=(n?10:30)+(n?150:190), bw=(n?340:560)-(n?150:190)-46, ay=h.y+2, tx=v=>FX(bx+bw*Math.log10(v*10)/Math.log10(3500));
+  const ax=G('a-fade',.9,ln(bx,ay,bx+bw,ay,'#6A5B47',1)+[0.1,1,10,100].map(v=>ln(tx(v),ay,tx(v),ay+4,'#6A5B47',1)+T(tx(v),ay+17,String(v),'mono mid f12')).join('')+T(bx+bw/2,ay+33,'kJ/mol, log scale','note mid f12'));
+  h.y+=40;
   const p=para(n?16:24,h.y+12,'The hydrophobic effect is not an attraction between oily groups but the cost of ordering water around them. Burying non-polar side chains releases that water, which is why folding is driven mostly by entropy, and why proteins cold-denature as well as heat-denature.',n?50:92,'note start f13',17,1);
-  return {vb:n?slim(p.y+6):wide(p.y+8),s:top.s+h.s+p.s};
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:top.s+h.s+ax+p.s};
 }
 function scM3(n){
   const cx=n?190:190, top=50, w=n?140:150, h=n?180:200;
@@ -687,7 +690,9 @@ function scM5(n){
   const pairs=[['A','T',2],['G','C',3],['T','A',2],['C','G',3]];
   pairs.forEach((p,i)=>{const x=x0+i*dx;s+=G('a-fade',(i*.2).toFixed(1),Tc(x,y,p[0],NB[p[0]]||'#3A2E22',16,'mono mid','600')+Tc(x,y+70,p[1],NB[p[1]]||'#3A2E22',16,'mono mid','600')
     +[...Array(p[2])].map((_,k)=>ln(x-8+k*(16/(p[2]-1)),y+10,x-8+k*(16/(p[2]-1)),y+52,'#2F5276',1.4,'3 3')).join(''));});
-  s+=G('a-fade',.9,T(x0-20,y+4,'5′','mono end f11')+T(x0-20,y+74,'3′','mono end f11')+T(x0+(pairs.length-1)*dx/2,y+100,'2 or 3 hydrogen bonds per pair','note mid f11'));
+  const xe=x0+(pairs.length-1)*dx;
+  s+=G('a-fade',.7,ln(x0-12,y-20,xe+12,y-20,DNAC,2.4)+ln(x0-12,y+80,xe+12,y+80,DNAC,2.4)+T(xe+20,y+4,'3′','mono start f12')+T(xe+20,y+74,'5′','mono start f12'));
+  s+=G('a-fade',.9,T(x0-20,y+4,'5′','mono end f12')+T(x0-20,y+74,'3′','mono end f12')+T(x0+(pairs.length-1)*dx/2,y+100,'2 or 3 hydrogen bonds per pair','note mid f11'));
   const b=n?bullets(24,y+140,[['Stacking holds the helix','Flat bases stack like coins; stacking contributes more to stability than the hydrogen bonds do.'],['GC content raises Tm','G–C pairs stack more strongly. Melting temperature rises with GC content and salt.'],['RNA adds G·U','RNA folds back on itself and accepts G·U wobble pairs, giving hairpins and complex structures.'],['B-DNA','About 10.5 bp per turn, 0.34 nm per pair, 2 nm wide, with major and minor grooves.']],44,{d0:1,gap:22})
     :bullets(330,52,[['Stacking holds the helix','Flat bases stack like coins; stacking contributes more to stability than the hydrogen bonds, which mainly give specificity.'],['GC content raises Tm','G–C pairs stack more strongly, so melting temperature rises with GC content and with salt, which screens the phosphates.'],['RNA adds G·U','RNA folds back on itself and accepts G·U wobble pairs, giving hairpins, pseudoknots and catalytic structures.'],['B-DNA','About 10.5 bp per turn, 0.34 nm per pair and 2 nm wide, with major and minor grooves that proteins read.']],38,{d0:1,gap:22});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,y+120)),s:s+b.s};

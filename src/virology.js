@@ -79,7 +79,7 @@ function scV6(n){
   let s=A.s;
   s+=G('a-fade',.3,pts.map(p=>`<circle cx="${FX(A.px(p[0]))}" cy="${FX(A.py(p[1]))}" r="4.5" fill="${PAL.rose}" stroke="${INK}" stroke-width="1"/>`).join('')
     +curve(A,x=>-9+(x-2)*(6/8),{col:'#2F5276',dash:'5 4'}));
-  if(!n){const short=['herpes','HIV','influenza'];s+=G('a-fade',.5,pts.map((p,i)=>T(FX(A.px(p[0])),FX(A.py(p[1])+15),short[i],'note mid f10 halo')).join(''));}
+  {const short=['herpes','HIV','influenza'],dx=[9,-9,-9],dy=[4,-7,17],an=['start','end','end'];s+=G('a-fade',.5,pts.map((p,i)=>T(FX(A.px(p[0])+dx[i]),FX(A.py(p[1])+dy[i]),short[i],'note '+an[i]+' f12 halo')).join(''));}
   const b=bullets(n?24:400,n?A.y+A.h+54:52,[
     ['Quasispecies','An RNA virus does not exist as one sequence but as a swarm of related mutants around a consensus. Selection acts on the swarm, which is why resistance to a single drug appears so fast.'],
     ['Error catastrophe','The rate is near the limit: push it higher with a mutagenic drug such as molnupiravir and the population collapses under its own errors.'],
@@ -88,14 +88,45 @@ function scV6(n){
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,A.y+A.h+50)),s:s+b.s};
 }
 function scV7(n){
-  const N=n?{h3:{x:95,y:40,w:150,t:'human H2N2',f:PAL.blue},av:{x:265,y:40,w:150,t:'avian H3 virus',f:PAL.green},
-     co:{x:180,y:150,w:200,t:'co-infected pig or bird',f:PAL.gold},nw:{x:180,y:250,w:220,t:'new reassortant|(1968 H3N2)',f:PAL.rose}}
-   :{h3:{x:150,y:60,w:150,t:'human H2N2',f:PAL.blue},av:{x:150,y:150,w:150,t:'avian H3 virus',f:PAL.green},
-     co:{x:360,y:105,w:160,t:'co-infected host',f:PAL.gold},nw:{x:560,y:105,w:150,t:'new reassortant|(1968 H3N2)',f:PAL.rose}};
-  const E=n?[['h3','co','',{side:1}],['av','co','',{side:-1}],['co','nw','segments mixed']]
-    :[['h3','co','',{side:-1}],['av','co','',{side:1}],['co','nw','segments mixed']];
-  let s=G('a-fade',0,flow(N,E));
-  const b=bullets(n?24:30,n?330:230,[
+  // eight influenza A segments, longest first (nt): PB2 2341, PB1 2341, PA 2233, HA 1778, NP 1565, NA 1413, M 1027, NS 890
+  const SEG=[['PB2',2341],['PB1',2341],['PA',2233],['HA',1778],['NP',1565],['NA',1413],['M',1027],['NS',890]];
+  const k=n?.03:.034, dy=n?15:17;
+  const genome=(x,y0,cols)=>SEG.map((g,i)=>`<rect x="${x}" y="${FX(y0+i*dy-5)}" width="${FX(g[1]*k)}" height="9" rx="3" fill="${cols[i]}" stroke="${INK}" stroke-width=".8" class="tint"/>`).join('');
+  const HU=SEG.map(()=>PAL.blue), AV=SEG.map(()=>PAL.green), RE=SEG.map((g,i)=>(i===1||i===3)?PAL.green:PAL.blue);
+  let s='';
+  if(!n){
+    const y0=74;
+    s+=G('a-fade',0,SEG.map((g,i)=>T(60,y0+i*dy+4,g[0],'mono end f12')).join('')
+      +T(106,y0-20,'human H2N2','lab mid f13')+genome(66,y0,HU)
+      +T(212,y0-20,'avian virus (H3)','lab mid f13')+genome(172,y0,AV));
+    s+=G('a-fade',.3,arw(258,y0+60,292,y0+60)+blob(346,y0+60,50,62,PAL.sand)
+      +T(346,y0+52,'co-infected','lab mid f12')+T(346,y0+68,'cell','lab mid f12')+arw(400,y0+60,432,y0+60));
+    s+=G('a-fade',.6,T(480,y0-20,'1968 pandemic H3N2','lab mid f13')+genome(440,y0,RE)
+      +SEG.map((g,i)=>(i===1||i===3)?Tc(528,y0+i*dy+4,g[0]+' from bird',GREEN,12,'mono start','600'):T(528,y0+i*dy+4,g[0],'mono start f12')).join(''));
+    const yd=228;
+    s+=G('a-fade',.9,T(30,yd,'Drift, by contrast: point mutations (red) build up in HA year after year','note start f13')
+      +[0,1,2].map(c=>{const x=60+c*180;return T(x-6,yd+28,['year 1','year 4','year 8'][c],'note end f12')
+        +`<rect x="${x}" y="${yd+18}" width="${FX(1778*k)}" height="9" rx="3" fill="${PAL.blue}" stroke="${INK}" stroke-width=".8" class="tint"/>`
+        +[12,30,44,22,50].slice(0,c*2).map(m=>`<rect x="${x+m}" y="${yd+17}" width="2.4" height="11" fill="${RED}"/>`).join('')
+        +T(x+64,yd+27,'HA','mono start f12');}).join(''));
+  } else {
+    const y0=66;
+    s+=G('a-fade',0,SEG.map((g,i)=>T(40,y0+i*dy+4,g[0],'mono end f12')).join('')
+      +T(81,y0-20,'human H2N2','lab mid f12')+genome(46,y0,HU)
+      +T(240,y0-20,'avian virus (H3)','lab mid f12')+genome(205,y0,AV));
+    const yc=y0+8*dy+34;
+    s+=G('a-fade',.3,arw(81,y0+8*dy,150,yc-8)+arw(240,y0+8*dy,210,yc-8)+blob(180,yc+10,74,22,PAL.sand)+T(180,yc+15,'co-infected cell','lab mid f12')
+      +arw(180,yc+33,180,yc+58));
+    const yr=yc+90;
+    s+=G('a-fade',.6,T(180,yr-20,'1968 pandemic H3N2','lab mid f12')+SEG.map((g,i)=>T(116,yr+i*dy+4,g[0],'mono end f12')).join('')+genome(122,yr,RE)
+      +[1,3].map(i=>Tc(196,yr+i*dy+4,'from bird',GREEN,12,'mono start','600')).join(''));
+    var ydN=yr+8*dy+26;
+    s+=G('a-fade',.9,T(16,ydN,'Drift: point mutations (red) build up in HA','note start f13')
+      +[0,1,2].map(c=>{const y=ydN+20+c*18,x=96;return T(86,y+4,['year 1','year 4','year 8'][c],'note end f12')
+        +`<rect x="${x}" y="${y-5}" width="${FX(1778*k)}" height="9" rx="3" fill="${PAL.blue}" stroke="${INK}" stroke-width=".8" class="tint"/>`
+        +[10,26,38,18,46].slice(0,c*2).map(m=>`<rect x="${x+m}" y="${y-6}" width="2.4" height="11" fill="${RED}"/>`).join('');}).join(''));
+  }
+  const b=bullets(n?24:30,n?ydN+92:290,[
     ['Drift: small, steady change','Point mutations in the surface proteins haemagglutinin and neuraminidase slowly change them until last year’s antibodies no longer fit. This is why the flu vaccine is reformulated every year.'],
     ['Shift: a sudden swap','When two influenza strains infect one cell, their segments reassort and a surface protein the population has never seen can appear at once. Such antigenic shifts caused the 1957, 1968 and 2009 pandemics.'],
     ['Why influenza is special','Only segmented viruses reassort this way. It makes influenza uniquely prone to pandemics. Wild birds are the reservoir and pigs, which can catch both bird and human strains, are the classic mixing vessel. In 1968 a human H2N2 virus picked up avian H3 and PB1 segments to become pandemic H3N2.']],
@@ -105,7 +136,7 @@ function scV7(n){
 function scV8(n){
   const rows=[
    ['HIV-1','chimpanzee SIV','bushmeat contact, c. 1920s','adapted fully to humans'],
-   ['SARS-CoV-1','bats via civets','live-animal markets, 2002','contained, ~8000 cases'],
+   ['SARS-CoV-1','bats via civets','live-animal markets, 2002','contained, about 8000 cases'],
    ['SARS-CoV-2','bats (intermediate debated)','2019','pandemic, now endemic'],
    ['MERS-CoV','bats via camels','2012','camel contact, limited spread'],
    ['Nipah','fruit bats via pigs/date palm sap','1998 onward','high fatality, little human spread'],

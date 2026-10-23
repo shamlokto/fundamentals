@@ -601,7 +601,7 @@ function scG7(n){
   const ry=my+h+(n?112:118);
   s+=G('a-fade',2.2,`<path d="M${X[4]} ${my+h+(n?98:104)} V${ry} H${X[0]-(n?9:14)} V${my+h+6} H${X[0]-7}" stroke="#6A5B47" stroke-width="1.3" fill="none" stroke-dasharray="4 3" marker-end="url(#ahp)"/>`
     +T((X[0]+X[4])/2,ry+14,n?'phosphatase, then flipped back: Und-P again':'a phosphatase removes one phosphate and the carrier flips back: Und-P again, ready for the next round','note mid '+(n?'f10':'f11'))
-    +Tc((X[1]+X[2])/2,ry-6,'⊣ bacitracin','#A4473A',n?10:11,'mono mid','600'));
+    +Tc((X[1]+X[2])/2,ry-6,'bacitracin ⊣ this step','#A4473A',n?10:11,'mono mid','600'));
   const y=ry+(n?34:36);
   const b=bullets(n?20:30,y,[['One lipid, many jobs','Undecaprenyl phosphate, a C55 isoprenoid, carries sugars across the membrane for peptidoglycan, capsule, O-antigen and wall teichoic acids alike — so these pathways all draw on one small shared pool.'],
    ['The cycle','A phosphoglycosyltransferase loads the first sugar-phosphate, giving Und-PP-sugar; GTs extend it; a flippase moves it out; the polymer is built; and the spent Und-PP is dephosphorylated and returned.'],
@@ -618,7 +618,8 @@ function scG8(n){
     if(i===0)d+=`<rect x="${cx-44}" y="${my-6}" width="16" height="34" rx="4" fill="${E2}" stroke="${INK}"/><rect x="${cx+24}" y="${my-6}" width="20" height="34" rx="4" fill="${E5}" stroke="${INK}"/>`
       +[0,1,2].map(j=>snfg(['Glc','Rha','GlcA'][j],cx-62,my+32+j*13,5)).join('')+[0,1,2,3,4,5].map(j=>snfg(['Glc','Rha','GlcA','Glc','Rha','GlcA'][j],cx+34,my-14-j*12,5)).join('')+Tc(cx-36,my+15,'Wzx','#3A2E22',8,'mono mid')+Tc(cx+34,my+15,'Wzy','#3A2E22',8,'mono mid');
     if(i===1)d+=`<rect x="${cx-14}" y="${my-6}" width="28" height="34" rx="4" fill="${E4}" stroke="${INK}"/>`+[0,1,2,3,4].map(j=>snfg('Man',cx,my-14-j*12,5)).join('')+Tc(cx,my+15,'ABC',"#3A2E22",8,'mono mid');
-    if(i===2)d+=`<rect x="${cx-16}" y="${my-6}" width="32" height="34" rx="6" fill="${E6}" stroke="${INK}"/>`+[0,1,2,3,4,5].map(j=>snfg(j%2?'GlcA':'Glc',cx,my-14-j*12,5)).join('')+snfg('Glc',cx-34,my+42,5)+snfg('GlcA',cx+34,my+42,5);
+    if(i===2)d+=`<rect x="${cx-16}" y="${my-6}" width="32" height="34" rx="6" fill="${E6}" stroke="${INK}"/>`+[0,1,2,3,4,5].map(j=>snfg(j%2?'GlcA':'Glc',cx,my-14-j*12,5)).join('')+snfg('Glc',cx+16,my+42,5)+snfg('GlcA',cx+42,my+42,5);
+    d+=T(cx-78,my-8,'outside','note start f12')+(i===0?T(cx+78,my+42,'cytoplasm','note end f12'):i===1?T(cx-78,my+42,'cytoplasm','note start f12'):T(cx-78,my+42,'cytoplasm','note start f12'));
     return d;};
   let y;
   if(!n){cols.forEach((c,i)=>{const cx=110+i*210;s+=G('a-fade',(i*.6).toFixed(1),draw(i,cx,98)+T(cx,172,c[0],'cname mid f14')+wrap(c[1],30).map((l,j)=>T(cx,192+j*16,l,'note mid f12')).join('')+wrap(c[2],26).map((l,j)=>T(cx,192+4*16+j*15,l,'mono acc mid f11')).join(''));});y=320;}
@@ -648,7 +649,7 @@ function scG9(n){
 /* shared capsule-assembly picture; block = index of last working step (rest dimmed + X).
    Layers from top: capsule space, wall, gap, membrane, cytoplasm. Chains that grow outward pass through the wall. */
 const RU=['Glc',['Rha',['GlcA']],'Rha'];
-function capsuleScene(n,block){
+function capsuleScene(n,block,short){
   const x1=n?8:20, x2=n?352:620, X=n?[62,126,190,254,318]:[112,216,320,424,528];
   const wy=98, wh=20, my=166, mh=24, lx=n?10:24;
   let s=`<rect x="${x1}" y="${wy}" width="${x2-x1}" height="${wh}" fill="#E3D6B4" opacity=".85"/><path d="M${x1} ${wy+5} H${x2} M${x1} ${wy+15} H${x2}" stroke="#A8916A" stroke-width="1.1"/>`+memb(x1,x2,my,mh);
@@ -658,21 +659,22 @@ function capsuleScene(n,block){
   {const L=undp(X[0],my,mh,'in',2);st.push(L.s+snfg('Glc',X[0],L.end+7,6)+`<rect x="${X[0]+14}" y="${my+1}" width="15" height="22" rx="4" fill="#3E7FA8" fill-opacity=".85" stroke="${INK}"/>`);}
   {const L=undp(X[1],my,mh,'in',2);st.push(L.s+sugarChain(X[1],L.end+7,RU,1,6,13)+`<rect x="${X[1]+22}" y="${my+2}" width="15" height="20" rx="4" fill="#7FA05A" stroke="${INK}"/>`);}
   {const L=undp(X[2],my,mh,'out',2);st.push(`<rect x="${X[2]-30}" y="${my-5}" width="16" height="34" rx="5" fill="#A9C4DC" stroke="${INK}"/>`+L.s+sugarChain(X[2],L.end-7,RU,-1,6,13));}
-  {const L=undp(X[3],my,mh,'out',2);st.push(`<rect x="${X[3]+14}" y="${my-5}" width="18" height="34" rx="5" fill="#C99A2E" stroke="${INK}"/>`+L.s+sugarChain(X[3],L.end-7,RU.concat(RU),-1,5.5,13)+`<rect x="${X[3]-32}" y="${my-1}" width="11" height="26" rx="3" fill="#B4766E" stroke="${INK}"/>`);}
+  {const L=undp(X[3],my,mh,'out',2);st.push(`<rect x="${X[3]+14}" y="${my-5}" width="18" height="34" rx="5" fill="#C99A2E" stroke="${INK}"/>`+L.s+sugarChain(X[3],L.end-7,short?RU:RU.concat(RU),-1,5.5,13)+`<rect x="${X[3]-32}" y="${my-1}" width="11" height="26" rx="3" fill="#B4766E" stroke="${INK}"/>`);}
   {st.push(`<rect x="${X[4]+14}" y="${my-5}" width="15" height="34" rx="4" fill="#B4766E" stroke="${INK}"/>`
      +`<path d="M${X[4]+21} ${my-7} V${wy+wh+2}" stroke="#8C5A1E" stroke-width="1.2" stroke-dasharray="3 2" marker-end="url(#ahp)"/>`
-     +`<circle cx="${X[4]}" cy="${wy+4}" r="3" fill="#8C5A1E" stroke="${INK}" stroke-width=".7"/>`+sugarChain(X[4],wy-9,RU.concat(['Glc','Rha']),-1,5.5,13)+glink(X[4],wy+4,X[4],wy-9));}
+     +`<circle cx="${X[4]}" cy="${wy+4}" r="3" fill="#8C5A1E" stroke="${INK}" stroke-width=".7"/>`+sugarChain(X[4],wy-9,short?['Glc','Rha']:RU.concat(['Glc','Rha']),-1,5.5,13)+glink(X[4],wy+4,X[4],wy-9));}
   const names=['CpsE','GTs','Wzx','CpsH',n?'LCP':'CpsA/LCP'], nx=n?[X[0]+18,X[1]+20,X[2]-16,X[3]+22,X[4]+20]:[X[0]+22,X[1]+30,X[2]-22,X[3]+23,X[4]+22], ncol=['#2F5276','#3E6131','#2F5276','#8C5A1E','#8C5A1E'];
-  st.forEach((d,i)=>{const dim=block!==undefined&&i>block;
+  st.forEach((d,i)=>{const dim=block!==undefined&&i>=block;
     s+=G('a-fade',(.3+i*.45).toFixed(1),`<g opacity="${dim?.16:1}">${d}</g>`+Tc(X[i],16+4,String(i+1),'#2F5276',12,'mono mid','600')
-      +`<g opacity="${dim?.3:1}">${Tc(nx[i],my+mh+(n?60:62),names[i],ncol[i],n?9.5:10,'mono mid','600')}</g>`);
-    if(i<4){const adim=block!==undefined&&i>=block;s+=G('a-fade',(.5+i*.45).toFixed(1),`<g opacity="${adim?.16:1}">${arw(X[i]+(n?16:26),16,X[i+1]-(n?16:26),16,{w:1.1})}</g>`);}});
+      +`<g opacity="${dim&&i>block?.3:1}">${Tc(nx[i],my+mh+(n?60:62),names[i],ncol[i],n?9.5:10,'mono mid','600')}</g>`);
+    if(i<4){const adim=block!==undefined&&i>=block-1;s+=G('a-fade',(.5+i*.45).toFixed(1),`<g opacity="${adim?.16:1}">${arw(X[i]+(n?16:26),16,X[i+1]-(n?16:26),16,{w:1.1})}</g>`);}});
   /* step 4 also shows CpsC (membrane) with its kinase partner CpsD beside Wzy */
   s+=G('a-fade',1.9,`<g opacity="${block!==undefined&&3>block?.3:1}">${Tc(X[3]-(n?26:27),my+mh+(n?60:62),'CpsC/D','#8C5A1E',n?9:9.5,'mono mid','600')}</g>`);
   /* point out the capsule on the extracellular side */
-  const cdim=block!==undefined&&block<3;
+  const cdim=block!==undefined&&block<=3;
   s+=G('a-fade',2.4,`<g opacity="${cdim?.3:1}">${T(lx,52,n?'capsule, outside':'capsule, outside the wall','lab start '+(n?'f11':'f12'))+arw(lx+(n?96:150),56,X[3]-14,72,{w:1.2})+(n?'':T(lx,66,'the chain grows out through the peptidoglycan','note start f10'))}</g>`);
-  if(block!==undefined)s+=G('a-fade',.6,mark(X[block]+(n?16:26),16,false,8));
+  if(short)s+=G('a-fade',2.6,Tc((X[3]+X[4])/2,wy-30,'short chains','#A4473A',n?10:12,'mono mid','600'));
+  if(block!==undefined)s+=G('a-fade',.6,mark(X[block]-(n?14:20),16,false,8)+Tc(nx[block],my+mh+(n?74:78),'deleted','#A4473A',n?9.5:11,'mono mid','600'));
   return {s,y:my+mh+(n?72:76)};
 }
 function scG10(n){
@@ -696,7 +698,7 @@ const BRK=[
  {n:'cpsA',b:null,lesson:'Redundancy is the other lesson. A step carried out by a single enzyme is a single point of failure; a step shared by a family of them is not, and the phenotype only appears when you remove enough of the family at once.',t:'Not lethal, and the capsule still ends up on the wall. CpsA is only one of three LCP ligases in the pneumococcus, alongside LytR and Psr, and they are semi-redundant: with cpsA gone the other two attach the polymer, and attachment, polymer length and the fraction bound to peptidoglycan all look normal. It is combinations that hurt — cpsA with psr leaves the cell dependent on lytR, and cpsA with walK is synthetically lethal once capsule is induced (Zik et al., 2026 preprint).'}];
 let brkSel=0;
 function scG11(n){
-  const B=BRK[brkSel], r=capsuleScene(n,B.b===null?undefined:B.b);
+  const B=BRK[brkSel], r=capsuleScene(n,B.b===null?undefined:B.b,B.n==='cpsD');
   const p=para(n?16:24,r.y+18,B.t,n?50:92,'note start f13',17,.8);
   const q=para(n?16:24,p.y+14,B.lesson||'The pattern: a block in the middle of the pathway is worse than making no capsule at all, because it locks up the undecaprenyl carrier the cell needs to build its wall. This is why acapsular revertants arise so readily.',n?50:92,'lab start f13',17,1.2);
   return {vb:n?slim(q.y+6):wide(q.y+8),s:r.s+p.s+q.s};

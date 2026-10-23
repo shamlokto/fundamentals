@@ -667,7 +667,7 @@ function mscArt(m,cx,cy,w){
   const P=[[-.32,-.15,0],[-.05,.18,25],[.22,-.2,-15],[.34,.14,60]];
   const k=mscSel;
   if(k===6)s+=`<rect x="${FX(x+2)}" y="${FX(cy-14)}" width="${w-4}" height="28" fill="#7FD08A" opacity=".18"/>`;
-  P.forEach(([dx,dy,a],i)=>{const px=cx+dx*w, py=cy+dy*h*1.4, L=44, r=8, tr=`transform="rotate(${a} ${FX(px)} ${FX(py)})"`;
+  P.forEach(([dx,dy,a],i)=>{const px=cx+dx*w, py=(k===6&&i%2===0)?cy:cy+dy*h*1.4, L=44, r=8, tr=`transform="rotate(${a} ${FX(px)} ${FX(py)})"`;
     const rr=(o)=>`<rect x="${FX(px-L/2)}" y="${FX(py-r)}" width="${L}" height="${2*r}" rx="${r}" ${o} ${tr}/>`;
     if(k===0)s+=rr(`fill="${m.cell}" opacity=".8" stroke="#3A2E22" stroke-width=".8"`);
     else if(k===1)s+=rr(`fill="none" stroke="#F3EEE2" stroke-width="5" opacity=".7"`)+rr(`fill="#3A2E22" opacity=".85"`);
@@ -677,6 +677,7 @@ function mscArt(m,cx,cy,w){
     else if(k===5)s+=rr(`fill="none" stroke="${m.cell}" stroke-width="2.4"`);
     else s+=rr(Math.abs(py-cy)<16?`fill="${m.cell}" opacity=".85"`:`fill="${m.cell}" opacity=".12"`);
   });
+  if(k===6)s+=arw(x+4,cy,x+26,cy,{w:1.6,col:'#7FD08A'})+Tc(x+8,y+h-8,'side view: sheet from the left, camera above','#E8E2D2',12,'note start');
   return s;}
 function scM1(n){return introPlate(n,{q:'How small a thing can we see, and how do we see it?',
   belief:'A bacterium is about a micrometre across, its ribosomes twenty nanometres and its atoms a tenth of a nanometre. Each step down needs a different trick: light and contrast, then fluorescence and super-resolution, then electrons, crystals and computation.',
@@ -684,7 +685,7 @@ function scM1(n){return introPlate(n,{q:'How small a thing can we see, and how d
   art:(cx,cy)=>{let s=rodCell2(cx,cy-18,120,24,{fill:'#E4E8D4'});
     [[-36,-22],[-10,-12],[18,-26],[40,-14],[-24,-6]].forEach(([dx,dy])=>{s+=`<circle cx="${cx+dx}" cy="${cy+dy}" r="3.2" fill="#BBA27A" stroke="${INK}" stroke-width=".5"/>`;});
     s+=ln(cx-50,cy+30,cx+50,cy+30,INK,2.4)+T(cx,cy+48,'1 µm','mono mid f11');
-    return s+T(cx,cy+66,'a rod cell; dots are ribosome-sized','note mid f11');},artH:150});}
+    return s+T(cx,cy+66,'a rod cell; dots stand for ribosomes (enlarged)','note mid f11');},artH:150});}
 function scM2(n){
   const g=(x,m)=>Math.exp(-((x-m)**2)/(2*.3*.3));
   const mk=(x,y,w,h,sep,tt)=>{const A=axes(x,y,w,h,{xr:[-2,2],yr:[0,1.8],xt:[],yt:[],xlab:'position'});

@@ -19,15 +19,19 @@ function scA3(n){
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scA4(n){
-  const cx=n?180:215, cy=n?180:190, R=n?110:130;
-  const items=[{t:'N₂',w:52},{t:'NH₄⁺',w:60,f:PAL.green},{t:'NO₂⁻',w:60,f:PAL.gold},{t:'NO₃⁻',w:60,f:PAL.gold},{t:'N₂O, NO',w:76,f:PAL.rose}];
-  let s=G('a-fade',0,cycle(cx,cy,R,items,{labs:n?['fixation','nitri-|tation','nitra-|tation','denitri-|fication','denitri-|fication']:['fixation','nitritation','nitratation','denitrification','denitrification'],lr:n?20:24}));
-  const Jx=cx+R*.3, Jy=cy+R*.08;
-  s+=G('a-fade',.6,ln(FX(cx+R*.95-(n?32:34)),FX(cy-R*.31),FX(Jx),FX(Jy),'#2F5276',1.5,'5 3')+ln(FX(cx+R*.59-8),FX(cy+R*.81-14),FX(Jx),FX(Jy),'#2F5276',1.5,'5 3')
-    +arw(FX(Jx),FX(Jy),FX(cx+R*.06),FX(cy-R+16),{blue:1,dash:'5 3',w:1.5})+T(FX(Jx-R*.12),FX(Jy+4),'anammox','note end f11 halo'));
-  const b=n?bullets(24,cy+R+50,[['Fixation','Nitrogenase, N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Oxygen-sensitive.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota), nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both.'],['Denitrification','Nitrate respiration to N₂ via NO and N₂O, a potent greenhouse gas.'],['Anammox','NH₄⁺ + NO₂⁻ → N₂ (Planctomycetes), a major sink of fixed nitrogen in oceans.']],44,{d0:1,gap:18})
-    :bullets(400,48,[['Fixation','Nitrogenase: N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Extremely oxygen-sensitive, protected by heterocysts, respiration or root nodules.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota) then nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both (2015).'],['Denitrification','Nitrate respiration to N₂ through NO and N₂O, a potent greenhouse gas.'],['Anammox','Anaerobic ammonium oxidation, NH₄⁺ + NO₂⁻ → N₂, by Planctomycetes: a major ocean sink of fixed nitrogen.']],32,{d0:1,gap:18});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};
+  const d=n?-18:0, P=(x,y)=>[x+d,y];
+  const N={N2:{x:170+d,y:50,w:70,t:'N₂ (0)'},NH4:{x:322+d,y:170,w:92,t:'NH₄⁺ (−3)',f:PAL.green},NO2:{x:290+d,y:320,w:88,t:'NO₂⁻ (+3)',f:PAL.gold},NO3:{x:90+d,y:320,w:88,t:'NO₃⁻ (+5)',f:PAL.gold},NO:{x:154+d,y:232,w:76,t:'NO (+2)',f:PAL.rose},N2O:{x:90+d,y:132,w:86,t:'N₂O (+1)',f:PAL.rose}};
+  const E=[['N2','NH4',''],['NH4','NO2',''],['NO2','NO3','',{bend:16}],['NO3','NO2','',{bend:16,red:1}],['NO2','NO','',{red:1}],['NO','N2O','',{red:1}],['N2O','N2','',{red:1}]];
+  let s=G('a-fade',0,flow(N,E));
+  const [jx,jy]=P(246,196);
+  s+=G('a-fade',.5,ln(276+d,174,jx,jy,'#2F5276',1.6,'5 3')+ln(282+d,305,jx,jy,'#2F5276',1.6,'5 3')+arw(jx,jy,186+d,66,{blue:1,dash:'5 3',w:1.6})+T(jx-12,jy+10,'anammox','note end f12 halo'));
+  s+=G('a-fade',.8,T(262+d,100,'fixation','note start f12 halo')+(n?T(312+d,240,'nitri-','note start f12 halo')+T(312+d,254,'tation','note start f12 halo'):T(316+d,250,'nitritation','note start f12 halo'))
+    +T(190+d,296,'nitratation','note mid f12 halo')+Tc(190+d,354,'NO₃⁻ → NO₂⁻','#A4473A',12,'note mid')
+    +Tc(58+d,214,'denitri-','#A4473A',12,'note end')+Tc(58+d,228,'fication','#A4473A',12,'note end')+Tc(n?12:20,388,'red: denitrification, NO₃⁻ → NO₂⁻ → NO → N₂O → N₂','#A4473A',12,'note start'));
+  const cy=200, R=170;
+  const b=n?bullets(24,416,[['Fixation','Nitrogenase, N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Oxygen-sensitive.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota), nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both.'],['Denitrification','Nitrate respiration to N₂ via nitrite, NO and N₂O, a potent greenhouse gas.'],['Anammox','NH₄⁺ + NO₂⁻ → N₂ (Planctomycetes), a major sink of fixed nitrogen in oceans.']],44,{d0:1,gap:18})
+    :bullets(400,48,[['Fixation','Nitrogenase: N₂ + 8H⁺ + 8e⁻ + 16 ATP → 2NH₃ + H₂. Extremely oxygen-sensitive, protected by heterocysts, respiration or root nodules.'],['Nitrification','Ammonia oxidisers (Nitrosomonas, Thaumarchaeota) then nitrite oxidisers (Nitrobacter, Nitrospira); comammox Nitrospira do both (2015).'],['Denitrification','Nitrate respiration, step by step: NO₃⁻ → NO₂⁻ → NO → N₂O → N₂. N₂O is a potent greenhouse gas.'],['Anammox','Anaerobic ammonium oxidation, NH₄⁺ + NO₂⁻ → N₂, by Planctomycetes: a major ocean sink of fixed nitrogen.']],32,{d0:1,gap:18});
+  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,400)),s:s+b.s};
 }
 function scA5(n){
   const items=[['Who fixes nitrogen','Only bacteria and archaea: free-living (Azotobacter, Clostridium, cyanobacteria) and symbiotic (Rhizobium in legume nodules, Frankia in alder). Industrial Haber–Bosch now fixes about half as much as all of biology.'],['Nitrogenase','The MoFe protein holds the FeMo-cofactor; the Fe protein delivers electrons from ferredoxin, hydrolysing 2 ATP per electron. Alternative V and Fe-only nitrogenases exist.'],['Protecting it from oxygen','Heterocysts in Anabaena lack photosystem II; Azotobacter respires furiously to keep O₂ low; legume nodules use leghaemoglobin.'],['Assimilation','Ammonia is assimilated by glutamine synthetase and glutamate synthase (GS–GOGAT), tightly controlled by the Ntr system and PII proteins.']];
@@ -36,10 +40,10 @@ function scA5(n){
 }
 function scA6(n){
   const cx=n?180:180, cy=n?170:180, R=n?110:120;
-  const items=[{t:'SO₄²⁻',w:66},{t:'H₂S',w:56,f:PAL.gold},{t:'S⁰',w:50,f:PAL.gold},{t:'S₂O₃²⁻',w:72}];
+  const items=[{t:'SO₄²⁻',w:66},{t:'H₂S',w:56,f:PAL.gold},{t:'S⁰',w:50,f:PAL.gold},{t:'SO₃²⁻',w:66}];
   let s=G('a-fade',0,cycle(cx,cy,R,items,{labs:['dissimilatory|reduction','oxidation','oxidation','oxidation'],lr:n?18:22}));
   const b=n?bullets(24,cy+R+46,[['Reducers','Desulfovibrio and relatives respire sulfate, making H₂S in anoxic sediments and guts.'],['Oxidisers','Beggiatoa, Thiobacillus, phototrophic sulfur bacteria; cable bacteria conduct electrons over centimetres.'],['Acid mine drainage','Acidithiobacillus oxidises pyrite, releasing sulfuric acid and metals.']],44,{d0:1,gap:18})
-    :bullets(360,48,[['Reducers','Desulfovibrio and relatives respire sulfate, producing H₂S in anoxic sediments, guts and oil wells (souring, corrosion).'],['Oxidisers','Beggiatoa and Thiobacillus oxidise sulfide aerobically; purple and green sulfur bacteria use it in light; cable bacteria conduct electrons over centimetres.'],['Disproportionation','Some bacteria split thiosulfate or S⁰ into sulfate and sulfide for energy.'],['Acid mine drainage','Acidithiobacillus oxidises pyrite, releasing sulfuric acid and dissolved metals; the same chemistry leaches copper.']],34,{d0:1,gap:18});
+    :bullets(360,48,[['Reducers','Desulfovibrio and relatives respire sulfate, producing H₂S in anoxic sediments, guts and oil wells (souring, corrosion).'],['Oxidisers','Beggiatoa and Thiobacillus oxidise sulfide aerobically; purple and green sulfur bacteria use it in light; cable bacteria conduct electrons over centimetres.'],['Intermediates','Sulfite is the last step before sulfate; thiosulfate, another intermediate, is oxidised by the Sox system or split (disproportionated) into sulfate and sulfide for energy.'],['Acid mine drainage','Acidithiobacillus oxidises pyrite, releasing sulfuric acid and dissolved metals; the same chemistry leaches copper.']],34,{d0:1,gap:18});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};
 }
 function scA7(n){

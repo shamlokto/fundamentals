@@ -669,7 +669,7 @@ function abY(cx,cy,k=1,col=PAL.gold){const a=`M${cx} ${cy} V${cy-8*k}`,l=`M${cx}
 function scI1(n){return introPlate(n,{q:'How does the body tell self from a microbe, and respond fast but also remember?',
   belief:'Immunity works in two layers. An innate system reacts within minutes to molecular patterns shared by whole classes of microbe. A slower adaptive system then builds receptors tailored to the exact invader, and remembers it for next time. Vaccines exploit that memory. The two layers constantly talk to each other.',
   items:['Barriers and pattern receptors','Complement','Phagocytes and the inflammasome','Antigen presentation, MHC I and II','T cell subsets and B cells','Antibodies and class switching','Memory and vaccination'],
-  art:(cx,cy)=>phago(cx-18,cy,1)+bactDot(cx+26,cy-6,PAL.green)+bactDot(cx+30,cy+8,PAL.rose)+T(cx,cy+46,'a phagocyte meets bacteria','note mid f11'),artH:150});}
+  art:(cx,cy)=>phago(cx-18,cy,1)+bactDot(cx+26,cy-6,PAL.green)+bactDot(cx+30,cy+8,PAL.rose)+T(cx,cy+58,'a phagocyte meets bacteria','note mid f12'),artH:150});}
 function scI2(n){
   const items=[
    ['Barriers come first','Intact skin, the acid of the stomach, lysozyme in tears and saliva, mucus and its beating cilia, and the competition of the normal microbiota keep most microbes out before any sensing is needed.'],
@@ -717,15 +717,15 @@ function scI5(n){
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }
 function scI6(n){
-  const N=n?{mb:{x:95,y:36,w:150,t:'microbe engulfed'},m2:{x:95,y:120,w:150,t:'MHC II peptide',f:PAL.gold},
-     cd4:{x:95,y:208,w:150,t:'CD4 T helper',f:PAL.blue},
-     cy:{x:265,y:36,w:150,t:'cytosolic protein|(virus, tumour)'},m1:{x:265,y:120,w:150,t:'MHC I peptide',f:PAL.rose},
-     cd8:{x:265,y:208,w:150,t:'CD8 killer T',f:PAL.lilac}}
-   :{mb:{x:130,y:50,w:160,t:'microbe engulfed|(vesicle)'},m2:{x:130,y:140,w:160,t:'MHC II + peptide',f:PAL.gold},cd4:{x:130,y:225,w:160,t:'CD4 T helper',f:PAL.blue},
-     cy:{x:470,y:50,w:170,t:'cytosolic protein|(virus-infected)'},m1:{x:470,y:140,w:160,t:'MHC I + peptide',f:PAL.rose},cd8:{x:470,y:225,w:160,t:'CD8 killer T',f:PAL.lilac}};
-  const E=[['mb','m2',''],['m2','cd4',''],['cy','m1',''],['m1','cd8','']];
-  let s=G('a-fade',0,flow(N,E));
-  const b=bullets(n?24:30,n?290:320,[
+  const xb=n?90:150, xa=n?270:470, w=n?172:210, ys=n?[56,134,212,290]:[62,138,214,290];
+  const N={mb:{x:xa,y:ys[0],w,t:'microbe engulfed|into a phagosome'},lp:{x:xa,y:ys[1],w,t:'lysosomal proteases|cut it up',f:PAL.sand},
+     m2:{x:xa,y:ys[2],w,t:'peptide loaded on|MHC II, to surface',f:PAL.gold},cd4:{x:xa,y:ys[3],w,t:'CD4 helper T cell|reads MHC II',f:PAL.blue},
+     cy:{x:xb,y:ys[0],w,t:'cytosolic protein|(virus-infected cell)'},pr:{x:xb,y:ys[1],w,t:'proteasome cuts;|TAP pumps peptide|into the ER',f:PAL.sand},
+     m1:{x:xb,y:ys[2],w,t:'peptide loaded on|MHC I, to surface',f:PAL.rose},cd8:{x:xb,y:ys[3],w,t:'CD8 killer T cell|reads MHC I',f:PAL.lilac}};
+  const E=[['mb','lp',''],['lp','m2',''],['m2','cd4',''],['cy','pr',''],['pr','m1',''],['m1','cd8','']];
+  const hd=T(xa,22,'MHC class II route','lab mid f13')+T(xb,22,'MHC class I route','lab mid f13');
+  let s=G('a-fade',0,hd+flow(N,E));
+  const b=bullets(n?24:30,n?340:345,[
     ['MHC I: "what is inside me"','Almost every cell displays fragments of its own cytosolic proteins on MHC class I. A virus-infected or cancerous cell shows foreign peptides and is killed by a CD8 T cell. Many viruses fight back by downregulating MHC I, which then alerts NK cells.'],
     ['MHC II: "what I have eaten"','Professional antigen-presenting cells (dendritic cells, macrophages, B cells) display fragments of engulfed material on MHC class II to CD4 helper T cells, which then coordinate the whole adaptive response.']],
     n?44:82,{d0:.6,gap:24});
@@ -745,20 +745,39 @@ function scI7(n){
   const p=para(n?16:24,t.y+14,'A naive CD4 cell is pushed toward one fate by the cytokines dendritic cells make, which depend on the PRRs that fired. The match of T-helper subset to microbe type is central: a strong Th1 response contains leprosy in its limited tuberculoid form, while a Th2-skewed response allows the spreading lepromatous form.',n?50:92,'note start f13',17,.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
+function igG(cx,hy){
+  // two heavy chains (VH CH1 | hinge | CH2 CH3) and two light chains (VL CL); variable domains form the antigen-binding tips
+  const dom=(x,y,w,h,f)=>`<rect x="${FX(x)}" y="${FX(y)}" width="${w}" height="${h}" rx="7" fill="${f}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  const arm=(sg)=>{const hx=sg<0?0:-16, lx=sg<0?-18:2; // heavy inner, light outer
+    return dom(hx,-58,16,24,PAL.rose)+dom(hx,-32,16,24,PAL.blue)+dom(lx,-58,16,24,PAL.rose)+dom(lx,-32,16,24,PAL.gold)
+      ''+'';};
+  let s=`<g transform="translate(${cx-11} ${hy}) rotate(-38)">${arm(-1)}</g><g transform="translate(${cx+11} ${hy}) rotate(38)">${arm(1)}</g>`;
+  s+=`<path d="M${cx-9.6} ${hy-11} L${cx-8} ${hy+13} M${cx+9.6} ${hy-11} L${cx+8} ${hy+13}" stroke="${INK}" stroke-width="2.2" fill="none"/>`
+    +ln(cx-8,hy+6,cx+8,hy+6,RED,1.4)+ln(cx-8,hy+10,cx+8,hy+10,RED,1.4)
+    +dom(cx-17,hy+13,16,24,PAL.blue)+dom(cx+1,hy+13,16,24,PAL.blue)+dom(cx-17,hy+39,16,24,PAL.blue)+dom(cx+1,hy+39,16,24,PAL.blue);
+  // antigen held by the left tip
+  const a=-38*Math.PI/180, tx=cx-11+(-1)*Math.cos(a)-(-64)*Math.sin(a), ty=hy+(-1)*Math.sin(a)+(-64)*Math.cos(a);
+  s+=`<path d="M${FX(tx)} ${FX(ty-9)} l8 5 l-2 9 h-12 l-2 -9 Z" fill="${PAL.green}" stroke="${INK}" stroke-width="1" class="tint"/>`;
+  return {s,tx,ty};}
 function scI8(n){
-  const cy=n?64:70;
-  let s=G('a-fade',0,abY(n?70:120,cy+20,n?1.4:1.8,PAL.gold)
-    +T(n?70:120,cy+40,'IgG monomer','note mid f11')
-    +T(n?70:120,n?32:34,'Fab: binds antigen','note mid f10 halo')+T(n?70:120,cy+54,'Fc: effector end','note mid f10'));
+  const cx=n?96:120, hy=n?110:116, g=igG(cx,hy);
+  const lab=(x,y,t,an)=>T(x,y,t,'note '+an+' f12 halo');
+  let s=G('a-fade',0,g.s
+    +lab(g.tx-12,g.ty-4,'antigen','end')
+    +lab(cx+62,hy-50,'Fab arm','start')+lab(cx+62,hy-36,'(binds antigen)','start')
+    +lab(cx+30,hy+10,'hinge (S–S)','start')+lab(cx+24,hy+42,'Fc stem','start')+lab(cx+24,hy+56,'(effector end)','start'));
+  const ly=hy+86, lx=n?20:24, sw=(x,y,f,t)=>`<rect x="${x}" y="${y-9}" width="14" height="11" rx="3" fill="${f}" stroke="${INK}" stroke-width=".8" class="tint"/>`+T(x+20,y,t,'note start f12');
+  s+=G('a-fade',.2,sw(lx,ly,PAL.rose,'variable domains (V)')+sw(lx,ly+17,PAL.blue,'heavy-chain constant')+sw(lx,ly+34,PAL.gold,'light-chain constant')
+    +T(lx,ly+54,'IgG: 2 heavy + 2 light chains','note start f12'));
   const rows=[
    ['IgM','pentamer, first made','strong complement activation; stays in blood'],
    ['IgG','monomer, most abundant','neutralises, opsonises, crosses the placenta'],
    ['IgA','dimer at mucosa','guards gut and airway surfaces; in breast milk'],
    ['IgE','on mast cells','parasites and, unhelpfully, allergy'],
    ['IgD','on naive B cells','a receptor; little secreted']];
-  const t=wtable(n,['Isotype','Form','Role'],rows,n?[[10,10],[70,12],[150,16]]:[[270,16],[350,18],[470,22]],{y0:n?150:40,R:n?354:620});
+  const t=wtable(n,['Isotype','Form','Role'],rows,n?[[10,10],[70,12],[150,16]]:[[270,16],[350,18],[470,22]],{y0:n?ly+78:40,R:n?354:620});
   let wb={s:'',y:t.y};
-  if(!n)wb=bullets(24,170,[
+  if(!n)wb=bullets(24,ly+82,[
     ['One site, many jobs','The two Fab arms fix the target; the Fc stem decides what happens: neutralise, flag for phagocytosis, trigger complement.'],
     ['Class switching','Activated B cells keep the same antigen-binding site but swap the Fc region (IgM → IgG, IgA, IgE) to suit the site of battle.'],
     ['Affinity maturation','In germinal centres, B cells hypermutate their binding site and the best binders are selected, so antibodies improve over weeks.']],28,{d0:.3,gap:22});

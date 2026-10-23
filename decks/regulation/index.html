@@ -533,16 +533,23 @@ const LAC=[
  {k:'lactose only',r:'repressor released',c:'cAMP high; CAP on',lvl:1,t:'Repressor off and CAP–cAMP recruiting RNA polymerase: full induction, about a thousand-fold over the repressed level.'}];
 let lacSel=3;
 function operonDraw(cx,y,w,on,capOn){
+  /* lacI (own promoter) · CAP site · promoter · operator · lacZ lacY lacA; RNAP drawn under the promoter, mRNA under the genes */
   const x1=cx-w/2;let s=dsDNA(x1,x1+w,y,DNA,8);
-  const seg=(a,b,f,t)=>box(x1+w*a,y-14,w*(b-a),36,f,3)+Tc(x1+w*(a+b)/2,y+8,t,'#3A2E22',11,'mono mid','600');
-  s+=seg(.0,.1,'#E0C88A','CAP')+seg(.1,.2,'#EFE6D2','P')+seg(.2,.28,'#C9A9D6','O')+seg(.3,.6,'#A9C4DC','lacZ')+seg(.6,.8,'#A9C4DC','lacY')+seg(.8,.95,'#A9C4DC','lacA');
-  if(!on)s+=blob(x1+w*.24,y-26,20,12,'#7D4A98')+T(x1+w*.24,y-44,'LacI','mono mid f11');
-  if(capOn)s+=blob(x1+w*.05,y-26,18,11,'#C99A2E')+T(x1+w*.05,y-44,'CAP','mono mid f11');
+  const seg=(a,b,f,t)=>box(x1+w*a,y-14,w*(b-a),36,f,3)+Tc(x1+w*(a+b)/2,y+8,t,'#3A2E22',12,'mono mid','600');
+  s+=seg(.0,.11,'#D9C6E2','lacI')+seg(.15,.23,'#E0C88A','CAP')+seg(.23,.31,'#EFE6D2','P')+seg(.31,.38,'#C9A9D6','O')+seg(.39,.62,'#A9C4DC','lacZ')+seg(.62,.8,'#A9C4DC','lacY')+seg(.8,.95,'#A9C4DC','lacA');
+  if(!on)s+=blob(x1+w*.345,y-26,18,11,'#7D4A98')+T(x1+w*.345,y-42,'LacI','mono mid f12');
+  else s+=T(x1+w*.345,y-26,'LacI + allolactose: off','note start f12');
+  if(capOn)s+=blob(x1+w*.19,y-26,17,11,'#C99A2E')+T(x1+w*.19,y-42,'CAP–cAMP','mono mid f12');
+  const px=x1+w*.27, full=on&&capOn, weak=on&&!capOn;
+  s+=`<ellipse cx="${FX(px)}" cy="${FX(y+36)}" rx="${FX(w*.06)}" ry="12" fill="#9DB4AE" stroke="${INK}" stroke-width="1" ${on?'':'opacity=".55"'} class="tint"/>`+Tc(FX(px),FX(y+40),'RNAP','#3A2E22',12,'mono mid','600');
+  if(on){const xe=x1+w*.95;s+=`<g opacity="${full?1:.45}">`+wave(x1+w*.39,xe-8,y+40,'#C17A2C',full?2.6:1.6)+arw(xe-10,y+40,xe+2,y+40,{col:'#C17A2C'})+`</g>`
+    +T(x1+w*.67,y+64,full?'lacZYA mRNA: abundant':'lacZYA mRNA: little','note mid f12');}
+  else s+=T(x1+w*.67,y+52,'LacI on the operator blocks RNAP: no mRNA','note mid f12');
   return s;}
 function scLac(n){
   const c=LAC[lacSel], on=c.r==='repressor released', cap=c.c.includes('on');
-  let s=G('a-fade',0,operonDraw(n?180:250,64,n?320:440,on,cap));
-  const bx=n?16:24, by=118;
+  let s=G('a-fade',0,operonDraw(n?180:300,70,n?328:560,on,cap));
+  const bx=n?16:24, by=n?168:162;
   s+=G('a-fade',.3,T(bx,by,c.k,'cname start f16')+T(bx,by+22,c.r,'lab start f13')+T(bx,by+40,c.c,'lab start f13'));
   const bw=n?320:420, lv=Math.max(4,bw*Math.log10(c.lvl*1000)/3);
   s+=G('a-fade',.5,T(bx,by+70,'β-galactosidase (log scale)','note start f11')+`<rect x="${bx}" y="${by+78}" width="${bw}" height="16" fill="none" stroke="${INK}" stroke-dasharray="3 3"/>`+box(bx,by+78,FX(lv),16,'#A9C4DC',2));
@@ -553,25 +560,31 @@ function scLac(n){
 function scR2(n){
   let s='';const y=n?50:56;
   const mx=n?180:320;
-  /* membrane */
-  const my=n?80:86;
-  s+=G('a-fade',0,`<path d="M${n?16:30} ${my} H${n?344:610}" stroke="${CELLE}" stroke-width="9" opacity=".5"/>`
-    +Tc(n?16:30,my-22,'outside','#6A5B47',10,'mono start')+Tc(n?16:30,my+26,'cytoplasm','#6A5B47',10,'mono start'));
-  /* sensor kinase */
-  s+=G('a-fade',.3,`<rect x="${mx-(n?26:30)}" y="${my-(n?22:24)}" width="${n?52:60}" height="${n?58:64}" rx="6" fill="${INTC}" fill-opacity=".55" stroke="${INK}"/>`
-    +Tc(mx,my+(n?2:3),'sensor','#3A2E22',n?10:11,'mono mid','600')
-    +Tc(mx,my+(n?16:18),'kinase','#3A2E22',n?10:11,'mono mid','600')
-    +arw(mx-(n?56:80),my-(n?16:18),mx-(n?30:34),my-(n?16:18),{blue:1})
-    +Tc(mx-(n?60:84),my-(n?20:22),'signal','#6A5B47',10,'mono end'));
-  s+=G('a-fade',.8,Tc(mx,my+(n?46:58),'ATP → His~P','#2F5276',10,'mono mid','600'));
-  /* response regulator */
-  s+=G('a-fade',1.1,prot(mx+(n?92:130),my+(n?52:52),n?26:30,n?16:18,RECC,'regulator')
-    +arw(mx+(n?30:34),my+(n?46:46),mx+(n?62:96),my+(n?50:50),{blue:1})
-    +Tc(mx+(n?46:64),my+(n?34:30),'Asp~P','#2F5276',10,'mono mid','600'));
-  s+=G('a-fade',1.5,rLine(mx+(n?44:84),n?126:190,my+(n?100:100),'#D6CDB8',5)
-    +gArrow(mx+(n?58:100),my+(n?100:100),n?98:150,'target operon',METC,{h:16})
-    +arw(mx+(n?92:130),my+(n?72:72),mx+(n?92:130),my+(n?90:90),{blue:1}));
-  let yy=my+(n?134:140);
+  /* membrane (bilayer), histidine kinase spanning it, response regulator in the cytoplasm, DNA below */
+  const my=n?86:90, L=n?16:30, R=n?344:610, hx=n?100:250, rx=n?256:430;
+  s+=G('a-fade',0,`<rect x="${L}" y="${my-8}" width="${R-L}" height="16" fill="${CELLE}" opacity=".25"/>`+ln(L,my-8,R,my-8,CELLE,1.4)+ln(L,my+8,R,my+8,CELLE,1.4)
+    +T(L,my-46,n?'outside':'outside (periplasm in Gram-negatives)','note start f12')+T(L,my+26,'cytoplasm','note start f12')+T(R,my-14,'membrane','note end f12'));
+  /* kinase: sensor domain outside, two TM helices, DHp (H) and catalytic (ATP) domains inside */
+  const hk=`<ellipse cx="${hx}" cy="${my-24}" rx="26" ry="13" fill="${INTC}" fill-opacity=".55" stroke="${INK}"/>`
+    +`<rect x="${hx-14}" y="${my-12}" width="8" height="24" rx="2" fill="${INTC}" stroke="${INK}" stroke-width=".8"/><rect x="${hx+6}" y="${my-12}" width="8" height="24" rx="2" fill="${INTC}" stroke="${INK}" stroke-width=".8"/>`
+    +`<rect x="${hx-16}" y="${my+12}" width="32" height="24" rx="4" fill="${INTC}" fill-opacity=".8" stroke="${INK}"/>`+Tc(hx,my+28,'H','#3A2E22',12,'mono mid','600')
+    +`<ellipse cx="${hx}" cy="${my+50}" rx="22" ry="12" fill="${INTC}" fill-opacity=".45" stroke="${INK}"/>`+Tc(hx,my+54,'ATP','#3A2E22',12,'mono mid','600')
+    +`<circle cx="${hx+22}" cy="${my+24}" r="7" fill="${METC}" stroke="${INK}" stroke-width=".7"/>`+Tc(hx+22,my+28,'P','#3A2E22',10,'mono mid','600');
+  s+=G('a-fade',.3,hk+T(hx+32,my-28,'sensor domain','note start f12')
+    +T(hx-(n?26:30),my+40,n?'kinase':'histidine kinase','note end f12')
+    +arw(hx-(n?70:110),my-24,hx-30,my-24,{blue:1})+T(hx-(n?72:112),my-30,'signal','note start f12'));
+  /* response regulator: receiver domain (D) + DNA-binding output domain */
+  const ry=my+40;
+  s+=G('a-fade',.9,`<circle cx="${rx-16}" cy="${ry}" r="14" fill="${RECC}" fill-opacity=".55" stroke="${INK}"/>`+Tc(rx-16,ry+4,'D','#3A2E22',12,'mono mid','600')
+    +`<rect x="${rx}" y="${ry-11}" width="30" height="22" rx="6" fill="${RECC}" fill-opacity=".3" stroke="${INK}"/>`
+    +`<circle cx="${rx-16}" cy="${ry-19}" r="7" fill="${METC}" stroke="${INK}" stroke-width=".7"/>`+Tc(rx-16,ry-15,'P','#3A2E22',10,'mono mid','600')
+    +T(rx+36,ry-16,n?'regulator':'response regulator','note start f12'));
+  s+=G('a-fade',.6,arw(hx+30,my+24,rx-36,ry-6,{blue:1})+T((hx+rx)/2-6,my+(n?14:16),'His~P → Asp~P','mono mid f12 acc'));
+  /* DNA and target genes: phosphorylated RR binds the promoter */
+  const dy=my+(n?98:96);
+  s+=G('a-fade',1.3,dsDNA(n?40:150,R-10,dy-4,DNA,8)+`<rect x="${rx-10}" y="${dy-9}" width="26" height="18" rx="3" fill="#EFE6D2" stroke="${INK}" stroke-width=".8"/>`
+    +gArrow(rx+22,dy,n?60:150,n?'genes':'target genes',METC,{h:18,fs:12})+arw(rx+3,ry+12,rx+3,dy-10,{blue:1})+T(rx-14,dy+24,'promoter','note mid f12'));
+  let yy=my+(n?150:148);
   const rows=[['CiaRH','cell wall stress and β-lactams','Streptococcus pneumoniae: controls the HtrA protease and small RNAs; mutations in it raise β-lactam tolerance and lower competence.'],
    ['ComDE','the peptide CSP','The competence circuit: ComD is the receptor for CSP, ComE switches on the early competence genes including comX.'],
    ['WalRK (VicRK)','cell wall metabolism','Essential in most Firmicutes; controls autolysins and wall hydrolases, and so couples division to wall synthesis.'],
@@ -635,21 +648,41 @@ function scR4(n){
 }
 
 function scR5(n){
-  let s='';const x=n?20:44, y=n?50:56;
-  const stepY=n?42:44;
-  const chain=[['comC','made as a precursor peptide',CORE],
-   ['ComAB','cleaves and exports it as CSP',INTC],
-   ['CSP outside','accumulates with cell density',METC],
-   ['ComD → ComE~P','the receptor kinase fires',RECC],
-   ['early genes, comX','ComE switches them on',PLS],
-   ['ComX (σX)','an alternative sigma: about 80 late genes',PHG],
-   ['uptake machinery, RecA, CbpD','DNA uptake — and fratricide',TNC]];
-  chain.forEach((c,i)=>{const yy=y+i*stepY;
-    s+=G('a-fade',(i*.25).toFixed(2),`<rect x="${x}" y="${yy}" width="${n?12:14}" height="${n?26:28}" rx="3" fill="${c[2]}" fill-opacity=".6" stroke="${INK}" stroke-width=".7"/>`
-      +T(x+(n?22:26),yy+(n?12:13),c[0],'cname start f13')
-      +T(x+(n?22:26),yy+(n?26:28),c[1],'note start f11')
-      +(i<chain.length-1?`<path d="M${FX(x+(n?6:7))} ${FX(yy+(n?26:28))} V${FX(yy+stepY)}" stroke="${AXC}" stroke-width="1.6"/>`:''));});
-  let yy=y+chain.length*stepY+(n?8:10);
+  /* cell picture: membrane, ComAB exporter, CSP outside, ComD kinase, ComE~P on three promoters (feedback), ComX to late genes */
+  let s='';const X=v=>FX(n?16+(v-30)*0.5655:v,1), my=n?66:70, dy=my+(n?132:128);
+  s+=G('a-fade',0,`<rect x="${X(30)}" y="${my-8}" width="${FX((n?328:580))}" height="16" fill="${CELLE}" opacity=".25"/>`+ln(X(30),my-8,X(610),my-8,CELLE,1.4)+ln(X(30),my+8,X(610),my+8,CELLE,1.4)
+    +T(X(30),my-30,'outside','note start f12')+T(X(30),my+26,'cytoplasm','note start f12'));
+  /* ComAB: ABC transporter with peptidase, spans membrane */
+  s+=G('a-fade',.2,`<rect x="${X(140)}" y="${my-14}" width="${n?16:26}" height="28" rx="4" fill="${INTC}" fill-opacity=".6" stroke="${INK}"/>`
+    +`<rect x="${X(140)}" y="${my+14}" width="${n?16:26}" height="12" rx="3" fill="${INTC}" fill-opacity=".35" stroke="${INK}" stroke-width=".7"/>`
+    +T(X(140)-4,my+42,'ComAB','note end f12'));
+  /* CSP outside */
+  let dots='';[[190,-26],[215,-36],[240,-24],[262,-38],[285,-27]].forEach(([dx,dd])=>dots+=`<circle cx="${X(dx)}" cy="${my+dd}" r="3.4" fill="${METC}" stroke="${INK}" stroke-width=".5"/>`);
+  s+=G('a-fade',.5,dots+arw(+X(150),my-16,+X(180),my-28,{})+T(X(238),my-48,'CSP (17 aa)','note mid f12'));
+  /* ComD: histidine kinase */
+  const dx=+X(330);
+  s+=G('a-fade',.8,`<ellipse cx="${dx}" cy="${my-20}" rx="${n?13:18}" ry="10" fill="${RECC}" fill-opacity=".5" stroke="${INK}"/>`
+    +`<rect x="${FX(dx-5)}" y="${my-10}" width="10" height="20" fill="${RECC}" fill-opacity=".6" stroke="${INK}" stroke-width=".7"/>`
+    +`<rect x="${FX(dx-(n?11:14))}" y="${my+10}" width="${n?22:28}" height="18" rx="4" fill="${RECC}" fill-opacity=".6" stroke="${INK}"/>`
+    +arw(+X(296),my-30,dx-(n?14:19),my-24,{})+T(FX(dx+(n?14:20)),my-22,'ComD','note start f12'));
+  /* ComE~P */
+  const ex=+X(450), ey=my+64;
+  s+=G('a-fade',1.1,arw(dx+(n?12:15),my+22,ex-(n?20:26),ey-6,{blue:1})+T(FX((dx+ex)/2+(n?14:22)),my+30,'~P','mono mid f12 acc')
+    +blob(ex,ey,n?25:28,12,RECC)+Tc(ex,ey+4,'ComE~P','#3A2E22',12,'mono mid','600'));
+  /* chromosome with three ComE-activated loci */
+  const g=[[60,'comAB',INTC],[220,'comCDE',RECC],[420,'comX',PHG]], gw=n?54:100;
+  let dna=dsDNA(+X(40),+X(600),dy-4,DNA,8);
+  g.forEach(([gx,t,f])=>{dna+=gArrow(+X(gx),dy,gw,'',f,{h:18})+T(FX(+X(gx)+gw/2-3),dy+28,t,'note mid f12');});
+  s+=G('a-fade',1.4,dna+T(X(600),dy-18,'chromosome','note end f12'));
+  let fb='';g.forEach(([gx])=>fb+=arw(ex,ey+12,+X(gx)+4,dy-12,{blue:1}));
+  s+=G('a-fade',1.7,fb+T(FX(ex+(n?27:31)),FX(ey+5),n?'feedback':'positive feedback','mono start f12 acc halo'));
+  /* comC product goes to ComAB; comX to late genes */
+  s+=G('a-fade',2.0,`<path d="M${FX(+X(220)+gw*.6)} ${dy-12} Q${FX(+X(190))} ${my+62} ${FX(+X(140)+(n?8:13))} ${my+30}" stroke="${AXC}" stroke-width="1.2" stroke-dasharray="4 3" fill="none" marker-end="url(#ahp)"/>`
+    +T(FX(+X(150)),my+(n?84:70),'pre-CSP','note start f12 halo')
+    +T(n?16:30,dy+62,n?'ComX (σX) → about 80 late genes:':'ComX (σX) → about 80 late genes: DNA uptake, RecA, DprA, and CbpD for fratricide','note start f12')
+    +(n?T(16,dy+78,'DNA uptake, RecA, DprA, CbpD','note start f12'):''));
+  const chain=[];
+  let yy=dy+(n?96:84);
   const b=bullets(n?24:30,yy,[['A positive feedback loop with a twenty-minute window','ComE~P switches on comAB and comC as well as comX, so the signal amplifies itself and the whole population becomes competent almost at once. ComX is then degraded and the window closes; the cells cannot be induced again for a while.'],
    ['Competence is a general stress response as well','Antibiotics that damage DNA or inhibit replication induce competence, and the CiaRH system holds it down. Calling it “a system for taking up DNA” understates it: the ComX regulon includes stress genes, and competent cells are physiologically distinct.'],
    ['Fratricide supplies the substrate','Competent cells release CbpD, which with LytA and LytC lyses the non-competent members of the population. The DNA released is homologous, which is exactly what transformation needs — and the released cell contents include virulence factors.'],
@@ -659,15 +692,19 @@ function scR5(n){
 
 function scR6(n){
   let s='';const y=n?48:54, cx=n?180:320;
-  s+=G('a-fade',0,ribo(cx-(n?90:140),y+34,n?1.1:1.3)
-    +Tc(cx-(n?90:140),y+(n?68:74),'a ribosome stalls','#6A5B47',10,'mono mid'));
-  s+=G('a-fade',.4,prot(cx-(n?16:20),y+34,n?24:28,n?14:16,RECC,'RelA')
-    +arw(cx-(n?64:106),y+34,cx-(n?42:52),y+34,{blue:1}));
-  s+=G('a-fade',.9,`<circle cx="${cx+(n?54:80)}" cy="${y+34}" r="${n?12:14}" fill="${METC}" fill-opacity=".7" stroke="${INK}"/>`
-    +Tc(cx+(n?54:80),y+38,'ppGpp','#3A2E22',n?9:10,'mono mid','600')
-    +arw(cx+(n?12:14),y+34,cx+(n?38:62),y+34,{blue:1}));
-  s+=G('a-fade',1.3,Tc(cx+(n?54:80),y+(n?68:74),'the alarmone','#6A5B47',10,'mono mid'));
-  let yy=y+(n?92:100);
+  /* stalled ribosome with uncharged tRNA in the A site; RelA bound to it makes (p)ppGpp; ppGpp (with DksA, on RNAP) inhibits rRNA promoters */
+  const P=n?{r:46,ra:84,pp:186,rr:300}:{r:80,ra:124,pp:330,rr:520}, yc=y+40;
+  s+=G('a-fade',0,ribo(P.r,yc,n?1.5:1.8)+T(P.r,yc-(n?30:34),n?'uncharged tRNA':'uncharged tRNA in the A site','note mid f12')
+    +T(P.r,yc+(n?34:38),'stalled ribosome','note mid f12'));
+  s+=G('a-fade',.4,prot(P.ra,yc-2,n?20:24,n?12:14,RECC,'RelA',{fs:12}));
+  s+=G('a-fade',.9,arw(P.ra+(n?22:28),yc-2,P.pp-(n?24:26),yc-2,{blue:1})
+    +T((P.ra+P.pp)/2+(n?2:0),yc-12,n?'GDP + ATP':'GTP or GDP + ATP','note mid f12')
+    +`<circle cx="${P.pp}" cy="${yc-2}" r="${n?21:23}" fill="${METC}" fill-opacity=".7" stroke="${INK}"/>`
+    +Tc(P.pp,yc+2,'ppGpp','#3A2E22',12,'mono mid','600')+T(P.pp,yc+(n?34:38),'the alarmone','note mid f12'));
+  s+=G('a-fade',1.3,ln(P.pp+(n?23:25),yc-2,P.rr-(n?44:58),yc-2,'#A4473A',2)+ln(P.rr-(n?44:58),yc-11,P.rr-(n?44:58),yc+7,'#A4473A',2.4)
+    +box(P.rr-(n?40:54),yc-16,n?84:108,28,'#EFE6D2',4)+Tc(P.rr+(n?2:0),yc+3,n?'rRNA':'rRNA promoters','#3A2E22',12,'mono mid','600')
+    +T((P.pp+P.rr)/2-(n?6:4),yc-12,n?'+ DksA':'with DksA, on RNAP','note mid f12'));
+  let yy=y+(n?98:104);
   const rows=[['Down','rRNA and tRNA synthesis','ppGpp with DksA binds RNA polymerase and destabilises open complexes at promoters with a GC-rich discriminator — which is exactly what ribosomal RNA promoters have. Ribosome synthesis stops within seconds.'],
    ['Down','replication initiation, and elongation','In E. coli ppGpp blocks new rounds of initiation at oriC; in Bacillus (p)ppGpp inhibits the primase DnaG, which stalls replication forks.'],
    ['Up','amino-acid biosynthesis, stress regulons','Sigma factor competition shifts towards σS and the alternative sigmas as σ70 holdings are released, so the general stress response comes on.'],
@@ -703,17 +740,26 @@ function scR8(n){
   /* asymmetric septum picture */
   const cell=(ox,oy,k)=>{const L=n?100:100, R=n?26:30, lt=ox-L/2-R*.62, sx=lt+(L+R*1.24)*.3, fx=(lt+sx)/2+(n?10:12);
     let t=cellRod(ox,oy,L,R,k>=3?{dash:'4 3',fill:'none'}:{});
-    if(k===0)t+=`<path d="M${FX(sx)} ${FX(oy-R)} V${FX(oy+R)}" stroke="${CELLE}" stroke-width="3"/>`;
-    if(k===1)t+=`<path d="M${FX(sx-6)} ${FX(oy-R)} Q${FX(sx+R*.9)} ${oy} ${FX(sx-6)} ${FX(oy+R)}" stroke="${CELLE}" stroke-width="2.4" fill="none"/><path d="M${FX(sx-10)} ${FX(oy-R+4)} Q${FX(sx+R*.6)} ${oy} ${FX(sx-10)} ${FX(oy+R-4)}" stroke="${CELLE}" stroke-width="1.6" fill="none"/>`;
+    const sg=(x,t,c)=>Tc(FX(x),FX(oy+4),t,c||'#2F5276',12,'mono mid','700');
+    const mx=(sx+ox+L/2+R*.62)/2;
+    if(k===0)t+=`<path d="M${FX(sx)} ${FX(oy-R)} V${FX(oy+R)}" stroke="${CELLE}" stroke-width="3"/>`+sg((lt+sx)/2+2,'σF','#3A2E22')+sg(mx,'σE');
+    /* engulfment: the mother-cell membrane migrates round the forespore, which rounds up */
+    if(k===1)t+=`<ellipse cx="${FX(fx-2)}" cy="${oy}" rx="${FX((sx-lt)/2-2)}" ry="${FX(R*.7)}" fill="${METC}" fill-opacity=".18" stroke="${CELLE}" stroke-width="1.6"/>`
+      +`<path d="M${FX(fx-(sx-lt)*.25)} ${FX(oy-R*.86)} Q${FX(sx+8)} ${FX(oy-R*.9)} ${FX(sx+8)} ${oy} Q${FX(sx+8)} ${FX(oy+R*.9)} ${FX(fx-(sx-lt)*.25)} ${FX(oy+R*.86)}" stroke="${CELLE}" stroke-width="2.4" fill="none"/>`
+      +sg(fx-2,'σF','#3A2E22')+sg(mx+6,'σE');
     if(k>=2)t+=`<ellipse cx="${FX(fx)}" cy="${oy}" rx="${FX((sx-lt)/2)}" ry="${FX(R*.6)}" fill="${METC}" fill-opacity=".45" stroke="${METC}" stroke-width="1.6"/><ellipse cx="${FX(fx)}" cy="${oy}" rx="${FX((sx-lt)/2+3)}" ry="${FX(R*.6+3)}" fill="none" stroke="${TNC}" stroke-width="3"/>`;
+    if(k===2)t+=sg(fx,'σG','#3A2E22')+sg(mx+6,'σK');
+    if(k===3)t+=T(FX(mx+6),FX(oy+4),'spore freed','note mid f12');
     return t;};
   const labs=['asymmetric septum','engulfment','cortex and coat','mother cell lyses'];
   if(!n){[0,1,2,3].forEach(k=>{const ox=104+k*148;
-    s+=G('a-fade',(k*.5).toFixed(1),cell(ox,y+34,k)+T(ox,y+74,labs[k],'note mid f11'));});
-    var yy=y+100;}
+    s+=G('a-fade',(k*.5).toFixed(1),cell(ox,y+34,k)+T(ox,y+76,labs[k],'note mid f12'));});
+    var yy=y+(n?100:104);
+    s+=G('a-fade',2,T(30,yy-2,'blue: mother-cell sigma · dark: forespore sigma','note start f12'));yy+=10;}
   else{[0,1,2,3].forEach(k=>{const oy=y+30+k*66;
-    s+=G('a-fade',(k*.5).toFixed(1),cell(110,oy,k)+T(240,oy+4,labs[k],'note start f11'));});
-    var yy=y+30+4*66+10;}
+    s+=G('a-fade',(k*.5).toFixed(1),cell(110,oy,k)+T(240,oy+4,labs[k],'note start f12'));});
+    var yy=y+30+4*66-6;
+    s+=G('a-fade',2,T(16,yy,'blue: mother-cell sigma · dark: forespore sigma','note start f12'));yy+=14;}
   const stages=[['Spo0A~P','A phosphorelay — KinA–E, Spo0F, Spo0B — integrates starvation, cell density and the state of the chromosome. Only when Spo0A phosphorylation passes a threshold does the cell commit. Up to that point the decision is reversible.'],
    ['σH, then σF and σE','σH prepares the cell; the asymmetric septum then separates a small forespore from a large mother cell. σF becomes active only in the forespore, σE only in the mother cell — compartment-specific from the first division.'],
    ['σG and σK','σF switches on the signal that activates σE; σE switches on the signal that activates σG; σG switches on the signal that activates σK. Each compartment licenses the next step in the other — criss-cross regulation, and the reason the sequence cannot run out of order.'],

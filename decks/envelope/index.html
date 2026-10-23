@@ -678,7 +678,7 @@ let envSel=0;
 function scV1(n){return introPlate(n,{q:'What surrounds a microbial cell, and why does it matter so much?',
   belief:'The envelope holds the cell together against turgor, decides what gets in, presents the cell to the immune system, and is the target of more antibiotics than any other structure. Its three main designs are the basis of the Gram stain and of much of clinical microbiology.',
   items:['Three bacterial envelopes and the Gram stain','Peptidoglycan: chemistry, synthesis, turnover','LPS, teichoic acids and mycolic acids','Archaeal membranes and S-layers','What distinguishes the three domains'],
-  art:(cx,cy)=>stack(true,cx-90,cy-70,90,[['lps',12],['om',16],['peri',14],['pg',8],['peri',12],['im',16],['cyto',20]]).s,artH:170});}
+  art:(cx,cy)=>stack(true,cx-110,cy-70,76,[['lps',12],['om',16],['peri',14],['pg',8],['peri',12],['im',16],['cyto',20]]).s,artH:170});}
 function scV2(n){
   const steps=[['Crystal violet','All cells take up the purple dye.'],['Iodine','Forms a large dye–iodine complex inside the cell.'],['Alcohol or acetone','The decisive step: thin walls under a dissolved outer membrane release the complex; thick walls shrink and trap it.'],['Safranin','Decolourised cells are counterstained pink.']];
   const c=cards(n,steps.map(s=>[s[0],s[1]]),{y:20,cols:4,num:1,cw:6.2});
@@ -784,15 +784,46 @@ function scV6(n){
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }
 function scV7(n){
-  let s='';const x=n?40:60, y=40, w=n?60:70;
-  const seg=(yy,h,f,lab,sub)=>box(x,yy,w,h,f,3)+T(x+w+12,yy+h/2+2,lab,'lab start f13')+T(x+w+12,yy+h/2+18,sub,'note start f11');
-  s+=G('a-fade',0,seg(y,70,'#C9A9D6','O-antigen','repeating sugar units; serotype (e.g. O157)'));
-  s+=G('a-fade',.3,seg(y+74,40,'#E0C88A','core oligosaccharide','includes Kdo and heptose'));
-  s+=G('a-fade',.6,membraneBand(x-20,x+w+4,y+118,50)+seg(y+118,25,'#E7A99B','lipid A','acylated glucosamine disaccharide: endotoxin'));
-  s+=G('a-fade',.9,T(x+w+12,y+168,'inner leaflet: phospholipid','note start f11')+T(x-20,y+192,'outer membrane: lipid A is its outer leaflet','note start f11'));
-  const b=n?bullets(24,y+222,[['Endotoxin','Lipid A activates TLR4–MD-2; in blood it drives septic shock.'],['A barrier','LPS packs tightly with Mg²⁺ bridges, excluding detergents and hydrophobic drugs.'],['Colistin','Polymyxins bind lipid A; resistance comes from adding positive charges (mcr genes).']],44,{d0:1.2,gap:20})
-    :bullets(400,52,[['Endotoxin','Hexa-acylated lipid A activates TLR4–MD-2 at picomolar levels; in blood it drives septic shock. Some pathogens remodel lipid A to evade it.'],['A barrier','LPS molecules pack tightly with Mg²⁺ bridges, excluding detergents, bile and hydrophobic antibiotics.'],['Colistin','Polymyxins bind lipid A and disrupt the membrane; resistance adds positive charges to lipid A, including by plasmid-borne mcr genes.']],30,{d0:1.2,gap:20});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,y+200)),s:s+b.s};
+  // a stretch of outer membrane: LPS in the outer leaflet (lipid A acyl chains in the bilayer, core, O-antigen of
+  // varying length), phospholipids in the inner leaflet, Mg2+ bridging neighbouring LPS phosphates
+  let s='';const x0=n?14:40, x1=n?214:330, top=34, mT=184, mB=264, LX=x1+26;
+  const GN='#E7A99B', KDO='#E0C88A', HEP='#D9A441', OAG='#C9A9D6', TAIL='#8C6D46';
+  s+=G('a-fade',0,`<rect x="${x0}" y="${mT}" width="${x1-x0}" height="${mB-mT}" fill="#EDE0B8"/>`+`<path d="M${x0} ${(mT+mB)/2} H${x1}" stroke="#C9B98F" stroke-width="1" stroke-dasharray="3 3"/>`
+    +T(x0,mT-152,'outside','note start f12')+T(x0,mB+20,'periplasm','note start f12'));
+  const step=n?40:52, xs=[];for(let x=x0+step/2;x<x1;x+=step)xs.push(x);
+  const oLen=[4,6,0,5,3,6,4];
+  let lps='';
+  xs.forEach((x,i)=>{
+    // lipid A: two glucosamines with phosphates, six acyl chains down into the outer leaflet
+    for(let k=0;k<6;k++){const tx=x-12+k*4.8;lps+=`<path d="M${FX(tx)} ${mT+8} V${mT+36}" stroke="${TAIL}" stroke-width="1.6"/>`;}
+    lps+=`<rect x="${x-13}" y="${mT-4}" width="12" height="11" rx="2" fill="${GN}" stroke="${INK}" stroke-width=".7"/><rect x="${x+1}" y="${mT-4}" width="12" height="11" rx="2" fill="${GN}" stroke="${INK}" stroke-width=".7"/>`
+      +`<circle cx="${x-15}" cy="${mT+2}" r="2.6" fill="#B5584A"/><circle cx="${x+15}" cy="${mT+2}" r="2.6" fill="#B5584A"/>`;
+    // core: Kdo then heptoses then hexoses
+    const cy=[mT-12,mT-22,mT-32,mT-42,mT-52];
+    lps+=`<path d="M${x} ${mT-4} V${mT-56}" stroke="${INK}" stroke-width=".8"/>`;
+    cy.forEach((yy,j)=>lps+=`<circle cx="${x}" cy="${yy}" r="4.2" fill="${j<1?KDO:(j<3?HEP:'#F1E3B8')}" stroke="${INK}" stroke-width=".6"/>`);
+    // O-antigen repeats (one molecule has none: rough LPS)
+    const L=oLen[i%oLen.length];
+    for(let r=0;r<L;r++){const yy=mT-64-r*14;lps+=`<path d="M${x} ${yy+4} V${yy+10}" stroke="${INK}" stroke-width=".8"/><rect x="${x-4}" y="${yy-5}" width="8" height="9" rx="1.5" fill="${OAG}" stroke="${INK}" stroke-width=".6"/>`;}
+  });
+  s+=G('a-fade',.3,lps);
+  // Mg2+ between neighbouring lipid A phosphates
+  let mg='';for(let i=0;i<xs.length-1;i++){const mx=(xs[i]+xs[i+1])/2;mg+=`<circle cx="${mx}" cy="${mT+2}" r="3.6" fill="#3E7FC1"/>`;}
+  s+=G('a-pop',.8,mg);
+  // inner leaflet: phospholipids
+  let pl='';for(let x=x0+6;x<x1-2;x+=11){pl+=`<path d="M${x-1.5} ${mB-8} V${mB-36} M${x+1.5} ${mB-8} V${mB-36}" stroke="${TAIL}" stroke-width="1.2"/><circle cx="${x}" cy="${mB-5}" r="3.6" fill="#B89A5E"/>`;}
+  s+=G('a-fade',.5,pl);
+  // labels with brackets
+  const br=(y1,y2,t,sub,d)=>G('a-fade',d,`<path d="M${x1+14} ${y1} h5 V${y2} h-5" stroke="#6A5B47" stroke-width="1" fill="none"/>`+T(LX,FX((y1+y2)/2+(sub&&!n?-2:4)),t,'lab start f13')+(sub&&!n?T(LX,FX((y1+y2)/2+14),sub,'note start f12'):''));
+  s+=br(mT-140,mT-60,'O-antigen',n?'':'repeating sugar units; sets the serotype (e.g. O157)',1.0);
+  s+=br(mT-56,mT-9,n?'core':'core oligosaccharide','Kdo (inner) and heptoses',1.2);
+  s+=br(mT-6,(mT+mB)/2,'lipid A','glucosamine disaccharide, six acyl chains',1.4);
+  s+=br((mT+mB)/2+2,mB,n?'phospholipid':'inner leaflet','phospholipid',1.6);
+  s+=G('a-fade',1.8,`<circle cx="${x0+6}" cy="${mB+38}" r="3.6" fill="#3E7FC1"/>`+T(x0+16,mB+42,'Mg²⁺ bridges between phosphates','note start f12')+(n?'':T(x0,mB+62,'one molecule here is rough LPS, with no O-antigen','note start f12')));
+  const yb=mB+(n?70:96);
+  const b=n?bullets(24,yb,[['Endotoxin','Lipid A activates TLR4–MD-2; in blood it drives septic shock.'],['A barrier','LPS packs tightly with Mg²⁺ bridges, excluding detergents and hydrophobic drugs.'],['Colistin','Polymyxins bind lipid A; resistance comes from adding positive charges (mcr genes).']],44,{d0:2,gap:20})
+    :bullets(24,yb,[['Endotoxin','Hexa-acylated lipid A activates TLR4–MD-2 at picomolar levels; in blood it drives septic shock. Some pathogens remodel lipid A to evade it.'],['A barrier','LPS molecules pack tightly with Mg²⁺ bridges, excluding detergents, bile and hydrophobic antibiotics.'],['Colistin','Polymyxins bind lipid A and disrupt the membrane; resistance adds positive charges to lipid A, including by plasmid-borne mcr genes.']],80,{d0:2,gap:18});
+  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scV8(n){
   const items=[['Wall teichoic acids','Polymers of ribitol- or glycerol-phosphate attached to peptidoglycan; up to half the wall’s mass in some Gram-positives. They shape the cell, bind cations and phages, and position autolysins.'],

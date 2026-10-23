@@ -51,7 +51,7 @@ function scI4(n){
     if(i===1&&err>=a&&err<a+l)r+=`<rect x="${FX(x0+err*dx+1)}" y="${y-4}" width="${FX(dx-2)}" height="8" fill="#2F5276"/>`;
     s+=G('a-fade',(.2+i*.1).toFixed(1),r);});
   const yb=y0+18+reads.length*12+10;
-  s+=G('a-fade',1,T(FX(x0+snp*dx+dx/2),yb+6,'T in every read: a real SNP','note mid f11')+T(n?FX(x0+err*dx):FX(x0+err*dx+dx/2),yb+22,'once only: a sequencing error',`note ${n?'start':'mid'} f11`));
+  s+=G('a-fade',1,T(FX(x0+snp*dx+dx/2),yb+6,n?'C→T in every read: a SNP':'reference C, but T in every read: a real SNP','note mid f11')+T(n?FX(x0+err*dx):FX(x0+err*dx+dx/2),yb+22,'once only: a sequencing error',`note ${n?'start':'mid'} f11`));
   const b=bullets(n?24:30,yb+56,[['Aligners','BWA-MEM and Bowtie2 index the reference with the Burrows–Wheeler transform so millions of short reads can be placed quickly; minimap2 handles long reads. Output is SAM text or its compressed form, BAM.'],['Coverage and MAPQ','Depth is the number of reads over a base; 30–100× is typical for a bacterial genome. MAPQ is −10 log₁₀ of the chance a read is misplaced; 0 means it fits equally well elsewhere, as in repeated rRNA operons.'],['Calling variants','A clonal bacterium is haploid, so a true SNP sits in nearly all reads; intermediate frequencies suggest a mixed population or contamination. bcftools, FreeBayes, Snippy and breseq call them.']],n?44:88,{d0:1.2,gap:18});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }

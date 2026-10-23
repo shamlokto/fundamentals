@@ -266,14 +266,14 @@ function rodCell(cx,cy,L,R,c,o={}){
   return s;
 }
 function ovoCell(cx,cy,W,H,c,o={}){
-  const w=H*0.95*c;
-  const d=`M${FX(cx-W/2)} ${FX(cy)} C ${FX(cx-W/2)} ${FX(cy-H)}, ${FX(cx)} ${FX(cy-H)}, ${FX(cx)} ${FX(cy-H+w*0)} `
-   +`C ${FX(cx)} ${FX(cy-H)}, ${FX(cx+W/2)} ${FX(cy-H)}, ${FX(cx+W/2)} ${FX(cy)} `
-   +`C ${FX(cx+W/2)} ${FX(cy+H)}, ${FX(cx)} ${FX(cy+H)}, ${FX(cx)} ${FX(cy+H)} `
-   +`C ${FX(cx)} ${FX(cy+H)}, ${FX(cx-W/2)} ${FX(cy+H)}, ${FX(cx-W/2)} ${FX(cy)} Z`;
+  // an ovococcus seen from the side: two half-ovals joined at a waist that narrows as constriction (c, 0..1) proceeds
+  const Hm=H*.75, hw=Hm*(1-c), k=W*.16;
+  const d=`M${FX(cx)} ${FX(cy-hw)} C ${FX(cx-k)} ${FX(cy-Hm)}, ${FX(cx-W/2)} ${FX(cy-Hm)}, ${FX(cx-W/2)} ${FX(cy)} `
+   +`C ${FX(cx-W/2)} ${FX(cy+Hm)}, ${FX(cx-k)} ${FX(cy+Hm)}, ${FX(cx)} ${FX(cy+hw)} `
+   +`C ${FX(cx+k)} ${FX(cy+Hm)}, ${FX(cx+W/2)} ${FX(cy+Hm)}, ${FX(cx+W/2)} ${FX(cy)} `
+   +`C ${FX(cx+W/2)} ${FX(cy-Hm)}, ${FX(cx+k)} ${FX(cy-Hm)}, ${FX(cx)} ${FX(cy-hw)} Z`;
   let s=`<path d="${d}" fill="none" stroke="${WALL}" stroke-width="7"/><path d="${d}" fill="${o.fill||CYTO}" stroke="${WALLE}" stroke-width="2.4"/>`;
-  if(c>0){const y=H*(1-c);s+=`<path d="M${FX(cx)} ${FX(cy-H)} q ${FX(-H*.5*c)} ${FX(H*.6)} 0 ${FX(H*2*1)}" fill="none" stroke="${WALLE}" stroke-width="2.4"/>`
-    +`<path d="M${FX(cx)} ${FX(cy-H)} q ${FX(H*.5*c)} ${FX(H*.6)} 0 ${FX(H*2*1)}" fill="none" stroke="${WALLE}" stroke-width="2.4"/>`;}
+  if(c>.05)s+=`<path d="M${FX(cx)} ${FX(cy-hw)} V${FX(cy-hw+Math.min(hw*.5,12*c+2))} M${FX(cx)} ${FX(cy+hw)} V${FX(cy+hw-Math.min(hw*.5,12*c+2))}" stroke="${WALLE}" stroke-width="3"/>`;
   return s;
 }
 function zring(cx,cy,R,o={}){
@@ -333,7 +333,7 @@ function cmpTable2(n,head,rows,o={}){
 function scProblem(n){
   const y=n?90:100, L=n?110:190, R=n?30:40, cr=R*.62, dL=n?.4:.5;
   const xs=n?[78,268]:[150,474], o=L*dL/2+cr+4;
-  let s=G('a-fade',0,rodCell(xs[0],y,L,R,0)+nucleoid(xs[0],y,L*.3,R*.55,{seed:3})+T(xs[0],y+R+(n?30:34),'one cell','note mid f12'));
+  let s=G('a-fade',0,rodCell(xs[0],y,L,R,0)+nucleoid(xs[0]-L*.24,y,L*.15,R*.5,{seed:3})+nucleoid(xs[0]+L*.24,y,L*.15,R*.5,{seed:9})+T(xs[0],y+R+(n?30:34),n?'one cell, two chromosomes':'one cell, chromosome copied and segregated','note mid f12'));
   s+=G('a-fade',.6,rodCell(xs[1]-o,y,L*dL,R,0)+rodCell(xs[1]+o,y,L*dL,R,0)+nucleoid(xs[1]-o,y,L*dL*.32,R*.5,{seed:7})+nucleoid(xs[1]+o,y,L*dL*.32,R*.5,{seed:11})+T(xs[1],y+R+(n?30:34),'two cells','note mid f12'));
   const a1=xs[0]+L/2+cr+8, a2=xs[1]-o-L*dL/2-cr-8;
   s+=G('a-fade',1,`<path d="M${FX(a1)} ${y} H${FX(a2)}" class="arrow"/>`);
@@ -351,7 +351,7 @@ function scProblem(n){
 function scFts(n){
   const y=n?80:88, R=n?26:30;
   let s=G('a-fade',0,T(n?14:30,n?30:34,'Temperature-sensitive mutants that stop dividing','cname start '+(n?'f14':'')));
-  s+=G('a-fade',.4,rodCell(n?68:150,y+(n?30:34),n?96:150,R,0)+T(n?68:150,y+(n?30:34)+R+22,'30 °C: normal','note mid f12'));
+  s+=G('a-fade',.4,rodCell(n?68:150,y+(n?30:34),n?96:150,R,0)+nucleoid(n?68:150,y+(n?30:34),n?16:24,R*.55,{seed:5})+T(n?68:150,y+(n?30:34)+R+22,'30 °C: normal','note mid f12'));
   const fy=y+(n?30:34), fx=n?244:430;
   s+=G('a-fade',1,rodCell(fx,fy,n?190:300,R,0)+[0,1,2,3].map(i=>nucleoid(fx-(n?70:112)+i*(n?47:75),fy,n?16:24,R*.55,{seed:3+i*4})).join('')
     +T(fx,fy+R+22,'42 °C: a filament','note mid f12'));
@@ -403,23 +403,31 @@ function scDivisome(n){
 
 /* ===================== Part II · where to divide ===================== */
 function scMin(n){
-  const L=n?250:330, R=n?34:38, cx=n?180:200;
-  const row=(y,phase)=>{
+  // MinD (with MinC bound) coats the membrane of one polar half; a MinE ring sits at its rim and drives it off,
+  // so the coat re-forms at the other pole about once a minute. Time-averaged MinC is lowest at midcell.
+  const L=n?250:330, R=n?34:38, cx=n?180:200, MINE='#C99A2E';
+  const row=(y,phase,id)=>{
     let g=rodCell(cx,y,L,R,0);
-    const x1=cx-L/2, x2=cx+L/2;
-    g+=gradBar(x1+6,y-R+5,L-12,8,phase?['#3E7FA8','#CFE0EC','#F3EEE2']:['#F3EEE2','#CFE0EC','#3E7FA8'],'mg'+(phase?'a':'b'));
-    g+=Tc(phase?x1+28:x2-28,y-R-6,'MinD',MIND,10,'mono mid','600');
-    [0,1,2].forEach(i=>{const px=phase?x1+14+i*16:x2-14-i*16;g+=`<circle cx="${px}" cy="${y+R-10}" r="4" fill="${MINC}" stroke="${INK}" stroke-width=".5"/>`;});
-    g+=Tc(phase?x1+30:x2-30,y+R+14,'MinC',MINC,10,'mono mid','600');
+    const x1=cx-L/2, x2=cx+L/2, cut=cx+(phase?-1:1)*L*.06;
+    const clip=phase?`<rect x="${x1-20}" y="${y-R-10}" width="${cut-x1+20}" height="${2*R+20}"/>`:`<rect x="${cut}" y="${y-R-10}" width="${x2-cut+20}" height="${2*R+20}"/>`;
+    g+=`<defs><clipPath id="${id}">${clip}</clipPath></defs><g clip-path="url(#${id})">`+rodCell(cx,y,L-9,R-4.5,0,{fill:'none',stroke:MIND,sw:6})+'</g>';
+    const dir=phase?1:-1, xp=phase?x1:x2;
+    [.1,.22,.34].forEach(f=>{const px=xp+dir*L*f;g+=`<circle cx="${FX(px)}" cy="${FX(y-R+10)}" r="3.6" fill="${MINC}" stroke="${INK}" stroke-width=".5"/><circle cx="${FX(px+dir*L*.06)}" cy="${FX(y+R-10)}" r="3.6" fill="${MINC}" stroke="${INK}" stroke-width=".5"/>`;});
+    g+=`<rect x="${FX(cut-3)}" y="${FX(y-R+2)}" width="6" height="11" rx="2" fill="${MINE}" stroke="${INK}" stroke-width=".5"/><rect x="${FX(cut-3)}" y="${FX(y+R-13)}" width="6" height="11" rx="2" fill="${MINE}" stroke="${INK}" stroke-width=".5"/>`;
+    g+=Tc(phase?x1+30:x2-30,y-R-8,'MinD coat','#2F5276',12,'mono mid','600')+Tc(phase?x1+L*.3:x2-L*.3,y+R+16,'MinC',MINC,12,'mono mid','600')+Tc(cut+(phase?8:-8),y-R-8,'MinE ring','#8C6D1E',12,phase?'mono start':'mono end','600');
     return g;};
-  const r1=n?74:76, r2=r1+2*R+(n?50:52);
-  let s=G('a-fade',0,row(r1,1)+T(n?14:30,r1-R-24,'MinD, with MinE, sweeps pole to pole','note start f12'));
-  s+=G('a-fade',1,row(r2,0));
-  s+=G('a-fade',1.6,`<path d="M${cx} ${r1+R+8} V${r2-R-8}" class="arrow"/>`+T(cx+(n?16:22),(r1+r2)/2,'~1 min','note start f11'));
-  const my=r2+2*R+(n?36:40);
-  s+=G('a-fade',2,rodCell(cx,my,L,R,0)+`<rect x="${cx-10}" y="${my-R+4}" width="20" height="${2*R-8}" fill="#F3EEE2" opacity=".85"/>`+zring(cx,my,R-4,{n:6,w:6})
-    +T(cx,my-R-12,'time-averaged MinC: lowest at midcell','note mid f12'));
-  const ty=my+R+(n?34:38);
+  const r1=R+50, r2=r1+2*R+(n?72:76);
+  let s=G('a-fade',0,row(r1,1,'minA')+T(n?14:30,r1-R-32,n?'MinCD coat one pole; MinE drives it off':'MinCD coat the membrane of one half; the MinE ring drives them off','note start f12'));
+  s+=G('a-fade',1,row(r2,0,'minB'));
+  s+=G('a-fade',1.6,`<path d="M${cx} ${r1+R+12} V${r2-R-26}" class="arrow"/>`+T(cx+10,(r1+r2)/2+4,'~1 min later, at the other pole','note start f12'));
+  const my=r2+2*R+(n?42:46);
+  const x1=cx-L/2, x2=cx+L/2, ph=n?44:50, py=my+R+16+ph;
+  let curve='';for(let i=0;i<=40;i++){const t=i/40, x=x1+t*L, v=.12+.88*Math.pow(2*t-1,2);curve+=(i?' L':'M')+FX(x)+' '+FX(py-v*ph);}
+  s+=G('a-fade',2,rodCell(cx,my,L,R,0)+zring(cx,my,R-4,{n:6,w:6})+T(cx,my-R-12,'FtsZ assembles only where MinC is scarce','note mid f12')
+    +`<path d="M${x1} ${py} H${x2} M${x1} ${py} V${py-ph-4}" stroke="${INK}" stroke-width="1"/>`+`<path d="${curve}" stroke="${MINC}" stroke-width="2.4" fill="none"/>`
+    +`<path d="M${cx} ${my+R+2} V${py}" stroke="${ZC}" stroke-width="1" stroke-dasharray="3 3"/>`
+    +T(cx+L*.2,py-ph*.8,'time-averaged MinC','note mid f12 halo')+T(x1,py+16,'pole','note mid f12')+T(cx,py+16,'midcell','note mid f12')+T(x2,py+16,'pole','note mid f12'));
+  const ty=py+(n?44:46);
   const L2=wrap(n?'MinC blocks FtsZ. Because MinCD oscillate from pole to pole, their average concentration is lowest exactly at midcell, so that is the only place a ring can form. Seen by Raskin and de Boer, 1999.':'MinC inhibits FtsZ assembly. Because MinC and MinD oscillate from pole to pole roughly once a minute, driven by MinE, their time-averaged concentration is highest at the poles and lowest exactly at midcell — so midcell is the only place a ring can form. The oscillation was seen by David Raskin and Piet de Boer in 1999. Bacillus subtilis has no oscillation: MinCD are held at the poles by DivIVA.',n?46:88);
   s+=G('a-fade',2.6,L2.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L2.length*20+14):wide(ty+L2.length*20+16),s};
@@ -428,8 +436,10 @@ function scMin(n){
 function scNoc(n){
   const L=n?250:300, R=n?36:40, cx=n?180:180;
   let s=G('a-fade',0,rodCell(cx,n?80:86,L,R,0)+nucleoid(cx,n?80:86,L*.33,R*.6,{seed:5})
-    +[0,1,2,3,4].map(i=>`<circle cx="${cx-L*.3+i*L*.15}" cy="${(n?80:86)-R+12}" r="4.5" fill="${NOCC}" stroke="${INK}" stroke-width=".5"/>`).join('')
-    +T(cx,(n?80:86)-R-14,'SlmA on the DNA blocks FtsZ','note mid f12')+mark(cx+L*.42,(n?80:86),false,9));
+    +[[-.24,-.3],[-.12,.25],[0,-.2],[.1,.3],[.22,-.25]].map(p=>`<circle cx="${FX(cx+p[0]*L)}" cy="${FX((n?80:86)+p[1]*R)}" r="4.5" fill="${NOCC}" stroke="${INK}" stroke-width=".5"/>`).join('')
+    +`<g opacity=".35">${zring(cx,(n?80:86),R-4,{n:6,w:6})}</g>`+mark(cx,(n?80:86),false,9)
+    +T(cx,(n?80:86)-R-14,'SlmA bound to the DNA keeps FtsZ off','note mid f12')
+    +T(FX(cx+.22*L+8),FX((n?80:86)-.25*R-6),'SlmA','note start f12 halo'));
   const y2=n?206:210;
   s+=G('a-fade',1,rodCell(cx,y2,L,R,0)+nucleoid(cx-L*.26,y2,L*.19,R*.55,{seed:9})+nucleoid(cx+L*.26,y2,L*.19,R*.55,{seed:13})
     +zring(cx,y2,R-4,{n:6,w:6})+T(cx,y2-R-14,'DNA has moved aside: the ring can form','note mid f12')+mark(cx+L*.42,y2,true,9));
@@ -446,16 +456,19 @@ function scOvo(n){
   const W=n?92:110, H=n?48:56, y=n?120:124;
   const xs=n?[70,180,290]:[120,320,520];
   let s='';
-  [[0,'new cell'],[0.45,'ring at midcell'],[0.95,'two ovals']].forEach((st,i)=>{
-    s+=G('a-fade',(i*.5).toFixed(1),ovoCell(xs[i],y,W,H,st[0])+T(xs[i],y+H+(n?24:28),st[1],'note mid f12'));
-    if(i===1)s+=G('a-pop',1,zring(xs[i],y,H-6,{n:6,w:6}));
-    /* MapZ rings seen edge-on, as bands across the cell */
-    const mz=x=>`<path d="M${FX(x)} ${FX(y-H*.72)} V${FX(y+H*.72)}" stroke="${MAPZ}" stroke-width="4" stroke-linecap="round" stroke-dasharray="7 3"/>`;
-    if(i>0)s+=G('a-pop',(i*.5+.2).toFixed(1),[0,1].map(k=>mz(xs[i]+(k?1:-1)*W*.3)).join(''));
-    if(i===0)s+=G('a-pop',.3,mz(xs[i]));
+  const Ws=[W*.82,W*1.05,W*1.28];
+  [[0,'new cell'],[0.12,'Z ring at midcell'],[0.7,'constricting']].forEach((st,i)=>{
+    const Wi=Ws[i], Hm=H*.75, hw=Hm*(1-st[0]);
+    s+=G('a-fade',(i*.5).toFixed(1),ovoCell(xs[i],y,Wi,H,st[0])+T(xs[i],y+H+(n?24:28),st[1],'note mid f12'));
+    if(i>0)s+=G('a-pop',1,zring(xs[i],y,hw-5,{n:i===1?7:4,w:6}));
+    /* MapZ rings seen edge-on, as bands across the cell, at the equator of the cell or of each future daughter */
+    const mz=(x,h)=>`<path d="M${FX(x)} ${FX(y-h)} V${FX(y+h)}" stroke="${MAPZ}" stroke-width="4" stroke-linecap="round" stroke-dasharray="7 3"/>`;
+    if(i>0)s+=G('a-pop',(i*.5+.2).toFixed(1),[0,1].map(k=>mz(xs[i]+(k?1:-1)*Wi*.25,Hm*.86)).join(''));
+    if(i===0)s+=G('a-pop',.3,mz(xs[i],hw-3));
   });
+  s+=G('a-fade',1.6,`<rect x="${xs[2]+12}" y="${y+H*.75+6}" width="10" height="5" fill="${ZC}"/>`+T(xs[2]+26,y+H*.75+12,'FtsZ','note start f12'));
   s+=G('a-fade',1.8,T(n?180:320,n?44:48,'MapZ rings mark the site before FtsZ arrives','lab mid '+(n?'f14':''))
-    +Tc(xs[0]+(n?14:16),y-(n?14:16),'MapZ',MAPZ,11,'mono start','600'));
+    +Tc(xs[0]+(n?10:14),y-(n?20:24),'MapZ',MAPZ,12,'mono start','600'));
   const ty=y+H+(n?52:60);
   const L=wrap(n?'The pneumococcus is an ovococcus: it has no Min system and no MreB. MapZ (also called LocZ) forms a ring at the equator, splits in two as the cell grows, and the two daughter rings mark the next division sites. Fleurie and colleagues; Holečková and colleagues, 2014.':'Streptococcus pneumoniae is an ovococcus. It has no Min system, and although it keeps an elongasome it has no MreB, so neither of the E. coli positioning systems applies. Instead MapZ, also called LocZ, forms a ring at the equator early, binds peptidoglycan through its extracellular domain, splits into two rings as the cell grows, and those rings mark where the next divisions will happen. It guides FtsZ rather than inhibiting it elsewhere. Described independently by Fleurie and colleagues and by Holečková and colleagues in 2014.',n?46:88);
   s+=G('a-fade',2.4,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));

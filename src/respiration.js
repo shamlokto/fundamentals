@@ -15,14 +15,26 @@ function scB1(n){return introPlate(n,{q:'How do cells turn the energy of electro
   items:['The proton motive force','ATP synthase','Bacterial respiratory chains','Alternative acceptors','Fermentation and its end products','Yields compared'],
   art:(cx,cy)=>membraneBand(cx-100,cx+100,cy-10,20)+[-50,0,50].map((d,i)=>arw(cx+d,cy+30,cx+d,cy-30,{w:1.4,blue:1})).join('')+T(cx,cy-40,'H⁺ H⁺ H⁺','mono mid f12')+T(cx,cy+52,'electron transport','note mid f11'),artH:140});}
 function scB2(n){
-  let s='';const y=n?120:120, x1=n?10:30, x2=n?350:610;
-  s+=G('a-fade',0,membraneBand(x1,x2,y-12,24)+T(x1+4,y-40,'outside (periplasm)','note start f11')+T(x1+4,y+34,'cytoplasm','note start f11'));
-  const cx=n?[70,150,230]:[120,230,340];
-  s+=G('a-fade',.3,cx.map((x,i)=>`<rect x="${x-22}" y="${y-22}" width="44" height="44" rx="8" fill="${['#A9C4DC','#C9A9D6','#E7A99B'][i]}" stroke="${INK}" class="tint"/>`+Tc(x,y+4,['I','III','IV'][i],'#3A2E22',12,'mono mid','600')+arw(x+15,y+28,x+15,y-34,{w:1.2,blue:1})).join(''));
-  const ax=n?310:500;
-  s+=G('a-fade',.6,`<rect x="${ax-16}" y="${y-30}" width="32" height="60" rx="6" fill="${PAL.gold}" stroke="${INK}" class="tint"/><circle cx="${ax}" cy="${y+46}" r="18" fill="${PAL.gold}" stroke="${INK}"/>`+Tc(ax,y+50,'F₁','#3A2E22',11,'mono mid','600')+arw(ax-6,y-40,ax-6,y+24,{w:1.4,red:1})+T(ax+24,y+52,'ATP','mono start f12'));
-  s+=G('a-fade',.9,T(n?180:240,y-50,n?'protons pumped out':'electron transport pumps protons out','note mid f11')+T(ax,y-46,'flow back','note mid f11'));
-  const b=bullets(n?24:30,y+90,[['Δp = Δψ − (2.3RT/F)·ΔpH','The proton motive force has an electrical part (inside negative) and a chemical part (inside alkaline). In E. coli it is about −150 to −200 mV, mostly Δψ at neutral pH.'],['It powers more than ATP','Flagellar rotation, many transporters, SecDF and Tat protein export, and the uptake of aminoglycosides all run on it.'],['Uncouplers','Molecules that carry protons across the membrane collapse Δp and stop ATP synthesis without stopping electron flow.']],n?44:88,{d0:1.2,gap:22});
+  let s='';const y=112, x1=n?8:24, x2=n?352:616, w=n?32:50;
+  const X=n?{I:46,Q:94,III:140,c:184,IV:226,A:314}:{I:110,Q:188,III:262,c:332,IV:396,A:488};
+  s+=G('a-fade',0,membraneBand(x1,x2,y-14,28)+T(x1+2,y-82,n?'periplasm: P side, + charge, acidic':'periplasm (P side): positive charge, more acidic','note start f12')+T(x1+2,y+102,n?'cytoplasm: N side, − charge, alkaline':'cytoplasm (N side): negative charge, more alkaline','note start f12'));
+  const cx=k=>X[k], cplx=(k,lab,col,bot)=>`<rect x="${cx(k)-w/2}" y="${y-26}" width="${w}" height="${26+bot}" rx="7" fill="${col}" stroke="${INK}" class="tint"/>`+Tc(cx(k)+(n?5:8),y+5,lab,'#3A2E22',12,'mono mid','600');
+  s+=G('a-fade',.3,cplx('I','I','#A9C4DC',44)+cplx('III','III','#C9A9D6',26)+cplx('IV','IV','#E7A99B',26)
+    +`<ellipse cx="${cx('Q')}" cy="${y}" rx="${n?13:16}" ry="10" fill="${PAL.gold}" stroke="${INK}"/>`+Tc(cx('Q'),y+4,'Q','#3A2E22',12,'mono mid','600')
+    +`<circle cx="${cx('c')}" cy="${y-42}" r="10" fill="#E8B4A0" stroke="${INK}"/>`+Tc(cx('c'),y-38,'c','#3A2E22',12,'mono mid','600')
+    +T(n?6:cx('I'),y+66,'NADH → NAD⁺',(n?'mono start':'mono mid')+' f12')+T(cx('IV')+(n?-4:0),y+50,'½O₂ + 2H⁺ → H₂O','mono mid f12'));
+  const e=(x1,y1,x2,y2)=>arw(x1,y1,x2,y2,{red:1,w:1.5,dash:'4 3'});
+  s+=G('a-fade',.6,e(cx('I')+w/2,y,cx('Q')-(n?14:17),y)+e(cx('Q')+(n?14:17),y,cx('III')-w/2-2,y)+e(cx('III')+w/2,y-20,cx('c')-10,y-40)+e(cx('c')+10,y-40,cx('IV')-w/2-1,y-20));
+  const h=(k,lab)=>arw(cx(k)-w/4,k==='I'?y+38:y+30,cx(k)-w/4,y-44,{blue:1,w:1.4})+T(cx(k)-w/4,y-52,lab,'mono mid f12');
+  s+=G('a-fade',.9,h('I','4H⁺')+h('III','4H⁺')+h('IV','2H⁺'));
+  const A=cx('A');
+  s+=G('a-fade',1.2,`<rect x="${A-17}" y="${y-18}" width="34" height="36" rx="6" fill="${PAL.gold}" stroke="${INK}" class="tint"/>`+ln(A,y+18,A,y+28,INK,3)+`<circle cx="${A}" cy="${y+46}" r="18" fill="${PAL.gold}" stroke="${INK}"/>`
+    +Tc(A-6,y+5,'F₀','#3A2E22',12,'mono mid','600')+Tc(A,y+50,'F₁','#3A2E22',12,'mono mid','600')+arw(A+9,y-46,A+9,y+14,{blue:1,w:1.6})+T(A+9,y-52,n?'H⁺ back':'H⁺ flow back','mono mid f12')
+    +(n?T(A,y+80,'ADP + Pᵢ','mono mid f12')+T(A,y+94,'→ ATP','mono mid f12'):T(A+24,y+50,'ADP + Pᵢ → ATP','mono start f12')));
+  s+=G('a-fade',1.4,T(x1+2,y+124,'red dashed: electrons (2 e⁻ per NADH);  blue: protons','note start f12'));
+  const cap=para(x1+2,y+146,'A mitochondrion-like chain (as in Paracoccus) moves about 10 H⁺ out per NADH: 4 at complex I, 4 at III (bc₁, via the Q cycle) and 2 at IV, while O₂ is reduced on the cytoplasmic side. E. coli has no III or IV: its quinol oxidases bo₃ (which pumps) and bd (which does not) take electrons straight from QH₂.',n?52:96,'lab start f13',17,1.5);
+  s+=cap.s;
+  const b=bullets(n?24:30,cap.y+22,[['Δp = Δψ − (2.3RT/F)·ΔpH','The proton motive force has an electrical part (inside negative) and a chemical part (inside alkaline). In E. coli it is about −150 to −200 mV, mostly Δψ at neutral pH.'],['It powers more than ATP','Flagellar rotation, many transporters, SecDF and Tat protein export, and the uptake of aminoglycosides all run on it.'],['Uncouplers','Molecules that carry protons across the membrane collapse Δp and stop ATP synthesis without stopping electron flow.']],n?44:88,{d0:1.2,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scB3(n){
@@ -32,8 +44,8 @@ function scB3(n){
 }
 function scB4(n){
   const N=n?{d:{x:80,y:60,w:140,t:'NADH, succinate,|formate, H₂'},q:{x:80,y:250,w:120,t:'quinone|pool',f:PAL.gold},o2:{x:268,y:130,w:150,t:'O₂ oxidases|bo₃, bd',f:PAL.blue},n3:{x:268,y:210,w:150,t:'nitrate|reductase',f:PAL.rose},f:{x:268,y:290,w:150,t:'fumarate|reductase',f:PAL.green},t:{x:268,y:370,w:150,t:'TMAO, DMSO|reductases',f:PAL.lilac}}
-   :{d:{x:100,y:150,w:160,t:'NADH, succinate,|formate, H₂, lactate'},q:{x:290,y:150,w:130,t:'quinone pool|(UQ, MK)',f:PAL.gold},o2:{x:500,y:40,w:150,t:'O₂: bo₃ or bd|oxidase',f:PAL.blue},n3:{x:500,y:120,w:150,t:'nitrate|reductase',f:PAL.rose},f:{x:500,y:200,w:150,t:'fumarate|reductase',f:PAL.green},t:{x:500,y:280,w:150,t:'TMAO, DMSO|reductases',f:PAL.lilac}};
-  const E=[['d','q',n?'':'dehydrogenases'],['q','o2',''],['q','n3',''],['q','f',''],['q','t','']];
+   :{d:{x:100,y:150,w:160,t:'NADH, succinate,|formate, H₂, lactate'},q:{x:316,y:150,w:130,t:'quinone pool|(UQ, MK)',f:PAL.gold},o2:{x:500,y:40,w:150,t:'O₂: bo₃ or bd|oxidase',f:PAL.blue},n3:{x:500,y:120,w:150,t:'nitrate|reductase',f:PAL.rose},f:{x:500,y:200,w:150,t:'fumarate|reductase',f:PAL.green},t:{x:500,y:280,w:150,t:'TMAO, DMSO|reductases',f:PAL.lilac}};
+  const E=[['d','q',n?'':'dehydro-|genases',{side:-1}],['q','o2',''],['q','n3',''],['q','f',''],['q','t','']];
   let s=G('a-fade',0,flow(N,E));
   const by=n?420:340;
   const b=bullets(n?24:30,by,[['Modular, branched chains','Bacteria mix and match dozens of dehydrogenases and terminal reductases around a shared quinone pool, unlike the fixed mitochondrial chain.'],['A hierarchy','E. coli prefers O₂, then nitrate, then other acceptors, sensed by ArcBA and FNR (oxygen) and NarXL (nitrate).'],['Two oxidases','Cytochrome bo₃ pumps protons; bd does not but binds O₂ more tightly, used at low oxygen and to tolerate stress.']],n?44:88,{d0:1,gap:22});
@@ -49,7 +61,7 @@ function scB6(n){
   const f=FERM[fermSel];
   const N=n?{g:{x:180,y:40,w:120,t:'glucose'},p:{x:180,y:120,w:120,t:'pyruvate',f:PAL.gold},e:{x:180,y:210,w:320,t:f.p.length>34?f.p.replace(/, (?=[^,]*$)/,',|').replace(', formate',',|formate'):f.p,f:PAL.rose}}
     :{g:{x:70,y:60,w:100,t:'glucose'},p:{x:220,y:60,w:100,t:'pyruvate',f:PAL.gold},e:{x:480,y:60,w:250,t:f.p.length>26?f.p.replace(/, /g,',|').split('|').reduce((a,w)=>{const L=a[a.length-1];if((L+' '+w).length>28)a.push(w);else a[a.length-1]=(L?L+' ':'')+w;return a;},['']).join('|'):f.p,f:PAL.rose,fs:11}};
-  let s=G('a-fade',0,flow(N,[['g','p',f.up||'2 ATP, 2 NADH',{side:n?-1:1}],['p','e','NADH reoxidised',{side:n?-1:1}]]));
+  let s=G('a-fade',0,flow(N,[['g','p',f.up||'2 ATP, 2 NADH',{side:n?-1:1,off:n?12:28}],['p','e','NADH reoxidised',{side:n?-1:1,off:n?12:28}]]));
   const ex=explorer(n,{h:f.k+' fermentation',rows:[['Products',f.p],['Organisms',f.org],['ATP per glucose',String(f.atp)]],note:f.note},{y:n?260:130});
   return {vb:ex.vb,s:s+ex.s};
 }

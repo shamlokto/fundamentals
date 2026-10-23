@@ -434,10 +434,18 @@ function scWo1(n){return titlePlate(n,{name:'Carl Woese',dates:'1928–2012',q:'
 function scWo2(n){
   const crit=[['In every cell','All cellular life has ribosomes, so every organism can be compared with every other.'],['Same job everywhere','Its function is ancient and conserved, so its sequence changes for neutral reasons, not new roles.'],
    ['Changes slowly, and unevenly','Some regions barely change, others change faster: one molecule can compare both close and distant relatives.'],['Long enough','About 1,500 nucleotides in the bacterial 16S rRNA: plenty of information.'],['Rarely swapped','As part of the core of the ribosome, it is seldom transferred between lineages.']];
-  let s='';const ox=n?180:150, oy=n?100:150;
-  s+=G('a-fade',0,`<ellipse cx="${ox}" cy="${oy}" rx="${n?90:110}" ry="${n?62:78}" fill="#E9DDB8" stroke="${INK}" stroke-width="1.2"/>`
-    +`<path d="M${ox-80} ${oy+10} q20 -40 40 -10 q10 20 30 -14 q14 -30 30 0 q14 26 30 -6 q10 -24 30 -6" stroke="${RNAC}" stroke-width="2.6" fill="none"/>`+[[-60,-20],[-20,10],[10,-30],[40,10],[66,-14]].map(q=>`<path d="M${ox+q[0]} ${oy+q[1]} l4 -10 m-4 10 l8 -8" stroke="${RNAC}" stroke-width="1.6"/>`).join('')
-    +T(ox,oy+(n?84:100),'16S rRNA in the small ribosomal subunit','note mid f12'));
+  let s='';const x0=n?20:28, x1=n?340:284, k=(x1-x0)/1542, by=n?70:110;
+  const V=[[69,99],[137,242],[433,497],[576,682],[822,879],[986,1043],[1117,1173],[1243,1294],[1435,1465]];
+  let bar=T(x0,by-40,'the 16S rRNA gene of E. coli, about 1,540 nucleotides','note start f12')
+    +`<rect x="${x0}" y="${by-8}" width="${FX(x1-x0)}" height="16" rx="3" fill="#D8D2C2" stroke="${INK}" stroke-width="1"/>`;
+  V.forEach((v,i)=>{const a=x0+v[0]*k, w=Math.max(3,(v[1]-v[0])*k), cx=a+w/2;
+    bar+=`<rect x="${FX(a)}" y="${by-8}" width="${FX(w)}" height="16" fill="${RNAC}" opacity=".85"/>`
+      +T(FX(cx),i%2?by+24:by-14,'V'+(i+1),'mono mid f12');});
+  bar+=T(x0,by+42,'1','mono start f12')+T(x1,by+42,'1542','mono end f12');
+  const lg=(y,c,t)=>`<rect x="${x0}" y="${y-10}" width="14" height="11" fill="${c}" stroke="${INK}" stroke-width=".6"/>`+T(x0+20,y,t,'note start f12');
+  bar+=lg(by+66,'#D8D2C2','conserved: compares distant groups')+lg(by+84,RNAC,'variable (V1–V9): compares close relatives');
+  s+=G('a-fade',0,bar);
+  const oy=n?by+20:150;
   const b=n?bullets(24,oy+120,crit,44,{d0:.6,gap:22}):bullets(310,44,crit,44,{d0:.6,gap:22});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
@@ -458,7 +466,17 @@ const METHTEST={dh:96,dhn:96,
  conds:[
   {n:'16S rRNA catalogues',d:'SAB between methanogens and typical bacteria, compared with values within bacteria.',draw:(cx,y)=>[['bacteria vs bacteria',.3,BACC],['methanogen vs bacteria',.1,ARCC],['bacteria vs eukaryote',.08,EUKC]].map((r,i)=>`<rect x="${cx-60}" y="${y+14+i*26}" width="${FX(r[1]*500)}" height="16" fill="${r[2]}" stroke="${INK}" stroke-width=".7"/>`+T(cx-70,y+26+i*26,r[0],'note end f11')).join(''),
    pred:[['similar to within bacteria','they share bacterial sequences'],['as low as to eukaryotes','an independent line']],obs:['as low as to eukaryotes','about 0.1, no closer than bacteria are to eukaryotes']},
-  {n:'Membrane lipids',d:'The chemistry of the lipids that make the membrane.',draw:(cx,y)=>`<path d="M${cx-100} ${y+40} h60 M${cx-100} ${y+52} h60" stroke="${BACC}" stroke-width="3"/>`+T(cx-70,y+76,'ester-linked fatty acids','note mid f11')+`<path d="M${cx+40} ${y+40} h60 M${cx+40} ${y+52} h60" stroke="${ARCC}" stroke-width="3" stroke-dasharray="6 2"/>`+T(cx+70,y+76,'ether-linked isoprenoids','note mid f11'),
+  {n:'Membrane lipids',d:'The chemistry of the lipids that make the membrane.',draw:(cx,y)=>{
+    /* glycerol backbone with two hydrocarbon tails: ester bonds and straight fatty acids (bacteria); ether bonds and branched isoprenoids (methanogens) */
+    const zig=(x0,yy,branch,col)=>{let d=`M${x0} ${yy}`,t='';for(let k=1;k<=10;k++){const x=x0+k*9,yv=yy+(k%2?-4:4);d+=` L${x} ${yv}`;if(branch&&k%2===0)t+=`<path d="M${x} ${yv} l0 7" stroke="${col}" stroke-width="1.6"/>`;}return `<path d="${d}" stroke="${col}" stroke-width="2" fill="none"/>`+t;};
+    const lip=(gx,col,ester,branch)=>{let o=`<rect x="${gx-9}" y="${y+28}" width="18" height="52" rx="4" fill="#EFE6D2" stroke="${INK}" stroke-width="1"/>`+T(gx,y+98,'glycerol','note mid f12');
+      [44,66].forEach(dy=>{o+=ln(gx+9,y+dy,gx+16,y+dy,INK,1.4)+Tc(gx+20,y+dy+4,'O','#3A2E22',11,'mono mid','600');
+        if(ester)o+=Tc(gx+34,y+dy-7,'O','#A4473A',11,'mono mid','600')+`<path d="M${gx+32} ${y+dy-4} v-1 M${gx+36} ${y+dy-4} v-1" stroke="#A4473A"/>`+ln(gx+25,y+dy,gx+34,y+dy,INK,1.4)+ln(gx+34,y+dy,gx+34,y+dy-4,'#A4473A',1.4);
+        o+=zig(gx+(ester?38:26),y+dy,branch,col);});
+      return o;};
+    return lip(cx-140,BACC,1,0)+lip(cx+20,ARCC,0,1)
+      +T(cx-80,y+122,'bacteria: ester bonds,','note mid f12')+T(cx-80,y+137,'straight fatty acids','note mid f12')
+      +T(cx+80,y+122,'methanogens: ether bonds,','note mid f12')+T(cx+80,y+137,'branched isoprenoids','note mid f12');},
    pred:[['ester-linked fatty acids','like other bacteria'],['something different','a separate line could differ in basics']],obs:['something different','ether-linked isoprenoid lipids']},
   {n:'Cell wall',d:'Is there peptidoglycan, with muramic acid?',draw:(cx,y)=>T(cx,y+50,'no muramic acid; pseudomurein or protein layers instead','note mid f12'),
    pred:[['peptidoglycan','the universal bacterial wall'],['something different','']],obs:['something different','no peptidoglycan']},

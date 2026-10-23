@@ -527,36 +527,42 @@ function scH1(n){
 
 function scH2(n){
   let s='', y;
+  /* donor duplex -> one strand imported (EndA degrades the other) -> RecA-coated ssDNA -> pairs into one strand of the chromosome */
+  const ds=(x1,x2,yy,col,patch)=>`<path d="M${x1} ${yy} H${x2}" stroke="${col}" stroke-width="3" stroke-linecap="round"/><path d="M${x1} ${yy+7} H${x2}" stroke="${col}" stroke-width="3" stroke-linecap="round" opacity=".6"/>`
+     +(patch?`<path d="M${patch[0]} ${yy} h${patch[1]}" stroke="${INTC}" stroke-width="4"/>`:'');
+  const deg=(x,yy,dx,dy)=>[0,1,2,3].map(i=>`<path d="M${FX(x+i*dx)} ${FX(yy+i*dy)} l${FX(dx*.55)} ${FX(dy*.55)}" stroke="${INTC}" stroke-width="2.6" opacity=".55" stroke-linecap="round"/>`).join('');
+  const recA=(x1,x2,yy)=>{let t=`<path d="M${x1} ${yy} H${x2}" stroke="${INTC}" stroke-width="3" stroke-linecap="round"/>`;for(let x=x1+6;x<=x2-6;x+=11)t+=`<ellipse cx="${x}" cy="${yy}" rx="5" ry="6.5" fill="${RECC}" stroke="${INK}" stroke-width=".6" opacity=".9"/>`;return t;};
   if(!n){
     const my=100;
     s+=G('a-fade',0,`<rect x="214" y="56" width="392" height="88" rx="10" fill="${CELLF}" stroke="${CELLE}" stroke-width="2"/>`
-      +Tc(232,74,'inside the competent cell','#6A5B47',10,'mono start'));
-    s+=G('a-fade',.3,frag(36,my-2,112,INTC)+T(36,46,'donor double-stranded DNA','note start f11'));
-    s+=G('a-fade',.5,arw(156,my,200,my,{blue:1}));
+      +Tc(596,136,'inside the competent cell','#6A5B47',12,'mono end'));
+    s+=G('a-fade',.3,ds(36,150,my-4,INTC)+T(36,my-16,'donor double-stranded DNA','note start f12'));
+    s+=G('a-fade',.5,arw(156,my,198,my,{blue:1}));
     s+=G('a-fade',.7,`<rect x="206" y="${my-20}" width="16" height="40" rx="3" fill="${INTC}" stroke="${INK}"/>`
-      +Tc(214,46,'ComEA / ComEC','#2E7D78',10,'mono mid','600'));
-    s+=G('a-fade',1,`<path d="M232 ${my} H330" stroke="${INTC}" stroke-width="3.4" stroke-linecap="round"/>`
-      +Tc(36,172,'one strand enters; the other is degraded outside','#6A5B47',10,'mono start'));
-    s+=G('a-fade',1.3,prot(372,my,22,14,RECC,'RecA')+arw(336,my,350,my,{blue:1}));
-    s+=G('a-fade',1.6,`<path d="M408 ${my} H586" stroke="${CHR}" stroke-width="3"/>`
-      +`<path d="M470 ${my} h44" stroke="${INTC}" stroke-width="5"/>`
-      +Tc(586,96,'chromosome','#6A5B47',10,'mono end')
-      +Tc(432,172,'recombined in as a patch','#6A5B47',10,'mono start'));
-    y=196;
+      +Tc(214,46,'ComEA / ComEC','#2E7D78',12,'mono mid','600')+deg(198,my+24,-10,7));
+    s+=G('a-fade',1,`<path d="M226 ${my} H246" stroke="${INTC}" stroke-width="3" stroke-linecap="round"/>`+recA(246,330,my)
+      +T(288,my-16,'RecA on the single strand','note mid f12')
+      +Tc(36,168,'one strand enters; EndA','#6A5B47',12,'mono start')+Tc(36,184,'degrades the other outside','#6A5B47',12,'mono start'));
+    s+=G('a-fade',1.3,arw(338,my,370,my,{blue:1}));
+    s+=G('a-fade',1.6,ds(380,586,my-4,CHR,[456,60])
+      +Tc(586,my-14,'chromosome','#6A5B47',12,'mono end')
+      +Tc(400,168,'donor strand replaces one','#6A5B47',12,'mono start')+Tc(400,184,'strand: a heteroduplex patch','#6A5B47',12,'mono start'));
+    y=212;
   } else {
-    s+=G('a-fade',0,frag(26,54,130,INTC)+T(26,40,'donor dsDNA','note start f11'));
+    s+=G('a-fade',0,ds(26,156,54,INTC)+T(26,40,'donor dsDNA','note start f12'));
     s+=G('a-fade',.4,arw(90,70,90,96,{blue:1}));
     s+=G('a-fade',.6,`<rect x="24" y="106" width="312" height="96" rx="10" fill="${CELLF}" stroke="${CELLE}" stroke-width="2"/>`
       +`<rect x="82" y="100" width="34" height="14" rx="3" fill="${INTC}" stroke="${INK}"/>`
-      +Tc(124,112,'ComEA / ComEC','#2E7D78',10,'mono start','600'));
-    s+=G('a-fade',1,`<path d="M99 120 V152 H150" stroke="${INTC}" stroke-width="3.2" fill="none"/>`
-      +Tc(26,218,'one strand enters; the other','#6A5B47',10,'mono start')
-      +Tc(26,232,'is degraded outside','#6A5B47',10,'mono start'));
-    s+=G('a-fade',1.3,prot(190,152,20,13,RECC,'RecA'));
-    s+=G('a-fade',1.6,`<path d="M212 152 H330" stroke="${CHR}" stroke-width="3"/>`
-      +`<path d="M250 152 h32" stroke="${INTC}" stroke-width="5"/>`
-      +Tc(330,178,'chromosome','#6A5B47',10,'mono end'));
-    y=256;
+      +Tc(124,100,'ComEA / ComEC','#2E7D78',12,'mono start','600')+deg(78,98,-8,-5));
+    s+=G('a-fade',1,`<path d="M99 120 V152 H106" stroke="${INTC}" stroke-width="3" fill="none"/>`+recA(106,160,152)
+      +T(132,136,'RecA','note mid f12')
+      +Tc(26,218,'one strand enters; EndA','#6A5B47',12,'mono start')
+      +Tc(26,234,'degrades the other outside','#6A5B47',12,'mono start'));
+    s+=G('a-fade',1.3,arw(166,152,186,152,{blue:1}));
+    s+=G('a-fade',1.6,ds(194,326,148,CHR,[236,40])
+      +Tc(326,136,'chromosome','#6A5B47',12,'mono end')
+      +Tc(256,184,'heteroduplex patch','#6A5B47',12,'mono mid'));
+    y=262;
   }
   s+=G('a-fade',1.6,T(n?16:24,y,'Competence in the pneumococcus','cname start f14'));y+=22;
   const q=para(n?16:24,y,'Competence is not permanent. The cell exports a small peptide, CSP, encoded by comC; when enough of it accumulates the ComD–ComE two-component system fires, the alternative sigma factor ComX is made, and for about twenty minutes roughly a hundred genes are on and the cell can take up DNA. Then the window closes.',n?50:92,'note start f13',17,1.8);
@@ -567,22 +573,45 @@ function scH2(n){
 }
 
 function scH3(n){
-  let s='';const cy=n?88:96, L=n?118:160, R=n?15:19;
-  const dx=n?84:132, cx=n?180:320;
-  s+=G('a-fade',0,cellRod(cx-dx,cy,L,R,{})+T(cx-dx,cy+R+18,'donor','note mid f11'));
-  s+=G('a-fade',.2,cellRod(cx+dx,cy,L,R,{})+T(cx+dx,cy+R+18,'recipient','note mid f11'));
-  /* plasmid rings */
-  s+=G('a-fade',.4,pRing(cx-dx,cy,13,{col:PLS,w:2.6,feats:[{a0:-30,a1:20,col:TNC,lab:''}]})
-    +Tc(cx-dx,cy-26,'oriT','#7D4A98',10,'mono mid','600'));
-  /* pilus / mating bridge */
-  const bx1=cx-dx+L/2-4, bx2=cx+dx-L/2+4;
-  s+=G('a-fade',.7,`<path d="M${FX(bx1)} ${cy} H${FX(bx2)}" stroke="${PLS}" stroke-width="7" stroke-linecap="round"/>`
-    +`<path d="M${FX(bx1)} ${cy} H${FX(bx2)}" stroke="#E7DEC9" stroke-width="2.6"/>`
-    +Tc((bx1+bx2)/2,cy-16,'T4SS','#7D4A98',11,'mono mid','600')
-    +Tc((bx1+bx2)/2,cy+22,'mating pair','#6A5B47',10,'mono mid'));
-  s+=G('a-fade',1.1,`<path d="M${FX(bx1)} ${FX(cy+1)} H${FX(bx2)}" stroke="${TNC}" stroke-width="2.6" stroke-dasharray="5 3"/>`);
-  s+=G('a-fade',1.4,pRing(cx+dx,cy,13,{col:PLS,w:2.6,dash:'4 3'}));
-  let y=cy+(n?54:62);
+  /* strands drawn separately: donor plasmid nicked at oriT, the T strand leaves 5′ end first with relaxase, both cells make new DNA */
+  let s='';const cy=n?92:100, L=n?112:160, R=n?24:30;
+  const dx=n?88:132, cx=n?180:320, PA='#7D4A98', PB='#B79BCB', NEW='#A4473A', RLX=TNC, W=2.6, r=n?14:17, r2=r-6;
+  const P=(x0,y0,rr,t)=>{const q=t*Math.PI/180;return [+(x0+rr*Math.sin(q)).toFixed(1),+(y0-rr*Math.cos(q)).toFixed(1)];};
+  const arc=(x0,y0,rr,a1,a2,col)=>{const p=P(x0,y0,rr,a1),q=P(x0,y0,rr,a2),big=((a2-a1+720)%360)>180?1:0;
+    return `<path d="M${p[0]} ${p[1]} A${rr} ${rr} 0 ${big} 1 ${q[0]} ${q[1]}" fill="none" stroke="${col}" stroke-width="${W}" stroke-linecap="round"/>`;};
+  const head=(x0,y0,rr,t,col)=>{const [x,y]=P(x0,y0,rr,t),q=(t+90)*Math.PI/180,ux=Math.sin(q),uy=-Math.cos(q);
+    return `<path d="M${FX(x+ux*6)} ${FX(y+uy*6)} L${FX(x-ux*2+uy*4)} ${FX(y-uy*2-ux*4)} L${FX(x-ux*2-uy*4)} ${FX(y-uy*2+ux*4)}Z" fill="${col}"/>`;};
+  const D=cx-dx, Rc=cx+dx;
+  s+=G('a-fade',0,cellRod(D,cy,L,R,{})+cellRod(Rc,cy,L,R,{})+T(D,cy+R+18,'donor','note mid f12')+T(Rc,cy+R+18,'recipient','note mid f12'));
+  const bx1=D+L/2+R*.62-5, bx2=Rc-L/2-R*.62+5;
+  s+=G('a-fade',.2,`<rect x="${FX(bx1)}" y="${cy-7}" width="${FX(bx2-bx1)}" height="14" rx="4" fill="#E7DEC9" stroke="${PA}" stroke-width="1.6"/>`
+    +Tc(cx,cy-14,'T4SS','#7D4A98',12,'mono mid','600'));
+  /* donor: template circle intact; replacement strand grows from the 3′ end at the nick */
+  const f=P(D,cy,r,90), nk=P(D,cy,r,0);
+  s+=G('a-fade',.4,`<circle cx="${D}" cy="${cy}" r="${r2}" fill="none" stroke="${PB}" stroke-width="${W}"/>`
+    +arc(D,cy,r,90,360,PA)+arc(D,cy,r,0,86,NEW)+head(D,cy,r,86,NEW)
+    +`<circle cx="${nk[0]}" cy="${nk[1]}" r="3" fill="${INK}"/>`+T(D,cy-R-8,'nick at oriT','note mid f12'));
+  /* T strand: from the donor fork through the T4SS into the recipient, relaxase on its 5′ end */
+  const rr=r+3, e0=P(Rc,cy,rr,270);
+  s+=G('a-fade',.8,`<path d="M${f[0]} ${f[1]} H${e0[0]}" fill="none" stroke="${PA}" stroke-width="${W}"/>`
+    +arc(Rc,cy,rr,270,480,PA));
+  const rl=P(Rc,cy,rr,120);
+  s+=G('a-fade',1.1,`<circle cx="${rl[0]}" cy="${rl[1]}" r="5.5" fill="${RLX}" stroke="${INK}" stroke-width=".8"/>`
+    +T(Rc,cy-R-8,'relaxase on the 5′ end','note mid f12'));
+  /* recipient: complement made on the incoming strand, towards its 5′ end */
+  s+=G('a-fade',1.3,arc(Rc,cy,rr-6,290,425,NEW)+head(Rc,cy,rr-6,425,NEW));
+  const ly=cy+R+36;
+  if(!n){
+    s+=G('a-fade',1.5,T(D,ly,'the donor replaces the leaving','note mid f12')+T(D,ly+15,'strand by rolling-circle synthesis','note mid f12')
+      +T(Rc,ly,'the recipient copies the','note mid f12')+T(Rc,ly+15,'incoming single strand','note mid f12'));
+  } else {
+    s+=G('a-fade',1.5,T(D,ly,'donor re-makes','note mid f12')+T(D,ly+15,'the leaving strand','note mid f12')
+      +T(Rc,ly,'recipient copies','note mid f12')+T(Rc,ly+15,'the incoming strand','note mid f12'));
+  }
+  const kx=n?40:150, ky=ly+(n?40:42);
+  s+=G('a-fade',1.7,`<path d="M${kx} ${ky-4} h18" stroke="${PA}" stroke-width="3"/><path d="M${kx} ${ky+2} h18" stroke="${PB}" stroke-width="3"/>`+T(kx+24,ky+3,'plasmid strands','note start f12')
+    +`<path d="M${kx+(n?150:200)} ${ky-1} h18" stroke="${NEW}" stroke-width="3"/>`+T(kx+(n?174:224),ky+3,'new DNA','note start f12'));
+  let y=ky+(n?24:26);
   const steps=[['Relaxase nicks at oriT','A dedicated enzyme cuts one strand at a specific site, the nic site, and stays covalently attached to its 5′ end.'],
    ['The nucleoprotein is pumped through','The T4SS is a secretion machine; it transfers the relaxase with its single strand, not a naked plasmid, into the recipient.'],
    ['Both cells fill in the second strand','The donor replaces the departing strand by rolling-circle replication and the recipient copies the incoming one, so at the end both cells have a complete plasmid.'],
@@ -621,7 +650,9 @@ function scH5(n){
   /* 1: IS element */
   s+=G('a-fade',0,row(y,'insertion sequence — about 1 kb',yy=>{
     const a=x+W*.30, b=x+W*.62;
-    return irTri(a,rw,yy,1,TNC)+irTri(b-rw,rw,yy,-1,TNC)+gArrow(a+rw+4,yy,b-a-2*rw-8,'tnp',TNC,{h:15});}));
+    const dr=xx=>`<rect x="${FX(xx)}" y="${yy-5}" width="12" height="10" fill="${INTC}" stroke="${INK}" stroke-width=".6"/>`;
+    return dr(a-15)+dr(b+3)+irTri(a,rw,yy,1,TNC)+irTri(b-rw,rw,yy,-1,TNC)+gArrow(a+rw+4,yy,b-a-2*rw-8,'tnp',TNC,{h:15})
+      +T(b+20,yy+4,n?'TSD':'target-site duplication (direct repeat)','note start f12 halo');}));
   /* 2: composite transposon */
   const y2=y+(n?76:78);
   s+=G('a-fade',.5,row(y2,'composite transposon — two IS copies flanking cargo',yy=>{
@@ -632,8 +663,10 @@ function scH5(n){
   const y3=y2+(n?76:78);
   s+=G('a-fade',1,row(y3,'unit transposon — Tn3 family, one set of inverted repeats',yy=>{
     const a=x+W*.12, b=x+W*.88;
-    return irTri(a,rw,yy,1,TNC)+gArrow(a+rw+3,yy,W*.22,'tnpA',TNC,{h:15})
-      +gArrow(a+rw+6+W*.22,yy,W*.16,'tnpR',RECC,{h:15})
+    const rx=a+rw+5+W*.22;
+    return irTri(a,rw,yy,1,TNC)+gArrowL(a+rw+3,yy,W*.22,'tnpA',TNC,{h:15})
+      +`<rect x="${FX(rx)}" y="${yy-7}" width="8" height="14" fill="${INK}"/>`+T(rx+4,yy+22,'res','note mid f12')
+      +gArrow(rx+10,yy,W*.38-(rx+10-(a+rw+6)),'tnpR',RECC,{h:15})
       +gArrow(a+rw+9+W*.38,yy,b-rw-(a+rw+9+W*.38)-3,'bla',METC,{h:15})+irTri(b-rw,rw,yy,-1,TNC);}));
   let yy=y3+(n?46:48);
   const b=bullets(n?24:30,yy,[['Cut-and-paste or copy-and-paste','Conservative transposition excises the element and moves it, leaving a double-strand break behind. Replicative transposition copies it through a cointegrate that is then resolved by TnpR at the res site — which is why Tn3 carries a resolvase.'],
@@ -698,17 +731,18 @@ function scH7(n){
     +`<rect x="${FX(x+W*.34)}" y="${FX(cy-8)}" width="${FX(W*.32)}" height="16" rx="2" fill="${PLS}" fill-opacity=".45" stroke="${PLS}" stroke-width="1.4"/>`
     +Tc(cx,cy-18,'ICE, integrated','#7D4A98',11,'mono mid','600')
     +Tc(x+W*.34,cy+22,'attL','#2E7D78',10,'mono mid','600')+Tc(x+W*.66,cy+22,'attR','#2E7D78',10,'mono mid','600'));
-  const ry=cy+(n?74:72);
-  s+=G('a-fade',.7,arw(cx,cy+32,cx,ry-26,{blue:1})+Tc(cx+10,cy+48,'excision','#6A5B47',10,'mono start'));
+  const ry=cy+(n?110:104);
   const lx=cx-(n?74:118), rx2=cx+(n?80:118);
-  s+=G('a-fade',1,pRing(lx,ry,20,{col:PLS,w:3,feats:[{a0:-50,a1:20,col:METC,lab:'cargo'},{a0:160,a1:230,col:TNC,lab:'int'}]})
+  s+=G('a-fade',.7,arw(cx-(n?20:30),cy+30,lx+16,ry-44,{blue:1})+Tc(cx+(n?14:40),cy+46,'excision leaves','#6A5B47',12,'mono start')+Tc(cx+(n?14:40),cy+61,'attB in the chromosome','#6A5B47',12,'mono start'));
+  s+=G('a-fade',1,pRing(lx,ry,20,{col:PLS,w:3,lfs:12,feats:[{a0:-160,a1:-110,col:METC,lab:'cargo'},{a0:-70,a1:-20,col:RECC,lab:'T4SS, oriT'},{a0:110,a1:170,col:TNC,lab:'int'}]})
+    +`<circle cx="${lx}" cy="${ry-20}" r="3.2" fill="${INK}"/>`+Tc(lx,ry-30,'attP','#2E7D78',12,'mono mid','600')
     +T(lx,ry+54,'circular intermediate','note mid f11'));
   s+=G('a-fade',1.4,cellRod(rx2,ry,n?96:124,18,{})
     +arw(lx+28,ry,rx2-(n?52:66),ry,{blue:1})
     +`<circle cx="${rx2}" cy="${ry}" r="7" fill="none" stroke="${PLS}" stroke-width="2.4" stroke-dasharray="3 2"/>`
     +T(rx2,ry+40,'conjugates into a new cell,','note mid f11')
     +T(rx2,ry+54,'then integrates again','note mid f11'));
-  let y=ry+(n?82:84);
+  let y=ry+(n?84:84);
   const b=bullets(n?24:30,y,[['Integrative and conjugative elements','An ICE spends most of its life quietly integrated in the chromosome, replicating as part of it. On induction it excises, circularises, transfers by its own T4SS, and integrates into the recipient. Plasmid-like in transfer, phage-like in integration.'],
    ['They are usually the biggest cargo carriers','ICEs run from twenty to several hundred kilobases and routinely carry resistance, metabolic or virulence modules. SXT in Vibrio cholerae and ICEBs1 in Bacillus subtilis are the best-studied.'],
    ['Tn916 and the streptococci','The Tn916–Tn1545 family are small conjugative transposons of the ICE type. They carry tetM, and in Tn1545 ermB as well, and are the main vehicle of tetracycline and macrolide resistance in Streptococcus pneumoniae, usually embedded in larger composite elements such as Tn2009 and Tn2010.'],

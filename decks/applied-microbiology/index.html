@@ -749,9 +749,11 @@ function scM8(n){
 function scM9(n){
   const tx=n?180:160, ty=92;
   const N={a:{x:tx-(n?80:90),y:ty,w:n?100:110,t:'repressor 1|(LacI)',f:PAL.blue},b:{x:tx+(n?80:90),y:ty,w:n?100:110,t:'repressor 2|(cI)',f:PAL.rose}};
-  let s=G('a-fade',0,T(tx,22,'toggle switch','cname mid f14')+flow(N,[['a','b','represses',{bend:-50,red:1,off:22}],['b','a','represses',{bend:-50,red:1,off:22}]])+T(tx,ty+84,'two stable states; a pulse','note mid f11')+T(tx,ty+98,'of inducer flips it','note mid f11'));
+  const tee=x=>x.replace(/marker-end="url\(#ah[pr]\)"/g,'marker-end="url(#amTee)"');
+  let s=`<defs><marker id="amTee" viewBox="0 0 10 12" refX="8" refY="6" markerWidth="5" markerHeight="7" orient="auto"><path d="M8 0 V12" stroke="#A4473A" stroke-width="3"/></marker></defs>`;
+  s+=G('a-fade',0,T(tx,22,'toggle switch','cname mid f14')+tee(flow(N,[['a','b','represses',{bend:-50,red:1,off:22}],['b','a','represses',{bend:-50,red:1,off:22}]]))+T(tx,ty+84,'two stable states; a pulse','note mid f11')+T(tx,ty+98,'of inducer flips it','note mid f11'));
   const rx=n?180:470, ry=n?330:140;
-  s+=G('a-fade',.5,T(rx,n?ry-108:22,'repressilator','cname mid f14')+cycle(rx,ry,n?64:66,[{t:'LacI',w:58,f:PAL.blue},{t:'TetR',w:58,f:PAL.gold},{t:'λ cI',w:58,f:PAL.rose}],{labs:['represses','represses','represses'],lr:14}));
+  s+=G('a-fade',.5,T(rx,n?ry-108:22,'repressilator','cname mid f14')+tee(cycle(rx,ry,n?64:66,[{t:'LacI',w:58,f:PAL.blue},{t:'TetR',w:58,f:PAL.gold},{t:'λ cI',w:58,f:PAL.rose}],{labs:['represses','represses','represses'],lr:14}).replace(/stroke="#6A5B47" stroke-width="1.5"/g,'stroke="#A4473A" stroke-width="1.5"')));
   const by=n?ry+122:ry+104;
   const b=bullets(n?24:30,by,[['2000: circuits from parts','Gardner, Cantor and Collins built the toggle switch and Elowitz and Leibler the repressilator, whose three repressors make E. coli cells blink in oscillating cycles.'],['Chassis','E. coli, Bacillus subtilis, yeast and Pseudomonas putida are the usual hosts. JCVI-syn3.0 (2016) runs on a synthetic genome of 473 genes.'],['Biosensors and engineered strains','Whole-cell biosensors report arsenic or other pollutants with a coloured or glowing output. Yeast engineered to make artemisinic acid supplied a semi-synthetic route to the antimalarial artemisinin from 2013.']],n?44:88,{d0:1,gap:20});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};

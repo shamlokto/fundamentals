@@ -663,16 +663,31 @@ function scF1(n){return introPlate(n,{q:'How does a cell a micrometre long swim 
     return rodCell2(cx+40,cy-40,80,20)+wv(cx,cy-42,180,7)+wv(cx,cy-36,182,7)+T(cx+40,cy-8,'run: flagella bundled behind','note mid f11')
       +rodCell2(cx+40,cy+46,80,20)+wv(cx+6,cy+40,215,5)+wv(cx+80,cy+50,25,5)+wv(cx+2,cy+52,160,5)+T(cx+40,cy+100,'tumble: the bundle flies apart','note mid f11');},artH:190});}
 function scF2(n){
-  let s='';const cx=n?100:130, y=56;
-  s+=G('a-fade',0,membraneBand(cx-90,cx+90,y+64,16)+`<rect x="${cx-90}" y="${y+40}" width="180" height="6" fill="#C6D3A8"/>`+membraneBand(cx-90,cx+90,y+10,14,{fill:'#D9C89B'}));
-  s+=G('a-fade',.3,`<rect x="${cx-34}" y="${y+86}" width="68" height="34" rx="6" fill="#C9A9D6" stroke="${INK}" class="tint"/>`+`<rect x="${cx-20}" y="${y+60}" width="40" height="24" rx="3" fill="#E0C88A" stroke="${INK}"/>`
-    +`<rect x="${cx-12}" y="${y+6}" width="24" height="56" rx="3" fill="#D6C79F" stroke="${INK}"/>`+`<rect x="${cx-20}" y="${y+11}" width="40" height="12" rx="3" fill="#B9A27A" stroke="${INK}"/><rect x="${cx-20}" y="${y+37}" width="40" height="12" rx="3" fill="#B9A27A" stroke="${INK}"/>`+`<path d="M${cx} ${y+6} V${y-14} q 0 -12 14 -14" stroke="${INK}" stroke-width="3" fill="none"/>`+`<path d="M${cx+14} ${y-28} q 20 -8 40 0 t 40 0 t 40 0" stroke="${INK}" stroke-width="2" fill="none"/>`
-    +[-60,-44,44,60].map(d=>`<rect x="${cx+d-6}" y="${y+45}" width="12" height="53" rx="3" fill="#9DB4AE" stroke="${INK}"/>`).join(''));
-  const LX=cx+102, lab=[['filament',cx+60,y-26,y-50],['hook',cx+4,y-16,y-10],['outer membrane',cx+90,y+17,y+17],['rod, L and P rings',cx+20,y+42,y+38],['MS ring, stator',cx+66,y+72,y+64],['C ring (switch)',cx+34,y+104,y+104]];
-  s+=G('a-fade',.8,lab.map(l=>ln(l[1],l[2],LX-4,l[3],'#9A8E78',.8)+T(LX,l[3]+4,l[0],'note start f11')).join(''));
-  const b=n?bullets(24,y+160,[['Proton-powered','Stators of MotA and MotB let protons flow and push on the C ring: about 1,000 protons a turn.'],['Fast','The motor spins at ~300 revolutions a second in E. coli; up to ~1,700 in Vibrio, with Na⁺.'],['Switchable','CheY-P binding the C ring flips it from counter-clockwise to clockwise.'],['Built from inside','Flagellin travels through the hollow filament, added at the tip.']],44,{d0:1.2,gap:20})
-    :bullets(370,52,[['Proton-powered','Stators of MotA and MotB let protons flow across the membrane and push on the C ring, using about 1,000 protons per turn.'],['Fast','The motor turns at around 300 revolutions per second in E. coli, and up to ~1,700 in Na⁺-driven Vibrio motors.'],['Switchable','CheY-P binding the C-ring protein FliM flips rotation from counter-clockwise to clockwise.'],['Built from inside','A type III export apparatus at the base sends flagellin up the hollow filament, added at the distal tip.']],32,{d0:1.2,gap:20});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,y+150)),s:s+b.s};
+  // Gram-negative envelope with compartments labelled; L ring in the OM, P ring at the peptidoglycan, MS ring in the
+  // inner membrane, C ring (switch) and export gate in the cytoplasm; stators span the IM and bind the peptidoglycan
+  let s='';const cx=n?146:190, y=40, x0=cx-(n?90:110), x1=cx+(n?90:110), LX=x1+12;
+  const OM=y+50, PG=y+92, IM=y+132, ring='#B9A27A', ROD='#D6C79F', STAT='#9DB4AE';
+  s+=G('a-fade',0,membraneBand(x0,x1,OM,16,{fill:'#D9C89B'})+`<rect x="${x0}" y="${OM+16}" width="${x1-x0}" height="${IM-OM-16}" fill="#F3EEE2" opacity=".6"/>`
+    +`<rect x="${x0}" y="${PG}" width="${x1-x0}" height="7" fill="#C6D3A8"/>`+membraneBand(x0,x1,IM,18)
+    +[['outside',y+28],[n?'OM':'outer memb.',OM+12],['PG',PG+7],[n?'peri.':'periplasm',PG+28],[n?'IM':'inner memb.',IM+13],[n?'cyto.':'cytoplasm',IM+44]].map(l=>T(x0-6,l[1],l[0],'note end f12')).join(''));
+  s+=G('a-fade',.3,`<rect x="${cx-8}" y="${OM-6}" width="16" height="${IM-OM+10}" fill="${ROD}" stroke="${INK}"/>`
+    +`<rect x="${cx-22}" y="${OM+1}" width="44" height="13" rx="3" fill="${ring}" stroke="${INK}"/>`
+    +`<rect x="${cx-22}" y="${PG-3}" width="44" height="13" rx="3" fill="${ring}" stroke="${INK}"/>`
+    +`<rect x="${cx-28}" y="${IM-2}" width="56" height="22" rx="4" fill="#E0C88A" stroke="${INK}"/>`
+    +`<path d="M${cx-48} ${IM+20} h96 v22 q0 10 -10 10 h-76 q-10 0 -10 -10z" fill="#C9A9D6" stroke="${INK}" class="tint"/>`
+    +`<rect x="${cx-13}" y="${IM+20}" width="26" height="22" rx="3" fill="#E7A99B" stroke="${INK}"/>`);
+  s+=G('a-fade',.6,`<path d="M${cx} ${OM-6} V${y+28} q0 -12 14 -14" stroke="${INK}" stroke-width="3.2" fill="none"/>`
+    +`<path d="M${cx+14} ${y+14} q 16 -10 32 0 t 32 0 t 32 0${n?'':' t 32 0'}" stroke="${INK}" stroke-width="2.2" fill="none"/>`);
+  s+=G('a-pop',.9,[-74,-60,60,74].map(d=>`<rect x="${cx+d-6}" y="${PG+2}" width="12" height="${IM+22-PG-2}" rx="3" fill="${STAT}" stroke="${INK}" class="tint"/>`).join('')
+    +arw(cx-67,PG-10,cx-67,IM+32,{blue:1,w:2})+Tc(cx-67,PG-14,'H⁺','#2F5276',12,'mono mid','600'));
+  s+=G('a-pop',1.2,blob(cx-30,IM+62,9,6,'#B5584A')+Tc(cx-42,IM+66,'CheY-P','#A4473A',12,'mono end','600'));
+  const R=[['filament',cx+110,y+14,y+6],['hook',cx+10,y+22,y+26],['L ring',cx+22,OM+7,OM+8],['P ring',cx+22,PG+3,PG+4],['stator MotA/B',cx+80,PG+22,PG+26],['MS ring',cx+28,IM+8,IM+12],['C ring (switch)',cx+48,IM+32,IM+36],['export gate',cx+13,IM+38,IM+56]];
+  if(n)R[0][1]=cx+106;
+  s+=G('a-fade',1.4,R.map(l=>ln(l[1],l[2],LX-4,l[3],'#9A8E78',.8)+T(LX,l[3]+4,n&&l[0]==='stator MotA/B'?'stator':(n&&l[0]==='C ring (switch)'?'C ring':l[0]),'note start f12')).join(''));
+  const yb=IM+(n?100:96);
+  const b=n?bullets(24,yb,[['Proton-powered','Stators of MotA and MotB let protons flow and push on the C ring: about 1,000 protons a turn.'],['Fast','The motor spins at ~300 revolutions a second in E. coli; up to ~1,700 in Vibrio, with Na⁺.'],['Switchable','CheY-P binding the C ring flips it from counter-clockwise to clockwise.'],['Built from inside','Flagellin travels through the hollow filament, added at the tip.']],44,{d0:1.6,gap:20})
+    :bullets(410,52,[['Proton-powered','Stators of MotA and MotB let protons flow across the membrane and push on the C ring, using about 1,000 protons per turn.'],['Fast','The motor turns at around 300 revolutions per second in E. coli, and up to ~1,700 in Na⁺-driven Vibrio motors.'],['Switchable','CheY-P binding the C-ring protein FliM flips rotation from counter-clockwise to clockwise.'],['Built from inside','A type III export apparatus at the base sends flagellin up the hollow filament, added at the distal tip.']],28,{d0:1.6,gap:20});
+  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,yb)),s:s+b.s};
 }
 function scF3(n){
   let s='';const P0=[[30,150],[120,120],[150,180],[250,160],[300,90],[360,140],[450,120],[480,200],[570,170],[610,110]];
@@ -684,11 +699,11 @@ function scF3(n){
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scF4(n){
-  const N=n?{mcp:{x:130,y:40,w:200,t:'receptors|+ CheW',f:'#A9C4DC'},r:{x:300,y:40,w:80,t:'CheR',f:'#C6D3A8'},a:{x:130,y:140,w:110,t:'CheA',f:'#C9A9D6'},b:{x:300,y:140,w:90,t:'CheB-P',f:'#E7A99B'},y:{x:130,y:240,w:110,t:'CheY-P',f:'#E7A99B'},z:{x:300,y:240,w:80,t:'CheZ'},
+  const N=n?{mcp:{x:120,y:40,w:170,t:'receptors|+ CheW',f:'#A9C4DC'},r:{x:300,y:40,w:80,t:'CheR',f:'#C6D3A8'},a:{x:130,y:140,w:110,t:'CheA',f:'#C9A9D6'},b:{x:300,y:140,w:90,t:'CheB-P',f:'#E7A99B'},y:{x:130,y:240,w:110,t:'CheY-P',f:'#E7A99B'},z:{x:300,y:240,w:80,t:'CheZ'},
      m:{x:130,y:340,w:130,t:'motor switch'}}
    :{mcp:{x:150,y:50,w:220,t:'receptors (MCPs) + CheW',f:'#A9C4DC'},a:{x:150,y:140,w:110,t:'CheA',f:'#C9A9D6'},y:{x:330,y:140,w:100,t:'CheY-P',f:'#E7A99B'},m:{x:520,y:140,w:120,t:'motor switch'},
      z:{x:330,y:230,w:90,t:'CheZ'},b:{x:150,y:230,w:100,t:'CheB-P',f:'#E7A99B'},r:{x:390,y:50,w:90,t:'CheR',f:'#C6D3A8'}};
-  const E=n?[['mcp','a','activates;|less with|attractant',{side:1}],['a','y','P',{side:-1}],['a','b','P',{side:-1}],['y','m','CW: tumble',{side:-1}],['z','y','',{}],['b','mcp','−CH₃',{side:1,dash:'4 3'}],['r','mcp','+CH₃',{side:-1,dash:'4 3'}]]
+  const E=n?[['mcp','a','activates;|less with|attractant',{side:1}],['a','y','P',{side:-1}],['a','b','P',{side:-1}],['y','m','CW: tumble',{side:-1}],['z','y','−P',{side:1}],['b','mcp','−CH₃',{side:1,dash:'4 3'}],['r','mcp','+CH₃',{side:1,dash:'4 3',lx:24}]]
     :[['mcp','a','activates; less when|attractant binds',{side:-1}],['a','y','P'],['y','m','CW rotation: tumble'],['z','y','dephosphorylates',{side:1}],['a','b','P',{side:-1}],['b','mcp','removes|methyl groups',{bend:-90,dash:'4 3',off:16}],['r','mcp','adds methyl groups',{side:-1,dash:'4 3'}]];
   let s=G('a-fade',0,flow(N,E));
   const by=n?390:290;

@@ -511,9 +511,9 @@ function scE1(n){
 }
 
 function scE2(n){
-  const rows=[['Per base, per generation','1 × 10⁻¹⁰ to 5 × 10⁻¹⁰','E. coli, mutation-accumulation lines'],
+  const rows=[['Per base, per generation','1 in 10 billion to 1 in 2 billion','E. coli, mutation-accumulation lines'],
    ['Per genome, per generation','about 0.003','roughly one mutation per 300 divisions'],
-   ['Per gene, per generation','about 10⁻⁶','so 10⁹ cells carry mutants of every gene'],
+   ['Per gene, per generation','about 1 in 10 million to 1 in a million','so 10⁹ cells carry mutants of every gene'],
    ['Mutator strains','10–100× higher','mismatch-repair or GO-system defects'],
    ['Under SOS induction','raised for the duration','error-prone Pol IV and Pol V']];
   const t=wtable(n,['Measure','Typical value','Note'],rows,n?[[10,13],[112,15],[224,20]]:[[24,22],[210,24],[400,34]],{y0:32});
@@ -527,10 +527,11 @@ function scE2(n){
 }
 
 function scE3(n){
-  const P=n?xyPlot(44,40,290,150,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency',xdy:30,ydx:14})
-           :xyPlot(60,46,280,170,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency of the variant',xdy:32,ydx:16});
+  const P=n?xyPlot(44,40,290,150,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency',xdy:30,ydx:30})
+           :xyPlot(60,46,280,170,[0,300],[0,1.02],{xlab:'generations',ylab:'frequency of the variant',xdy:32,ydx:34});
   const logistic=s=>t=>1/(1+1e6*Math.exp(-s*t));
-  let s=G('a-fade',0,P.s+[0,100,200,300].map(v=>`<path d="M${FX(P.px(v))} ${P.y+P.h} v4" stroke="${AXC}"/>`+T(FX(P.px(v)),P.y+P.h+14,v,'mono mid f10')).join(''));
+  let s=G('a-fade',0,P.s+[0,100,200,300].map(v=>`<path d="M${FX(P.px(v))} ${P.y+P.h} v4" stroke="${AXC}"/>`+T(FX(P.px(v)),P.y+P.h+14,v,'mono mid f10')).join('')
+    +[0,.5,1].map(v=>`<path d="M${P.x} ${FX(P.py(v))} h-4" stroke="${AXC}"/>`+T(P.x-7,FX(P.py(v)+3),v,'mono end f10')).join(''));
   [[0.30,'s = 0.30',PHG,''],[0.15,'s = 0.15',CORE,''],[0.05,'s = 0.05',TNC,'5 3']].forEach((c,i)=>{
     s+=G('a-fade',(.3+i*.35).toFixed(1),xyCurve(P,logistic(c[0]),{col:c[2],dash:c[3],n:140}));});
   s+=G('a-fade',1.4,n?keyRow(26,P.y+P.h+50,[['s = 0.30',PHG],['s = 0.15',CORE],['s = 0.05',TNC]],{rh:16,fs:'f11'})
@@ -548,7 +549,7 @@ function scE4(n){
   const mk=(frac,seed)=>{const rr=rnd(seed),a=[];for(let i=0;i<cols*rows;i++)a.push(rr()<frac?PHG:CORE);return a;};
   const stages=[['Large population','10⁹ cells',mk(.5,3)],['Bottleneck','only a few survive or are transmitted',null],['Regrown','from whatever got through',null]];
   const gx=n?[24,24,24]:[40,250,452], gy=n?[60,190,320]:[70,70,70];
-  const popA=mk(.5,3);
+  const popA=(()=>{const a=[];for(let i=0;i<cols*rows;i++)a.push(i<cols*rows/2?PHG:CORE);const rr=rnd(3);for(let i=a.length-1;i>0;i--){const j=Math.floor(rr()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;})();  // exactly half each
   s+=G('a-fade',0,popGrid(gx[0],gy[0],cols,rows,popA,{d:n?13:14,g:n?4:5}));
   const surv=[PHG,PHG,CORE];
   s+=G('a-fade',.6,popGrid(gx[1]+(n?0:14),gy[1]+(n?0:18),3,1,surv,{d:n?13:14,g:n?4:5}));
@@ -557,7 +558,7 @@ function scE4(n){
   const lab=[['Large population','two variants at equal frequency'],['Bottleneck','only a few cells pass'],['Regrown','frequencies have shifted by chance alone']];
   lab.forEach((l,i)=>{const lx=n?24:gx[i], ly=n?gy[i]-26:gy[i]+(n?0:4*19+26);
     s+=G('a-fade',(.2+i*.6).toFixed(1),T(lx,ly,l[0],'cname start f13')+T(lx,ly+(n?14:16),l[1],'note start f11'));});
-  if(!n)s+=G('a-fade',.9,arw(gx[0]+8*19+6,gy[0]+34,gx[1]-8,gy[1]+34)+arw(gx[1]+54,gy[1]+34,gx[2]-8,gy[2]+34));
+  if(!n)s+=G('a-fade',.9,arw(gx[0]+8*19+6,gy[0]+34,gx[1]-8,gy[1]+34)+arw(gx[1]+14+3*19+6,gy[1]+34,gx[2]-8,gy[2]+34));
   let y=n?gy[2]+4*19+40:gy[0]+4*19+70;
   const b=bullets(n?24:30,y,[['Drift is sampling error','No variant here is fitter. The frequencies changed because only a handful of cells founded the next population, and which ones is luck.'],
    ['Bacteria pass through bottlenecks constantly','Transmission between hosts, colonisation of a new site, a course of antibiotics, a single-colony purification in the laboratory. Each resets diversity.'],
@@ -568,12 +569,21 @@ function scE4(n){
 function scE5(n){
   let s='';const x=n?20:40, w=n?320:230, h=n?120:140, y=46;
   s+=G('a-fade',0,T(n?16:24,28,'Two hypotheses, two pictures of the same lineage','cname start f14'));
-  const treeA=(ox,oy)=>lineage(ox,oy,w,h,8,5,[[8,0,PHG,false],[8,2,PHG,false],[8,3,PHG,false]],{r:3.6});
-  const treeB=(ox,oy)=>lineage(ox,oy,w,h,8,5,[[2.2,1,PHG]],{r:3.6});
+  /* real cell pedigrees: four rounds of division, 16 cells at plating; red = resistant */
+  const tree=(ox,oy,red,mut,tipOnly)=>{const G4=4,tw=w-28,pos=[];let t='';
+    for(let g=0;g<=G4;g++){pos[g]=[];const k=1<<g;for(let i=0;i<k;i++){const span=h/k;pos[g].push([ox+g*tw/G4,oy+span*(i+.5)]);}}
+    for(let g=1;g<=G4;g++)pos[g].forEach((c,i)=>{const p=pos[g-1][i>>1],r=!tipOnly&&red(g,i);
+      t+=`<path d="M${FX(p[0])} ${FX(p[1])} V${FX(c[1])} H${FX(c[0])}" fill="none" stroke="${r?PHG:'#B9AE98'}" stroke-width="${r?2.4:1.4}"/>`;});
+    pos[G4].forEach((c,i)=>{t+=`<circle cx="${FX(c[0])}" cy="${FX(c[1])}" r="3.4" fill="${red(G4,i)?PHG:'#E0DBCB'}" stroke="${INK}" stroke-width=".6"/>`;});
+    (mut||[]).forEach(([g,i])=>{const p=pos[g-1][i>>1],c=pos[g][i];t+=`<path d="M${FX((p[0]+c[0])/2)} ${FX(c[1]-5)} l3 5 l-3 5 l-3 -5z" fill="${PHG}" stroke="${INK}" stroke-width=".6"/>`;});
+    const px=ox+tw+10;t+=`<path d="M${FX(px)} ${oy-4} V${oy+h+4}" stroke="${CORE}" stroke-width="1.4" stroke-dasharray="4 3"/>`+T(px+4,oy-8,'plating','note mid f12');
+    return t;};
+  const treeA=(ox,oy)=>tree(ox,oy,(g,i)=>g===4&&(i===3||i===11),null,1);
+  const treeB=(ox,oy)=>tree(ox,oy,(g,i)=>(g===2&&i===1)||(g===3&&(i===2||i===3))||(g===4&&((i>=4&&i<=7)||i===13)),[[2,1],[4,13]]);
   const ay=n?y+26:y+26, by=n?y+26+h+112:y+26;
   const bx=n?x:x+w+78;
-  s+=G('a-fade',.4,treeA(x,ay)+T(x,ay-20,'If exposure induces resistance','cname start f13')+T(x,ay+h+22,n?'the same small chance at plating;':'the same small chance at plating,','note start f11')+T(x,ay+h+36,n?'no clone behind it':'with no clone behind it','note start f11'));
-  s+=G('a-fade',1,treeB(bx,by)+T(bx,by-20,'If mutations arise at random, before exposure','cname start f13')+T(bx,by+h+22,'one early mutation leaves a whole','note start f11')+T(bx,by+h+36,'clone of resistant descendants','note start f11'));
+  s+=G('a-fade',.4,treeA(x,ay)+T(x,ay-20,'If exposure induces resistance','cname start f13')+T(x,ay+h+22,n?'the same small chance at plating;':'the same small chance at plating,','note start f12')+T(x,ay+h+36,n?'no clone behind it':'with no clone behind it','note start f12'));
+  s+=G('a-fade',1,treeB(bx,by)+T(bx,by-20,'If mutations arise at random, before exposure','cname start f13')+T(bx,by+h+22,'one early mutation (◆) leaves a whole','note start f12')+T(bx,by+h+36,'clone of resistant descendants','note start f12'));
   let yy=(n?by+h:Math.max(ay,by)+h)+(n?60:62);
   const p=para(n?16:24,yy,'Both produce resistant colonies. They differ in how the number of resistant cells varies from culture to culture — and that is measurable, which is the whole idea.',n?50:92,'note start f13',17,1.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
@@ -601,9 +611,9 @@ function scE6(n){
   let y=(n?P2.y+P2.h:P1.y+P1.h)+(n?54:56);
   const m1=INDUCED.reduce((a,b)=>a+b,0)/INDUCED.length, v1=INDUCED.reduce((a,b)=>a+(b-m1)*(b-m1),0)/(INDUCED.length-1);
   const m2=SPONT.reduce((a,b)=>a+b,0)/SPONT.length, v2=SPONT.reduce((a,b)=>a+(b-m2)*(b-m2),0)/(SPONT.length-1);
-  const rows=[['Induced (Poisson)',m1.toFixed(1),v1.toFixed(1),(v1/m1).toFixed(2)],['Observed',m2.toFixed(1),v2.toFixed(0),(v2/m2).toFixed(0)]];
+  const rows=[[n?'Induced (sim.)':'If induced (simulated)',m1.toFixed(1),v1.toFixed(1),(v1/m1).toFixed(2)],[n?'Spontaneous (sim.)':'Spontaneous (simulated)',m2.toFixed(1),v2.toFixed(0),(v2/m2).toFixed(0)]];
   const t=wtable(n,['',n?'mean':'mean',n?'var.':'variance',n?'var / mean':'variance / mean'],rows,n?[[8,17],[160,5],[216,6],[268,10]]:[[24,22],[260,10],[370,12],[490,12]],{y0:y,d0:1.6});
-  const p=para(n?16:24,t.y+12,'For a Poisson process the variance equals the mean. The real data are wildly over-dispersed: most plates have nothing and a few have a jackpot. That single statistic — variance far larger than the mean — is the whole proof.',n?50:92,'note start f13',17,2);
+  const p=para(n?16:24,t.y+12,'Both sets are simulated, 20 cultures each, to show the pattern. For a Poisson process the variance equals the mean. The real data are wildly over-dispersed: most plates have nothing and a few have a jackpot. That single statistic — variance far larger than the mean — is the whole proof.',n?50:92,'note start f13',17,2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
 }
 
@@ -692,13 +702,13 @@ function scE10(n){
 
 function scE11(n){
   const rows=[['Fluctuation test','mutation rate, and that mutants pre-exist selection','many parallel small cultures; fit the distribution'],
-   ['Mutation accumulation','unbiased mutation rate and spectrum','repeated single-colony bottlenecks for thousands of generations, then sequence'],
+   ['Mutation accumulation','nearly unbiased mutation rate and spectrum','repeated single-colony bottlenecks for thousands of generations, then sequence'],
    ['Competition assay','relative fitness of two strains','mix at known ratio, grow, measure the ratio again'],
    ['Experimental evolution','how adaptation proceeds','serial passage with sequencing over time; detects sweeps and interference'],
    ['Population sequencing','standing variation in a sample','deep sequencing of a mixed population; allele frequencies, not genotypes'],
    ['Recombination detection','imported patches and r/m','look for clusters of SNPs inconsistent with the clonal tree']];
   const t=wtable(n,['Method','What it measures','How'],rows,n?[[10,12],[106,18],[232,20]]:[[24,20],[190,28],[390,36]],{y0:32});
-  const p=para(n?16:24,t.y+14,'Each of the four forces leaves a different signature, and each method is designed to isolate one of them. Mutation accumulation deliberately makes drift dominate, by passing single colonies so that selection cannot act; competition assays do the reverse.',n?50:92,'note start f13',17,1.6);
+  const p=para(n?16:24,t.y+14,'Each of the four forces leaves a different signature, and each method is designed to isolate one of them. Mutation accumulation deliberately makes drift dominate, by passing single colonies so that selection can remove little more than lethal mutations; competition assays do the reverse.',n?50:92,'note start f13',17,1.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 

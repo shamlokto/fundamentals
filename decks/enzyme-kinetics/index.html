@@ -842,19 +842,19 @@ function scATCase(n){
 function scFeedback(n){
   const X=n?[60,180,300]:[100,320,540], bw=n?102:126, nb=(x,y,t,d)=>G('a-fade',d,box(x-bw/2,y-15,bw,28,'#E7DEC9',4)+Tc(x,y+4,t,'#3A2E22',n?10:12,'mono mid','600'));
   const Y=n?[36,156,262]:[40,160,262], fs=n?10:11, w=n?6:6.6;
-  const inh=(x,y,t,a='start')=>Tc(x,y,'⊣ '+t,'#A4473A',fs,'mono '+a,'600');
+  const inh=(x,y,t,a='start')=>Tc(x,y,t+' ⊣','#A4473A',fs,'mono '+a,'600');
   const en=(x,y,t,a='start')=>Tc(x,y,t,'#2F5276',fs,'mono '+a,'600');
   const vA=(x,y1,y2)=>`<path d="M${x} ${y1+15} V${y2-17}" class="arrow"/>`, hA=(x1,x2,y)=>`<path d="M${x1+bw/2+2} ${y} H${x2-bw/2-4}" class="arrow"/>`;
-  let s='';const ax=X[0]+10, c2=ax+14*w;
+  let s='';const ax=X[0]+10, c2=ax+6*w;
   s+=nb(X[0],Y[0],'aspartate',0)+G('a-fade',.3,vA(X[0],Y[0],Y[1])+en(ax,Y[0]+34,'aspartokinases')
-    +en(ax,Y[0]+50,'AK I (thrA)')+inh(c2,Y[0]+50,'Thr')+en(ax,Y[0]+66,'AK II (metL)')+Tc(c2,Y[0]+66,'repressed by Met','#6A5B47',fs-1,'mono start')
-    +en(ax,Y[0]+82,'AK III (lysC)')+inh(c2,Y[0]+82,'Lys'));
+    +inh(ax,Y[0]+50,'Thr')+en(c2,Y[0]+50,'AK I (thrA)')+en(c2,Y[0]+66,'AK II (metL)')+Tc(c2+13*w,Y[0]+66,'repressed by Met','#6A5B47',fs-1,'mono start')
+    +inh(ax,Y[0]+82,'Lys')+en(c2,Y[0]+82,'AK III (lysC)'));
   s+=nb(X[0],Y[1],'Asp semialdehyde',.6);
-  s+=G('a-fade',.9,vA(X[0],Y[1],Y[2])+en(ax,Y[1]+48,'DapA')+inh(ax+5*w,Y[1]+48,'Lys'))+nb(X[0],Y[2],'lysine',1.1);
-  s+=G('a-fade',1.3,hA(X[0],X[1],Y[1])+en((X[0]+X[1])/2+(n?6:0),Y[1]-(n?22:10),'HDH I ','end')+inh((X[0]+X[1])/2+(n?6:0),Y[1]-(n?22:10),'Thr'))+nb(X[1],Y[1],'homoserine',1.4);
+  s+=G('a-fade',.9,vA(X[0],Y[1],Y[2])+inh(ax,Y[1]+48,'Lys')+en(c2,Y[1]+48,'DapA')+Tc(ax,Y[1]+64,'+ more steps','#6A5B47',fs-1,'mono start'))+nb(X[0],Y[2],'lysine',1.1);
+  s+=G('a-fade',1.3,hA(X[0],X[1],Y[1])+en((X[0]+X[1])/2+(n?40:30),Y[1]-(n?22:10),'HDH I','end')+inh((X[0]+X[1])/2+(n?40:30)-6*w,Y[1]-(n?22:10),'Thr','end'))+nb(X[1],Y[1],'homoserine',1.4);
   s+=G('a-fade',1.7,vA(X[1],Y[1],Y[2])+en(X[1]+8,Y[1]+48,'several steps'))+nb(X[1],Y[2],'methionine',1.9);
   s+=G('a-fade',2.1,hA(X[1],X[2],Y[1])+en((X[1]+X[2])/2,Y[1]-(n?22:10),'ThrB, ThrC','mid'))+nb(X[2],Y[1],'threonine',2.3);
-  s+=G('a-fade',2.5,vA(X[2],Y[1],Y[2])+en(X[2]+8,Y[1]+42,'IlvA')+inh(X[2]+8,Y[1]+58,'Ile')+Tc(X[2]-8,Y[1]+(n?76:50),'Umbarger, 1956','#6A5B47',fs-1,'mono end'))+nb(X[2],Y[2],'isoleucine',2.7);
+  s+=G('a-fade',2.5,vA(X[2],Y[1],Y[2])+inh(X[2]+8,Y[1]+38,'Ile')+en(X[2]+8,Y[1]+54,'IlvA')+Tc(X[2]+8,Y[1]+70,'+ 4 steps','#6A5B47',fs-1,'mono start')+Tc(X[2]-8,Y[1]+(n?76:50),'Umbarger, 1956','#6A5B47',fs-1,'mono end'))+nb(X[2],Y[2],'isoleucine',2.7);
   let y=Y[2]+(n?54:52);
   const items=[['Isoenzymes','E. coli makes three aspartokinases, each answering to a different end product, so no one amino acid can starve the others.'],
    ['Concerted inhibition','In some other bacteria a single aspartokinase is shut off only when lysine and threonine are both in excess.'],
