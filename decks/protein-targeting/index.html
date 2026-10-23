@@ -275,14 +275,20 @@ function scPlaces(n){
 function scSignalHyp(n){
   const k=n?.5:.62, cx=n?120:170, my=n?170:190;
   let s=G('a-fade',0,`<rect x="${n?10:20}" y="${my+26}" width="${n?340:300}" height="16" fill="${MEMB}"/><path d="M${n?12:22} ${my+28.6} H${n?350:320} M${n?12:22} ${my+39.4} H${n?350:320}" stroke="${HEAD}" stroke-width="5" stroke-dasharray="0.1 7.5" stroke-linecap="round"/>`+T(n?14:24,my+60,'ER membrane','note start f11'));
-  s+=G('a-fade',.4,ribosome(cx,my,k,{mrna:true,trnas:[{site:'P',ac:'',aa:''}]}));
-  s+=G('a-fade',.8,`<path d="M${cx+4} ${my-k*104} C ${cx+40} ${my-k*150}, ${cx+60} ${my-k*60}, ${cx+30} ${my+24}" stroke="${RED}" stroke-width="5" fill="none" stroke-linecap="round"/>`+T(cx+52,my-k*130,'signal sequence','note start f12'));
-  s+=G('a-pop',1.2,chan(cx+30,my+26,SECY,24,9,6)+T(cx+20,my+70,'translocon','mono end f11'));
-  s+=G('a-fade',1.6,`<path d="M${cx+30} ${my+44} v24" stroke="${CHAIN[1]}" stroke-width="4"/>`+beadChain(cx+30,my+74,4,0,9,CHAIN[1]).replace(/r="4"/g,'r="4"'));
+  // ribosome docked with its large subunit (and exit tunnel) on the translocon; small subunit and mRNA face the cytosol
+  const F=my-k*41, yM=2*F-my;
+  s+=G('a-fade',.4,`<g transform="translate(0 ${2*F}) scale(1 -1)">${ribosome(cx,my,k,{mrna:false,trnas:[{site:'P',ac:'',aa:''}]})}</g>`
+    +`<path d="M${cx-k*170} ${yM} H${cx+k*170}" stroke="${RNAC}" stroke-width="2"/>`+Tc(cx-k*174,yM+4,'5′','#6A5B47',11,'mono end')+Tc(cx+k*174,yM+4,'3′','#6A5B47',11,'mono start')
+    +T(n?14:24,yM-k*60,'cytosol','note start f11'));
+  s+=G('a-pop',1.0,chan(cx,my+26,SECY,24,9,12)+T(cx+20,my+38,'translocon','mono start f11'));
+  // signal sequence (red) sits in the channel, N-terminus towards the cytosol; the mature chain (blue) loops into the lumen
+  s+=G('a-fade',1.4,`<path d="M${cx+3} ${2*F-(my-k*104)} V${my+48} C ${cx+3} ${my+72}, ${cx-3} ${my+72}, ${cx-3} ${my+46}" stroke="${CHAIN[1]}" stroke-width="4" fill="none"/><path d="M${cx-3} ${my+46} V${my+24}" stroke="${RED}" stroke-width="5" stroke-linecap="round"/><circle cx="${cx-3}" cy="${my+23}" r="2.6" fill="${RED}"/>`
+    +`<path d="M${cx-9} ${my+24} C ${cx-40} ${my+10}, ${cx-60} ${my}, ${cx-70} ${my-6}" stroke="${INK}" stroke-width=".8" fill="none"/>`+T(cx-72,my-10,'signal sequence','note end f12')
+    +T(cx+18,my+66,n?'signal peptidase cuts it off':'cut off by signal peptidase in the lumen','note start f11')+T(n?14:24,my+84,'ER lumen','note start f11'));
   const tx=n?14:360, ty=n?my+124:50;
   const ev=[['1972','César Milstein: a secreted antibody chain is first made a little longer'],['1975','Günter Blobel and Bernhard Dobberstein: an N-terminal signal sequence steers the ribosome to the ER, then is cut off'],['1999','Nobel Prize to Blobel']];
   let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:34);s+=G('a-fade',(2+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+12;});
-  return {vb:n?slim(yy):wide(Math.max(my+76,yy)),s};
+  return {vb:n?slim(yy):wide(Math.max(my+94,yy)),s};
 }
 
 function scSecGenes(n){

@@ -137,7 +137,7 @@ function scV7(n){
   const seg=(yy,h,f,lab,sub)=>box(x,yy,w,h,f,3)+T(x+w+12,yy+h/2+2,lab,'lab start f13')+T(x+w+12,yy+h/2+18,sub,'note start f11');
   s+=G('a-fade',0,seg(y,70,'#C9A9D6','O-antigen','repeating sugar units; serotype (e.g. O157)'));
   s+=G('a-fade',.3,seg(y+74,40,'#E0C88A','core oligosaccharide','includes Kdo and heptose'));
-  s+=G('a-fade',.6,membraneBand(x-20,x+w+20,y+118,50)+seg(y+118,25,'#E7A99B','lipid A','acylated glucosamine disaccharide: endotoxin'));
+  s+=G('a-fade',.6,membraneBand(x-20,x+w+4,y+118,50)+seg(y+118,25,'#E7A99B','lipid A','acylated glucosamine disaccharide: endotoxin'));
   s+=G('a-fade',.9,T(x+w+12,y+168,'inner leaflet: phospholipid','note start f11')+T(x-20,y+192,'outer membrane: lipid A is its outer leaflet','note start f11'));
   const b=n?bullets(24,y+222,[['Endotoxin','Lipid A activates TLR4–MD-2; in blood it drives septic shock.'],['A barrier','LPS packs tightly with Mg²⁺ bridges, excluding detergents and hydrophobic drugs.'],['Colistin','Polymyxins bind lipid A; resistance comes from adding positive charges (mcr genes).']],44,{d0:1.2,gap:20})
     :bullets(400,52,[['Endotoxin','Hexa-acylated lipid A activates TLR4–MD-2 at picomolar levels; in blood it drives septic shock. Some pathogens remodel lipid A to evade it.'],['A barrier','LPS molecules pack tightly with Mg²⁺ bridges, excluding detergents, bile and hydrophobic antibiotics.'],['Colistin','Polymyxins bind lipid A and disrupt the membrane; resistance adds positive charges to lipid A, including by plasmid-borne mcr genes.']],30,{d0:1.2,gap:20});

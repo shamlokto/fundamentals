@@ -608,9 +608,9 @@ function scFidelity(n){
   const cx=n?110:150, y=n?80:90;
   s+=G('a-fade',0,T(cx,y-50,'A site, seen from the small subunit','note mid f12')+['G','G','U'].map((b,i)=>box(cx-66+i*44,y,36,26,'#F0DEC6',4)+Tc(cx-48+i*44,y+18,b,'#6A3E12',15,'mono mid','600')).join('')
     +['C','C','A'].map((b,i)=>box(cx-66+i*44,y-44,36,26,'#A9C4DC',4)+Tc(cx-48+i*44,y-26,b,'#3A2E22',15,'mono mid','600')).join('')+[0,1,2].map(i=>ln(cx-48+i*44,y-18,cx-48+i*44,y,INK,1.4)).join(''));
-  s+=G('a-pop',.8,[[cx-90,y+44,'A1492'],[cx-30,y+52,'A1493'],[cx+40,y+48,'G530']].map(([x,yy,t])=>blob(x+20,yy,24,11,'#E0B84A')+Tc(x+20,yy+4,t,'#3A2E22',10,'mono mid','600')).join('')
-    +T(cx,y+80,n?'16S bases check codon positions 1–2':'16S rRNA bases grip the first two base pairs','note mid f12'));
-  const tx=n?14:330, ty=n?y+120:40;
+  s+=G('a-pop',.8,[[cx-68,y+46,'A1493'],[cx-24,y+46,'A1492'],[cx-24,y+72,'G530']].map(([x,yy,t])=>blob(x+20,yy,21,10,'#E0B84A')+Tc(x+20,yy+4,t,'#3A2E22',10,'mono mid','600')).join('')
+    +T(cx+40,y+48,'wobble:','note mid f11')+T(cx+40,y+62,'looser','note mid f11')+T(cx,y+100,n?'16S bases check codon positions 1–2':'16S rRNA bases grip the first two base pairs','note mid f12'));
+  const tx=n?14:330, ty=n?y+134:40;
   const st=[['Initial selection','wrong tRNAs fall off before GTP is hydrolysed'],['Proofreading','after hydrolysis, a second chance to reject'],['Result','about 1 error in 10³–10⁴ codons']];
   st.forEach((e,i)=>{const yy=ty+i*(n?48:58);s+=G('a-fade',(1.4+i*.5).toFixed(1),badge(tx+8,yy-4,i+1)+T(tx+24,yy,e[0],'lab start '+(n?'f14':''))+wrap(e[1],n?44:38).map((l,j)=>T(tx+24,yy+18+j*16,l,'note start f12')).join(''));});
   const yb=n?ty+3*48+6:y+130;
@@ -678,8 +678,8 @@ const ABX=[
  {d:'Streptomycin',cls:'aminoglycoside',at:[50,22],step:1,text:'Binds 16S rRNA at the decoding centre and distorts it, so wrong tRNAs are accepted. Misread proteins pile up. Kanamycin and gentamicin act similarly.'},
  {d:'Tetracycline',cls:'tetracycline',at:[54,40],step:0,text:'Binds the small subunit at the A site and blocks the arrival of aminoacyl-tRNA. Bacteriostatic; doxycycline is a modern relative.'},
  {d:'Chloramphenicol',cls:'phenicol',at:[34,-112],step:2,text:'Sits in the peptidyl transferase centre where the A-site amino acid should go, so peptide bonds cannot form.'},
- {d:'Erythromycin',cls:'macrolide',at:[-8,-132],step:3,text:'Plugs the exit tunnel. Short chains can be made, but they jam and drop off. Azithromycin works the same way.'},
- {d:'Linezolid',cls:'oxazolidinone',at:[26,-104],step:0,text:'Binds the peptidyl transferase centre of the large subunit and blocks the first steps of protein synthesis. Used against resistant Gram-positive bacteria.'},
+ {d:'Erythromycin',cls:'macrolide',at:[-4,-114],step:3,text:'Plugs the exit tunnel. Short chains can be made, but they jam and drop off. Azithromycin works the same way.'},
+ {d:'Linezolid',cls:'oxazolidinone',at:[26,-104],step:2,text:'Binds the A-site pocket of the peptidyl transferase centre, so the incoming aminoacyl-tRNA cannot settle into place for peptide bond formation. Used against resistant Gram-positive bacteria.'},
  {d:'Fusidic acid',cls:'steroid antibiotic',at:[68,-44],step:4,text:'Lets EF-G translocate once, then locks it on the ribosome. Nothing else can bind, so elongation halts.'},
  {d:'Puromycin',cls:'tRNA mimic',at:[50,-104],step:2,text:'Looks like the end of an aminoacyl-tRNA. It enters the A site, accepts the chain, and carries it away early. A research tool that works on all ribosomes.'}];
 let abxSel=0;
@@ -829,7 +829,7 @@ const S=[
  {p:5,title:'Polysomes',draw:scPolysome,
   text:"An mRNA does not wait for one ribosome to finish. New ribosomes load as soon as there is room, so a single message is read by many at once: a polysome. In bacteria this happens even while the mRNA is still being transcribed, as the earlier primer on gene structure showed."},
  {p:6,title:'Folding and finding home',draw:scFate,
-  text:"A new chain starts to fold as it leaves the exit tunnel. In bacteria, trigger factor meets it at the tunnel, and chaperones such as DnaK and the GroEL barrel help larger proteins fold. Proteins bound for the membrane or beyond carry an N-terminal signal peptide. The signal recognition particle catches it and brings the ribosome to the SecYEG channel, or Sec61 in eukaryotes, as Günter Blobel's signal hypothesis predicted. Bacteria have a second route, the Tat pathway, which exports proteins that are already folded."},
+  text:"A new chain starts to fold as it leaves the exit tunnel. In bacteria, trigger factor meets it at the tunnel, and chaperones such as DnaK and the GroEL barrel help larger proteins fold. Proteins bound for the membrane or beyond carry an N-terminal signal peptide. The signal recognition particle catches it and brings the ribosome to the SecYEG channel, or Sec61 in eukaryotes, as Günter Blobel's signal hypothesis predicted; in bacteria this route serves mainly membrane proteins, while many secreted proteins reach SecYEG after synthesis, guided by SecB and SecA. Bacteria have a second route, the Tat pathway, which exports proteins that are already folded."},
  {p:6,title:'Starvation: the stringent response',draw:scStringent,
   text:"When amino acids run short, uncharged tRNAs enter the ribosome's A site. RelA, bound to the stalled ribosome, responds by making guanosine tetraphosphate and pentaphosphate, (p)ppGpp, the 'magic spots' found by Michael Cashel and Jonathan Gallant in 1969. Together with DksA, ppGpp acts on RNA polymerase: rRNA and tRNA synthesis shut down, amino acid biosynthesis genes come on, growth slows, and cells become tolerant to many antibiotics."},
  {p:6,title:'Ribosomes asleep',draw:scHibernate,

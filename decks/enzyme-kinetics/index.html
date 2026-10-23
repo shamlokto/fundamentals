@@ -375,8 +375,8 @@ function ebar(P,xv,lo,hi,col=INK){const x=FX(P.px(xv)),a=FX(P.py(lo)),b=FX(P.py(
   return `<path d="M${x} ${a} V${b} M${+x-3} ${a} h6 M${+x-3} ${b} h6" stroke="${col}" stroke-width="1" fill="none"/>`;}
 
 /* ===================== Part I · catalysis ===================== */
-const RATES=[['CO₂ hydration','carbonic anhydrase',20,1e-6,'10⁷×'],
- ['Peptide-bond hydrolysis','serine proteases',2.2e8,1e-2,'10¹⁰×'],
+const RATES=[['CO₂ hydration','carbonic anhydrase',5,1e-6,'10⁷×'],
+ ['Peptide-bond hydrolysis','serine proteases',1.4e10,1e-2,'10¹²×'],
  ['Glycoside hydrolysis','lysozyme',1.5e14,2,'10¹⁴×'],
  ['OMP decarboxylation','OMP decarboxylase',2.5e15,2.5e-2,'10¹⁷×']];
 function scRate(n){
@@ -499,7 +499,7 @@ function triad(ox,oy){
     +Tc(ox+40,oy+228,'Asp102','#2F5276',12,'mono mid','600')+T(ox+40,oy+244,'orients His','note mid f12'));
   // arrows
   s+=G('a-fade',1.5,`<path d="M${ox+208} ${oy+142} Q${ox+232} ${oy+116} ${ox+208} ${oy+86}" stroke="${INHC}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`
-    +`<path d="M${ox+188} ${oy+144} Q${ox+170} ${oy+130} ${ox+150} ${oy+152}" stroke="${INHC}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`);
+    +`<path d="M${ox+150} ${oy+152} Q${ox+166} ${oy+128} ${ox+180} ${oy+142}" stroke="${INHC}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`);
   return s;
 }
 const TRIAD=[['Attack','His57 takes the proton from Ser195, and the Ser oxygen attacks the carbonyl carbon of the bond to be cut.'],
@@ -576,7 +576,7 @@ function scHyper(n){
   s+=G('a-fade',1.2,gline(P,0,.5,1,.5,{col:'#2F5276'})+gline(P,1,.5,1,0,{col:'#2F5276'})+dot(P,1,.5)
     +plab(P,1.1,.5,VMX+'/2',{dy:16,col:'#2F5276'})+Tc(P.px(1),P.py(0)+14,KM,'#2F5276',12,'mono mid','600'));
   s+=G('a-fade',1.8,gline(P,0,0,.9,.9,{col:SUBC,dash:'5 4'})+plab(P,.95,.9,'slope = '+VMX+'/'+KM,{col:'#8C5A1E',fs:11,dy:-2}));
-  s+=G('a-fade',2.2,plab(P,2.7,.2,'first order in [S]',{fs:11,col:'#6A5B47'})+plab(P,9.8,.78,'zero order',{fs:11,col:'#6A5B47',a:'end'}));
+  s+=G('a-fade',2.2,plab(P,.3,.07,'first order at low [S]',{fs:11,col:'#6A5B47',a:'start'})+plab(P,9.8,.78,'zero order',{fs:11,col:'#6A5B47',a:'end'}));
   const rows=[['0.1 '+KM,'9%'],[KM,'50%'],['4 '+KM,'80%'],['9 '+KM,'90%'],['99 '+KM,'99%']];
   let y;
   if(n){const t0=P.y+P.h+60;s+=G('a-fade',2.6,T(24,t0,'[S]','cname start f13')+T(130,t0,'v / '+VMX,'cname start f13')+ln(20,t0+6,240,t0+6)

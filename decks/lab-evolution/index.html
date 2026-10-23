@@ -668,7 +668,7 @@ function scG3(n){
 }
 function scG6(n){
   const A=n?axes(54,30,280,160,{xr:[0,75],yr:[1,1.8],xt:[0,25,50,75],yt:[1,1.4,1.8],xlab:'thousands of generations',ylab:'relative fitness'}):axes(70,30,320,180,{xr:[0,75],yr:[1,1.8],xt:[0,25,50,75],yt:[1,1.4,1.8],xlab:'thousands of generations',ylab:'relative fitness'});
-  const f=t=>1+0.7*Math.pow(t/75,0.3)*(t>0?1:0);
+  const f=t=>Math.pow(5.15*t+1,0.095); // Wiser, Ribeck & Lenski 2013 power law, t in thousands of generations
   let s=A.s+G('a-fade',.2,curve(A,f,{col:'#2F5276',from:.01,n:200})+T(FX(A.px(40)),FX(A.py(f(40))-12),'still rising','note mid f11 halo'));
   const b=n?bullets(24,A.y+A.h+60,[['The long-term experiment','Since 1988, Richard Lenski’s 12 E. coli populations have been transferred daily, more than 75,000 generations, with frozen samples every 500.'],['Fitness keeps rising','Gains slow but do not stop: no peak in sight.'],['Rare innovations','One population evolved citrate use under oxygen after ~31,000 generations, building on earlier potentiating mutations.']],44,{d0:.8,gap:20})
     :bullets(420,46,[['The long-term experiment','Since 1988, Richard Lenski’s twelve E. coli populations have been transferred daily, now beyond 75,000 generations, with samples frozen every 500.'],['Fitness keeps rising','Gains slow but have not stopped, following a power law rather than approaching a ceiling.'],['Rare innovations','One population evolved aerobic citrate use after ~31,000 generations, possible only because of earlier potentiating mutations.']],28,{d0:.8,gap:22});
@@ -683,18 +683,18 @@ function scG8(n){
   const A=n?axes(48,30,292,170,{xr:[0,100],yr:[0,1],xt:[],yt:[],xlab:'time',ylab:'frequency'}):axes(60,30,360,190,{xr:[0,100],yr:[0,1],xt:[],yt:[],xlab:'time',ylab:'frequency'});
   const L=(k,t0)=>t=>1/(1+Math.exp(-k*(t-t0)));
   const fb=L(.12,45), fc=t=>Math.min(fb(t),L(.22,80)(t)), fa=t=>Math.min(.42*Math.exp(-Math.pow((t-30)/16,2)),1-fb(t));
-  const band=(lo,hi,col)=>{let up='',dn='';for(let i=0;i<=100;i++){const t=i;up+=(i?' L':'M')+FX(A.px(t))+' '+FX(A.py(hi(t)));dn=' L'+FX(A.px(t))+' '+FX(A.py(lo(t)))+dn;}return `<path d="${up}${dn}Z" fill="${col}" stroke="${INK}" stroke-width=".6"/>`;};
+  const band=(lo,hi,col,t0=0)=>{let up='',dn='';for(let i=t0;i<=100;i++){const t=i;up+=(i>t0?' L':'M')+FX(A.px(t))+' '+FX(A.py(hi(t)));dn=' L'+FX(A.px(t))+' '+FX(A.py(lo(t)))+dn;}return `<path d="${up}${dn}Z" fill="${col}" stroke="${INK}" stroke-width=".6"/>`;};
   let s=A.s+`<rect x="${A.x}" y="${A.y}" width="${A.w}" height="${A.h}" fill="#EFE6D2"/>`
     +G('a-fade',.2,band(t=>0,fa,'#E7A99B')+T(FX(A.px(30)),FX(A.py(.12)),'A','mono mid f11'))
     +G('a-fade',.4,band(t=>1-fb(t),t=>1,'#A9C4DC')+T(FX(A.px(62)),FX(A.py(.9)),'B','mono mid f11'))
-    +G('a-fade',.6,band(t=>1-fb(t)+(fb(t)-fc(t))/2,t=>1-(fb(t)-fc(t))/2,'#C6D3A8')+T(FX(A.px(92)),FX(A.py(.5)+4),'B+C','mono mid f11'))
+    +G('a-fade',.6,band(t=>1-fb(t)+(fb(t)-fc(t))/2,t=>1-(fb(t)-fc(t))/2,'#C6D3A8',52)+T(FX(A.px(92)),FX(A.py(.5)+4),'B+C','mono mid f11'))
     +T(FX(A.px(8)),FX(A.py(.6)),'ancestor','note start f11');
   const b=n?bullets(24,A.y+A.h+50,[['Clonal interference','In large asexual populations several beneficial mutations arise at once and compete; only one lineage can win.'],['A wins, then loses','A rises but is outcompeted by B. C arises within B and sweeps. Many beneficial mutations are lost.']],44,{d0:.8,gap:20})
     :bullets(450,46,[['Clonal interference','In large asexual populations several beneficial mutations arise at once in different cells. Without recombination they cannot combine, so they compete.'],['Winners and losers','A rises but is outcompeted by B; C arises within B and sweeps. Many beneficial mutations are lost this way.'],['Seen by barcoding','Tracking hundreds of thousands of barcoded lineages, as Levy and colleagues did in yeast in 2015, shows the same dynamics in detail.']],24,{d0:.8,gap:20});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y,A.y+A.h+56)),s:s+b.s};
 }
 function scG9(n){
-  const items=[['A cost, often','Resistance mutations frequently slow growth: altered ribosomal proteins (streptomycin), RNA polymerase (rifampicin) or gyrase (quinolones) work less well. Carrying plasmids costs too.'],['Compensation, not reversion','When the drug is removed, resistant strains usually acquire second-site compensatory mutations that restore fitness without losing resistance, because there are many more ways to compensate than to revert.'],['Some resistance is free','Some mutations, such as rpsL K43R in some backgrounds or certain rpoB mutations, cost almost nothing. Then resistance persists for good.'],['Implications','Stopping use of a drug does not reliably bring back susceptibility, a central problem for stewardship.']];
+  const items=[['A cost, often','Resistance mutations frequently slow growth: altered ribosomal proteins (streptomycin), RNA polymerase (rifampicin) or gyrase (quinolones) work less well. Carrying plasmids costs too.'],['Compensation, not reversion','When the drug is removed, resistant strains usually acquire second-site compensatory mutations that restore fitness without losing resistance, because there are many more ways to compensate than to revert.'],['Some resistance is free','Some mutations cost almost nothing, such as rpsL K43R (streptomycin) in Mycobacterium tuberculosis or K42R in E. coli and Salmonella. Then resistance persists for good.'],['Implications','Stopping use of a drug does not reliably bring back susceptibility, a central problem for stewardship.']];
   const c=cards(n,items,{y:20,num:1});
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }

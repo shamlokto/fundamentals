@@ -468,6 +468,9 @@ function cellRod(cx,cy,L,R,o={}){
   if(o.label)s+=T(cx,cy+R+(o.ldy||18),o.label,'note mid f11');
   return s;}
 /* --- gene arrow --- */
+function gArrowL(x,y,w,label,fill,o={}){const h=o.h||17;
+  return `<path d="M${FX(x+w)} ${FX(y-h/2)} h${FX(-(w-7))} l-7 ${FX(h/2)} l7 ${FX(h/2)} h${FX(w-7)}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
+   +(label?Tc(FX(x+7+(w-7)/2),FX(y+4),label,o.tc||'#3A2E22',o.fs||10,'mono mid','600'):'');}
 function gArrow(x,y,w,label,fill,o={}){
   const h=o.h||17;
   return `<path d="M${x} ${FX(y-h/2)} h${FX(w-7)} l7 ${FX(h/2)} l-7 ${FX(h/2)} h${FX(-(w-7))}z" fill="${fill}" stroke="${INK}" stroke-width=".8"/>`
@@ -582,7 +585,7 @@ function scH3(n){
   let y=cy+(n?54:62);
   const steps=[['Relaxase nicks at oriT','A dedicated enzyme cuts one strand at a specific site, the nic site, and stays covalently attached to its 5′ end.'],
    ['The nucleoprotein is pumped through','The T4SS is a secretion machine; it transfers the relaxase with its single strand, not a naked plasmid, into the recipient.'],
-   ['Both cells fill in the second strand','Rolling-circle replication in the donor and in the recipient, so at the end both cells have a complete plasmid.'],
+   ['Both cells fill in the second strand','The donor replaces the departing strand by rolling-circle replication and the recipient copies the incoming one, so at the end both cells have a complete plasmid.'],
    ['The recipient becomes a donor','Which is why a conjugative plasmid can sweep through a dense population in hours.']];
   if(n){steps.forEach((st,i)=>{const b=boxItem(16,y,332,st[0],st[1],{num:i+1,cw:6.1});s+=G('a-fade',(1.6+i*.3).toFixed(1),b.s);y+=b.h+9;});}
   else{for(let r=0;r<2;r++){const a=boxItem(24,y,288,steps[2*r][0],steps[2*r][1],{num:2*r+1}),bb=boxItem(328,y,288,steps[2*r+1][0],steps[2*r+1][1],{num:2*r+2}),h=Math.max(a.h,bb.h);
@@ -622,10 +625,9 @@ function scH5(n){
   /* 2: composite transposon */
   const y2=y+(n?76:78);
   s+=G('a-fade',.5,row(y2,'composite transposon — two IS copies flanking cargo',yy=>{
-    const a=x+W*.12, b=x+W*.88, m1=a+W*.18, m2=b-W*.18;
-    return irTri(a,rw,yy,1,TNC)+gArrow(a+rw+3,yy,m1-a-rw-6,'tnp',TNC,{h:15})
-      +gArrow(m1+4,yy,m2-m1-8,'resistance cargo',METC,{h:15})
-      +gArrow(m2+4,yy,b-rw-m2-7,'tnp',TNC,{h:15})+irTri(b-rw,rw,yy,-1,TNC);}));
+    const a=x+W*(n?.02:.08), b=x+W*(n?.98:.92), isw=W*(n?.27:.2), m1=a+isw, m2=b-isw;
+    const IS=(p,q)=>irTri(p,rw,yy,1,TNC)+gArrow(p+rw+3,yy,q-p-2*rw-6,'tnp',TNC,{h:15})+irTri(q-rw,rw,yy,-1,TNC);
+    return IS(a,m1)+gArrow(m1+4,yy,m2-m1-8,n?'cargo':'resistance cargo',METC,{h:15})+IS(m2,b);}));
   /* 3: unit transposon Tn3 */
   const y3=y2+(n?76:78);
   s+=G('a-fade',1,row(y3,'unit transposon — Tn3 family, one set of inverted repeats',yy=>{
@@ -649,10 +651,11 @@ function scH6(n){
     const x=36, W=570, y=74;
     s+=G('a-fade',.2,dnaLine(x,W,y,'#D6CDB8'));
     const w1=W*.22;
-    s+=G('a-fade',.4,gArrow(x+4,y,w1,'intI',RECC,{h:16})
+    s+=G('a-fade',.4,gArrowL(x+4,y,w1,'intI',RECC,{h:16})
+      +`<path d="M${FX(x+w1-4)} ${y-8} V${y-20} H${FX(x+w1+14)}" stroke="${INK}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`+Tc(x+w1-10,y-22,'Pc','#3A2E22',10,'mono end','600')
       +`<rect x="${FX(x+w1+8)}" y="${FX(y-7)}" width="16" height="14" rx="2" fill="${INTC}" stroke="${INK}" stroke-width=".7"/>`
       +Tc(x+w1+16,y-14,'attI','#2E7D78',10,'mono mid','600')
-      +Tc(x+4,y+26,'Pc — one promoter for everything downstream','#6A5B47',10,'mono start'));
+      +Tc(x+4,y+26,'Pc, inside intI, reads into the cassettes; intI is read the other way','#6A5B47',10,'mono start'));
     const c0=x+w1+30, cw=(W-w1-40)/3;
     ['cassette 1','cassette 2','cassette 3'].forEach((c,i)=>{
       s+=G('a-fade',(.8+i*.35).toFixed(2),gArrow(c0+i*cw,y,cw-16,c,METC,{h:16})
@@ -664,7 +667,8 @@ function scH6(n){
   } else {
     const x=20, W=320, y=84;
     s+=G('a-fade',.2,dnaLine(x,W*.62,y,'#D6CDB8'));
-    s+=G('a-fade',.4,gArrow(x+4,y,132,'intI',RECC,{h:16})
+    s+=G('a-fade',.4,gArrowL(x+4,y,132,'intI',RECC,{h:16})
+      +`<path d="M132 ${y-8} V${y-20} H148" stroke="${INK}" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>`+Tc(126,y-22,'Pc','#3A2E22',10,'mono end','600')
       +`<rect x="146" y="${y-7}" width="16" height="14" rx="2" fill="${INTC}" stroke="${INK}" stroke-width=".7"/>`
       +Tc(154,y-14,'attI','#2E7D78',10,'mono mid','600')
       +Tc(186,y+4,'Pc drives all of them','#6A5B47',10,'mono start'));
@@ -726,7 +730,7 @@ function scH8(n){
 
 function scH9(n){
   let s=G('a-fade',0,T(n?16:24,28,'Not all genes move equally well','cname start f14'));
-  const bars=[['Ribosomal proteins',0.6,CORE],['RNA polymerase subunits',0.8,CORE],['tRNA synthetases',2,CORE],
+  const bars=[['Ribosomal proteins',0.6,CORE],['RNA polymerase subunits',0.8,CORE],['Elongation factors',1.4,CORE],
    ['Central metabolism',5,SHELL],['Transport and uptake',9,SHELL],['Resistance and detoxification',14,PHG],['Restriction–modification',15,PHG]];
   s+=G('a-fade',.3,barRow(n?16:24,62,n?130:280,bars.map(b=>[b[0],b[1],b[2],'']),16,{bx:n?176:300,rh:n?30:28,fs:n?'f11':'f12'}));
   let y=62+bars.length*(n?30:28)+(n?10:14);
@@ -788,7 +792,7 @@ const NAR='Narrator';
 const S=[
  {p:1,title:'Three ways in',draw:scH1,text:"Bacteria acquire DNA from other cells by three routes. In transformation the cell takes up naked DNA from its surroundings. In conjugation a donor builds a machine and pumps DNA directly into a recipient. In transduction a phage particle delivers it. None of these is reproduction; all of them are one-way and piecemeal."},
  {p:1,title:'Transformation and competence',draw:scH2,text:"Natural transformation is a programmed state of the recipient, not an accident. In the pneumococcus a secreted peptide signal switches on about a hundred genes for roughly twenty minutes; the cell builds an uptake machine, imports one strand of a DNA fragment, and hands it to RecA. The same signal makes competent cells kill their neighbours to supply the DNA."},
- {p:1,title:'Conjugation',draw:scH3,text:"Conjugation moves a single strand of DNA, nicked at a specific site and led by the enzyme that nicked it, through a type IV secretion system into a recipient in contact with the donor. Both cells end with a complete copy, and the new recipient can immediately donate in turn. Elements that carry only the origin of transfer borrow a machine from a neighbour."},
+ {p:1,title:'Conjugation',draw:scH3,text:"Conjugation moves a single strand of DNA, nicked at a specific site and led by the enzyme that nicked it, through a type IV secretion system into a recipient in contact with the donor. Both cells end with a complete copy, and the new recipient can immediately donate in turn. Mobilisable elements, which carry an origin of transfer but no secretion system, borrow a machine from a neighbour."},
  {p:1,title:'Transduction',draw:scH4,text:"A phage that mis-packages host DNA becomes a delivery vehicle. Generalized transduction samples the whole chromosome; specialized transduction moves only what lies beside the prophage; lateral transduction, found in Staphylococcus aureus, moves very long stretches at remarkably high frequency. None of these needs the recipient to be competent."},
  {p:2,title:'Insertion sequences and transposons',draw:scH5,text:"The simplest mobile element is an insertion sequence: a transposase flanked by inverted repeats. Put two of them around a cargo and you have a composite transposon that moves resistance genes as a unit. Transposition leaves a short duplication of the target site, which is how past insertions are recognised in a genome."},
  {p:2,title:'Integrons',draw:scH6,text:"An integron is not itself mobile. It is a recombination platform: an integrase, an insertion site, and a single promoter, capturing promoterless gene cassettes and expressing them according to their position in the array. Class 1 integrons riding inside transposons inside conjugative plasmids are the reason multidrug resistance cassettes travel as sets."},
