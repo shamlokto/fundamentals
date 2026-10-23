@@ -619,7 +619,7 @@ function scG8(n){
       +[0,1,2].map(j=>snfg(['Glc','Rha','GlcA'][j],cx-62,my+32+j*13,5)).join('')+[0,1,2,3,4,5].map(j=>snfg(['Glc','Rha','GlcA','Glc','Rha','GlcA'][j],cx+34,my-14-j*12,5)).join('')+Tc(cx-36,my+15,'Wzx','#3A2E22',8,'mono mid')+Tc(cx+34,my+15,'Wzy','#3A2E22',8,'mono mid');
     if(i===1)d+=`<rect x="${cx-14}" y="${my-6}" width="28" height="34" rx="4" fill="${E4}" stroke="${INK}"/>`+[0,1,2,3,4].map(j=>snfg('Man',cx,my-14-j*12,5)).join('')+Tc(cx,my+15,'ABC',"#3A2E22",8,'mono mid');
     if(i===2)d+=`<rect x="${cx-16}" y="${my-6}" width="32" height="34" rx="6" fill="${E6}" stroke="${INK}"/>`+[0,1,2,3,4,5].map(j=>snfg(j%2?'GlcA':'Glc',cx,my-14-j*12,5)).join('')+snfg('Glc',cx+16,my+42,5)+snfg('GlcA',cx+42,my+42,5);
-    d+=T(cx-78,my-8,'outside','note start f12')+(i===0?T(cx+78,my+42,'cytoplasm','note end f12'):i===1?T(cx-78,my+42,'cytoplasm','note start f12'):T(cx-78,my+42,'cytoplasm','note start f12'));
+    d+=T(cx-78,my-8,'outside','note start f12')+(i===0?T(cx+78,my+42,'cytoplasm','note end f12'):i===1?T(cx+78,my+42,'cytoplasm','note end f12'):T(cx-78,my+42,'cytoplasm','note start f12'));
     return d;};
   let y;
   if(!n){cols.forEach((c,i)=>{const cx=110+i*210;s+=G('a-fade',(i*.6).toFixed(1),draw(i,cx,98)+T(cx,172,c[0],'cname mid f14')+wrap(c[1],30).map((l,j)=>T(cx,192+j*16,l,'note mid f12')).join('')+wrap(c[2],26).map((l,j)=>T(cx,192+4*16+j*15,l,'mono acc mid f11')).join(''));});y=320;}

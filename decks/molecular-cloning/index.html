@@ -403,7 +403,7 @@ function scPCRends(n){
   s+=G('a-fade',1.4,duplex(x1-44,x2+44,y2,{col:INS})+`<rect x="${x1-44}" y="${y2-5}" width="28" height="19" rx="3" fill="${VEC}" opacity=".85"/><rect x="${x2+16}" y="${y2-5}" width="28" height="19" rx="3" fill="${VEC}" opacity=".85"/>`
     +T((x1+x2)/2,y2+32,'product now carries whatever ends you designed','note mid f12'));
   const rows=[['homology to the vector','Gibson, In-Fusion, SLIC, CPEC'],['a Type IIS site','Golden Gate, MoClo'],['a restriction site plus spacer','classical cloning'],['a 3′-A, added by Taq','TA cloning']];
-  const ty=y2b+(n?20:14);
+  const ty=y2+(n?62:66);
   s+=G('a-fade',2,T(n?14:60,ty,'Put in the tail…','cname start '+(n?'f14':''))+T(n?170:330,ty,'…and you get','cname start '+(n?'f14':''))+ln(n?12:58,ty+8,n?350:616,ty+8));
   rows.forEach((r,i)=>{const yy=ty+28+i*(n?26:26);s+=G('a-fade',(2.2+i*.2).toFixed(1),T(n?14:60,yy,r[0],'lab start '+(n?'f12':'f14'))+T(n?170:330,yy,r[1],'note start '+(n?'f12':'f13')));});
   return {vb:n?slim(ty+28+4*26+16):wide(ty+28+4*26+16),s};
@@ -487,7 +487,9 @@ function scMoClo(n){
     let g=box(bx,by,W,H,'#E7DEC9',4)+T(bx+16,by+24,l[0],'cname start '+(n?'f15':''))+Tc(bx+W-16,by+24,l[2],'#2F5276',12,'mono end','600')
       +wrap(l[1],n?42:26).map((t,j)=>T(bx+16,by+44+j*15,t,'note start f12')).join('');
     const yy=by+H-(n?24:26), bw=(W-32)/(i===0?1:4);
-    for(let k=0;k<(i===0?1:4);k++)g+=`<rect x="${bx+16+k*bw+1}" y="${yy}" width="${bw-2}" height="13" rx="2" fill="${[PROM,'#2E7D78',INS,TERM][i===0?2:k]}" stroke="${INK}" stroke-width=".6"/>`;
+    if(i<2){for(let k=0;k<(i===0?1:4);k++)g+=`<rect x="${bx+16+k*bw+1}" y="${yy}" width="${bw-2}" height="13" rx="2" fill="${[PROM,'#2E7D78',INS,TERM][i===0?2:k]}" stroke="${INK}" stroke-width=".6"/>`;}
+    else{const uw=(W-32-8)/2, sw=uw/4;[0,1].forEach(u=>{for(let k=0;k<4;k++)g+=`<rect x="${bx+16+u*(uw+8)+k*sw+.5}" y="${yy}" width="${sw-1}" height="13" rx="2" fill="${[PROM,'#2E7D78',u?INS2:INS,TERM][k]}" stroke="${INK}" stroke-width=".6"/>`;});
+      g+=T(bx+16+uw/2,yy-5,'unit 1','note mid f12')+T(bx+24+uw*1.5,yy-5,'unit 2','note mid f12');}
     s+=G('a-fade',(.6+i*.5).toFixed(1),g);
     if(i<2)s+=G('a-fade',(.8+i*.5).toFixed(1),n?`<path d="M180 ${by+H+1} v9" class="arrow"/>`:`<path d="M${bx+W+2} ${by+H/2} h7" class="arrow"/>`);});
   const yb=n?y0+3*(H+12)+12:y0+H+30;
@@ -510,20 +512,20 @@ function scTopo(n){
   /* right vector arm: bottom strand ends (on its left) in 3′-T, Topo on it */
   v+=str(X.r0,X.r1,y,VEC)+str(X.r0,X.r1,y+g,VEC)+rung(X.r0,X.r1,y)+ch(X.r0-7,y+g,'T',RED2)+topo(X.r0-7,y+g+22)+ln(X.r0-7,y+g+6,X.r0-7,y+g+12,ENZ,2.4);
   v+=`<path d="M${X.l0} ${y+6} q-12 0 -12 18 v${n?40:34} q0 14 14 14 H${X.r1-2} q14 0 14 -14 v${n?-40:-34} q0 -18 -12 -18" stroke="${VEC}" stroke-width="1.2" stroke-dasharray="4 3" fill="none"/>`
-    +T((X.l0+X.r1)/2,y+(n?78:72),'the rest of the linearised vector','note mid f12');
+    +T((X.l0+X.r1)/2,y+(n?92:86),'the rest of the linearised vector','note mid f12');
   s+=G('a-fade',.4,v+T(X.l0,y-14,'5′','mono start f12')+T(X.r1,y+g+16,'5′','mono end f12'));
   /* insert with 3′-A overhangs */
   const ins=str(X.i0,X.i1,y,INS)+str(X.i0,X.i1,y+g,INS)+rung(X.i0,X.i1,y)+ch(X.i1+7,y,'A',INS)+ch(X.i0-7,y+g,'A',INS)
     +T((X.i0+X.i1)/2,y-12,n?'PCR product (Taq)':'your PCR product, made with Taq','note mid f12');
   s+=G('a-fade',1.0,ins);
   s+=G('a-fade',1.4,T((X.i0+X.i1)/2,y+g+20,n?'3′-A pairs with 3′-T':'each 3′-A pairs with a vector 3′-T','note mid f12 acc'));
-  const y2=y+(n?100:96);
+  const y2=y+(n?110:96);
   if(n){s+=G('a-fade',1.8,`<path d="M180 ${y2-6} v14" class="arrow"/>`+T(194,y2+4,'5 min, room temperature','note start f12')
-      +plasmid(180,y2+56,34,[[.62,.88,INS,'insert',16]],{name:'',fs:11})+T(180,y2+108,'Topo seals both joins and leaves','note mid f12'));var y3=y2+118;}
-  else {s+=G('a-fade',1.8,`<path d="M520 ${y+6} h22" class="arrow"/>`+plasmid(590,y+6,32,[[.62,.88,INS,'insert',14]],{name:'',fs:11})
-      +T(590,y+60,'5 min, room temp.','note mid f12'));var y3=y2;}
+      +plasmid(180,y2+56,34,[[.62,.88,INS]],{name:'',fs:11})+T(180,y2+108,'Topo seals both joins and is released','note mid f12'));var y3=y2+118;}
+  else {s+=G('a-fade',1.8,`<path d="M520 ${y+6} h22" class="arrow"/>`+plasmid(590,y+6,32,[[.62,.88,INS]],{name:'',fs:11})
+      +T(590,y+56,'insert sealed in','note mid f12')+T(590,y+72,'5 min, room temp.','note mid f12'));var y3=y2;}
   const y2b=y3;
-  const ty=y2+(n?62:66);
+  const ty=y2b+(n?20:30);
   const TL0=wrap(n?'Vaccinia topoisomerase I cuts at CCCTT and stays attached to the DNA, storing the bond’s energy. When your insert’s end base-pairs, the enzyme reverses the reaction and seals the join, then lets go. No ligase, no ATP.':'Vaccinia virus topoisomerase I cuts at CCCTT and stays joined to the DNA through a phosphotyrosine bond, holding the energy of the broken bond. When your insert anneals, the enzyme simply runs the reaction backwards, seals the join and releases. No ligase and no ATP are needed, which is why it takes five minutes.',n?46:88);
   s+=G('a-fade',2.4,TL0.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   const yb=ty+TL0.length*20+(n?6:10);
@@ -533,10 +535,25 @@ function scTopo(n){
 }
 
 function scMutagenesis(n){
-  const W=n?340:190, H=n?110:132;
-  const items=[['Whole-plasmid PCR','Two back-to-back primers carrying the change amplify the entire plasmid as a line.'],
-   ['Remove the template','DpnI cuts only methylated DNA, so it destroys the plasmid you grew in E. coli and spares the PCR product.'],
-   ['Close the circle','Kinase and ligase, or a short overlap, join the ends. Transform and sequence.']];
+  const W=n?340:190, H=n?178:214;
+  /* small drawings: methylated template with back-to-back primers; linear unmethylated product and the DpnI-cut template; closed mutant plasmid */
+  const ART=(bx,by,W,H)=>({cx:bx+W/2, cy:by+H-(n?56:64)});
+  const meth=(cx,cy,r)=>[0,.25,.5,.75].map(f=>{const a=-Math.PI/2+(f+.12)*2*Math.PI;return `<circle cx="${F(cx+r*Math.cos(a))}" cy="${F(cy+r*Math.sin(a))}" r="3.6" fill="${AMP}" stroke="${INK}" stroke-width=".5"/>`;}).join('');
+  const star=(x,y)=>Tc(x,y+5,'★',RED2,14,'mid');
+  const art1=(bx,by,W,H)=>{const {cx,cy}=ART(bx,by,W,H), r=30, R=r+9;
+    const pa=(a0,a1)=>`<path d="${arcP(cx,cy,R,a0,a1)}" stroke="${RED2}" stroke-width="1.8" fill="none" marker-end="url(#ahp)"/>`;
+    return plasmid(cx,cy,r,[],{col:VEC,w:2.6})+meth(cx,cy,r)+pa(-Math.PI/2+.12,-Math.PI/2+1.0)+`<path d="${arcP(cx,cy,R,-Math.PI/2-1.0,-Math.PI/2-.12)}" stroke="${RED2}" stroke-width="1.8" fill="none" marker-start="url(#ahp)"/>`
+      +star(cx+R*Math.cos(-Math.PI/2+.16),cy+R*Math.sin(-Math.PI/2+.16)-2)
+      +T(cx,cy+r+18,'methylated template (gold)','note mid f12');};
+  const art2=(bx,by,W,H)=>{const {cx,cy}=ART(bx,by,W,H), hw=n?70:66;
+    return duplex(cx-hw,cx+hw,cy-26,{col:INS})+star(cx-hw+4,cy-34)+T(cx,cy-36,'PCR product','note mid f12')
+      +plasmid(cx,cy+18,16,[],{col:VEC,w:2,dash:'5 4'})+meth(cx,cy+18,16)+Tc(cx+24,cy+22,'✂',RED2,15,'start')+T(cx+40,cy+22,'DpnI','note start f12')
+      +T(cx,cy+52,'template cut, product spared','note mid f12');};
+  const art3=(bx,by,W,H)=>{const {cx,cy}=ART(bx,by,W,H), r=30;
+    return plasmid(cx,cy,r,[],{col:INS,w:2.6})+star(cx,cy-r-2)+T(cx,cy+r+18,'edited, unmethylated','note mid f12');};
+  const items=[['Whole-plasmid PCR','Two back-to-back primers carrying the change amplify the entire plasmid as a line.',art1],
+   ['Remove the template','DpnI cuts only methylated DNA, so it destroys the plasmid you grew in E. coli and spares the PCR product.',art2],
+   ['Close the circle','Kinase and ligase, or a short overlap, join the ends. Transform and sequence.',art3]];
   let s=n?stepRows(n,items,10,10,W,H,10,0):stepBoxes(n,items,10,20,W,H,12,0);
   const yb=n?10+3*(H+10)+10:20+H+28;
   const QL=wrap(n?'The same trick inserts, deletes or swaps a promoter: change what the primer tails carry. Round-the-horn, KLD and QuikChange are versions of this.':'The same layout inserts, deletes or swaps a promoter: it depends only on what the primer tails carry. QuikChange, round-the-horn and the KLD kits are variations. DpnI selection is what makes it work.',n?46:88);

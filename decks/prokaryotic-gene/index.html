@@ -490,15 +490,16 @@ function scAntisense(n){
   s+=G('a-drop',.4,cassette(cx,y,iw,'anti')+T(cx,y-38,n?'reversed cassette':'cassette, promoter facing back','note mid f12'));
   s+=G('a-fade',.8,`<path d="M${cx-iw/2} ${y+22} H${P.A[0]+6}" stroke="${RHO}" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ahp)"/>`+T((P.A[0]+cx)/2,y+40,'antisense transcription','note mid f12'));
   const x1=n?16:60, x2=n?344:580, y2=y+(n?104:110), meet=(x1+x2)/2;
-  s+=G('a-fade',1.2,T(x1,y2-40,'Polymerases collide','cname start')+dsDNA(x1,x2,y2,INK,8)+T(x1,y2+28,'gene A','mono start f11'));
+  s+=G('a-fade',1.2,T(x1,y2-40,'Polymerases collide','cname start')+dsDNA(x1,x2,y2,INK,8)+T(x2,y2-40,'(both inside gene A)','note end f12'));
   s+=G('a-move',1.4,rnap(meet-(n?26:32),y2+4,n?.75:.9),`--dx:${-(meet-(n?26:32)-x1-24)}px`);
   s+=G('a-move',1.4,rnap(meet+(n?26:32),y2+4,n?.75:.9),`--dx:${x2-24-(meet+(n?26:32))}px`);
-  s+=G('a-fade',1.4,`<path d="M${x1+(x2-x1)*.24} ${y2+26} h28" stroke="${MR}" stroke-width="2" marker-end="url(#ahp)"/><path d="M${x2-30} ${y2+26} h-28" stroke="${RHO}" stroke-width="2" marker-end="url(#ahp)"/>`+T(x1+(x2-x1)*.24+14,y2+42,'sense','note mid f11')+T(x2-44,y2+42,'antisense','note mid f11'));
+  s+=G('a-fade',1.4,`<path d="M${x1+(x2-x1)*.24} ${y2+26} h28" stroke="${MR}" stroke-width="2" marker-end="url(#ahp)"/><path d="M${x2-30} ${y2+26} h-28" stroke="${RHO}" stroke-width="2" marker-end="url(#ahp)"/>`+T(x1+(x2-x1)*.24+14,y2+42,'sense','note mid f12')+T(x2-44,y2+42,'antisense','note mid f12'));
   s+=G('a-pop',2.4,`<text x="${meet}" y="${y2-22}" class="mid" style="fill:${STOPC};font-size:20px">✸</text>`);
-  const y3=y2+(n?74:76);
+  const y3=y2+(n?86:86);
   let rungs='';for(let x=x1+30;x<x2-30;x+=8)rungs+=`M${x} ${y3+3} v6`;
   s+=G('a-fade',2.8,T(x1,y3-24,'RNA duplex','cname start')+wave(x1+20,x2-20,y3,MR,2.4,2.5)+`<path d="${rungs}" stroke="${INK}" stroke-width=".8" opacity=".55"/>`+wave(x1+20,x2-20,y3+12,RHO,2.4,2.5)
-    +T(x2-20,y3-10,n?'A mRNA':'gene A mRNA','note end f11')+T(x2-20,y3+32,'antisense RNA','note end f11'));
+    +T(x2-20,y3-10,n?'A mRNA':'gene A mRNA','note end f12')+T(x2-20,y3+32,'antisense RNA','note end f12')
+    +T(x1+16,y3+4,'5′','mono end f12')+T(x2-16,y3+4,'3′','mono start f12')+T(x1+16,y3+16,'3′','mono end f12')+T(x2-16,y3+16,'5′','mono start f12'));
   s+=G('a-pop',3.3,`<text x="${meet}" y="${y3+12}" class="mid" style="fill:${STOPC};font-size:18px">✂</text>`+T(meet,y3+(n?52:52),n?'RNase III cuts; RBS masked':'RNase III cuts the duplex, or the antisense masks the RBS','note mid f12'));
   const top=y3+(n?92:94), base=top+(n?88:96);
   s+=exprBars(n,[30,'disrupted',75],top,base,3.6);

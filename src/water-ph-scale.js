@@ -40,7 +40,8 @@ function scW5(n){
   const cw=n?150:180, y=n?60:70;
   const panel=(x,lab,arrowIn,note)=>{let s=(arrowIn?rodCell2(x,y+40,cw-30,32,{fill:'#DDE7F0'}):rodCell2(x,y+40,cw-30,32,{fill:'none',tint:false,sw:1.2}).replace('/>',' stroke-dasharray="4 3"/>')+rodCell2(x,y+40,cw-62,20,{fill:'#EFE6D2'}))+T(x,y-2,lab,'cname mid f14');
     for(let i=0;i<4;i++){const ax=x-cw/2+30+i*(cw-60)/3;s+=arrowIn?arw(ax,y+98,ax,y+78,{w:1.3,blue:1}):arw(ax,y+76,ax,y+98,{w:1.3});}
-    return s+T(x,y+116,note,'note mid f11');};
+    if(!arrowIn)s+=T(x+cw/2-6,y+12,'wall','note start f12')+T(x,y+44,'cytoplasm','note mid f12');
+    return s+T(x,y+116,note,'note mid f12');};
   let s=G('a-fade',0,panel(n?92:150,'hypo-osmotic shock',true,'water rushes in'));
   s+=G('a-fade',.4,panel(n?268:470,'hyper-osmotic shock',false,n?'cytoplasm shrinks':'water leaves; cytoplasm shrinks'));
   const b=bullets(n?24:30,y+150,[['Turgor','The cytoplasm is more concentrated than most environments, so water pushes outwards. The wall holds the pressure: estimates run from about 1 atmosphere in Gram-negatives to 10–20 in Gram-positives, though measurements disagree.'],
@@ -65,7 +66,7 @@ function scW7(n){
     :bullets(350,52,[['No coasting','Stop the flagella and a bacterium coasts less than the width of an atom, as Edward Purcell calculated in 1977.'],['The scallop theorem','A reciprocal stroke, like opening and closing a hinge, gets nowhere. Swimmers need a non-reciprocal motion, such as a rotating helix.'],['Outswimming diffusion','To reach new food a bacterium must move farther than diffusion would bring it, which is why chemotaxis works by runs of a second or so.']],36,{d0:1,gap:22});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,y+150)),s:s+b.s};
 }
-const CELLS=[['Mycoplasma',0.3,'one of the smallest free-living cells'],['Pelagibacter',0.1,'the most abundant ocean bacterium; tiny rods'],['E. coli',0.5,'a rod about 1 × 2 µm (radius ~0.5)'],['yeast',2.5,'a eukaryotic cell ~5 µm across'],['Epulopiscium',40,'giant gut bacterium, hundreds of µm long; many genome copies'],['Thiomargarita',300,'giant sulfur bacterium; a thin cytoplasm around a vacuole']];
+const CELLS=[['Mycoplasma',0.15,'one of the smallest free-living cells'],['Pelagibacter',0.1,'the most abundant ocean bacterium; tiny rods'],['E. coli',0.5,'a rod about 1 × 2 µm (radius ~0.5)'],['yeast',2.5,'a eukaryotic cell ~5 µm across'],['Epulopiscium',40,'giant gut bacterium, hundreds of µm long; many genome copies'],['Thiomargarita',300,'giant sulfur bacterium; a thin cytoplasm around a vacuole']];
 function scW8(n){
   const items=CELLS.map(c=>[`${c[0]} (r ${c[1]} µm)`,3/c[1],c[1]<1?PAL.green:c[1]<5?PAL.blue:PAL.rose,(3/c[1]).toFixed(c[1]<1?0:2)+' µm⁻¹']);
   const top=para(n?16:24,30,'For a sphere, surface area divided by volume is 3/r. Halve the radius and each unit of cytoplasm has twice the membrane through which to feed.',n?50:92,'lab start f13',17,0);

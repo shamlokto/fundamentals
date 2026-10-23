@@ -8,7 +8,9 @@ const GPH=[
  {k:'Stationary',a:7.5,b:14,col:PAL.blue,h:'Stationary phase',t:'A nutrient runs out or waste products build up, and net growth stops. Cells switch on the σS general stress response, shrink, condense their DNA with Dps and become tougher. Some cells may still divide while others die, so the count stays roughly flat.'},
  {k:'Death',a:14,b:24,col:PAL.rose,h:'Death (decline) phase',t:'Viable counts fall, often exponentially at first, then level off. A small surviving population can persist for months or years in long-term stationary phase, living on the remains of dead siblings while mutants with a growth advantage take over.'}];
 let gphSel=1;
-const gcurve=t=>5+4/(1+Math.exp(-1.3*(t-5)))-0.28*Math.log(1+Math.exp(1.6*(t-14)))/1.6;
+const gsp=(x,k)=>Math.log(1+Math.exp(k*x))/k;
+/* lag to 2.5 h, a straight exponential rise of 0.8 log units per hour (doubling about every 22 min), stationary from 7.5 h, exponential death after 14 h */
+const gcurve=t=>5+0.8*(gsp(t-2.5,3)-gsp(t-7.5,3))-0.28*gsp(t-14,1.6);
 function scG1(n){return introPlate(n,{q:'How fast can a bacterium multiply, and what stops it?',
   belief:'Given food, a bacterium copies itself, and its descendants do the same, so numbers rise exponentially until something runs out. How fast that happens, how big each cell is and how much of the cell is ribosomes all follow simple quantitative rules.',
   items:['The batch growth curve','Exponential growth maths','Measuring growth','The chemostat and Monod kinetics','Yield and maintenance','Growth laws and cell size'],
@@ -23,7 +25,7 @@ function scG2(n){
   s+=GPH.map(p=>T(FX((A.px(p.a)+A.px(p.b))/2),A.y-6,p.k==='Exponential'?(n?'exp.':'exponential'):p.k.toLowerCase(),'note mid f10')).join('');
   s+=G('a-fade',.2,curve(A,gcurve,{col:'#2F5276'}));
   if(gphSel===3)s+=G('a-fade',.5,curve(A,t=>gcurve(16)-.55*(1-Math.exp(-(t-16)/2.5)),{col:'#A4473A',dash:'4 3',w:1.6,from:16,to:24})+T(FX(A.px(23.6)),FX(A.py(gcurve(16)-.5)-18),n?'survivors':'long-term survivors','note end f10 halo'));
-  if(gphSel===1)s+=G('a-fade',.5,ln(FX(A.px(4.2)),FX(A.py(gcurve(4.2))),FX(A.px(5.8)),FX(A.py(gcurve(4.2))),'#A4473A',1.2,'3 3')+ln(FX(A.px(5.8)),FX(A.py(gcurve(4.2))),FX(A.px(5.8)),FX(A.py(gcurve(5.8))),'#A4473A',1.2,'3 3')+T(FX(A.px(5.8)+6),FX((A.py(gcurve(4.2))+A.py(gcurve(5.8)))/2+4),'slope = μ','note start f11 halo'));
+  if(gphSel===1)s+=G('a-fade',.5,ln(FX(A.px(4.2)),FX(A.py(gcurve(4.2))),FX(A.px(5.8)),FX(A.py(gcurve(4.2))),'#A4473A',1.2,'3 3')+ln(FX(A.px(5.8)),FX(A.py(gcurve(4.2))),FX(A.px(5.8)),FX(A.py(gcurve(5.8))),'#A4473A',1.2,'3 3')+T(FX(A.px(5.8)+6),FX((A.py(gcurve(4.2))+A.py(gcurve(5.8)))/2+4),'slope = μ / 2.3','note start f12 halo'));
   const tx=n?16:428, ty=n?A.y+A.h+60:50;
   s+=G('a-fade',.3,T(tx,ty,ph.h,'cname start f15'));
   const p=para(tx,ty+22,ph.t,n?50:30,'note start f13',17,.5);
@@ -39,7 +41,10 @@ function scG3(n){
   const items=[['Vibrio natriegens',1.0,PAL.green,'~10 min'],['E. coli, rich broth',1.3,PAL.green,'~20 min'],['E. coli, glucose minimal',1.78,PAL.blue,'~60 min'],['baker’s yeast',1.95,PAL.lilac,'~90 min'],['Mycobacterium tuberculosis',3.08,PAL.rose,'~20 h'],['Prochlorococcus, in the sea',3.16,PAL.rose,'~1 day']];
   const t=T(x,ex.y+18,'Typical doubling times (log scale)','note start f12');
   const h=hbars(n,n?6:24,ex.y+30,n?344:560,items,{max:3.3,lw:n?150:200,vw:56});
-  return {vb:n?slim(h.y+4):wide(h.y+6),s:s+t+h.s};
+  const bx=(n?6:24)+(n?150:200), bw=(n?344:560)-(n?150:200)-56, ay=h.y+2, tx=v=>FX(bx+bw*v/3.3);
+  const ax=G('a-fade',.9,ln(bx,ay,bx+bw,ay,'#6A5B47',1)+[[1,'10 min'],[Math.log10(60),'1 h'],[Math.log10(600),'10 h'],[Math.log10(1440),'1 day']].map(([v,l])=>ln(tx(v),ay,tx(v),ay+4,'#6A5B47',1)+(n&&(l==='1 h'||l==='10 h')?'':T(tx(v),ay+17,l,'mono mid f12'))).join(''));
+  h.y+=26;
+  return {vb:n?slim(h.y+4):wide(h.y+6),s:s+t+h.s+ax};
 }
 function scG4(n){
   let s='';const y=n?78:80, x0=n?36:60, dx=n?52:70;

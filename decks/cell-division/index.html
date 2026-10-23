@@ -509,7 +509,7 @@ function scTreadmill(n){
     let f='';
     for(let i=0;i<12;i++){const live=i>=ri&&i<ri+9;
       f+=`<rect x="${x+i*(w+1)}" y="${yy}" width="${w}" height="${n?13:15}" rx="2.5" fill="${live?(i<ri+2?'#B59BC9':ZC):'none'}" stroke="${live?INK:'#C9BFAB'}" stroke-width="${live?.7:.5}" ${live?'':'stroke-dasharray="2 2"'}/>`;}
-    s+=G('a-fade',(.3+ri*.4).toFixed(1),f+T(x-8,yy+(n?11:13),r[0],'mono end f11'));});
+    s+=G('a-fade',(.3+ri*.4).toFixed(1),f+T(x-8,yy+(n?11:13),r[0],'mono end f11')+(ri===0?T(x,yy-7,'GDP: leaves','note start f12')+T(x+9*(w+1)-2,yy-7,'GTP: adds','note end f12'):''));});
   const ay=y+3*(n?48:52);
   s+=G('a-fade',1.6,T(x,ay+(n?6:8),'GTP-bound subunits add at one end','note start f12')+T(x,ay+(n?24:26),'GDP subunits fall off the other','note start f12')
     +`<path d="M${x+10*(w+1)} ${ay-(n?30:34)} h${n?26:30}" stroke="${PBPC}" stroke-width="2" marker-end="url(#ahp)"/>`
@@ -546,14 +546,14 @@ function scAnchor(n){
 function scSwitch(n){
   const W=n?162:290, H=n?150:170, y=n?56:62;
   const panel=(x,on)=>{
-    let g=box(x,y,W,H,'#E7DEC9',4)+T(x+16,y+26,on?'ON':'OFF','cname start '+(n?'f15':''))+Tc(x+W-16,y+26,on?'septum builds':'nothing happens',on?'#4F7A3F':'#A4473A',11,'mono end','600');
+    let g=box(x,y,W,H,'#E7DEC9',4)+T(x+16,y+26,on?'ON':'OFF','cname start '+(n?'f15':''))+Tc(n?x+16:x+W-16,n?y+46:y+26,on?'septum builds':'nothing happens',on?'#4F7A3F':'#A4473A',11,n?'mono start':'mono end','600');
     const my=y+H-(n?44:48), cx=x+W/2;
     g+=bilayer(x+14,x+W-14,my,14);
     g+=tmProt(cx-(n?30:44),my,14,(n?26:34),SEDS,'',{})+Tc(cx-(n?30:44),my+(n?26:28),'FtsQLB','#3A2E22',9,'mono mid','600');
     g+=tmProt(cx+(n?14:22),my,14,(n?22:28),PBPC,'',{})+Tc(cx+(n?14:22),my+(n?26:28),'FtsWI','#3A2E22',9,'mono mid','600');
     if(on){g+=tmProt(cx+(n?46:72),my,14,12,'#B4766E','',{})+Tc(cx+(n?46:72),my+(n?26:28),'FtsN','#3A2E22',9,'mono mid','600');
       g+=pgStrand(x+20,x+W-20,my-(n?16:18),PBPC,{w:3,dir:-5})+Tc(cx,my-(n?26:30),'new wall','#4F7A3F',10,'mono mid','600');}
-    else g+=Tc(cx+(n?44:68),my+7,'—','#A4473A',14,'mono mid','600');
+    else g+=Tc(cx-(n?8:11),my-8,'⊣','#A4473A',16,'mono mid','600')+Tc(cx-(n?8:11),my-26,n?'holds off':'holds FtsWI off','#A4473A',11,'mono mid','600');
     return g;};
   let s=G('a-fade',0,panel(n?8:22,0))+G('a-fade',.8,panel(n?190:330,1));
   if(!n)s+=G('a-fade',1.2,`<path d="M${22+W+4} ${y+H/2} h${330-22-W-8}" class="arrow"/>`);
@@ -608,19 +608,20 @@ function scSplit(n){
     const t=['Septum complete','Amidases cut','Daughters part'][i];
     g+=T(x+28,y+19,t,'lab start f14');
     const cy=y+H-(n?46:52), cx=x+W/2, cw=n?58:70, R=n?26:30;
-    g+=rodCell(cx,cy,cw*2,R,i===0?1:i===1?1:1);
+    const two=(cx,cy,cw,R)=>{const cr=R*.62,L=cw-28;return rodCell(cx-L/2-cr-4,cy,L,R,0)+rodCell(cx+L/2+cr+4,cy,L,R,0);};
+    g+=i===2?two(cx,cy,cw,R):rodCell(cx,cy,cw*2,R,1);
     if(i===0)g+=`<rect x="${cx-5}" y="${cy-R+3}" width="10" height="${2*R-6}" fill="${WALL}" stroke="${WALLE}" stroke-width="1"/>`+Tc(cx,cy+R+(n?16:18),'shared wall','#6A5B47',10,'mono mid');
     if(i===1)g+=`<rect x="${cx-5}" y="${cy-R+3}" width="10" height="${2*R-6}" fill="${WALL}" stroke="${WALLE}" stroke-width="1"/>`
       +blob(cx,cy-R-(n?12:14),n?13:15,n?9:10,AMI)+Tc(cx,cy-R-(n?9:11),'Ami','#F3EDE0',9,'mono mid','600')
       +`<path d="M${cx} ${cy-R+2} v${2*R-4}" stroke="${AMI}" stroke-width="2" stroke-dasharray="3 2"/>`;
-    if(i===2)g+=`<path d="M${cx-3} ${cy-R+3} v${2*R-6} M${cx+3} ${cy-R+3} v${2*R-6}" stroke="${WALLE}" stroke-width="2"/>`;
+    if(i===2)g+=Tc(cx,cy+R+(n?16:18),'new poles','#6A5B47',10,'mono mid');
     return g;};
   let s='';
   if(n){s+=G('a-fade',0,panel(xs[0],0))+G('a-fade',.6,panel(xs[1],1))+G('a-fade',1.2,panel(xs[0],2).replace(`x="${xs[0]}" y="${y}"`,`x="${xs[0]}" y="${y+H+10}"`));
     s=G('a-fade',0,panel(8,0))+G('a-fade',.6,panel(190,1));
     const y2=y+H+12;
     s+=G('a-fade',1.2,box(8,y2,W,H,'#E7DEC9',4)+badge(22,y2+14,3)+T(36,y2+19,'Daughters part','lab start f14')
-      +rodCell(8+W/2,y2+H-46,116,26,1)+`<path d="M${8+W/2-3} ${y2+H-46-23} v46 M${8+W/2+3} ${y2+H-46-23} v46" stroke="${WALLE}" stroke-width="2"/>`);
+      +rodCell(8+W/2-15-16-4,y2+H-46,30,26,0)+rodCell(8+W/2+15+16+4,y2+H-46,30,26,0)+Tc(8+W/2,y2+H-46+42,'new poles','#6A5B47',10,'mono mid'));
   } else s=G('a-fade',0,panel(xs[0],0))+G('a-fade',.6,panel(xs[1],1))+G('a-fade',1.2,panel(xs[2],2));
   const ty=n?y+2*(H+12)+14:y+H+28;
   const items=[['Amidases','AmiA, AmiB and AmiC in E. coli cut the peptide cross-links in the shared septal wall. They are kept off until FtsEX and their LytM activators switch them on, so the wall is never weakened early.'],
@@ -662,12 +663,12 @@ function scDrugs(n){
   const y=n?92:100, x1=n?20:60, x2=n?344:600;
   let s=G('a-fade',0,bilayer(x1,x2,y,16)+T(x1,y-8,'outside','note start f11')+T(x1,y+42,'cytoplasm','note start f11'));
   const lx=n?84:130, mx=n?160:280, px=n?232:410, zx=n?300:520;
-  s+=G('a-pop',.1,`<path d="M${lx} ${y+14} v-14" stroke="#E0B84A" stroke-width="3"/><rect x="${lx-7}" y="${y-13}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`+T(lx,y+(n?54:56),'lipid II','note mid f11'));
+  s+=G('a-pop',.1,`<path d="M${lx} ${y+14} v-14" stroke="#E0B84A" stroke-width="3"/><rect x="${lx-7}" y="${y-13}" width="14" height="12" rx="2" fill="#3E7FC1" stroke="${INK}" stroke-width=".6"/>`+T(lx+12,y-16,'lipid II','note start f12'));
   s+=G('a-pop',.1,tmProt(mx,y,16,(n?24:30),SEDS,'',{})+Tc(mx,y+(n?34:36),'FtsW','#3A2E22',10,'mono mid','600'));
   s+=G('a-pop',.1,tmProt(px,y,16,14,PBPC,'',{})+`<path d="M${px} ${y} v-${n?18:21}" stroke="${PBPC}" stroke-width="3"/>`+blob(px,y-(n?26:30),n?13:15,n?9:10,PBPC)+Tc(px,y-(n?23:27),'PBP','#F3EDE0',9,'mono mid','600'));
-  s+=G('a-pop',.1,filament(zx-(n?34:40),y+(n?40:44),5,[ZC],{w:n?12:14,h:10})+T(zx,y+(n?66:70),'FtsZ','mono mid f11'));
-  s+=G('a-pop',.1,blob(n?64:130,y+(n?88:94),n?14:16,n?10:11,'#C9BFAB')+Tc(n?64:130,y+(n?91:97),'Mur','#3A2E22',9,'mono mid','600'));
-  const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?45:49)],cyto:[n?64:130,y+(n?88:94)],sub:[lx,y-7]}[m.at];
+  s+=G('a-pop',.1,filament(zx-(n?34:40),y+(n?22:24),5,[ZC],{w:n?12:14,h:10})+T(n?zx-4:zx,y+(n?64:68),n?'FtsZ':'FtsZ, under the membrane','mono mid f11'));
+  s+=G('a-pop',.1,blob(n?64:130,y+(n?80:82),n?14:16,n?10:11,'#C9BFAB')+Tc(n?64:130,y+(n?83:85),'MurA','#3A2E22',9,'mono mid','600'));
+  const tgt={pbp:[px,y-(n?26:30)],elong:[px,y-(n?26:30)],z:[zx,y+(n?27:29)],cyto:[n?64:130,y+(n?80:82)],sub:[lx,y-7]}[m.at];
   s+=G('a-pop',.4,`<circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?17:20}" fill="${AMI}" opacity=".3"/><circle cx="${tgt[0]}" cy="${tgt[1]}" r="${n?22:26}" fill="none" stroke="${AMI}" stroke-width="2" stroke-dasharray="4 3"/>`);
   const ty=y+(n?124:128);
   s+=G('a-fade',.6,T(n?14:30,ty,m.d,'cname start')+T(n?14:30,ty+20,'target: '+m.t,'note start '+(n?'f12':'f13')));
@@ -693,6 +694,7 @@ function scBreak(n){
   const k=m.g;
   if(k==='ftsZ'||k==='ftsA'||k==='ftsI (pbp3)'||k==='ftsN'||k==='sulA (induced)'){
     s+=G('a-fade',0,rodCell(cx,y,L*1.1,R,0)+[0,1,2,3].map(i=>nucleoid(cx-L*.42+i*L*.28,y,L*.1,R*.55,{seed:3+i*5})).join(''));
+    if(k==='ftsA')s+=G('a-pop',.6,`<g opacity=".45">`+[0,1,2].map(i=>zring(cx-L*.28+i*L*.28,y,R-16,{n:3,w:5})).join('')+'</g>'+T(cx,y-R-14,'faint FtsZ patches, off the membrane','note mid f12'));
     if(k==='ftsI (pbp3)'||k==='ftsN')s+=G('a-pop',.6,[0,1,2].map(i=>zring(cx-L*.28+i*L*.28,y,R-6,{n:4,w:5})).join(''));
     if(k==='sulA (induced)')s+=G('a-pop',.6,[0,1,2].map(i=>blob(cx-L*.28+i*L*.28,y,n?10:12,n?7:8,'#5E7F7A')).join('')+T(cx,y-R-14,'SulA holds FtsZ','note mid f11'));
     s+=G('a-fade',1,T(cx,y+R+(n?22:24),'a filament','note mid f12'));
