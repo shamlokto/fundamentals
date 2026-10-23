@@ -79,7 +79,7 @@ function scV6(n){
   let s=A.s;
   s+=G('a-fade',.3,pts.map(p=>`<circle cx="${FX(A.px(p[0]))}" cy="${FX(A.py(p[1]))}" r="4.5" fill="${PAL.rose}" stroke="${INK}" stroke-width="1"/>`).join('')
     +curve(A,x=>-9+(x-2)*(6/8),{col:'#2F5276',dash:'5 4'}));
-  if(!n)s+=G('a-fade',.5,pts.map(p=>T(FX(A.px(p[0])+6),FX(A.py(p[1])-6),p[2],'note start f10 halo')).join(''));
+  if(!n){const short=['herpes','HIV','influenza'];s+=G('a-fade',.5,pts.map((p,i)=>T(FX(A.px(p[0])),FX(A.py(p[1])+15),short[i],'note mid f10 halo')).join(''));}
   const b=bullets(n?24:400,n?A.y+A.h+54:52,[
     ['Quasispecies','An RNA virus does not exist as one sequence but as a swarm of related mutants around a consensus. Selection acts on the swarm, which is why resistance to a single drug appears so fast.'],
     ['Error catastrophe','The rate is near the limit: push it higher with a mutagenic drug such as molnupiravir and the population collapses under its own errors.'],

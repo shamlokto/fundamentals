@@ -30,17 +30,20 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | XXII | Central Carbon Metabolism | 7 | [`decks/central-metabolism/`](decks/central-metabolism/) |
 | XXIII | Respiration and Fermentation | 7 | [`decks/respiration/`](decks/respiration/) |
 | XXIV | Autotrophy and the Element Cycles | 8 | [`decks/autotrophy-cycles/`](decks/autotrophy-cycles/) |
-| XXV | Tools for Molecular Cloning | 21 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
-| XXVI | How CRISPR–Cas9 Works | 13 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
-| XXVII | Next-Generation Sequencing | 15 | [`decks/sequencing/`](decks/sequencing/) |
-| XXVIII | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
-| XXIX | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
-| XXX | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
-| XXXI | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
-| XXXII | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
-| XXXIII | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
-| XXXIV | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
-| XXXV | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
+| XXV | Viruses | 8 | [`decks/virology/`](decks/virology/) |
+| XXVI | Immunity to Microbes | 9 | [`decks/immunity/`](decks/immunity/) |
+| XXVII | Pathogenesis and Epidemiology | 9 | [`decks/pathogenesis/`](decks/pathogenesis/) |
+| XXVIII | Tools for Molecular Cloning | 21 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
+| XXIX | How CRISPR–Cas9 Works | 13 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
+| XXX | Next-Generation Sequencing | 15 | [`decks/sequencing/`](decks/sequencing/) |
+| XXXI | How Tn-seq Works | 11 | [`decks/tn-seq/`](decks/tn-seq/) |
+| XXXII | Pasteur and the Swan-Neck Flask | 11 | [`decks/pasteur/`](decks/pasteur/) |
+| XXXIII | Koch and the Pure Culture | 9 | [`decks/koch/`](decks/koch/) |
+| XXXIV | Winogradsky and the Soil | 7 | [`decks/winogradsky/`](decks/winogradsky/) |
+| XXXV | Beijerinck and the First Virus | 6 | [`decks/beijerinck/`](decks/beijerinck/) |
+| XXXVI | Griffith, Avery and DNA | 9 | [`decks/griffith-avery/`](decks/griffith-avery/) |
+| XXXVII | Lederberg and Bacterial Genetics | 8 | [`decks/lederberg/`](decks/lederberg/) |
+| XXXVIII | Woese and the Tree of Life | 7 | [`decks/woese/`](decks/woese/) |
 
 Historical attributions, dates and figures are rounded for teaching and should be checked against primary sources.
 

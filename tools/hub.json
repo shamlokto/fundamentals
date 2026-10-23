@@ -204,6 +204,33 @@
   ]
  },
  {
+  "name": "Viruses, hosts and disease",
+  "desc": "Viruses, the immune system, and how microbes cause disease.",
+  "decks": [
+   {
+    "slug": "virology",
+    "psub": "Virology",
+    "title": "Viruses",
+    "sub": "Particles, classes and evolution",
+    "blurb": "What viruses are, how they reach messenger RNA (the Baltimore classes), how they replicate, and how they mutate and spill over from animals."
+   },
+   {
+    "slug": "immunity",
+    "psub": "Immunology",
+    "title": "Immunity to Microbes",
+    "sub": "Innate and adaptive defences",
+    "blurb": "Barriers and pattern receptors, complement, phagocytes, antigen presentation, T and B cells, antibodies, memory and vaccines."
+   },
+   {
+    "slug": "pathogenesis",
+    "psub": "Pathogenesis",
+    "title": "Pathogenesis and Epidemiology",
+    "sub": "How microbes cause disease, and how it spreads",
+    "blurb": "Steps of infection, virulence factors and toxins, secretion systems, immune evasion, dysbiosis, and epidemiology basics."
+   }
+  ]
+ },
+ {
   "name": "Tools",
   "desc": "Building, editing and screening DNA in the lab.",
   "decks": [
