@@ -671,7 +671,7 @@ function scA4(n){
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};
 }
 function scA5(n){
-  const items=[['Who fixes nitrogen','Only bacteria and archaea: free-living (Azotobacter, Clostridium, cyanobacteria) and symbiotic (Rhizobium in legume nodules, Frankia in alder). Industrial Haber–Bosch now fixes about as much as all of biology.'],['Nitrogenase','The MoFe protein holds the FeMo-cofactor; the Fe protein delivers electrons from ferredoxin, hydrolysing 2 ATP per electron. Alternative V and Fe-only nitrogenases exist.'],['Protecting it from oxygen','Heterocysts in Anabaena lack photosystem II; Azotobacter respires furiously to keep O₂ low; legume nodules use leghaemoglobin.'],['Assimilation','Ammonia is assimilated by glutamine synthetase and glutamate synthase (GS–GOGAT), tightly controlled by the Ntr system and PII proteins.']];
+  const items=[['Who fixes nitrogen','Only bacteria and archaea: free-living (Azotobacter, Clostridium, cyanobacteria) and symbiotic (Rhizobium in legume nodules, Frankia in alder). Industrial Haber–Bosch now fixes about half as much as all of biology.'],['Nitrogenase','The MoFe protein holds the FeMo-cofactor; the Fe protein delivers electrons from ferredoxin, hydrolysing 2 ATP per electron. Alternative V and Fe-only nitrogenases exist.'],['Protecting it from oxygen','Heterocysts in Anabaena lack photosystem II; Azotobacter respires furiously to keep O₂ low; legume nodules use leghaemoglobin.'],['Assimilation','Ammonia is assimilated by glutamine synthetase and glutamate synthase (GS–GOGAT), tightly controlled by the Ntr system and PII proteins.']];
   const c=cards(n,items,{y:20,num:1});
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }
@@ -702,7 +702,7 @@ const S=[
  {p:3,title:'Nitrogen fixation',draw:scA5,text:"Breaking the triple bond of N₂ takes nitrogenase, an oxygen-sensitive enzyme that spends sixteen ATP per molecule. Only some bacteria and archaea have it, and they protect it in specialised cells, by respiration or inside plant nodules. The ammonia is then assimilated by GS–GOGAT."},
  {p:4,title:'The sulfur cycle',draw:scA6,text:"Sulfate reducers in anoxic places make hydrogen sulfide; sulfur oxidisers, using oxygen, nitrate or light, turn it back into sulfur and sulfate. The same chemistry souring oil wells and generating acid mine drainage also leaches metals from ore."},
  {p:4,title:'Methane',draw:scA7,text:"Methane is made only by archaea, in places without oxygen, and consumed by methanotrophic bacteria and anaerobic archaea. The balance between them sets how much of this potent greenhouse gas escapes from wetlands, rice paddies, sediments and livestock."},
- {p:4,title:'Who runs which step',draw:scA8,text:"Each step of each cycle is run by a characteristic set of microbes. The table is a starting map; many players, such as ammonia-oxidising archaea and comammox bacteria, were discovered only in the last twenty years."}];
+ {p:4,title:'Who runs which step',draw:scA8,text:"Each step of each cycle is run by a characteristic set of microbes. The table is a starting map; many players, such as ammonia-oxidising archaea and comammox bacteria, were discovered only in this century."}];
 const CHIPS={cf:{list:CFIX.map(c=>c.k),get:()=>cfSel,set:k=>cfSel=k}};
 const NAR='Narrator';
 const $=id=>document.getElementById(id);

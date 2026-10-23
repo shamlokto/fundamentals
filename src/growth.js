@@ -34,7 +34,7 @@ function scG3(n){
   const eq=[['N = N₀ · 2ⁿ','n generations; n = t / g, where g is the doubling time'],['μ = ln 2 / g ≈ 0.69 / g','specific growth rate, per hour'],['ln N = ln N₀ + μt','a straight line on a log plot, slope μ'],['n = 3.3 (log₁₀N − log₁₀N₀)','generations from two counts']];
   let s='', y=34; const x=n?16:24;
   eq.forEach((e,i)=>{s+=G('a-fade',(i*.25).toFixed(2),T(x,y,e[0],'mono start f14')+T(n?x:x+282,n?y+18:y,e[1],'note start f12'));y+=n?42:26;});
-  const ex=para(x,y+6,'Worked example: E. coli in rich broth at 37 °C doubles about every 20 minutes, so μ ≈ 2.1 per hour. Unchecked, one cell would leave about 4 × 10²¹ descendants in a day, and after two days they would outweigh the Earth. Exponential growth never lasts long.',n?50:92,'lab start f13',17,1);
+  const ex=para(x,y+6,'Worked example: E. coli in rich broth at 37 °C doubles about every 20 minutes, so μ ≈ 2.1 per hour. Unchecked, one cell would leave about 5 × 10²¹ descendants in a day, and after two days they would outweigh the Earth. Exponential growth never lasts long.',n?50:92,'lab start f13',17,1);
   s+=ex.s;
   const items=[['Vibrio natriegens',1.0,PAL.green,'~10 min'],['E. coli, rich broth',1.3,PAL.green,'~20 min'],['E. coli, glucose minimal',1.78,PAL.blue,'~60 min'],['baker’s yeast',1.95,PAL.lilac,'~90 min'],['Mycobacterium tuberculosis',3.08,PAL.rose,'~20 h'],['Prochlorococcus, in the sea',3.16,PAL.rose,'~1 day']];
   const t=T(x,ex.y+18,'Typical doubling times (log scale)','note start f12');

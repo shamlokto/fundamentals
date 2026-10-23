@@ -21,7 +21,7 @@ function scC2(n){
 function scC3(n){
   const rows=[['glucose-6-P','glycolysis','polysaccharides, wall'],['fructose-6-P','glycolysis','amino sugars, peptidoglycan'],['ribose-5-P','pentose phosphate','nucleotides, histidine'],['erythrose-4-P','pentose phosphate','aromatic amino acids'],['triose-P','glycolysis','lipids (glycerol)'],['3-phosphoglycerate','glycolysis','serine, glycine, cysteine'],['phosphoenolpyruvate','glycolysis','aromatics; sugar uptake (PTS)'],['pyruvate','glycolysis','alanine, valine, leucine'],['acetyl-CoA','pyruvate dehydrogenase','fatty acids'],['2-oxoglutarate','TCA','glutamate family; nitrogen assimilation'],['succinyl-CoA','TCA','haem, lysine, methionine'],['oxaloacetate','TCA','aspartate family, pyrimidines']];
   const t=wtable(n,['Precursor','From','Builds'],rows,n?[[10,16],[118,14],[220,18]]:[[24,22],[220,22],[400,34]],{y0:30,R:n?354:620});
-  const p=para(n?16:24,t.y+12,'Twelve precursor metabolites, drawn from glycolysis, the pentose phosphate pathway and the TCA cycle, are the starting points for every building block of the cell (Neidhardt’s scheme). Biosynthesis also spends about 4 ATP and many NADPH per amino acid on average.',n?50:92,'note start f13',17,1);
+  const p=para(n?16:24,t.y+12,'Twelve precursor metabolites, drawn from glycolysis, the pentose phosphate pathway and the TCA cycle, are the starting points for every building block of the cell (Neidhardt’s scheme). Linking amino acids into protein costs about 4 ATP each; making them needs much NADPH.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scC4(n){
