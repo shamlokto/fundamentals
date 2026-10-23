@@ -49,6 +49,13 @@ def build(slug):
     out = head + wrap + (T / 'base_helpers.js').read_text() + '\n' + (T / 'lib.js').read_text() + '\n/* ===================== deck ===================== */\n' + body.strip() + "\nconst NAR='Narrator';\n" + (T / 'base_runtime.html').read_text()
     d = ROOT / 'decks' / slug; d.mkdir(parents=True, exist_ok=True)
     (d / 'index.html').write_text(out)
+    import subprocess, tempfile
+    js = out[out.rindex('<script>') + 8:out.rindex('</script>')]
+    with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False) as t:
+        t.write(js)
+    r = subprocess.run(['node', '--check', t.name], capture_output=True, text=True)
+    if r.returncode:
+        print(r.stderr[:600]); raise SystemExit(f'syntax error in {slug}')
 
 def roman(n):
     r = ''
