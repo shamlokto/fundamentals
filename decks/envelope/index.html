@@ -696,17 +696,32 @@ function explorerAt(x,y,e){let s=T(x,y,e.k,'cname start f16');y+=24;
   e.rows.forEach(r=>{const V=wrap(r[1],36);s+=T(x,y,r[0],'lab start f13')+V.map((l,j)=>T(x,y+17+j*16,l,'note start f12')).join('');y+=17+V.length*16+8;});
   const P=wrap(e.note,44);s+=P.map((l,j)=>T(x,y+8+j*16,l,'lab start f12')).join('');return {s,y:y+8+P.length*16};}
 function scV4(n){
-  let s='';const x0=n?30:50, y0=60, dx=n?40:52, k=n?6:6;
-  const unit=(x,y,i)=>`<rect x="${x-9}" y="${y-8}" width="18" height="16" rx="3" fill="${i%2?'#C9A9D6':'#A9C4DC'}" stroke="${INK}" stroke-width=".8"/>`+Tc(x,y+4,i%2?'M':'G','#3A2E22',9,'mono mid','600');
-  [0,1].forEach(r=>{const y=y0+r*(n?118:128);
-    s+=G('a-fade',r*.3,`<path d="M${x0-14} ${y} H${x0+(k-1)*dx+14}" stroke="${INK}" stroke-width="1.4"/>`+[...Array(k)].map((_,i)=>unit(x0+i*dx,y,i)).join(''));
-    for(let i=1;i<k;i+=2){const x=x0+i*dx, d=r?-1:1;const aa=['L-Ala','D-Glu','m-DAP','D-Ala'];
-      s+=G('a-fade',(.6+r*.3).toFixed(1),aa.map((a,j)=>`<circle cx="${x}" cy="${y+d*(18+j*13)}" r="5" fill="${j===2?'#E0B84A':'#EFE6D2'}" stroke="${INK}" stroke-width=".7"/>`).join(''));}});
-  for(let i=1;i<k;i+=2){const x=x0+i*dx;if(i===3)continue;s+=G('a-pop',1.4,`<path d="M${x+5} ${y0+18+3*13} L${x+5} ${y0+(n?118:128)-18-2*13-4}" stroke="#A4473A" stroke-width="2.2"/>`);}
-  s+=G('a-fade',1.6,T(x0-14,y0-18,'glycan strand: GlcNAc (G) and MurNAc (M), β1→4','note start f11')+T(x0-14,y0+(n?118:128)+28,'red: 4→3 cross-link, D-Ala⁴ to m-DAP³','note start f11').replace('class=','style="fill:#A4473A" class='));
-  const b=n?bullets(24,y0+(n?118:128)+56,[['Stem peptide','L-Ala–D-Glu–m-DAP (or L-Lys)–D-Ala–D-Ala on each MurNAc.'],['Transpeptidation','PBPs link D-Ala⁴ of one stem to the third residue of another, releasing the terminal D-Ala.'],['Variations','S. aureus bridges with five glycines; mycobacteria and stationary E. coli add 3→3 links made by L,D-transpeptidases, which most β-lactams do not block.']],44,{d0:1.8,gap:20})
-    :bullets(400,52,[['Stem peptide','L-Ala–D-Glu–m-DAP (L-Lys in many Gram-positives)–D-Ala–D-Ala on each MurNAc. The D-amino acids resist ordinary proteases.'],['Transpeptidation','PBPs link D-Ala⁴ of one stem to the third residue of another, releasing the terminal D-Ala. β-lactams mimic that D-Ala–D-Ala.'],['Variations','S. aureus bridges with five glycines; mycobacteria and stationary-phase E. coli add 3→3 links made by L,D-transpeptidases, which most β-lactams do not block.']],30,{d0:1.8,gap:20});
-  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,y0+(n?118:128)+50)),s:s+b.s};
+  // two glycan strands; stems hang from MurNAc only; offset so each 4→3 link runs diagonally
+  // from D-Ala⁴ of a top stem to m-DAP³ of a bottom stem
+  let s='';const x0=n?34:48, dx=n?52:50, k=6, y0=58, y1=n?208:214, st=15;
+  const RES=[['L-Ala','#EFE6D2'],['D-Glu','#A8CFC9'],['m-DAP','#E0B84A'],['D-Ala','#E7A99B']];
+  const unit=(x,y,m)=>`<rect x="${x-10}" y="${y-9}" width="20" height="18" rx="3" fill="${m?'#C9A9D6':'#A9C4DC'}" stroke="${INK}" stroke-width=".8"/>`+Tc(x,y+4,m?'M':'G','#3A2E22',9,'mono mid','600');
+  const strand=(y,mOdd)=>`<path d="M${x0-16} ${y} H${x0+(k-1)*dx+16}" stroke="${INK}" stroke-width="1.4"/>`+[...Array(k)].map((_,i)=>unit(x0+i*dx,y,(i%2===1)===mOdd)).join('');
+  const stem=(x,y,d)=>{let t=`<path d="M${x} ${y+d*9} V${y+d*(18+3*st)}" stroke="${INK}" stroke-width="1"/>`;
+    RES.forEach((r,j)=>{t+=`<circle cx="${x}" cy="${y+d*(18+j*st)}" r="5.5" fill="${r[1]}" stroke="${INK}" stroke-width=".8"/>`;});return t;};
+  const top=[1,3,5], bot=[0,2,4], ry=(y,d,j)=>y+d*(18+j*st);
+  s+=G('a-fade',0,strand(y0,true)+top.map(i=>stem(x0+i*dx,y0,1)).join(''));
+  s+=G('a-fade',.3,strand(y1,false)+bot.map(i=>stem(x0+i*dx,y1,-1)).join(''));
+  // cross-links: top stem i → bottom stem i+1 (D-Ala⁴ → m-DAP³)
+  s+=G('a-pop',1.2,[[1,2],[3,4]].map(([a,b])=>{const xa=x0+a*dx, xb=x0+b*dx, ya=ry(y0,1,3), yb=ry(y1,-1,2);
+    const L=Math.hypot(xb-xa,yb-ya), ux=(xb-xa)/L, uy=(yb-ya)/L;
+    return `<path d="M${FX(xa+ux*6)} ${FX(ya+uy*6)} L${FX(xb-ux*6)} ${FX(yb-uy*6)}" stroke="#A4473A" stroke-width="2.6" stroke-linecap="round"/>`;}).join(''));
+  // label one stem
+  const lx=x0+5*dx+12;
+  s+=G('a-fade',1.5,RES.map((r,j)=>T(lx,ry(y0,1,j)+4,(j+1)+' '+r[0],'mono start f10')).join(''));
+  s+=G('a-fade',1.6,T(x0-16,y0-20,'glycan strands: GlcNAc (G) and MurNAc (M), β1→4','note start f11')
+    +Tc(x0-16,y1+34,'red: 4→3 cross-link, D-Ala⁴ of one stem to m-DAP³ of another','#A4473A',11,'note start'));
+  const bx=n?24:372, by=n?y1+66:48;
+  const items=[['Stem peptide','Attached to the lactyl group of MurNAc: L-Ala, D-Glu (linked through its γ-carboxyl), m-DAP (L-Lys in many Gram-positives), then D-Ala–D-Ala in the newly made unit.'],
+    ['Transpeptidation','PBPs join the carbonyl of D-Ala⁴ on one stem to the side-chain amino group of m-DAP³ on another, releasing the fifth residue, D-Ala. β-lactams mimic that D-Ala–D-Ala end.'],
+    ['Variations','S. aureus bridges Lys³ to D-Ala⁴ with five glycines; mycobacteria and stationary-phase E. coli add 3→3 links made by L,D-transpeptidases, which most β-lactams do not block.']];
+  const b=bullets(bx,by,items,n?44:34,{d0:1.8,gap:20});
+  return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,y1+50)),s:s+b.s};
 }
 function scV5(n){
   const N=n?{
