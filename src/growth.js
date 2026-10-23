@@ -51,7 +51,7 @@ function scG4(n){
   const dx1=n?x0+3*dx+50:x0+3*dx+90;
   s+=G('a-fade',.7,arw(x0+3*dx+14,y,dx1-34,y,{w:1.2})+dish(dx1+(n?6:10),y,n?30:36,cols,{label:n?'count':cols.length+' colonies'}));
   if(!n)s+=G('a-fade',.9,T(dx1+60,y-6,'0.1 mL plated from the','note start f11')+T(dx1+60,y+8,'1/1000 tube → '+cols.length+' × 10 × 1000','note start f11')+T(dx1+60,y+22,'= '+(cols.length/10).toFixed(1)+' × 10⁵ CFU per mL','note start f11'));
-  const rows=[['Optical density (OD₆₀₀)','light scattered by all cells, live or dead','fast and non-destructive; linear only at low OD; calibrate per instrument and organism (OD 1 is very roughly 10⁹ E. coli per mL)'],
+  const rows=[['Optical density (OD₆₀₀)','light scattered by all cells, live or dead','fast and non-destructive; linear only at low OD; calibrate per instrument and organism (OD 1 is often taken as about 8 × 10⁸ E. coli per mL)'],
    ['Viable count (CFU)','cells that can form a colony','serial dilution and plating; count plates with about 30–300 colonies; chains and clumps count as one'],
    ['Direct count','all cells in a counting chamber','Petroff–Hausser chamber or haemocytometer under the microscope; counts the dead too'],
    ['Flow cytometry','cells passing a laser, one at a time','fast counts and sizes; with DNA or live/dead stains; routine for marine plankton'],
