@@ -643,7 +643,7 @@ function scNHEJ(n){
   const t=wtable(n,n?['','HR','NHEJ']:['','Homologous recombination','End joining'],[['Template','sister copy','none'],['Accuracy','faithful','small insertions or deletions'],
     ['When','growing cells with a sister','stationary phase, spores, latency'],['Bacteria','RecBCD or AddAB, RecA, RuvABC','Ku and LigD, in Mycobacterium, Bacillus spores, Pseudomonas; absent from E. coli'],
     ['Eukaryotes','MRN, RAD51, BRCA2','Ku70–Ku80, DNA-PKcs, XRCC4–ligase IV']],n?[[10,10],[86,20],[218,21]]:[[24,14],[150,32],[380,38]],{y0:y2+g+56,d0:2});
-  const p=para(n?16:24,t.y+12,'Bacterial NHEJ was found in 2002 (Weller and colleagues, Doherty and colleagues). LigD combines polymerase, nuclease and ligase activities in one protein, and helps Mycobacterium tuberculosis survive when it is not dividing.',n?50:92,'note start f13',17,2.8);
+  const p=para(n?16:24,t.y+12,'Bacterial NHEJ was found in 2002 (Weller, Doherty and colleagues). LigD combines polymerase, nuclease and ligase activities in one protein, and helps Mycobacterium tuberculosis survive when it is not dividing.',n?50:92,'note start f13',17,2.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
 }
 
@@ -733,11 +733,11 @@ function scCompare(n){
    ['Nucleotide excision','UvrA, UvrB, UvrC, UvrD; Mfd','XPC, TFIIH, XPA, XPF–ERCC1, XPG; CSB'],
    ['Mismatch repair','MutS, MutL, MutH; Dam','MSH2–MSH6, MSH2–MSH3, MLH1–PMS2'],
    ['Recombination','RecBCD, RecFOR, RecA, RuvABC','MRN, CtIP, BRCA2, RAD51, resolvases'],
-   ['End joining','Ku, LigD (some species)','Ku70–Ku80, DNA-PKcs, XRCC4–ligase IV'],
+   ['End joining','none (Ku, LigD in other bacteria)','Ku70–Ku80, DNA-PKcs, XRCC4–ligase IV'],
    ['Translesion synthesis','Pol II, Pol IV, Pol V','Pol η, ι, κ, ζ; Rev1'],
    ['Damage signalling','SOS: RecA*, LexA','ATM, ATR, p53']];
   const t=wtable(n,['Pathway','E. coli','Humans'],rows,n?[[8,12],[94,19],[224,19]]:[[24,22],[200,32],[420,28]],{y0:30});
-  const p=para(n?16:24,t.y+14,'Some pathways use clearly related proteins in all domains of life (MutS and MutL, RecA and RAD51, the glycosylase families); others solved the same chemical problem with unrelated machinery (nucleotide excision repair, damage signalling).',n?50:92,'note start f13',17,1.4);
+  const p=para(n?16:24,t.y+14,'Some pathways use clearly related proteins: RecA and RAD51 and the glycosylase families in all domains of life, MutS and MutL in bacteria and eukaryotes. Others solved the same chemical problem with unrelated machinery (nucleotide excision repair, damage signalling).',n?50:92,'note start f13',17,1.4);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 const NAR='Narrator';
@@ -783,7 +783,7 @@ const S=[
  {p:5,title:'Break the repair systems',chips:'brk',draw:scBreakR,
   text:"Most of these pathways were discovered through mutants that were sensitive to UV, could not recombine, or mutated too often. Pick a mutant to see its phenotype and what it reveals. The table summarises them all."},
  {p:5,title:'Bacteria and eukaryotes compared',draw:scCompare,
-  text:"The same chemical problems are solved in every organism, often with related proteins. MutS and MutL, RecA and RAD51, and the DNA glycosylases are shared across all domains of life. Nucleotide excision repair and damage signalling use different machinery in bacteria and eukaryotes, but follow the same logic."}
+  text:"The same chemical problems are solved in every organism, often with related proteins. RecA and RAD51 and the DNA glycosylases are found in all domains of life, and MutS and MutL in bacteria and eukaryotes alike. Nucleotide excision repair and damage signalling use different machinery in bacteria and eukaryotes, but follow the same logic."}
 ];
 const CHIPS={les:{list:LES.map(l=>l.n),get:()=>lesSel,set:k=>lesSel=k},brk:{list:BRK.map(b=>b.g),get:()=>brkSel,set:k=>brkSel=k}};
 const $=id=>document.getElementById(id);

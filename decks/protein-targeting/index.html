@@ -461,7 +461,7 @@ function scGramPos(n){
   const x1=n?66:100, x2=n?350:620, e=envelope('pos',x1,x2,24,{labels:x1-6}), w=x2-x1;
   let s=G('a-fade',0,e.s);
   const a=x1+w*.18, b=x1+w*.5, c=x1+w*.8;
-  s+=G('a-pop',.4,`<rect x="${a-12}" y="${e.Y.im-2}" width="24" height="20" rx="5" fill="#9C7FB0" stroke="${INK}" class="tint"/>`+lab(a,e.Y.im+36,'SrtA','mono mid f10')+`<path d="M${a} ${e.Y.im-2} V${e.Y.pg-10}" stroke="${CHAIN[1]}" stroke-width="3"/>`+blob(a,e.Y.pg-24,16,11,'#8FB1CF')+lab(a+22,e.Y.pg+4,'LPXT↓G','mono start f10'));
+  s+=G('a-pop',.4,`<rect x="${a-42}" y="${e.Y.im-2}" width="24" height="20" rx="5" fill="#9C7FB0" stroke="${INK}" class="tint"/>`+lab(a-30,e.Y.im+36,'SrtA','mono mid f10')+`<path d="M${a} ${e.Y.im-14} V${e.Y.pg-10}" stroke="${CHAIN[1]}" stroke-width="3"/><circle cx="${a}" cy="${e.Y.im-14}" r="3.5" fill="${RED}" stroke="${INK}" stroke-width=".6"/>`+blob(a,e.Y.pg-24,16,11,'#8FB1CF')+lab(a+22,e.Y.pg+4,'LPXT↓G','mono start f10'));
   s+=G('a-pop',1.0,blob(b,e.Y.cap,18,12,'#8FB1CF')+`<path d="M${b} ${e.Y.cap+10} V${e.Y.pg+20}" stroke="${CHAIN[1]}" stroke-width="3"/>`+[0,1,2].map(i=>`<circle cx="${b+8}" cy="${e.Y.pg-6+i*12}" r="4" fill="#E0B84A" stroke="${INK}"/>`).join('')+lab(b+26,e.Y.pg+2,n?'Cbp':'choline-binding','mono start f10'));
   s+=G('a-pop',1.6,`<rect x="${c-32}" y="${e.Y.im-4}" width="22" height="24" rx="5" fill="${SECY}" stroke="${INK}" class="tint"/><rect x="${c+10}" y="${e.Y.im-4}" width="22" height="24" rx="5" fill="#2E7D78" stroke="${INK}" class="tint"/>`+lab(c-21,e.Y.im+38,'SecY','mono mid f10')+lab(c+21,e.Y.im+38,'SecY2','mono mid f10')+`<path d="M${c+21} ${e.Y.im-6} C ${c+20} ${e.Y.pg}, ${c+10} ${e.Y.cap}, ${c+20} ${e.Y.out}" stroke="#C17A2C" stroke-width="4" fill="none"/>`+lab(c+26,e.Y.cap,'SRR','mono start f10'));
   const ty=e.Y.cyto+(n?20:24);
@@ -520,9 +520,9 @@ function scUndP(n){
   const out=[['peptidoglycan','lipid II'],['capsule','Wzy'],['O-antigen','LPS'],['teichoic acids','WTA'],['protein glycans','Pgl'],['ECA','ECA']];
   out.forEach((o,i)=>{const a=-Math.PI/2+i*Math.PI/3,x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
     s+=G('a-pop',(.5+i*.3).toFixed(1),`<path d="M${cx+(n?42:48)*Math.cos(a)} ${cy+(n?42:48)*Math.sin(a)} L${x-24*Math.cos(a)} ${y-24*Math.sin(a)}" class="arrow"/>`+`<circle cx="${x}" cy="${y}" r="${n?22:24}" fill="${i===1?CAPC:'#E7DEC9'}" stroke="${INK}"/>`+T(x,y+(Math.sin(a)>.3?44:Math.sin(a)<-.3?-30:4)+(Math.abs(Math.sin(a))<.3?0:0),o[0],'lab mid '+(n?'f12':'f14')).replace(`y="${y+4}"`,`y="${y+4}"`)+Tc(x,y+4,o[1],'#3A2E22',9,'mono mid'));});
-  if(!n){const L=['Every cell-surface polymer is','built on the same lipid carrier,','undecaprenyl phosphate.','','In pneumococcus, most of the','~100 capsule types are made by','the Wzy pathway; the capsule is','then attached to peptidoglycan.','','Bacitracin works by trapping','the carrier.'];
+  if(!n){const L=['Nearly every surface polymer is','built on the same lipid carrier,','undecaprenyl phosphate.','','In pneumococcus, most of the','~100 capsule types are made by','the Wzy pathway; the capsule is','then attached to peptidoglycan.','','Bacitracin works by trapping','the carrier.'];
     s+=G('a-fade',2.4,L.map((l,i)=>T(400,50+i*20,l,'lab start')).join(''));return {vb:wide(360),s};}
-  const L=wrap('Every surface polymer is built on undecaprenyl phosphate. Most of the ~100 pneumococcal capsule types use the Wzy pathway. Bacitracin traps the carrier.',46);
+  const L=wrap('Nearly every surface polymer is built on undecaprenyl phosphate. Most of the ~100 pneumococcal capsule types use the Wzy pathway. Bacitracin traps the carrier.',46);
   s+=G('a-fade',2.4,L.map((l,i)=>T(14,cy+r+80+i*20,l,'lab start f13')).join(''));
   return {vb:slim(cy+r+80+L.length*20),s};
 }
@@ -542,7 +542,7 @@ function scChap(n){
   let y=n?by+64:y0+86;
   const items=[['Trigger factor','Sits on the ribosome at the exit tunnel and is the first thing a new chain meets. It holds exposed hydrophobic stretches and slows folding, buying time; it is not essential, because the system is layered and redundant.'],
    ['DnaK (Hsp70), with DnaJ and GrpE','Binds short hydrophobic segments in an ATP-dependent cycle: DnaJ delivers the substrate and stimulates hydrolysis, GrpE exchanges the nucleotide. Each cycle gives the chain another chance to fold, so the chaperone does not fold anything — it prevents aggregation and keeps trying.'],
-   ['GroEL–GroES (Hsp60)','A double ring with a cavity. An unfolded chain enters, GroES caps it, and the chain folds in isolation for about ten seconds before release. Essential in E. coli, and the only chaperone most proteins cannot do without.'],
+   ['GroEL–GroES (Hsp60)','A double ring with a cavity. An unfolded chain enters, GroES caps it, and the chain folds in isolation for about ten seconds before release. Essential in E. coli: only about a tenth of cytoplasmic proteins pass through it, but some of them cannot fold any other way.'],
    ['Hsp100: ClpB, with DnaK','Pulls polypeptides out of aggregates by threading them through its central pore. This is disaggregation rather than prevention, and it is what allows recovery after a heat shock.']];
   items.forEach((it,i)=>{const L=wrap(it[1],n?44:84);
     s+=G('a-fade',(2.2+i*.25).toFixed(2),badge(x+(n?8:10),y-4,i+1)
@@ -597,7 +597,7 @@ function scOther(n){
 /* ===================== Part VI · where does it go? ===================== */
 const ROUTES=[
  {p:'MalE',t:'neg',org:'E. coli maltose-binding protein',dest:'periplasm',stops:[['SecB','#7FA59B','cy',.2],['SecA + SecYEG',SECA,'im',.35],['SPase I','#9C7FB0','im',.5],['folds in the periplasm','#8FB1CF','peri',.62]]},
- {p:'OmpA',t:'neg',org:'E. coli outer-membrane porin',dest:'outer membrane',stops:[['SecA + SecYEG',SECA,'im',.25],['SurA','#7FA59B','peri',.45],['BAM',BAMC,'om',.65]]},
+ {p:'OmpA',t:'neg',org:'E. coli outer-membrane protein, an 8-stranded β-barrel',dest:'outer membrane',stops:[['SecA + SecYEG',SECA,'im',.25],['SurA','#7FA59B','peri',.45],['BAM',BAMC,'om',.65]]},
  {p:'Lpp',t:'neg',org:'Braun’s lipoprotein',dest:'outer membrane, inner leaflet',stops:[['SecYEG',SECY,'im',.2],['Lgt, LspA, Lnt','#9C7FB0','im',.38],['LolCDE',LOLC,'im',.55],['LolA',LOLC,'peri',.7],['LolB',LOLC,'om',.85]]},
  {p:'LacY',t:'neg',org:'lactose permease, 12 helices',dest:'inner membrane',stops:[['SRP',SRPC,'cy',.25],['FtsY','#9C7FB0','cy',.4],['SecYEG + YidC',SECY,'im',.55]]},
  {p:'F₀c',t:'neg',org:'ATP synthase subunit c, a small hairpin',dest:'inner membrane',stops:[['YidC alone','#9C7FB0','im',.45]]},
