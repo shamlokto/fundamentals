@@ -518,37 +518,70 @@ function scP1(n){
 }
 
 function scP2(n){
-  let s='';const y=n?60:66;
-  const cols=n?1:3, R=n?26:30;
-  const modes=[['Theta','#2F5276'],['Rolling circle','#A4473A'],['Strand displacement','#2E7D78']];
-  const pics=[
-    (cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
-      +`<path d="M${cx-R} ${cy} a${R} ${R*.55} 0 0 1 ${2*R} 0" fill="none" stroke="${CORE}" stroke-width="2.6"/>`
-      +`<circle cx="${cx-R}" cy="${cy}" r="3.4" fill="${CORE}"/><circle cx="${cx+R}" cy="${cy}" r="3.4" fill="${CORE}"/>`,
-    (cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="${R*.8}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
-      +`<path d="M${cx+R*.8} ${cy} q${R*.7} ${-R*.5} ${R*1.1} ${R*.1} q${R*.3} ${R*.4} ${R*.1} ${R*.7}" fill="none" stroke="${PHG}" stroke-width="2.6"/>`
-      +`<circle cx="${cx+R*.8}" cy="${cy}" r="3.4" fill="${PHG}"/>`,
-    (cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${PLS}" stroke-width="2.6"/>`
-      +`<path d="M${cx-R*.1} ${cy-R} a${R} ${R} 0 0 1 ${R*.9} ${R}" fill="none" stroke="${INTC}" stroke-width="2.6"/>`
-      +`<path d="M${cx-R*.3} ${cy+R*.95} a${R} ${R} 0 0 1 ${-R*.65} ${-R*.75}" fill="none" stroke="${INTC}" stroke-width="2.6" stroke-dasharray="4 3"/>`];
-  const txt=['Bidirectional or unidirectional from a single origin, through a theta-shaped intermediate. Needs host DnaA or a plasmid Rep protein to melt the origin, then host Pol III. The mode of most medium and large plasmids, and of the chromosome.',
-   'A Rep protein nicks one strand at the double-strand origin and stays attached; the free 3′ end is extended round the circle, displacing the old strand as a single-stranded circle that is converted back to double-stranded from a separate single-strand origin. Common in small Gram-positive plasmids, and the source of their characteristic single-stranded intermediates and structural instability.',
-   'No lagging strand is made. Replication starts at a separate origin on each strand, and each strand is copied continuously, displacing the other. Used by the broad-host-range IncQ plasmids such as RSF1010, which carry their own primase and so replicate in an enormous range of hosts.'];
-  if(!n){modes.forEach((m,i)=>{const cx=112+i*206;
-    s+=G('a-fade',(i*.4).toFixed(1),pics[i](cx,y+R+4)+T(cx,y+2*R+26,m[0],'cname mid f14'));});
-    let yy=y+2*R+44;
-    modes.forEach((m,i)=>{const L=wrap(txt[i],32);
-      s+=G('a-fade',(.6+i*.3).toFixed(1),L.map((l,j)=>T(112+i*206,yy+j*16,l,'note mid f12')).join(''));});
-    const maxL=Math.max(...txt.map(t2=>wrap(t2,32).length));
-    yy+=maxL*16+22;
-    const p=para(24,yy,'All three end with two complete circles, but the intermediates differ — and the intermediates are what make a plasmid easy or hard to work with. Rolling-circle plasmids generate single-stranded DNA, recombine with themselves and become unstable above about ten kilobases, which is why larger Gram-positive vectors use theta replicons.',92,'note start f13',17,1.8);
+  // double-stranded circles: parental strands purple (dark and light), new DNA red
+  const PA='#7D4A98', PB='#B79BCB', NEW='#A4473A', REP='#C99A2E', R=n?40:46, W=2.6;
+  const P=(cx,cy,r,t)=>{const a=t*Math.PI/180;return [+(cx+r*Math.sin(a)).toFixed(1),+(cy-r*Math.cos(a)).toFixed(1)];};
+  const arc=(cx,cy,r,a1,a2,col,o={})=>{const p=P(cx,cy,r,a1),q=P(cx,cy,r,a2),big=((a2-a1+360)%360)>180?1:0;
+    return `<path d="M${p[0]} ${p[1]} A${r} ${r} 0 ${big} 1 ${q[0]} ${q[1]}" fill="none" stroke="${col}" stroke-width="${o.w||W}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round"/>`;};
+  const ring=(cx,cy,r,col)=>`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${col}" stroke-width="${W}"/>`;
+  const head=(cx,cy,r,t,dir,col)=>{const [x,y]=P(cx,cy,r,t),a=(t+(dir>0?90:-90))*Math.PI/180,dx=Math.sin(a),dy=-Math.cos(a);
+    return `<path d="M${FX(x+dx*6)} ${FX(y+dy*6)} L${FX(x-dx*2+dy*4)} ${FX(y-dy*2-dx*4)} L${FX(x-dx*2-dy*4)} ${FX(y-dy*2+dx*4)}Z" fill="${col}"/>`;};
+  const lab=(x,y,t,a='start')=>T(x,y,t,`note ${a} f12 halo`);
+  const theta=(cx,cy)=>{let t='';
+    t+=arc(cx,cy,R,70,290,PA)+arc(cx,cy,R-7,70,290,PB);                       // unreplicated duplex
+    t+=arc(cx,cy,R+12,-58,58,PA)+arc(cx,cy,R+6,-58,58,NEW);                   // daughter 1: parental + new
+    t+=arc(cx,cy,R-19,-58,58,PB)+arc(cx,cy,R-13,-58,58,NEW);                  // daughter 2
+    [-1,1].forEach(d=>{const f=70*d,g=58*d,o=P(cx,cy,R,f),i=P(cx,cy,R-7,f);
+      [[R+12,PA,o],[R+6,NEW,o],[R-13,NEW,i],[R-19,PB,i]].forEach(([r,c,st])=>{const e=P(cx,cy,r,g);
+        t+=`<path d="M${st[0]} ${st[1]} L${e[0]} ${e[1]}" stroke="${c}" stroke-width="${W}" stroke-linecap="round"/>`;});});
+    t+=head(cx,cy,R+6,-58,-1,NEW)+head(cx,cy,R-13,58,1,NEW);
+    const o=P(cx,cy,R+12,0);t+=`<circle cx="${o[0]}" cy="${o[1]}" r="3.5" fill="${INK}"/>`+lab(o[0],o[1]-10,'ori','mid');
+    const fk=P(cx,cy,R+4,72);t+=lab(fk[0]+8,fk[1]+4,'fork')+lab(cx-R-8,cy-R*.5,'fork','end');
+    return t;};
+  const rolling=(cx,cy)=>{let t='';
+    t+=ring(cx,cy,R-7,PB);                                                    // template strand, intact circle
+    t+=arc(cx,cy,R,0,150,NEW)+arc(cx,cy,R,150,360,PA);                        // new strand from the nick; old strand ahead of fork
+    t+=head(cx,cy,R,150,1,NEW);
+    const f=P(cx,cy,R,150);                                                   // displaced old strand peels off at the fork
+    const e=[+(cx+R*1.45).toFixed(1),+(cy+R*1.25).toFixed(1)];
+    t+=`<path d="M${f[0]} ${f[1]} C${FX(f[0]+R*.25)} ${FX(f[1]+R*.5)} ${FX(cx+R*.95)} ${FX(cy+R*1.35)} ${e[0]} ${e[1]}" fill="none" stroke="${PA}" stroke-width="${W}"/>`;
+    t+=`<circle cx="${e[0]}" cy="${e[1]}" r="6.5" fill="${REP}" stroke="${INK}" stroke-width="1"/>`+lab(e[0]+10,e[1]+4,'Rep','start')+lab(e[0]-4,e[1]+22,'displaced strand, 5′ end','mid');
+    const o=P(cx,cy,R,0);t+=`<circle cx="${o[0]}" cy="${o[1]}" r="3.5" fill="${INK}"/>`+lab(o[0],o[1]-10,'nick at dso','mid');
+    const q=P(cx,cy,R+8,105);t+=lab(q[0]+6,q[1],'new strand','start')+lab(q[0]+6,q[1]+14,'from 3′ end','start');
+    return t;};
+  const disp=(cx,cy)=>{let t='';
+    t+=ring(cx,cy,R,PA);                                                      // template for the first new strand
+    t+=arc(cx,cy,R-7,140,360,PB)+arc(cx,cy,R-7,0,140,NEW);                    // new strand replaces the light strand
+    t+=head(cx,cy,R-7,140,1,NEW);
+    const a=P(cx,cy,R-7,0),b=P(cx,cy,R-7,140);                                // displaced light strand bulges inward
+    t+=`<path d="M${a[0]} ${a[1]} Q${FX(cx-R*.35)} ${FX(cy+R*.05)} ${b[0]} ${b[1]}" fill="none" stroke="${PB}" stroke-width="${W}"/>`;
+    const s2=[FX(cx-R*.12),FX(cy-R*.05)];
+    t+=`<path d="M${FX(s2[0]-2)} ${FX(s2[1]+2)} q${FX(R*.12)} ${FX(R*.28)} ${FX(R*.38)} ${FX(R*.44)}" fill="none" stroke="${NEW}" stroke-width="2.2" stroke-dasharray="4 3"/>`;
+    const o=P(cx,cy,R,0);t+=`<circle cx="${o[0]}" cy="${o[1]}" r="3.5" fill="${INK}"/>`+lab(o[0],o[1]-10,'oriV','mid');
+    t+=`<circle cx="${s2[0]}" cy="${s2[1]}" r="3" fill="${INK}"/>`+lab(cx-R*.55,cy+R+20,'displaced single strand','mid')+lab(cx-R*.55,cy+R+34,'with its own origin (●)','mid');
+    return t;};
+  const modes=[['Theta',theta],['Rolling circle',rolling],['Strand displacement',disp]];
+  const txt=['Both strands are copied at once from a single origin, through a θ-shaped bubble with one or two forks: leading and lagging strands, as in the chromosome. Needs DnaA or a plasmid Rep protein to open the origin, then host Pol III. The mode of most medium and large plasmids.',
+   'Rep nicks one strand at the double-strand origin (dso) and stays bound to its 5′ end. Host polymerase extends the free 3′ end round the template, peeling the old strand off as a single strand, which is released as a circle and made double-stranded from a separate single-strand origin (sso). Common in small Gram-positive plasmids.',
+   'A plasmid primase starts a new strand at one origin and copies it continuously, displacing the other parental strand as single-stranded DNA. That displaced strand exposes a second origin, from which it too is copied continuously. No lagging strand. Used by IncQ plasmids such as RSF1010.'];
+  const leg=(x,y)=>`<path d="M${x} ${y} h18" stroke="${PA}" stroke-width="3"/><path d="M${x} ${y+6} h18" stroke="${PB}" stroke-width="3"/>`+T(x+24,y+7,'parental strands','note start f12')
+    +`<path d="M${x+150} ${y+3} h18" stroke="${NEW}" stroke-width="3"/>`+T(x+174,y+7,'new DNA','note start f12');
+  let s='';
+  if(!n){const y=48;
+    modes.forEach((m,i)=>{const cx=104+i*216;s+=G('a-fade',(i*.4).toFixed(1),m[1](cx,y+R+28)+T(cx,y+2*R+108,m[0],'cname mid f16'));});
+    let yy=y+2*R+132;
+    modes.forEach((m,i)=>{const L=wrap(txt[i],29);s+=G('a-fade',(.6+i*.3).toFixed(1),L.map((l,j)=>T(104+i*216,yy+j*18,l,'note mid f13')).join(''));});
+    yy+=Math.max(...txt.map(t2=>wrap(t2,29).length))*18+12;
+    s+=G('a-fade',1.6,leg(150,yy));
+    const p=para(24,yy+44,'All three end with two complete circles, but the intermediates differ, and that decides how a plasmid behaves. Rolling-circle plasmids make single-stranded DNA, recombine with themselves and become unstable above about ten kilobases, which is why larger Gram-positive vectors use theta replicons.',88,'note start f14',18,1.8);
     return {vb:wide(p.y+8),s:s+p.s};}
-  let yy=y;
-  modes.forEach((m,i)=>{const L=wrap(txt[i],46);
-    s+=G('a-fade',(i*.4).toFixed(1),pics[i](46,yy+R-4)+T(86,yy-2,m[0],'cname start f14')
-      +L.map((l,j)=>T(16,yy+2*R+6+j*15,l,'note start f12')).join(''));
-    yy+=2*R+10+L.length*15+16;});
-  const p=para(16,yy,'All three end with two complete circles, but the intermediates differ — and the intermediates are what make a plasmid easy or hard to work with. Rolling-circle plasmids generate single-stranded DNA, recombine with themselves and become unstable above about ten kilobases, which is why larger Gram-positive vectors use theta replicons.',50,'note start f13',17,1.8);
+  let yy=30;
+  modes.forEach((m,i)=>{const L=wrap(txt[i],44);
+    s+=G('a-fade',(i*.4).toFixed(1),T(16,yy,m[0],'cname start f16')+m[1](i===1?140:170,yy+R+34)
+      +L.map((l,j)=>T(16,yy+2*R+108+j*17,l,'note start f13')).join(''));
+    yy+=2*R+108+L.length*17+26;});
+  s+=G('a-fade',1.6,leg(16,yy-6));
+  const p=para(16,yy+30,'All three end with two complete circles, but the intermediates differ. Rolling-circle plasmids make single-stranded DNA and become unstable above about ten kilobases, which is why larger Gram-positive vectors use theta replicons.',46,'note start f14',18,1.8);
   return {vb:slim(p.y+8),s:s+p.s};
 }
 
