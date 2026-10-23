@@ -124,7 +124,7 @@ function scI9(n){
     +(n?'':T(FX(AX.px(m[0])+6),FX(AX.py(100*(1-1/m[0]))+4),m[1],'note start f10 halo'))).join(''));
   const b=bullets(n?24:400,n?AX.y+AX.h+54:52,[
     ['Types of vaccine','Live-attenuated (MMR, BCG, oral polio) give strong, lasting immunity but can rarely revert; inactivated (whole-cell pertussis, injected polio) are safe but weaker; subunit, toxoid (tetanus, diphtheria), conjugate (Hib, pneumococcus) and mRNA or viral-vector (COVID-19) vaccines show just the right piece.'],
-    ['Herd immunity','If enough of a population is immune, chains of transmission break and even the unvaccinated are protected. The threshold is 1 − 1/R0: about 50% at R0 of 2, but around 95% for measles at R0 near 12.'],
+    ['Herd immunity','If enough of a population is immune, chains of transmission break and even the unvaccinated are protected. The threshold is 1 − 1/R0: about 50% at R0 of 2, but 92–95% for measles, with R0 of 12–18.'],
     ['Memory','Memory T and B cells persist for years, so a second exposure is met in days, not weeks, and often cleared before symptoms. This is the whole point of vaccination.']],
     n?44:34,{d0:.6,gap:20});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,AX.y+AX.h+50)),s:s+b.s};
