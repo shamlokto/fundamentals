@@ -701,10 +701,10 @@ function scF3(n){
 function scF4(n){
   const N=n?{mcp:{x:120,y:40,w:170,t:'receptors|+ CheW',f:'#A9C4DC'},r:{x:300,y:40,w:80,t:'CheR',f:'#C6D3A8'},a:{x:130,y:140,w:110,t:'CheA',f:'#C9A9D6'},b:{x:300,y:140,w:90,t:'CheB-P',f:'#E7A99B'},y:{x:130,y:240,w:110,t:'CheY-P',f:'#E7A99B'},z:{x:300,y:240,w:80,t:'CheZ'},
      m:{x:130,y:340,w:130,t:'motor switch'}}
-   :{mcp:{x:150,y:50,w:220,t:'receptors (MCPs) + CheW',f:'#A9C4DC'},a:{x:150,y:140,w:110,t:'CheA',f:'#C9A9D6'},y:{x:330,y:140,w:100,t:'CheY-P',f:'#E7A99B'},m:{x:520,y:140,w:120,t:'motor switch'},
-     z:{x:330,y:230,w:90,t:'CheZ'},b:{x:150,y:230,w:100,t:'CheB-P',f:'#E7A99B'},r:{x:390,y:50,w:90,t:'CheR',f:'#C6D3A8'}};
+   :{mcp:{x:150,y:50,w:220,t:'receptors (MCPs) + CheW',f:'#A9C4DC'},a:{x:150,y:140,w:110,t:'CheA',f:'#C9A9D6'},y:{x:330,y:140,w:100,t:'CheY-P',f:'#E7A99B'},m:{x:550,y:140,w:120,t:'motor switch'},
+     z:{x:330,y:230,w:90,t:'CheZ'},b:{x:150,y:230,w:100,t:'CheB-P',f:'#E7A99B'},r:{x:470,y:50,w:90,t:'CheR',f:'#C6D3A8'}};
   const E=n?[['mcp','a','activates;|less with|attractant',{side:1}],['a','y','P',{side:-1}],['a','b','P',{side:-1}],['y','m','CW: tumble',{side:-1}],['z','y','−P',{side:1}],['b','mcp','−CH₃',{side:1,dash:'4 3'}],['r','mcp','+CH₃',{side:1,dash:'4 3',lx:24}]]
-    :[['mcp','a','activates; less when|attractant binds',{side:-1}],['a','y','P'],['y','m','CW rotation: tumble'],['z','y','dephosphorylates',{side:1}],['a','b','P',{side:-1}],['b','mcp','removes|methyl groups',{bend:-90,dash:'4 3',off:16}],['r','mcp','adds methyl groups',{side:-1,dash:'4 3'}]];
+    :[['mcp','a','activates; less when|attractant binds',{side:-1}],['a','y','P'],['y','m','CW rotation: tumble',{lx:4,ly:4}],['z','y','dephosphorylates',{side:1}],['a','b','P',{side:-1}],['b','mcp','removes|methyl groups',{bend:-90,dash:'4 3',off:16}],['r','mcp','adds methyl groups',{side:-1,dash:'4 3',lx:22}]];
   let s=G('a-fade',0,flow(N,E));
   const by=n?390:290;
   const b=bullets(n?24:30,by,[['Excitation','An attractant binding the receptor array lowers CheA activity, so less CheY-P, fewer clockwise switches, fewer tumbles: the run continues.'],['Adaptation','Slowly, CheR adds methyl groups to the receptors (and CheB-P removes them less), restoring CheA activity. After a few seconds the cell is back to baseline at the new concentration.'],['A derivative','Excitation is fast and adaptation slow, so the output reports the change in concentration over the last few seconds.']],n?44:88,{d0:1.2,gap:22});

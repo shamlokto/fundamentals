@@ -680,7 +680,7 @@ function scV1(n){return introPlate(n,{q:'What surrounds a microbial cell, and wh
   items:['Three bacterial envelopes and the Gram stain','Peptidoglycan: chemistry, synthesis, turnover','LPS, teichoic acids and mycolic acids','Archaeal membranes and S-layers','What distinguishes the three domains'],
   art:(cx,cy)=>stack(true,cx-110,cy-70,76,[['lps',12],['om',16],['peri',14],['pg',8],['peri',12],['im',16],['cyto',20]]).s,artH:170});}
 function scV2(n){
-  const steps=[['Crystal violet','All cells take up the purple dye.'],['Iodine','Forms a large dye–iodine complex inside the cell.'],['Alcohol or acetone','The decisive step: thin walls under a dissolved outer membrane release the complex; thick walls shrink and trap it.'],['Safranin','Decolourised cells are counterstained pink.']];
+  const steps=[['Crystal violet','All cells take up the purple dye.'],['Iodine','Forms a large dye–iodine complex inside the cell.'],['Decolourise','Alcohol or acetone is the decisive step: thin walls under a dissolved outer membrane release the complex; thick walls shrink and trap it.'],['Safranin','Decolourised cells are counterstained pink.']];
   const c=cards(n,steps.map(s=>[s[0],s[1]]),{y:20,cols:4,num:1,cw:6.2});
   const items=[['Gram-positive','purple','#6E3E8C'],['Gram-negative','pink','#C86A7A']];
   let s=c.s,y=c.y+20;
@@ -693,7 +693,7 @@ function scV3(n){
   const st=stack(n,n?20:40,30,n?110:150,e.L.map(([k,h])=>[k,Math.round(h*1.5)]),{});
   const ex=explorer(n,{h:e.k,rows:e.rows,note:e.note},{y:n?st.y+40:30});
   if(!n){ // place the explorer to the right of the drawing
-    const ex2=explorerAt(360,34,e);return {vb:wide(Math.max(st.y+20,ex2.y+10)),s:st.s+ex2.s};}
+    const ex2=explorerAt(374,34,e);return {vb:wide(Math.max(st.y+20,ex2.y+10)),s:st.s+ex2.s};}
   return {vb:ex.vb,s:st.s+ex.s};
 }
 function explorerAt(x,y,e){let s=T(x,y,e.k,'cname start f16');y+=24;
@@ -762,9 +762,9 @@ function scV5(n){
   s+=G('a-fade',.2,bx(110,40,190,'UDP-GlcNAc')+arw(110,58,110,96)+lab(120,74,'MurA, B')+red(120,90,'fosfomycin ⊣ MurA')
     +bx(110,116,190,'UDP-MurNAc')+arw(110,134,110,170)+lab(120,156,'MurC, D, E')
     +bx(110,196,190,'UDP-MurNAc-|pentapeptide',PAL.cream,50));
-  s+=G('a-fade',.5,bx(290,40,110,'L-Ala')+arw(290,58,290,96)+lab(284,72,'Alr,','end')+lab(284,88,'Ddl','end')
-    +bx(290,116,120,'D-Ala–|D-Ala',PAL.cream,46)+red(290,158,'D-cycloserine','mid')+red(290,174,'⊣ Alr and Ddl','mid')
-    +arw(260,140,206,180)+lab(250,196,'MurF','start'));
+  s+=G('a-fade',.5,bx(290,40,110,'L-Ala')+arw(290,58,290,96)+lab(280,72,'Alr,','end')+lab(280,88,'Ddl','end')
+    +bx(290,116,120,'D-Ala–|D-Ala',PAL.cream,46)+red(300,166,'D-cycloserine','mid')+red(300,182,'⊣ Alr and Ddl','mid')
+    +arw(260,140,206,180)+lab(226,204,'MurF','start'));
   s+=G('a-fade',.8,arw(110,222,110,my-43)+lab(120,262,'MraY: onto Und-P')
     +bx(130,my-24,104,'lipid I',PAL.gold)+anch(130,my-7,my+mh-4)
     +bx(276,my-24,104,'lipid II',PAL.gold)+anch(276,my-7,my+mh-4)+arw(183,my-24,223,my-24)+lab(203,my-48,'MurG','mid'));
@@ -835,7 +835,7 @@ function scV8(n){
 }
 function scV9(n){
   const rows=[['Membrane lipids','ester-linked fatty acids, G3P','ether-linked isoprenoids, G1P','ester-linked fatty acids, G3P'],['Wall','peptidoglycan (most)','S-layer; pseudomurein in some','none, or cellulose/chitin'],['RNA polymerase','one, 5 subunits','one, many subunits, eukaryote-like','three or more'],['Translation start','formyl-Met','Met','Met'],['Nucleus, organelles','no','no','yes'],['Histones','no (HU, H-NS)','many have histones','yes'],['Introns in genes','rare','rare (tRNA, rRNA)','common']];
-  const t=wtable(n,['Feature','Bacteria','Archaea','Eukarya'],rows,n?[[10,9],[80,12],[170,12],[270,10]]:[[24,16],[170,24],[340,26],[500,20]],{y0:30,R:n?354:620});
+  const t=wtable(n,['Feature','Bacteria','Archaea','Eukarya'],rows,n?[[10,9],[78,13],[178,11],[268,10]]:[[24,16],[170,24],[340,26],[500,20]],{y0:30,R:n?354:620});
   const p=para(n?16:24,t.y+12,'The "lipid divide" between bacterial and archaeal membranes is one of the deepest differences in biology. Archaea share their information-processing machinery with eukaryotes but their cell plan with bacteria, a mosaic the Woese primer follows.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }

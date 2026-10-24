@@ -467,10 +467,10 @@ function scGO(n){
       +tbox(cx,144,120,'8-oxo-dGTP',{tc:OXO})+arw(cx,160,cx,198,{blue:1})+Tc(cx+8,182,'MutT','#2F5276',11,'mono start','600')+tbox(cx,214,120,'8-oxo-dGMP')
       +T(cx,246,'harmless; cannot be used','note mid f11'));
     y=334;}
-  else{y=356;const xs=[56,180,304];
-    s+=G('a-fade',3,T(16,y-28,'Cleaning the nucleotide pool','cname start f14')+tbox(xs[0],y,76,'dGTP',{fs:11})+arw(xs[0]+40,y,xs[1]-48,y)+T((xs[0]+xs[1])/2-4,y-18,'ROS','note mid f11')
+  else{y=372;const xs=[56,180,304];
+    s+=G('a-fade',3,T(16,y-42,'Cleaning the nucleotide pool','cname start f14')+tbox(xs[0],y,76,'dGTP',{fs:11})+arw(xs[0]+40,y,xs[1]-48,y)+T((xs[0]+xs[1])/2-4,y-18,'ROS','note mid f11')
       +tbox(xs[1],y,92,'8-oxo-dGTP',{tc:OXO,fs:11})+arw(xs[1]+48,y,xs[2]-48,y,{blue:1})+Tc((xs[1]+xs[2])/2+4,y-18,'MutT','#2F5276',10,'mono mid','600')+tbox(xs[2],y,92,'8-oxo-dGMP',{fs:11}));
-    y+=40;}
+    y+=52;}
   const t=wtable(n,['Mutant','What accumulates'],[['mutT','A·T → C·G, up to ~1000-fold; 8-oxo-dGTP is inserted opposite A'],['mutM','G·C → T·A, a few-fold'],['mutY','G·C → T·A, a few-fold'],['mutM mutY','G·C → T·A, strongly synergistic']],
     n?[[14,12],[110,38]]:[[24,14],[160,70]],{y0:y,d0:3.4});
   const p=para(n?16:24,t.y+12,'In humans the same three jobs are done by MTH1 (the pool), OGG1 (excises 8-oxoG) and MUTYH (excises A); inherited MUTYH defects cause MUTYH-associated polyposis.',n?50:92,'note start f13',17,3.8);
@@ -637,7 +637,7 @@ function scGaps(n){
     if(k===1)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[gapEnd,N,NEW]]})+recaFil(c(L-2)-6,c(gapEnd)-4,ly+g+2)+prot(c(L-5),ly+g+16,24,11,E2,'RecFOR')+ssb(c(gapEnd+1.5),ly+g+12)+T(c(L+2),ly+g+30,'RecA','note mid f11');
     if(k===2)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[L-2,gapEnd,INV],[gapEnd,N,NEW]]})+T(c(L+2),ly+g+18,'patch from sister','note mid f11');
     s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+W.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
-    y=ly+g+40;});
+    y=ly+g+(k===1?54:40);});
   const b=bullets(n?24:30,y+4,[['Daughter-strand gap repair','Rupp and Howard-Flanders found in 1968 that UV-irradiated, excision-deficient E. coli make new DNA with gaps that are later filled by recombination.'],
    ['Two loaders, one recombinase','RecBCD loads RecA at broken ends; RecFOR loads it at gaps.'],
    ['The alternative','Translesion polymerases can fill the same gap by copying the damaged template: faster, but error-prone (Part V).']],n?44:88,{d0:2.8,gap:24});
@@ -694,7 +694,7 @@ function scTLS(n){
     if(k===1)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW],[L,L+2,INV]],mk:{...les.mk,[L]:{t:CPDC,b:INV},[L+1]:{t:CPDC,b:INV}}})+bc(L+1)+prot(c(L+1),ly+g+18,26,12,E6,'Pol V')+G('a-move',.4,prot(c(L-5),ly+g+30,34,11,E5,'Pol III',{op:.5}),'--dx:30px');
     if(k===2)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW],[L,L+2,INV],[L+2,N-3,NEW]],mk:{...les.mk,[L]:{t:CPDC,b:INV},[L+1]:{t:CPDC,b:INV}}})+bc(N-4)+prot(c(N-5),ly+g+16,34,12,E5,'Pol III');
     s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+W.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
-    y=ly+g+50;});
+    y=ly+g+(k===1?64:50);});
   const t=wtable(n,['Polymerase','Gene','What it does'],[['Pol II','polB','restarts stalled forks; bypasses some adducts'],['Pol IV','dinB','bypasses some guanine adducts; makes −1 frameshifts'],['Pol V','umuD′₂C','copies past UV lesions and abasic sites; most UV mutagenesis']],
     n?[[10,10],[84,10],[156,30]]:[[24,14],[150,14],[260,56]],{y0:y,d0:2.6});
   const p=para(n?16:24,t.y+12,'Pol V is made late in the SOS response and only works after RecA* cleaves UmuD to UmuD′, a double safeguard against needless mutation. In eukaryotes, Pol η copies past thymine dimers correctly, inserting AA; its loss causes the variant form of xeroderma pigmentosum. Pol ι, κ, ζ and Rev1 handle other lesions.',n?50:92,'note start f13',17,3);
@@ -702,8 +702,8 @@ function scTLS(n){
 }
 
 function scAntibio(n){
-  let s='';const chain=n?[['quinolone',48],['ssDNA',130],['RecA*',212],['LexA cut',300]]:[['ciprofloxacin',100],['breaks, ssDNA',250],['RecA*',390],['LexA cleaved',530]];
-  const bw=n?74:122;
+  let s='';const chain=n?[['quinolone',47],['ssDNA',135],['RecA*',223],['LexA cut',311]]:[['ciprofloxacin',100],['breaks, ssDNA',250],['RecA*',390],['LexA cleaved',530]];
+  const bw=n?70:122;
   chain.forEach((c,i)=>{s+=G('a-fade',(i*.3).toFixed(1),tbox(c[1],40,bw,c[0],{fs:n?10:12,fill:i===3?'#E9C9C1':'#EFE6D2'})+(i<3?arw(c[1]+bw/2+2,40,chain[i+1][1]-bw/2-4,40):''));});
   const C=[['Mutation and resistance','Ciprofloxacin induces Pol IV and Pol V. E. coli carrying uncleavable LexA barely evolved resistance in a mouse infection model (Cirz et al., 2005).'],
    ['Gene transfer','SOS boosts transfer of the SXT integrative element (Beaber et al., 2004) and induces integron integrases that shuffle resistance cassettes (Guerin et al., 2009).'],

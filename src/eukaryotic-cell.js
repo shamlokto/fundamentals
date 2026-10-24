@@ -21,10 +21,10 @@ function scK2(n){
 function scK3(n){
   const N=n?{r:{x:80,y:40,w:120,t:'ribosome'},er:{x:80,y:120,w:120,t:'ER',f:'#D9CDE6'},cg:{x:80,y:210,w:120,t:'cis-Golgi',f:'#E0C88A'},tg:{x:270,y:210,w:120,t:'trans-Golgi',f:'#E0C88A'},
       pm:{x:180,y:300,w:140,t:'plasma|membrane'},en:{x:270,y:120,w:120,t:'endosome',f:'#E7A99B'},ly:{x:270,y:40,w:120,t:'lysosome',f:'#E7A99B'}}
-    :{r:{x:60,y:60,w:100,t:'ribosome'},er:{x:210,y:60,w:90,t:'ER',f:'#D9CDE6'},cg:{x:375,y:60,w:110,t:'cis-Golgi',f:'#E0C88A'},tg:{x:540,y:60,w:110,t:'trans-Golgi',f:'#E0C88A'},
-      pm:{x:540,y:220,w:120,t:'plasma|membrane'},en:{x:330,y:220,w:110,t:'endosome',f:'#E7A99B'},ly:{x:130,y:220,w:110,t:'lysosome',f:'#E7A99B'}};
+    :{r:{x:50,y:60,w:88,t:'ribosome'},er:{x:208,y:60,w:70,t:'ER',f:'#D9CDE6'},cg:{x:356,y:60,w:100,t:'cis-Golgi',f:'#E0C88A'},tg:{x:526,y:60,w:110,t:'trans-Golgi',f:'#E0C88A'},
+      pm:{x:526,y:220,w:120,t:'plasma|membrane'},en:{x:330,y:220,w:110,t:'endosome',f:'#E7A99B'},ly:{x:130,y:220,w:110,t:'lysosome',f:'#E7A99B'}};
   const E=n?[['r','er','SRP, Sec61',{side:1}],['er','cg','COPII',{side:-1}],['cg','er','COPI',{bend:-30,dash:'4 3',off:10}],['cg','tg','',{}],['tg','pm','secretion',{side:1}],['tg','en','M6P',{side:-1}],['en','ly','',{}]]
-    :[['r','er','SRP, Sec61'],['er','cg','COPII',{side:-1}],['cg','er','COPI (retrieval)',{bend:-40,dash:'4 3',off:10}],['cg','tg','maturation'],['tg','pm','secretory vesicles',{side:-1}],['tg','en','mannose-6-P tag',{side:1}],['en','ly','',{}],['pm','en','endocytosis (clathrin)',{bend:-40,dash:'4 3',side:1}]];
+    :[['r','er','SRP, Sec61',{side:-1}],['er','cg','COPII',{side:-1,lx:-6}],['cg','er','COPI (retrieval)',{bend:-40,dash:'4 3',off:10}],['cg','tg','maturation',{side:-1}],['tg','pm','secretory vesicles',{side:-1}],['tg','en','mannose-6-P tag',{side:1}],['en','ly','',{}],['pm','en','endocytosis (clathrin)',{bend:-40,dash:'4 3',side:-1,off:12}]];
   let s=G('a-fade',0,flow(N,E));
   const by=n?360:290;
   const b=bullets(n?24:30,by,[['Vesicles carry cargo','Coats (COPII, COPI, clathrin) bend membranes into vesicles; Rab GTPases mark identity; SNARE pairs decide which membranes may fuse.'],['Sugars on the way','N-glycans added in the ER are trimmed and rebuilt in the Golgi, and act as quality-control tags.'],['Signals decide','A signal peptide sends a protein to the ER; KDEL brings it back; mannose-6-phosphate sends enzymes to lysosomes.']],n?44:88,{d0:1.2,gap:22});
@@ -55,11 +55,11 @@ function scK7(n){
     g+=ring(x,27)+ring(x,31);for(let i=0;i<extra;i++)g+=ring(x,38+i*6,1);
     return g+lines(lab).map((l,i)=>T(x,y+70+i*14,l,'note mid f11')).join('');};
   const xs=n?[70,180,290]:[110,280,450];
-  s+=G('a-fade',0,nest(xs[0],1,0,'primary: 2 membranes|plants, green|and red algae'));
+  s+=G('a-fade',0,nest(xs[0],1,0,n?'primary:|2 membranes|plants, green|and red algae':'primary: 2 membranes|plants, green|and red algae'));
   s+=G('a-fade',.4,nest(xs[1],1,2,'secondary: 3 or 4|diatoms (4),|euglenids (3)'));
   s+=G('a-fade',.8,nest(xs[2],0,2,'apicoplast: 4|Plasmodium;|no photosynthesis'));
   if(!n)s+=G('a-fade',1,['solid: the original','cyanobacterial','envelope; dashed:','extra membranes','from a second','engulfment'].map((l,i)=>T(528,y-36+i*15,l,'note start f11')).join(''));
-  const b=bullets(n?24:30,y+130,[['Endosymbiosis happened again','Eukaryotic algae with plastids were themselves engulfed, giving plastids with three or four membranes in diatoms, brown algae and the apicomplexans.'],['A drug target in a parasite','The malaria parasite keeps a non-photosynthetic plastid, the apicoplast, which makes isoprenoids; doxycycline and fosmidomycin act on it.'],['Reduced mitochondria','Anaerobic eukaryotes such as Trichomonas have hydrogenosomes, and Giardia has mitosomes: mitochondria that lost respiration but kept iron–sulfur cluster assembly.']],n?44:88,{d0:1.2,gap:22});
+  const b=bullets(n?24:30,y+(n?146:130),[['Endosymbiosis happened again','Eukaryotic algae with plastids were themselves engulfed, giving plastids with three or four membranes in diatoms, brown algae and the apicomplexans.'],['A drug target in a parasite','The malaria parasite keeps a non-photosynthetic plastid, the apicoplast, which makes isoprenoids; doxycycline and fosmidomycin act on it.'],['Reduced mitochondria','Anaerobic eukaryotes such as Trichomonas have hydrogenosomes, and Giardia has mitosomes: mitochondria that lost respiration but kept iron–sulfur cluster assembly.']],n?44:88,{d0:1.2,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 const S=[
