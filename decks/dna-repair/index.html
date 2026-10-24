@@ -283,6 +283,7 @@ function lad(x,y,n,o={}){
   return s;
 }
 function prot(cx,cy,rx,ry,fill,label,o={}){
+  if(label&&!o.fs)rx=Math.max(rx,[...label].length*3.9+6);
   return blob(FX(cx),FX(cy),rx,ry,fill,o.op?`opacity="${o.op}"`:'')+(label?Tc(FX(cx),FX(cy+3.8),label,o.tc||'#3A2E22',o.fs||11,'mono mid','600'):'');}
 function ring(cx,cy,rx,ry,fill,label,o={}){
   return `<ellipse cx="${FX(cx)}" cy="${FX(cy)}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity=".55" stroke="${INK}" stroke-width="1.1" class="tint"/>`
@@ -373,7 +374,7 @@ function scHistory(n){
   let s=t.s;
   const mx=n?180:548, my=n?t.y+56:150;
   s+=G('a-pop',3.4,medal(mx,my,n?40:50,'2015',[['Lindahl · Modrich · Sancar','note mid f12'],['for mechanistic studies','note mid f11'],['of DNA repair','note mid f11']]));
-  return {vb:n?slim(my+100):wide(Math.max(t.y,300)+4),s};
+  return {vb:n?slim(my+114):wide(Math.max(t.y,300)+4),s};
 }
 
 /* ===================== Part II · direct reversal ===================== */
@@ -516,12 +517,12 @@ function scTCR(n){
 }
 
 function mmrD(k){return (x,y,w)=>{const n=26,dx=w/n,g=24,c=i=>x+i*dx+dx/2;
-  const lab=[{i:4.5,t:'GATC',col:'#8C5A1E',dy:14},{i:18,t:'G'}], me=[{i:4,s:'t'}];
-  if(k===0)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[...lab,{i:18,s:'b',t:'T',col:LESU}]})+ring(c(18),y+g/2,15,22,E4,'MutS',{ldx:34,ldy:-14})+prot(c(13.4),y-20,22,10,E5,'MutL');
-  if(k===1)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[{i:18,t:'G'},{i:18,s:'b',t:'T',col:LESU}],nick:[{i:6,s:'b'}]})+ring(c(18),y+g/2,15,22,E4,'')+prot(c(13.4),y-20,22,10,E5,'MutL')
+  const lab=[{i:4.5,t:'GATC',col:'#8C5A1E',dy:14},{i:18,t:'G',dy:k<2?28:0}], me=[{i:4,s:'t'}];
+  if(k===0)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[...lab,{i:18,s:'b',t:'T',col:LESU}]})+ring(c(18),y+g/2,15,22,E4,'MutS',{ldx:40,ldy:-16})+prot(c(13.4),y-20,22,10,E5,'MutL');
+  if(k===1)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[{i:18,t:'G',dy:28},{i:18,s:'b',t:'T',col:LESU}],nick:[{i:6,s:'b'}]})+ring(c(18),y+g/2,15,22,E4,'')+prot(c(13.4),y-20,22,10,E5,'MutL')
     +prot(c(5),y+g+16,22,10,E3,'MutH')+`<path d="M${FX(c(11.6))} ${y-16} Q${FX(c(8))} ${y-36} ${FX(c(6))} ${y+g+4}" stroke="#2F5276" stroke-width="1.2" stroke-dasharray="3 3" fill="none" marker-end="url(#ahb)"/>`+cut(x+6*dx,y+g+5);
   if(k===2)return lad(x,y,n,{dx,g,bot:[[0,6],[20,26]],me,lab:[{i:18,t:'G'}]})+prot(c(8),y+g+16,22,10,E4,'UvrD')+T(c(14),y+g+20,'exonucleases','note mid f11');
-  return lad(x,y,n,{dx,g,bot:[[0,6],[6,20,NEW],[20,26]],me:[{i:4,s:'t'},{i:4,s:'b',op:.6}],lab:[{i:18,t:'G'},{i:18,s:'b',t:'C',col:NEW},{i:4.5,t:'GATC',col:'#8C5A1E',dy:14}]})+prot(c(13),y+g+16,26,10,E5,'Pol III');};}
+  return lad(x,y,n,{dx,g,bot:[[0,6],[6,20,NEW],[20,26]],me:[{i:4,s:'t'},{i:4,s:'b',op:.6}],lab:[{i:18,t:'G'},{i:18,s:'b',t:'C',col:NEW},{i:4.5,t:'GATC',col:'#8C5A1E',dy:14}]})+prot(c(13),y+g+16,34,10,E5,'Pol III');};}
 function scMMR(n){
   const st=[{h:'Recognise',t:'Dam methylates GATC, but a newly made strand is briefly unmethylated. MutS clamps on the mismatch; MutL joins it.',d:mmrD(0),top:40,dh:44},
    {h:'Nick',t:'MutL activates MutH, which nicks the unmethylated new strand at a GATC that may be a kilobase away.',d:mmrD(1),top:40,dh:56},
@@ -546,7 +547,7 @@ function scWhich(n){
   let s=G('a-fade',0,L.dsb?lad(x,y,10,{dx,g,ends:1})+G('a-move',.3,lad(x+10*dx+28,y,10,{dx,g}),'--dx:-24px'):lad(x,y,20,{dx,g,ends:1,...L.o}));
   const rows=[['Pathway',L.path],['In E. coli',L.eco],['In humans',L.hum],['If left',L.un]];
   let yy=y+g+54;
-  rows.forEach((r,i)=>{const W=wrap(r[1],n?(i===0?28:32):62);
+  rows.forEach((r,i)=>{const W=wrap(r[1],n?28:56);
     s+=G('a-fade',(.3+i*.25).toFixed(2),T(n?16:60,yy,r[0],'cname start f14')+W.map((l,j)=>T(n?120:190,yy+j*18,l,(i===0?'lab':'note')+' start '+(i===0?'f15':'f13'))).join('')+ln(n?16:60,yy+W.length*18-6,n?344:580,yy+W.length*18-6,'#6A5B47',.4,'2 4'));
     yy+=W.length*18+16;});
   return {vb:n?slim(yy+4):wide(yy+6),s};
@@ -632,7 +633,7 @@ function scGaps(n){
   let s='',y=28;
   rows.forEach((r,k)=>{const W=wrap(r[1],n?52:90), ly=y+18+W.length*16+40; let d='';
     const gapEnd=L+6;
-    if(k===0)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[gapEnd,N,NEW]]})+prot(c(N-1.5),ly+g+12,24,11,E5,'Pol III')+T(c(L+2),ly+g+18,'gap','note mid f11');
+    if(k===0)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[gapEnd,N,NEW]]})+prot(c(N-1.5),ly+g+12,34,11,E5,'Pol III')+T(c(L+2),ly+g+18,'gap','note mid f11');
     if(k===1)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[gapEnd,N,NEW]]})+recaFil(c(L-2)-6,c(gapEnd)-4,ly+g+2)+prot(c(L-5),ly+g+16,24,11,E2,'RecFOR')+ssb(c(gapEnd+1.5),ly+g+12)+T(c(L+2),ly+g+30,'RecA','note mid f11');
     if(k===2)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L-2,NEW],[L-2,gapEnd,INV],[gapEnd,N,NEW]]})+T(c(L+2),ly+g+18,'patch from sister','note mid f11');
     s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+W.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
@@ -689,9 +690,9 @@ function scTLS(n){
   let s='',y=28;
   rows.forEach((r,k)=>{const W=wrap(r[1],n?52:90), ly=y+18+W.length*16+22; let d='';
     const bc=(i)=>`<ellipse cx="${FX(c(i))}" cy="${ly+g/2}" rx="9" ry="22" fill="${E3}" fill-opacity=".45" stroke="${INK}" stroke-width="1"/>`;
-    if(k===0)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW]]})+bc(L-1)+prot(c(L-2.4),ly+g+16,26,12,E5,'Pol III');
-    if(k===1)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW],[L,L+2,INV]],mk:{...les.mk,[L]:{t:CPDC,b:INV},[L+1]:{t:CPDC,b:INV}}})+bc(L+1)+prot(c(L+1),ly+g+18,26,12,E6,'Pol V')+G('a-move',.4,prot(c(L-5),ly+g+30,24,11,E5,'Pol III',{op:.5}),'--dx:30px');
-    if(k===2)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW],[L,L+2,INV],[L+2,N-3,NEW]],mk:{...les.mk,[L]:{t:CPDC,b:INV},[L+1]:{t:CPDC,b:INV}}})+bc(N-4)+prot(c(N-5),ly+g+16,26,12,E5,'Pol III');
+    if(k===0)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW]]})+bc(L-1)+prot(c(L-2.4),ly+g+16,34,12,E5,'Pol III');
+    if(k===1)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW],[L,L+2,INV]],mk:{...les.mk,[L]:{t:CPDC,b:INV},[L+1]:{t:CPDC,b:INV}}})+bc(L+1)+prot(c(L+1),ly+g+18,26,12,E6,'Pol V')+G('a-move',.4,prot(c(L-5),ly+g+30,34,11,E5,'Pol III',{op:.5}),'--dx:30px');
+    if(k===2)d=lad(x,ly,N,{dx,g,...les,bot:[[0,L,NEW],[L,L+2,INV],[L+2,N-3,NEW]],mk:{...les.mk,[L]:{t:CPDC,b:INV},[L+1]:{t:CPDC,b:INV}}})+bc(N-4)+prot(c(N-5),ly+g+16,34,12,E5,'Pol III');
     s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+W.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
     y=ly+g+50;});
   const t=wtable(n,['Polymerase','Gene','What it does'],[['Pol II','polB','restarts stalled forks; bypasses some adducts'],['Pol IV','dinB','bypasses some guanine adducts; makes −1 frameshifts'],['Pol V','umuD′₂C','copies past UV lesions and abasic sites; most UV mutagenesis']],
