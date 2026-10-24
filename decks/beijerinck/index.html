@@ -460,7 +460,7 @@ const TMVTEST={dh:140,dhn:140,
    pred:[['stays infectious','it multiplies'],['fades out','each passage dilutes it'],['stays infectious','it multiplies']],obs:['stays infectious','as potent after many passages']},
   {n:'Try to grow it',d:'Filtrate is put on nutrient media, or kept in sap outside the plant.',draw:(cx,y)=>dish(cx-50,y+70,46,[])+tube(cx+60,y+120,{h:70,w:22,fill:'#D4E0C6',full:.5}),
    pred:[['colonies grow','bacteria grow on media'],['nothing grows','toxins do not grow'],['nothing grows','it needs living cells']],obs:['nothing grows','no colonies; no increase in sap']},
-  {n:'Let it diffuse into agar',d:'Infectious sap is laid on an agar block; after some days the agar below the surface is tested.',draw:(cx,y)=>`<rect x="${cx-90}" y="${y+40}" width="180" height="70" fill="${AGAR}" stroke="${GLASSE}" stroke-width="1.5"/><rect x="${cx-90}" y="${y+30}" width="180" height="10" fill="#A9C49A"/><path d="M${cx-90} ${y+40} h180 v22 h-180z" fill="#A9C49A" opacity=".45"/>`+T(cx+100,y+70,'infectious to here','note start f11'),
+  {n:'Let it diffuse into agar',d:'Infectious sap is laid on an agar block; after some days the agar below the surface is tested.',draw:(cx,y,n)=>`<rect x="${cx-90}" y="${y+40}" width="180" height="70" fill="${AGAR}" stroke="${GLASSE}" stroke-width="1.5"/><rect x="${cx-90}" y="${y+30}" width="180" height="10" fill="#A9C49A"/><path d="M${cx-90} ${y+40} h180 v22 h-180z" fill="#A9C49A" opacity=".45"/>`+(n?T(cx+100,y+64,'infectious','note start f11')+T(cx+100,y+78,'to here','note start f11'):T(cx+100,y+70,'infectious to here','note start f11')),
    pred:[['stays on the surface','cells cannot move through gel'],['diffuses in','molecules diffuse'],['diffuses in','it is small enough to diffuse']],obs:['diffuses in','agar below the surface is infectious']},
   {n:'Young or old leaves',d:'The same inoculum is applied to growing tissue and to fully mature leaves.',draw:(cx,y)=>leaf(cx-60,y+70,90,true)+leaf(cx+70,y+70,90,false)+T(cx-60,y+120,'young, growing','note mid f11')+T(cx+70,y+120,'mature','note mid f11'),
    pred:[['infects both','bacteria grow anywhere nutritious'],['damages both','a poison acts anywhere'],['multiplies only in growing tissue','it depends on the cell’s own growth']],obs:['multiplies only in growing tissue','disease develops in young, dividing tissue']}]};
@@ -474,7 +474,7 @@ function scB4(n){
    ['1935','Wendell Stanley crystallises tobacco mosaic virus. Frederick Bawden and Norman Pirie show it contains RNA (1936)'],
    ['1939','Gustav Kausche, Edgar Pfankuch and Helmut Ruska see the rods by electron microscopy'],
    ['1956','Alfred Gierer and Gerhard Schramm, and Heinz Fraenkel-Conrat, show the RNA alone is infectious']];
-  const t=n?timeline(14,30,ev,40,'f13',66,10,0):timeline(24,32,ev,62,'f13',64,10,0);
+  const t=n?timeline(14,30,ev,38,'f13',74,10,0):timeline(24,32,ev,58,'f13',74,10,0);
   let s=t.s;
   const ty=n?t.y+20:90, tx=n?60:500;
   s+=G('a-fade',2.6,[0,1,2].map(i=>tmv(tx,ty+i*24,n?240:100,0)).join('')+T(n?180:550,ty+(n?72:110),'TMV: rods about 300 nm long','note mid f11'));

@@ -32,7 +32,7 @@ function scP2(n){
   const e=tr.c[0].c[0].c[0];
   s+=G('a-fade',.4,`<rect x="${FX(e._x-6)}" y="${FX(e.c[0]._y-14)}" width="${n?160:178}" height="${FX(e.c[1]._y-e.c[0]._y+26)}" rx="6" fill="none" stroke="${RED}" stroke-dasharray="4 3"/>`);
   s+=G('a-fade',.6,`<circle cx="${FX(tr._x)}" cy="${FX(tr._y)}" r="4" fill="${INK}"/>`+T(FX(tr._x+6),FX(tr._y+16),'root','note start f11 halo')
-    +`<circle cx="${FX(e._x)}" cy="${FX(e._y)}" r="4" fill="${RED}"/>`+T(FX(e._x-12),FX(y-8),n?'last common ancestor':'node: last common ancestor','note end f11 halo')+ln(FX(e._x-9),FX(y-5),FX(e._x-3),FX(e._y-4),'#6A5B47',.8)
+    +`<circle cx="${FX(e._x)}" cy="${FX(e._y)}" r="4" fill="${RED}"/>`+T(FX(e._x-12),FX(y-14),n?'last common ancestor':'node: last common ancestor','note end f11 halo')+ln(FX(e._x-9),FX(y-11),FX(e._x-3),FX(e._y-4),'#6A5B47',.8)
     +ln(x,y+5*dy,x+kx,y+5*dy,INK,1.6)+T(x+kx/2,y+5*dy+14,'0.1 substitutions per site','note start f10'));
   // unrooted quartet
   const ux=n?180:480, uy=n?y+5*dy+90:120;
@@ -40,7 +40,7 @@ function scP2(n){
   let u=ln(ux-24,uy,ux+24,uy,'#5A4632',2);
   U.forEach(([dx,dy2,t])=>{const sx=ux+(dx<0?-24:24);u+=ln(sx,uy,ux+dx,uy+dy2,'#5A4632',2)+T(ux+dx+(dx<0?-6:6),uy+dy2+4,t,'lab '+(dx<0?'end':'start')+' f13');});
   s+=G('a-fade',.8,u+T(ux,uy+66,'unrooted: relationships only,','note mid f11')+T(ux,uy+80,'no direction of time','note mid f11'));
-  const b=bullets(n?24:30,uy+(n?112:150),[['Read the nodes, not the tips','Rotating branches around a node changes nothing. E. coli is no closer to Vibrio than Salmonella is, whatever the order on the page.'],['Clades','A clade is an ancestor and all its descendants (monophyletic). A group that leaves some descendants out is paraphyletic, like “prokaryotes”, which leaves out the eukaryotes descended from the same ancestor.'],['Rooting','A root needs extra information, usually an outgroup known to lie outside the group, or a molecular clock.']],n?44:88,{d0:1,gap:18});
+  const b=bullets(n?24:30,uy+(n?112:150),[['Read the nodes, not the tips','Rotating branches around a node changes nothing. E. coli is no closer to Vibrio than Salmonella is, whatever the order on the page.'],['Clades','A clade is an ancestor and all its descendants (monophyletic). A group that leaves some descendants out is paraphyletic, like “prokaryotes”, which leaves out the eukaryotes descended from the same ancestor.'],['Rooting','A root needs extra information, usually an outgroup known to lie outside the group, or a molecular clock.']],n?44:88,{d0:1,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 function scP3(n){
@@ -55,20 +55,20 @@ function scP3(n){
     :axes(70,py,200,150,{xr:[0,2],yr:[0,1],xt:[[0,'0'],[1,'1'],[2,'2']],yt:[[0,'0'],[.75,'.75']],xlab:'true distance',ylab:'observed p'});
   s+=A.s+G('a-fade',.5,curve(A,d=>d,{col:'#9A9384',dash:'4 3',to:1})+curve(A,d=>.75*(1-Math.exp(-4*d/3)),{col:'#2F5276'})+ln(A.x,FX(A.py(.75)),A.x+A.w,FX(A.py(.75)),RED,1,'3 3')+T(FX(A.px(1.95)),FX(A.py(.75)-6),'saturation','note end f11 halo'));
   const items=[['JC69','Jukes and Cantor (1969): every substitution equally likely, equal base frequencies. Corrects p for multiple hits.'],['K80','Kimura (1980): transitions (A↔G, C↔T) and transversions at different rates.'],['GTR','Six exchange rates and four base frequencies: the most general reversible model.'],['+Γ','Rates vary across sites, drawn from a gamma distribution with shape α; small α means a few fast sites and many slow ones.']];
-  const b=n?bullets(24,A.y+A.h+58,items,44,{d0:.8,gap:16}):bullets(330,py+4,items,40,{d0:.8,gap:16});
+  const b=n?bullets(24,A.y+A.h+58,items,44,{d0:.8,gap:22}):bullets(330,py+4,items,40,{d0:.8,gap:22});
   return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,A.y+A.h+48)),s:s+b.s};
 }
 function scP4(n){
   const m=TREEM[mSel];
-  return explorer(n,{h:m.h,sub:m.sub,rows:m.rows,pros:m.pros,cons:m.cons,note:m.note},{y:32});
+  return explorer(n,{h:m.h,sub:n?m.sub.replace('minimum evolution','min. evolution'):m.sub,rows:m.rows,pros:m.pros,cons:m.cons,note:m.note},{y:32});
 }
 function scP5(n){
   const tr=tn([tn([tn([tn([tl('A',1),tl('B',1.1)],1.4,{s:'100 / 1.00'}),tl('C',2.2)],.6,{s:'54 / 0.97'}),tn([tl('D',1.5),tl('E',1.3)],1.2,{s:'88 / 1.00'})],.9,{s:'72 / 0.99'}),tl('outgroup',3.6)],.5);
-  const x=n?40:60;
-  let s=G('a-fade',0,rtree(tr,{x,y:44,dy:30,kx:n?40:50,sfs:'f11',fs:'f13'}));
+  const x=n?24:60;
+  let s=G('a-fade',0,rtree(tr,{x,y:44,dy:30,kx:n?58:50,sfs:'f11',fs:'f13'}));
   s+=G('a-fade',.5,T(n?16:24,226,'node labels: bootstrap % / posterior probability','note start f12'));
   const items=[['Bootstrap (Felsenstein, 1985)','Resample alignment columns with replacement, rebuild the tree many times, and count how often each clade reappears. Values above about 70% are usually taken as fair support.'],['Posterior probability','From a Bayesian run: the probability the clade is true given the data, model and priors. It is usually higher than the bootstrap for the same node; 0.95 is a common bar.'],['Neither is a guarantee','Both measure how consistently the data point one way. A wrong model or long-branch attraction can give high support to a wrong clade.']];
-  const b=n?bullets(24,260,items,44,{d0:.8,gap:18}):bullets(360,52,items,36,{d0:.8,gap:18});
+  const b=n?bullets(24,260,items,44,{d0:.8,gap:24}):bullets(360,52,items,36,{d0:.8,gap:24});
   return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,240)),s:s+b.s};
 }
 function quartet(cx,cy,pairs,lens,title){
@@ -83,7 +83,7 @@ function scP6(n){
   const c1=n?82:170, c2=n?278:470, cy=n?90:100;
   let s=G('a-fade',0,quartet(c1,cy,[['A','B'],['C','D']],lens,'true tree'));
   s+=G('a-fade',.6,arw(n?165:280,cy,n?195:360,cy,{w:1.6})+quartet(c2,cy,[['A','C'],['B','D']],{A:LL,C:LL,B:SS,D:SS},'inferred tree'));
-  const b=bullets(n?24:30,cy+130,[['Long branches attract','A and C have evolved fast. By chance they share many identical states at saturated sites, and parsimony or a poor model reads those coincidences as shared ancestry (Felsenstein, 1978).'],['Real cases','Fast-evolving microsporidia once appeared at the base of eukaryotes; with better models they sit within the fungi. Endosymbionts with small, AT-rich genomes cluster together for the same reason.'],['Remedies','Add taxa that break up long branches, use site-heterogeneous models, remove the fastest sites, or recode amino acids into groups.']],n?44:88,{d0:1,gap:18});
+  const b=bullets(n?24:30,cy+130,[['Long branches attract','A and C have evolved fast. By chance they share many identical states at saturated sites, and parsimony or a poor model reads those coincidences as shared ancestry (Felsenstein, 1978).'],['Real cases','Fast-evolving microsporidia once appeared at the base of eukaryotes; with better models they sit within the fungi. Endosymbionts with small, AT-rich genomes cluster together for the same reason.'],['Remedies','Add taxa that break up long branches, use site-heterogeneous models, remove the fastest sites, or recode amino acids into groups.']],n?44:88,{d0:1,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 function scP7(n){
@@ -92,8 +92,8 @@ function scP7(n){
   const g=(x,m,sd,h)=>h*Math.exp(-((x-m)**2)/(2*sd*sd));
   let s=A.s+G('a-fade',.3,curve(A,x=>g(x,79,2.2,.55)+g(x,98.6,1,.9)+.02,{col:'#2F5276',n:200}))+G('a-fade',.5,`<rect x="${FX(A.px(95))}" y="${A.y}" width="${FX(A.px(96)-A.px(95))}" height="${A.h}" fill="${RED}" opacity=".25"/>`+T(FX(A.px(90)),FX(A.y+14),'few pairs','note mid f11 halo')+T(FX(A.px(95.5)),A.y-6,'95–96%','mono mid f11'));
   const rows=[['ANI','≥ 95–96%','average nucleotide identity of shared genome; the working standard'],['dDDH','≥ 70%','digital DNA–DNA hybridisation, calculated to match the old wet-lab test'],['16S rRNA','≥ 98.7%','below this, almost always different species; above it, not proof of the same one'],['Wet-lab DDH','≥ 70%','the historical gold standard (1987), now replaced']];
-  const t=wtable(n,['Method',n?'Same if':'Same species if','Notes'],rows,n?[[10,10],[86,10],[170,28]]:[[24,14],[150,14],[290,48]],{y0:A.y+A.h+58,d0:.6,R:n?354:620});
-  if(!n)s+=G('a-fade',.7,bullets(410,52,[['A real gap','Pairs of genomes rarely share 83–95% ANI, so 95% falls in a natural valley.'],['Not one concept','Recombination, ecology and shared gene pools all bear on what a microbial species is.']],28,{gap:20}).s);
+  const t=wtable(n,['Method',n?'Same if':'Same species if','Notes'],rows,n?[[10,10],[86,10],[170,28]]:[[24,14],[150,14],[290,48]],{y0:A.y+A.h+70,d0:.6,R:n?354:620});
+  if(!n)s+=G('a-fade',.7,bullets(410,52,[['A real gap','Pairs of genomes rarely share 83–95% ANI, so 95% falls in a natural valley.'],['Not one concept','Recombination, ecology and shared gene pools all bear on what a microbial species is.']],28,{gap:26}).s);
   return {vb:n?slim(t.y+6):wide(t.y+8),s:s+t.s};
 }
 function scP8(n){
@@ -114,7 +114,7 @@ function scP9(n){
   const x2=n?28:340, y2=n?yT+130:yT;
   s+=G('a-fade',.9,T(n?20:330,y2,'two domains','cname start f14')+rtree(t2,{x:x2+(n?0:10),y:y2+24,dy:26,kx:k,fs:'f12'}));
   const by=n?y2+150:yT+130;
-  const b=bullets(n?24:30,by,[['Molecular clocks','Branch lengths become time when calibrated with fossils or geological events; relaxed clocks let rates vary between lineages.'],['LUCA','The last universal common ancestor was already a complex cell with a genetic code, ribosomes and ATP synthase, probably anaerobic and possibly H₂-using.'],['Eukaryogenesis','Asgard archaea, found in 2015 and first cultured in 2020 (Prometheoarchaeum), carry eukaryote-like genes; eukaryotes seem to arise from an Asgard host that took in an alphaproteobacterium, the future mitochondrion.']],n?44:88,{d0:1.2,gap:18});
+  const b=bullets(n?24:30,by,[['Molecular clocks','Branch lengths become time when calibrated with fossils or geological events; relaxed clocks let rates vary between lineages.'],['LUCA','The last universal common ancestor was already a complex cell with a genetic code, ribosomes and ATP synthase, probably anaerobic and possibly H₂-using.'],['Eukaryogenesis','Asgard archaea, found in 2015 and first cultured in 2020 (Prometheoarchaeum), carry eukaryote-like genes; eukaryotes seem to arise from an Asgard host that took in an alphaproteobacterium, the future mitochondrion.']],n?44:88,{d0:1.2,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 const S=[

@@ -233,7 +233,7 @@ function fork(n,o={}){
       const B=[['heli',F+8,yD+30,1],['gyr',g.gyr,yD-26,2],['ssb',ssbXY[2][0]+14,ssbXY[2][1]+4,3],['primase',g.primase,yB+20,4],['pol3a',g.polLead,yT-16,5],['pol3b',g.polLag,yB+20,5],['pol1',g.polI,yB+20,6],['lig',g.lig,yB+20,7]];
       B.forEach(b=>lab+=badge(b[1],b[2],b[3]));
       lab+=T(xL,yT-6,'3′','mono start f12')+T(xL,yB+16,'5′','mono start f12')+T(xR,yD-9,'5′','mono end f12')+T(xR,yD+19,'3′','mono end f12');
-      lab+=T(xL+2,yT+26,'leading','note start f11')+T(xL+2,yB-18,'lagging','note start f11');
+      lab+=T(xL+2,yT+26,'leading','note start f11')+T(xL+2,yB-30,'lagging','note start f11');
       lab+=`<path d="M${xR-52} ${yD+30} h40" stroke="${INK}" stroke-width="1.4" marker-end="url(#ahp)"/>`;
       const key=['helicase','gyrase','SSB','primase','Pol III + clamp','Pol I','ligase'];
       key.forEach((t,i)=>{const c=i%2,r=Math.floor(i/2),y=yB+48+r*22;lab+=badge(c?190:18,y,i+1)+T(c?204:32,y+5,t,'lab start f14');});
@@ -268,7 +268,7 @@ const MODELS=[['Semiconservative',[[['o','n']],[['o','n'],['n','o']],[['o','n'],
 MODELS.forEach(m=>m[1][0]=[['o','o']]);
 function strand(x,y,w,pat){if(typeof pat==='string')return `<rect x="${x}" y="${y}" width="${w}" height="6" fill="${pat==='o'?OLD:NEWL}" stroke="${INK}" stroke-width=".6"/>`;const sw=w/pat.length;return pat.map((o,i)=>`<rect x="${(x+i*sw).toFixed(1)}" y="${y}" width="${sw.toFixed(1)}" height="6" fill="${o?OLD:NEWL}" stroke="${INK}" stroke-width=".6"/>`).join('');}
 function scModels(n){
-  const L=n?{lx:12,gx:[12,62,148],dw:30,gap:6,y0:52,rh:76,H:290}:{lx:20,gx:[200,280,410],dw:50,gap:10,y0:62,rh:76,H:300};
+  const L=n?{lx:12,gx:[12,62,148],dw:30,gap:6,y0:62,rh:76,H:290}:{lx:20,gx:[200,280,410],dw:50,gap:10,y0:62,rh:76,H:300};
   let s=G('a-fade',0,['Parent','Gen 1','Gen 2'].map((t,i)=>T(L.gx[i]+(i===0?L.dw/2:i===1?L.dw+L.gap/2:2*L.dw+1.5*L.gap),n?22:28,t,'mono mid f12')).join(''));
   MODELS.forEach((m,r)=>{const y=L.y0+r*L.rh;
     let row=n?T(L.lx,y-12,m[0],'cname start f15'):T(L.lx,y+12,m[0],'cname start');
@@ -324,7 +324,7 @@ function scNeeds(n){
     s+=G('a-fade',3.9,T(320,230,'Leave out any one ingredient and nothing is made.','lab mid')+T(320,254,'The product copies whatever template it is given.','lab mid'));
     return {vb:wide(272),s};
   }
-  ing.forEach((g,i)=>{const c=i%2,r=Math.floor(i/2);s+=G('a-drop',(.2+i*.35).toFixed(2),box(10+c*174,14+r*42,166,32,'#E7DEC9',4)+`<rect x="${10+c*174}" y="${14+r*42}" width="7" height="32" fill="${g[1]}"/>`+T(96+c*174,35+r*42,g[0],'lab mid f13'));});
+  ing.forEach((g,i)=>{const c=i%2,r=Math.floor(i/2);s+=G('a-drop',(.2+i*.35).toFixed(2),box(10+c*174,14+r*42,166,32,'#E7DEC9',4)+`<rect x="${10+c*174}" y="${14+r*42}" width="7" height="32" fill="${g[1]}"/>`+T(96+c*174,35+r*42,g[0].startsWith('dATP')?'dNTPs (A, G, C, T)':g[0],'lab mid f13'));});
   s+=G('a-fade',1.6,`<path d="M180 104 v18" class="arrow"/>`+helix(110,250,146,11,OLD,NEW,40)+T(180,176,'new DNA','note mid'));
   s+=G('a-fade',2.4,T(180,206,'(A+T)/(G+C)','mono mid f13')+T(16,228,'source','note start f12')+T(262,228,'template','note mid f12')+T(322,228,'product','note mid f12')+ln(10,236,350,236));
   BASECOMP.forEach((r,i)=>s+=G('a-fade',(2.6+i*.2).toFixed(1),T(16,258+i*24,r[0],'note start f12')+T(262,258+i*24,r[1],'mono mid f13')+T(322,258+i*24,r[2],'mono mid f13')));
@@ -447,7 +447,7 @@ function scOrigin(n){
   const by=A.y+(n?72:86), bx1=A.x1+w*.04, bx2=A.x1+w*.36;
   s+=G('a-fade',1.6,`<path d="M${A.x1} ${by-5} H${bx1} q${(bx2-bx1)/2} -30 ${bx2-bx1} 0 H${A.x2}" stroke="${OLD}" stroke-width="2.2" fill="none"/><path d="M${A.x1} ${by+5} H${bx1} q${(bx2-bx1)/2} 30 ${bx2-bx1} 0 H${A.x2}" stroke="${OLD}" stroke-width="2.2" fill="none"/>`);
   s+=G('a-pop',2.2,heli(bx1+(bx2-bx1)*.3,by-16,.9)+heli(bx1+(bx2-bx1)*.7,by+16,.9)+T(bx2+14,by+34,'DnaC loads two DnaB helicases','note start f12'));
-  const C=n?{cx:180,cy:by+150,r:72}:{cx:500,cy:150,r:92};
+  const C=n?{cx:180,cy:by+158,r:82}:{cx:500,cy:150,r:92};
   s+=G('a-fade',2.8,`<circle cx="${C.cx}" cy="${C.cy}" r="${C.r}" fill="none" stroke="${OLD}" stroke-width="3"/>`+T(C.cx,C.cy-C.r-12,'oriC','mono mid f12')+T(C.cx,C.cy+C.r+20,'ter','mono mid f12'));
   const a=Math.PI*.42, f1=[C.cx+C.r*Math.cos(-Math.PI/2-a),C.cy+C.r*Math.sin(-Math.PI/2-a)], f2=[C.cx+C.r*Math.cos(-Math.PI/2+a),C.cy+C.r*Math.sin(-Math.PI/2+a)];
   // both replicated arms are daughter duplexes: one parental strand (brown) + one new strand (blue)
@@ -513,7 +513,7 @@ function scMature(n){
   s+=G('a-fade',.6,T(jx-pw/2,yT+22,"A’s RNA primer",'note mid f12'));
   // Pol I moves left along the gap removing A's primer, then lets go; ligase then sits on the nick it leaves
   s+=G('a-move',2.9,G('a-move',1.2,blob(jx-pw-24,yN-14*k-34,16*k,12*k,POL1)+T(jx-pw-24,yN-14*k-54,'Pol I','lab mid'),`--dx:${pw+8}px`),'--dx:20px;--dy:34px');
-  s+=G('a-pop',3.3,blob(jx-pw,yN-11*k,11*k,9*k,LIG)+T(jx-pw-(n?12:16),yN-6,'ligase','note end f12'));
+  s+=G('a-pop',3.3,blob(jx-pw,yN-11*k,11*k,9*k,LIG)+(n?T(jx-pw,yN-11*k-14,'ligase','note mid f12'):T(jx-pw-16,yN-6,'ligase','note end f12')));
   s+=n?T(x1,yN-6,'3′','mono start f12')+T(x2,yN-6,'5′','mono end f12')
       :T(x1-5,yN-1,'3′','mono end f12')+T(x2+5,yN-1,'5′','mono start f12')+T(x1-5,yT+11,'5′','mono end f12')+T(x2+5,yT+11,'3′','mono start f12');
   const ty=yT+(n?66:74);
@@ -573,8 +573,9 @@ function scBreak(n){
   let s=f.s, y=f.h+(n?6:4);
   const L=wrap(m.text,n?46:84), bh=62+(L.length-1)*20+18;
   s+=`<rect x="${n?10:24}" y="${y}" width="${n?340:592}" height="${bh}" rx="6" class="card"/>`;
-  s+=`<rect x="${n?22:40}" y="${y+14}" width="${n?96:110}" height="24" rx="12" fill="${m.col}"/>`+Tc(n?70:95,y+31,m.cls,'#F3EDE0',12,'mono mid','600');
-  s+=T(n?128:162,y+31,`<tspan font-style="italic">${m.g}</tspan>: ${m.p}`,'lab start '+(n?'f14':''));
+  const pw=Math.max(n?96:110,m.cls.length*8.6+14);
+  s+=`<rect x="${n?22:40}" y="${y+14}" width="${pw}" height="24" rx="12" fill="${m.col}"/>`+Tc((n?22:40)+pw/2,y+31,m.cls,'#F3EDE0',12,'mono mid','600');
+  s+=T((n?22:40)+pw+(n?10:12),y+31,`<tspan font-style="italic">${m.g}</tspan>: ${m.p}`,'lab start '+(n?((m.g+m.p).length>28?'f12':'f14'):''));
   s+=L.map((l,i)=>T(n?22:40,y+(n?62:62)+i*20,l,'note start '+(n?'f13':'f14'))).join('');
   if(m.g==='dnaA')s+=mark(n?334:596,y+26,false,n?8:10);
   return {vb:n?slim(y+bh+8):wide(y+bh+8),s};

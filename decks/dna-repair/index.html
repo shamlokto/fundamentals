@@ -372,7 +372,7 @@ function scHistory(n){
   const t=n?timeline(14,30,HIST,44,'f13',46,10,0):timeline(24,32,HIST,58,'f13',54,10,0);
   let s=t.s;
   const mx=n?180:548, my=n?t.y+56:150;
-  s+=G('a-pop',3.4,medal(mx,my,n?40:50,'2015',[['Lindahl · Modrich · Sancar','note mid f12'],['for mechanistic studies of DNA repair','note mid f11']]));
+  s+=G('a-pop',3.4,medal(mx,my,n?40:50,'2015',[['Lindahl · Modrich · Sancar','note mid f12'],['for mechanistic studies','note mid f11'],['of DNA repair','note mid f11']]));
   return {vb:n?slim(my+100):wide(Math.max(t.y,300)+4),s};
 }
 
@@ -546,7 +546,7 @@ function scWhich(n){
   let s=G('a-fade',0,L.dsb?lad(x,y,10,{dx,g,ends:1})+G('a-move',.3,lad(x+10*dx+28,y,10,{dx,g}),'--dx:-24px'):lad(x,y,20,{dx,g,ends:1,...L.o}));
   const rows=[['Pathway',L.path],['In E. coli',L.eco],['In humans',L.hum],['If left',L.un]];
   let yy=y+g+54;
-  rows.forEach((r,i)=>{const W=wrap(r[1],n?36:62);
+  rows.forEach((r,i)=>{const W=wrap(r[1],n?(i===0?28:32):62);
     s+=G('a-fade',(.3+i*.25).toFixed(2),T(n?16:60,yy,r[0],'cname start f14')+W.map((l,j)=>T(n?120:190,yy+j*18,l,(i===0?'lab':'note')+' start '+(i===0?'f15':'f13'))).join('')+ln(n?16:60,yy+W.length*18-6,n?344:580,yy+W.length*18-6,'#6A5B47',.4,'2 4'));
     yy+=W.length*18+16;});
   return {vb:n?slim(yy+4):wide(yy+6),s};
@@ -746,7 +746,7 @@ function scCompare(n){
    ['End joining','none (Ku, LigD in other bacteria)','Ku70–Ku80, DNA-PKcs, XRCC4–ligase IV'],
    ['Translesion synthesis','Pol II, Pol IV, Pol V','Pol η, ι, κ, ζ; Rev1'],
    ['Damage signalling','SOS: RecA*, LexA','ATM, ATR, p53']];
-  const t=wtable(n,['Pathway','E. coli','Humans'],rows,n?[[8,12],[94,19],[224,19]]:[[24,22],[200,32],[420,28]],{y0:30});
+  const t=wtable(n,['Pathway','E. coli','Humans'],rows,n?[[8,12],[106,17],[226,17]]:[[24,22],[200,32],[420,28]],{y0:30});
   const p=para(n?16:24,t.y+14,'Some pathways use clearly related proteins: RecA and RAD51 and the glycosylase families in all domains of life, MutS and MutL in bacteria and eukaryotes. Others solved the same chemical problem with unrelated machinery (nucleotide excision repair, damage signalling).',n?50:92,'note start f13',17,1.4);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }

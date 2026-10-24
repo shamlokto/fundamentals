@@ -536,8 +536,8 @@ function scP7(n){
   const tx=n?20:330, ty=n?oy+150:40;
   s+=G('a-fade',.8,T(tx,ty-12,'Fractional sterilisation','cname start f14')
     +`<path d="M${tx} ${ty+90} H${tx+270}" stroke="${AXC}" stroke-width="1.2"/>`+[0,1,2].map(i=>`<path d="M${tx+10+i*86} ${ty+88} v-62 h22 v62" stroke="${LESU}" stroke-width="2" fill="none"/>`+T(tx+21+i*86,ty+18,'boil','note mid f11')
-      +(i<2?T(tx+75+i*86,ty+80,'wait','note mid f11'):'')).join('')+T(tx+135,ty+108,'spores germinate between heatings, and the next boil kills them','note mid f11'));
-  const y=(n?ty+130:180);
+      +(i<2?T(tx+75+i*86,ty+80,'wait','note mid f11'):'')).join('')+(n?T(tx+135,ty+108,'spores germinate between heatings,','note mid f11')+T(tx+135,ty+122,'and the next boil kills them','note mid f11'):T(tx+135,ty+108,'spores germinate between heatings, and the next boil kills them','note mid f11')));
+  const y=(n?ty+144:180);
   const b=bullets(n?24:30,y,[['The hay problem','Pouchet’s hay infusions, Pasteur’s own milk flasks and Bastian’s urine grew after boiling. John Tyndall found in 1876–77 that hay infusions resisted boiling far better than others.'],
    ['Spores','Ferdinand Cohn showed in 1876 that the hay bacillus, Bacillus subtilis, forms heat-resistant endospores. Robert Koch described the same in anthrax that year.'],
    ['A better method','Tyndall’s repeated gentle heating (tyndallisation) killed the spores once they germinated. The anomaly that had seemed to support spontaneous generation became evidence for spores.']],n?44:88,{d0:1.6,gap:26});
@@ -584,7 +584,7 @@ function scP10(n){
    ['Then fresh culture','The same hens get a fully virulent culture. They stay well.',[0],[0]],
    ['Control hens','New hens get the same virulent culture. They die.',[1],[1]]];
   let s='',y=36;const hx=n?280:470;
-  rows.forEach((r,i)=>{const L=wrap(r[1],n?34:44);
+  rows.forEach((r,i)=>{const L=wrap(r[1],n?27:44);
     s+=G('a-fade',(i*.8).toFixed(1),badge(n?24:30,y-4,i+1)+T(n?40:46,y,r[0],'cname start f14')+L.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')
       +syringe(hx-90,y+10,40)+hen(hx,y+12,1.15,{dead:i===2})+hen(hx+52,y+12,1.15,{dead:i===2})+mark(hx+100,y+8,i<2,9));
     y+=Math.max(70,24+L.length*16)+14;});
@@ -595,8 +595,8 @@ function scP10(n){
 function scP11(n){
   let s='';const steps=[['5 May','first vaccination'],['17 May','second vaccination'],['31 May','all challenged with virulent anthrax'],['2 June','the result, before a crowd']];
   const x0=n?20:40, w=n?320:560;
-  s+=G('a-fade',0,`<path d="M${x0} 50 H${x0+w}" stroke="${AXC}" stroke-width="1.4"/>`+steps.map((st,i)=>{const x=x0+i*w/3;return `<circle cx="${x}" cy="50" r="5" fill="#2F5276"/>`+Tc(x,38,st[0],'#2F5276',11,'mono '+(i===0?'start':i===3?'end':'mid'),'600')+wrap(st[1],n?14:20).map((l,j)=>T(x,70+j*14,l,'note '+(i===0?'start':i===3?'end':'mid')+' f11')).join('');}).join(''));
-  const gy=n?140:130, gw=n?150:220, gx=[n?20:60,n?190:360];
+  s+=G('a-fade',0,`<path d="M${x0} 50 H${x0+w}" stroke="${AXC}" stroke-width="1.4"/>`+steps.map((st,i)=>{const x=x0+i*w/3;return `<circle cx="${x}" cy="50" r="5" fill="#2F5276"/>`+Tc(x,38,st[0],'#2F5276',11,'mono '+(i===0?'start':i===3?'end':'mid'),'600')+wrap(st[1],n?10:20).map((l,j)=>T(x,70+j*14,l,'note '+(i===0?'start':i===3?'end':'mid')+' f11')).join('');}).join(''));
+  const gy=n?150:130, gw=n?150:220, gx=[n?20:60,n?190:360];
   const grid=(x,dead)=>{let g='';for(let i=0;i<25;i++){const c=i%5,r=Math.floor(i/5);g+=sheep(x+12+c*(gw-24)/4,gy+20+r*24,dead&&i<23);}return g;};
   s+=G('a-fade',1,T(gx[0],gy,'vaccinated (about 25)','cname start f13')+grid(gx[0],false));
   s+=G('a-fade',1.6,T(gx[1],gy,'not vaccinated (about 25)','cname start f13')+grid(gx[1],true));
