@@ -210,7 +210,7 @@ function scHistory(n){
 
 /* ---------- Part II ---------- */
 function scLocus(n){
-  const g=n?{y:56,h:26,list:[[16,46,TR,'tracr'],[66,112,CAS_B,'cas9'],[182,46,CAS_A,'cas1'],[232,36,CAS_A,'cas2'],[272,46,CAS_A,'csn2']],by:96,bx:[66,318]}
+  const g=n?{y:56,h:26,list:[[16,48,TR,'tracr'],[68,92,CAS_B,'cas9'],[164,56,CAS_A,'cas1'],[224,56,CAS_A,'cas2'],[284,58,CAS_A,'csn2']],by:96,bx:[68,342]}
            :{y:150,h:28,list:[[24,56,TR,'tracr'],[86,130,CAS_B,'cas9'],[222,50,CAS_A,'cas1'],[278,40,CAS_A,'cas2'],[324,50,CAS_A,'csn2']],by:192,bx:[86,374]};
   let s='';
   /* SF370: tracrRNA is encoded on the opposite strand to the cas genes, so its arrow points left */
@@ -247,7 +247,7 @@ function scStages(n){
 
 function scAdapt(n){
   const P=n?{d1:56,d2:344,dy:66,ps:[180,236],pam:[238,262],phx:28,phk:.7,cx:190,cy:150,ay:262,ah:26,lx:16,lw:22,sw:44,lab:316,H:340}
-           :{d1:110,d2:610,dy:64,ps:[330,400],pam:[402,430],phx:64,phk:.9,cx:365,cy:150,ay:280,ah:28,lx:60,lw:26,sw:56,lab:340,H:360};
+           :{d1:110,d2:610,dy:64,ps:[330,400],pam:[402,430],phx:64,phk:.9,cx:365,cy:150,ay:280,ah:28,lx:60,lw:26,sw:56,lab:340,H:372};
   let s=G('a-fade',0,phage(P.phx,P.dy-30,P.phk)+dsDNA(P.d1,P.d2,P.dy-4,PH,8)+T(P.d1+4,P.dy+26,'phage DNA','note start'));
   s+=G('a-fade',.4,box(P.ps[0],P.dy-8,P.ps[1]-P.ps[0],16,PH)+box(P.pam[0],P.dy-8,P.pam[1]-P.pam[0],16,PAMC)
     +T((P.ps[0]+P.ps[1])/2,P.dy-16,'protospacer','note mid')+T((P.pam[0]+P.pam[1])/2,P.dy+26,'PAM','mono acc mid f12'));
@@ -259,7 +259,7 @@ function scAdapt(n){
   const x1=P.ps[0]-nsx, y1=(P.dy-8)-P.ay, x2=(c-P.sw/2)-nsx, y2=(y+4)-P.ay;
   s+=G('a-hop',.9,box(nsx+1,P.ay,P.sw-2,P.ah,PH),`--x1:${x1}px;--y1:${y1}px;--x2:${x2}px;--y2:${y2}px`);
   s+=G('a-pop',3.9,rep(nx,P.ay,P.ah));
-  s+=G('a-fade',4.2,T(P.lx+P.lw/2,P.lab,'leader','note mid')+T(nsx+P.sw/2,P.lab+(n?18:0),'new spacer','lab acc mid')+T((nsx+P.sw+old.end)/2,P.lab,'older spacers','note mid'));
+  s+=G('a-fade',4.2,T(P.lx+P.lw/2,P.lab,'leader','note mid')+T(nsx+P.sw/2,P.lab+18,'new spacer','lab acc mid')+T((nsx+P.sw+old.end)/2,P.lab,'older spacers','note mid'));
   return {vb:n?slim(P.H):wide(P.H),s};
 }
 
@@ -297,7 +297,7 @@ function scSearch(n){
 
 const PS='GTCACCTCCAATGACTAGGG', SEQ='AC'+PS+'TGG'+'CA', COMP={A:'T',T:'A',G:'C',C:'G'};
 function scCut(n){
-  const N=SEQ.length, dx=n?12.6:21, x0=n?(360-N*12.6)/2:(640-N*21)/2, fs=n?10.5:15;
+  const N=SEQ.length, dx=n?11.8:21, x0=n?34:(640-N*21)/2, fs=n?10.5:15;
   const yT=n?120:134, yR=n?68:74, yG=n?172:196, yB=n?214:246, H=n?290:330, X=i=>x0+i*dx+dx/2;
   let back=`<ellipse cx="${(X(2)+X(21))/2}" cy="${(yR+yB)/2-4}" rx="${(X(21)-X(2))/2+dx*2.2}" ry="${(yB-yR)/2+20}" fill="${CAS_A}" opacity=".3" class="tint"/>`;
   let flank='', raised='', bot='', guide='';
@@ -325,7 +325,7 @@ function scSelf(n){
   const [a,b]=P.rows;
   let s=G('a-fade',0,T(P.x1,a+30,'Phage DNA','cname start')+dsDNA(P.x1,P.x2,a-4,INK,8)+box(P.s1,a-8,P.s2-P.s1,16,PH)+box(P.s2+2,a-8,P.pw,16,PAMC)+T(P.s2+2+P.pw/2,a+26,'NGG','mono acc mid f11'));
   s+=G('a-pop',1.0,cas9((P.s1+P.s2)/2,a-30,.8,PH))+G('a-pop',1.8,mark(P.mx,a,true)+T(P.mx,a+32,'Cut','lab mid'));
-  s+=G('a-fade',1.4,T(P.x1,b+30,'Own CRISPR array','cname start')+dsDNA(P.x1,P.x2,b-4,INK,8)+rep(P.s1-14,b-9,18)+box(P.s1,b-8,P.s2-P.s1,16,PH)+rep(P.s2,b-9,18)+T(P.s2+18,b+26,'repeat, no PAM','note start'));
+  s+=G('a-fade',1.4,T(P.x1,b+30,'Own CRISPR array','cname start')+dsDNA(P.x1,P.x2,b-4,INK,8)+rep(P.s1-14,b-9,18)+box(P.s1,b-8,P.s2-P.s1,16,PH)+rep(P.s2,b-9,18)+T(n?P.x2:P.s2+18,b+26,'repeat, no PAM','note '+(n?'end':'start')));
   s+=G('a-pop',2.4,`<g opacity=".45">${cas9((P.s1+P.s2)/2,b-40,.8,PH)}</g>`)+G('a-pop',3.0,mark(P.mx,b,false)+T(P.mx,b+32,'Spared','lab mid'));
   s+=G('a-fade',3.4,T(n?180:320,P.H-14,n?'Same spacer. Only the PAM differs.':'Same spacer sequence. Only the PAM differs.','lab mid'));
   return {vb:n?slim(P.H):wide(P.H),s};
@@ -361,7 +361,7 @@ function scRepair(n){
     s+=G('a-fade',.6,`<path d="M300 66 L196 118" class="arrow"/><path d="M340 66 L444 118" class="arrow"/>`+T(236,84,'NHEJ','mono acc end f13')+T(404,84,'HDR','mono acc start f13'));
     s+=G('a-fade',1.2,R(20,130,290,224,'card',6)+dsDNA(40,290,166,INK,8)+box(150,162,20,16,RNA)+T(160,152,'+1 or −2','mono f11 mid')
       +T(40,214,'Non-homologous end joining','cname start')+T(40,238,'Fast, but adds or deletes','note start')+T(40,258,'a few bases','note start')+T(40,292,'→ gene knocked out','lab start'));
-    s+=G('a-fade',2.0,R(330,130,290,224,'card',6)+T(475,146,'repair template','note mid')+dsDNA(370,440,152,INK,6)+dsDNA(440,510,152,GREEN,6)+dsDNA(510,580,152,INK,6)
+    s+=G('a-fade',2.0,R(330,130,290,224,'card',6)+T(475,148,'repair template','note mid')+dsDNA(370,440,158,INK,6)+dsDNA(440,510,158,GREEN,6)+dsDNA(510,580,158,INK,6)
       +dsDNA(350,600,184,INK,8)+box(440,180,70,16,GREEN)
       +T(350,230,'Homology-directed repair','cname start')+T(350,254,'Copies a supplied template','note start')+T(350,274,'to make a precise change','note start')+T(350,306,'→ exact edit','lab start'));
     return {vb:wide(370),s};

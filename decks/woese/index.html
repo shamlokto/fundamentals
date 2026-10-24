@@ -436,7 +436,7 @@ function scWo2(n){
    ['Changes slowly, and unevenly','Some regions barely change, others change faster: one molecule can compare both close and distant relatives.'],['Long enough','About 1,500 nucleotides in the bacterial 16S rRNA: plenty of information.'],['Rarely swapped','As part of the core of the ribosome, it is seldom transferred between lineages.']];
   let s='';const x0=n?20:28, x1=n?340:284, k=(x1-x0)/1542, by=n?70:110;
   const V=[[69,99],[137,242],[433,497],[576,682],[822,879],[986,1043],[1117,1173],[1243,1294],[1435,1465]];
-  let bar=T(x0,by-40,'the 16S rRNA gene of E. coli, about 1,540 nucleotides','note start f12')
+  let bar=(n?T(x0,by-40,'the 16S rRNA gene of E. coli, about 1,540 nucleotides','note start f12'):T(x0,by-56,'the 16S rRNA gene of E. coli,','note start f12')+T(x0,by-40,'about 1,540 nucleotides','note start f12'))
     +`<rect x="${x0}" y="${by-8}" width="${FX(x1-x0)}" height="16" rx="3" fill="#D8D2C2" stroke="${INK}" stroke-width="1"/>`;
   V.forEach((v,i)=>{const a=x0+v[0]*k, w=Math.max(3,(v[1]-v[0])*k), cx=a+w/2;
     bar+=`<rect x="${FX(a)}" y="${by-8}" width="${FX(w)}" height="16" fill="${RNAC}" opacity=".85"/>`
@@ -461,10 +461,10 @@ function scWo3(n){
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 
-const METHTEST={dh:96,dhn:96,
+const METHTEST={dh:112,dhn:112,
  hyps:[['Methanogens are unusual bacteria','bacteria'],['Methanogens are a separate primary group of life','a third group']],
  conds:[
-  {n:'16S rRNA catalogues',d:'SAB between methanogens and typical bacteria, compared with values within bacteria.',draw:(cx,y)=>[['bacteria vs bacteria',.3,BACC],['methanogen vs bacteria',.1,ARCC],['bacteria vs eukaryote',.08,EUKC]].map((r,i)=>`<rect x="${cx-60}" y="${y+14+i*26}" width="${FX(r[1]*500)}" height="16" fill="${r[2]}" stroke="${INK}" stroke-width=".7"/>`+T(cx-70,y+26+i*26,r[0],'note end f11')).join(''),
+  {n:'16S rRNA catalogues',d:'SAB between methanogens and typical bacteria, compared with values within bacteria.',draw:(cx,y,n)=>[['bacteria vs bacteria',.3,BACC],['methanogen vs bacteria',.1,ARCC],['bacteria vs eukaryote',.08,EUKC]].map((r,i)=>`<rect x="${cx-60+(n?36:0)}" y="${y+14+i*26}" width="${FX(r[1]*500)}" height="16" fill="${r[2]}" stroke="${INK}" stroke-width=".7"/>`+T(cx-70+(n?36:0),y+26+i*26,r[0],'note end f11')).join(''),
    pred:[['similar to within bacteria','they share bacterial sequences'],['as low as to eukaryotes','an independent line']],obs:['as low as to eukaryotes','about 0.1, no closer than bacteria are to eukaryotes']},
   {n:'Membrane lipids',d:'The chemistry of the lipids that make the membrane.',draw:(cx,y)=>{
     /* glycerol backbone with two hydrocarbon tails: ester bonds and straight fatty acids (bacteria); ether bonds and branched isoprenoids (methanogens) */
@@ -490,7 +490,7 @@ function scWo4(n){return predictPlate(n,METHTEST,methSel);}
 function scWo5(n){
   const org=['E. coli','Bacillus','Methanobacterium','Methanococcus','yeast','duckweed'], grp=[BACC,BACC,ARCC,ARCC,EUKC,EUKC];
   const M=[[1,.32,.09,.08,.07,.06],[.32,1,.1,.09,.07,.07],[.09,.1,1,.33,.1,.08],[.08,.09,.33,1,.09,.09],[.07,.07,.1,.09,1,.29],[.06,.07,.08,.09,.29,1]];
-  const x0=n?110:170, y0=n?84:96, c=n?38:56;
+  const x0=n?126:170, y0=n?84:96, c=n?36:56;
   let s=G('a-fade',0,org.map((o,i)=>Tc(x0-8,y0+i*c+c/2+4,o,grp[i],n?10:12,'mono end','600')+`<text transform="translate(${x0+i*c+c/2} ${y0-8}) rotate(-35)" class="mono start" style="fill:${grp[i]};font-size:${n?9:11}px;font-weight:600">${o}</text>`).join(''));
   M.forEach((r,i)=>r.forEach((v,j)=>{if(i===j)return;s+=G('a-fade',(.2+.03*(i*6+j)).toFixed(2),`<rect x="${x0+j*c}" y="${y0+i*c}" width="${c-2}" height="${c-2}" fill="${v>.2?grp[i]:'#C9BFAB'}" opacity="${FX(.25+v*2,2)}"/>`+Tc(x0+j*c+c/2-1,y0+i*c+c/2+4,v.toFixed(2),'#3A2E22',n?9:11,'mono mid','600'));}));
   const y=y0+6*c+24;

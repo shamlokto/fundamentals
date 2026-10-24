@@ -497,7 +497,7 @@ function scP4(n){
   return {vb:n?slim(b.y-6):wide(Math.max(b.y,by+40)-4),s:s+b.s};
 }
 
-const FLASKTEST={dh:150,dhn:150,
+const FLASKTEST={dh:164,dhn:164,
  hyps:[['Life arises spontaneously in broth exposed to air','spontaneous'],['Microbes are carried in on dust','dust-borne germs'],['Boiling destroyed a vital force in the broth','broth damaged']],
  conds:[
   {n:'Swan neck, intact',d:'Boiled broth, open to the air through the curved neck.',draw:(cx,y)=>flask(cx-40,y+130,'swan',{r:32}),
@@ -508,8 +508,8 @@ const FLASKTEST={dh:150,dhn:150,
    pred:[['growth','air reaches the broth'],['growth','the broth picks up the trapped dust'],['no growth','the broth is still boiled']],obs:['growth','cloudy within days']},
   {n:'Unboiled broth',d:'A control: the same broth in a swan-neck flask, but never heated.',draw:(cx,y)=>flask(cx-40,y+130,'swan',{r:32,turbid:1,seed:8}),
    pred:[['growth','air reaches the broth'],['growth','microbes were already in it'],['growth','the broth was never harmed']],obs:['growth','cloudy']},
-  {n:'Opened at altitude',d:'Sealed flasks of boiled broth are opened briefly at different places, then resealed.',draw:(cx,y,n)=>{let s=`<path d="M${cx-150} ${y+140} L${cx-30} ${y+20} L${cx+30} ${y+60} L${cx+150} ${y+140} Z" fill="#E3E0D6" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${cx-48} ${y+38} L${cx-30} ${y+20} L${cx-12} ${y+38} Z" fill="#FFF"/>`;
-     [[-110,128,'8/20'],[-60,92,'5/20'],[-30,44,'1/20']].forEach(p=>s+=flask(cx+p[0],y+p[1],'sealed',{r:10,turbid:p[2]!=='1/20',seed:3})+Tc(cx+p[0]-16,y+p[1]-8,p[2],'#2F5276',11,'mono end','600'));return s;},
+  {n:'Opened at altitude',d:'Sealed flasks of boiled broth are opened briefly at different places, then resealed.',draw:(cx,y0,n)=>{const y=y0+14;let s=`<path d="M${cx-150} ${y+140} L${cx-30} ${y+20} L${cx+30} ${y+60} L${cx+150} ${y+140} Z" fill="#E3E0D6" stroke="${GLASSE}" stroke-width="1.2"/><path d="M${cx-48} ${y+38} L${cx-30} ${y+20} L${cx-12} ${y+38} Z" fill="#FFF"/>`;
+     [[-110,128,'8/20'],[-60,92,'5/20'],[-30,44,'1/20']].forEach(p=>s+=flask(cx+p[0],y+p[1],'sealed',{r:10,turbid:p[2]!=='1/20',seed:3})+Tc(cx+p[0]+16,y+p[1]+6,p[2],'#2F5276',11,'mono start halo','600'));return s;},
    pred:[['all grow','air is the same everywhere'],['fewer grow higher up','mountain air carries less dust'],['none grow','the broths are all boiled']],obs:['fewer grow higher up','8, 5 and 1 of 20 flasks, rising in altitude']}]};
 let flaskSel=0;
 function scP5(n){return predictPlate(n,FLASKTEST,flaskSel);}

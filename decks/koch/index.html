@@ -462,7 +462,9 @@ function scK3(n){
    ['If the cause were a living organism','It multiplies in every drop, so the last culture is as strong as the first.','still lethal']];
   let yy=y;
   rows.forEach((r,i)=>{const L=wrap(r[1],n?50:80);s+=G('a-fade',(2.6+i*.4).toFixed(1),T(n?16:24,yy,r[0],'cname start f14')+L.map((l,j)=>T(n?16:24,yy+18+j*16,l,'note start f12')).join('')+mark(n?338:606,yy-4,i===1,8));yy+=24+L.length*16+12;});
-  s+=G('a-fade',3.6,`<rect x="${n?10:18}" y="${yy-14}" width="${n?340:604}" height="26" rx="3" fill="#E7DEC9" stroke="${INK}"/>`+T(n?16:24,yy+4,'Observed: the eighth culture killed mice just like the original blood.','lab start '+(n?'f12':'f13')));
+  const OL=n?['Observed: the eighth culture killed mice','just like the original blood.']:['Observed: the eighth culture killed mice just like the original blood.'];
+  s+=G('a-fade',3.6,`<rect x="${n?10:18}" y="${yy-14}" width="${n?340:604}" height="${8+OL.length*18}" rx="3" fill="#E7DEC9" stroke="${INK}"/>`+OL.map((l,i)=>T(n?16:24,yy+4+i*18,l,'lab start '+(n?'f12':'f13'))).join(''));
+  yy+=(OL.length-1)*18;
   const p=para(n?16:24,yy+40,'Serial passage turns dilution into an argument. The same logic was used again by Beijerinck for tobacco mosaic in 1898, and it is the reasoning behind every passage experiment since.',n?50:92,'note start f13',17,4);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
@@ -502,7 +504,7 @@ function postPic(i,cx,cy){
   return dish(cx,cy+2,30,[[-12,-8,2.4],[-4,-2,2.6],[4,4,2.8],[12,10,3]]);}
 function scK6(n){
   let s='',y;
-  if(!n){POST.forEach((p,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx-58,28,i+1)+T(cx-44,32,p[0],'cname start f13')+postPic(i,cx,92)+wrap(p[1],24).map((l,j)=>T(cx,148+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+52,92,cx+102,92));});y=240;}
+  if(!n){POST.forEach((p,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx,22,i+1)+T(cx,50,p[0],'cname mid f13')+postPic(i,cx,100)+wrap(p[1],24).map((l,j)=>T(cx,156+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+52,100,cx+102,100));});y=248;}
   else{y=24;POST.forEach((p,i)=>{const L=wrap(p[1],30);s+=G('a-fade',(i*.6).toFixed(1),badge(24,y-4,i+1)+T(40,y,p[0],'cname start f14')+L.map((l,j)=>T(16,y+20+j*15,l,'note start f12')).join('')+postPic(i,280,y+26));y+=Math.max(90,28+L.length*15)+12;});}
   const p=para(n?16:24,y+6,'The criteria are usually called Koch’s postulates, but Friedrich Loeffler set them out most explicitly in his 1884 paper on diphtheria, and Jakob Henle, Koch’s teacher, had argued along similar lines in 1840. Koch himself treated them as a standard of evidence, not a rigid rule.',n?50:92,'note start f13',17,2.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
@@ -530,16 +532,16 @@ function scK7(n){
 
 function scK8(n){
   const rows=[['Wild type','virulence gene intact',1,0],['Gene knocked out','virulence lost',0,1],['Gene put back','virulence restored',1,2]];
-  let s='',y=40;const gx=n?20:60, mx=n?300:460;
+  let s='',y=40;const gx=n?20:60, mx=n?296:420;
   s+=G('a-fade',0,T(gx,y-14,'Molecular Koch’s postulates (Stanley Falkow, 1988)','cname start '+(n?'f13':'f14')));
   y+=14;
-  rows.forEach((r,i)=>{const yy=y+i*62;
+  rows.forEach((r,i)=>{const yy=y+12+i*62;
     let gene=`<path d="M${gx} ${yy+8} H${gx+(n?150:240)}" stroke="${BB}" stroke-width="3"/>`;
     if(i>=1)gene+=`<path d="M${gx+40} ${yy} h60 l8 8 l-8 8 h-60z" fill="#E9C9C1" stroke="${INK}"/><path d="M${gx+52} ${yy+2} l36 12 m0 -12 l-36 12" stroke="${LESU}" stroke-width="2"/>`;
     else gene+=`<path d="M${gx+40} ${yy} h60 l8 8 l-8 8 h-60z" fill="#E3B26B" stroke="${INK}"/>`;
-    if(i===2)gene+=`<path d="M${gx+(n?120:170)} ${yy} h44 l8 8 l-8 8 h-44z" fill="#E3B26B" stroke="${INK}"/>`+T(gx+(n?146:196),yy+28,'copy supplied','note mid f11');
+    if(i===2)gene+=`<path d="M${gx+(n?120:170)} ${yy} h44 l8 8 l-8 8 h-44z" fill="#E3B26B" stroke="${INK}"/>`+T(gx+(n?132:196),yy+28,'copy supplied','note mid f11');
     s+=G('a-fade',(.4+i*.6).toFixed(1),gene+T(gx,yy-8,r[0],'lab start f13')+mouse(mx,yy+10,.9,{dead:r[2]===1})+T(mx+(n?0:60),yy+(n?36:14),r[1],'note '+(n?'mid':'start')+' f12'));});
-  y+=3*62+20;
+  y+=3*62+32;
   const b=bullets(n?24:30,y,[['The gene, not just the microbe','The trait is found in pathogenic strains and not in harmless relatives; inactivating the gene reduces virulence; restoring it restores virulence.'],
    ['Genome-wide versions','Transposon screens such as Tn-seq apply the same logic to every gene at once, by counting which mutants are lost during infection.']],n?44:88,{d0:2,gap:26});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};

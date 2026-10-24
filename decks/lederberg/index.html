@@ -440,7 +440,7 @@ function utube(cx,by,o={}){const w=o.w||110,h=o.h||90;
   let s=`<path d="M${cx-w/2} ${by-h} V${by-20} a20 20 0 0 0 20 20 H${cx+w/2-20} a20 20 0 0 0 20 -20 V${by-h}" fill="none" stroke="${GLASSE}" stroke-width="16" stroke-linecap="round"/>`
    +`<path d="M${cx-w/2} ${by-h*.6} V${by-20} a20 20 0 0 0 20 20 H${cx+w/2-20} a20 20 0 0 0 20 -20 V${by-h*.6}" fill="none" stroke="${BROTH}" stroke-width="11"/>`
    +`<path d="M${cx} ${by-10} v20" stroke="${INK}" stroke-width="3" stroke-dasharray="2 2"/>`;
-  if(o.labels)s+=T(cx-w/2,by-h-10,o.labels[0],'note mid f11')+T(cx+w/2,by-h-10,o.labels[1],'note mid f11')+T(cx,by-18,'filter','note mid f11');
+  if(o.labels)s+=T(cx-w/2,by-h-10,o.labels[0],'note mid f11')+T(cx+w/2,by-h-10,o.labels[1],'note mid f11')+T(cx,by+(o.fb||-18),'filter','note mid f11');
   return s;}
 function countDish(cx,cy,R,k,seed){const c=colonySet(Math.min(k,30),seed,R).map(q=>[q[0],q[1],Math.min(q[2],3.2)]);return dish(cx,cy,R,c)+Tc(cx,cy+R+14,String(k),'#2F5276',11,'mono mid','600');}
 function scL1(n){return titlePlate(n,{name:'Joshua Lederberg',dates:'1925–2008',q:'Do bacteria have genes that mutate and recombine, like those of other organisms?',
@@ -453,8 +453,8 @@ function scL2(n){
   let s='';const rows=[['If resistance were induced by the phage',IND,'similar counts in every culture'],['If mutations arose at random, before the phage',SPN,'mostly none, a few “jackpots”'],['Samples from one large culture (control)',ONE,'similar counts either way']];
   let y=34;
   rows.forEach((r,i)=>{s+=G('a-fade',(i*.8).toFixed(1),T(n?16:24,y,r[0],'cname start '+(n?'f13':'f14'))+r[1].map((k,j)=>countDish(x0+j*gap,y+R+12,R,k,j*7+i+1)).join('')+T(n?16:24,y+2*R+48,r[2],'note start f12'));y+=2*R+74;});
-  s+=G('a-fade',2.6,`<rect x="${n?10:18}" y="${y-14}" width="${n?340:604}" height="44" rx="3" fill="#E7DEC9" stroke="${INK}"/>`+T(n?16:24,y+4,'Observed: huge variation between separate cultures,','lab start '+(n?'f12':'f13'))+T(n?16:24,y+20,'far more than between samples of one culture: random mutation','lab start '+(n?'f12':'f13')));
-  const p=para(n?16:24,y+52,'Salvador Luria and Max Delbrück, 1943, with E. coli and phage T1. A mutation early in the growth of one culture leaves many resistant descendants; one that happens late leaves few; most cultures have none. That distribution, not the average, is the evidence.',n?50:92,'note start f13',17,3);
+  s+=G('a-fade',2.6,`<rect x="${n?10:18}" y="${y-14}" width="${n?340:604}" height="${n?60:44}" rx="3" fill="#E7DEC9" stroke="${INK}"/>`+(n?['Observed: huge variation between separate','cultures, far more than between samples of','one culture: random mutation']:['Observed: huge variation between separate cultures,','far more than between samples of one culture: random mutation']).map((l,i)=>T(n?16:24,y+4+i*16,l,'lab start '+(n?'f12':'f13'))).join(''));
+  const p=para(n?16:24,y+(n?68:52),'Salvador Luria and Max Delbrück, 1943, with E. coli and phage T1. A mutation early in the growth of one culture leaves many resistant descendants; one that happens late leaves few; most cultures have none. That distribution, not the average, is the evidence.',n?50:92,'note start f13',17,3);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 
@@ -476,21 +476,21 @@ function scL4(n){
   const cx=n?[90,270]:[150,470], y=40;
   const st=[['Y-10','needs threonine, leucine, thiamine'],['Y-24','needs biotin, phenylalanine, cystine']];
   let s='';
-  st.forEach((t,i)=>{s+=G('a-fade',(i*.5).toFixed(1),T(cx[i],y,t[0],'cname mid f15')+wrap(t[1],n?22:30).map((l,j)=>T(cx[i],y+18+j*15,l,'note mid f12')).join('')+dish(cx[i],y+90,n?38:44,[])+T(cx[i],y+150,'alone on minimal medium: nothing','note mid f11'));});
-  const mx=n?180:310, my=y+220;
-  s+=G('a-fade',1.4,arw(cx[0]+30,y+160,mx-30,my-50)+arw(cx[1]-30,y+160,mx+30,my-50)+dish(mx,my,n?44:50,colonySet(6,11,n?44:50))+T(mx,my+(n?62:68),'mixed: prototrophs, about 1 in 10 million','lab mid f12'));
+  st.forEach((t,i)=>{s+=G('a-fade',(i*.5).toFixed(1),T(cx[i],y,t[0],'cname mid f15')+wrap(t[1],n?22:30).map((l,j)=>T(cx[i],y+18+j*15,l,'note mid f12')).join('')+dish(cx[i],y+90,n?38:44,[])+(n?T(cx[i],y+150,'alone on minimal','note mid f11')+T(cx[i],y+164,'medium: nothing','note mid f11'):T(cx[i],y+150,'alone on minimal medium: nothing','note mid f11')));});
+  const mx=n?180:310, my=y+(n?236:220);
+  s+=G('a-fade',1.4,arw(cx[0]+30,y+(n?172:160),mx-30,my-50)+arw(cx[1]-30,y+(n?172:160),mx+30,my-50)+dish(mx,my,n?44:50,colonySet(6,11,n?44:50))+T(mx,my+(n?62:68),'mixed: prototrophs, about 1 in 10 million','lab mid f12'));
   const p=para(n?16:24,my+(n?90:96),'Lederberg, a medical student of 21 working with Edward Tatum at Yale, 1946. Using two strains that each needed three nutrients made reversion essentially impossible: all three defects would have to revert in one cell. Prototrophs therefore had to combine genes from both parents.',n?50:92,'note start f13',17,2.4);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 
-const MATE={dh:118,dhn:118,
+const MATE={dh:132,dhn:132,
  hyps:[['Back-mutation (reversion)','reversion'],['Free DNA (transformation)','transformation'],['Cross-feeding of nutrients','cross-feeding'],['Cell-to-cell contact','contact']],
  conds:[
   {n:'Each strain alone',d:'Y-10 and Y-24 plated separately on minimal medium.',draw:(cx,y)=>dish(cx-70,y+56,42,[])+dish(cx+70,y+56,42,[]),
    pred:[['prototrophs','reversion needs no partner'],['none','no donor DNA'],['none','no partner to feed it'],['none','no partner']],obs:['none','no colonies']},
   {n:'Pick and regrow',d:'Colonies from the mixed plate are grown on their own on minimal medium.',draw:(cx,y)=>dish(cx-70,y+56,42,colonySet(5,11,42))+arw(cx-20,y+56,cx+20,y+56)+tube(cx+70,y+100,{h:70,w:22,turbid:1}),
    pred:[['stable prototrophs',''],['stable prototrophs',''],['no stable growth','they still need a partner'],['stable prototrophs','']],obs:['stable prototrophs','they breed true']},
-  {n:'U-tube with a filter',d:'Strains on either side of a filter that passes medium and molecules but not cells (Bernard Davis, 1950).',draw:(cx,y)=>utube(cx,y+108,{w:130,h:86,labels:['Y-10','Y-24']}),
+  {n:'U-tube with a filter',d:'Strains on either side of a filter that passes medium and molecules but not cells (Bernard Davis, 1950).',draw:(cx,y)=>utube(cx,y+114,{w:130,h:80,labels:['Y-10','Y-24']}),
    pred:[['none','reversion rate is nil'],['prototrophs','DNA passes the filter'],['none','no stable change'],['none','no contact']],obs:['none','no prototrophs']},
   {n:'Add DNase to the mixture',d:'The two strains mixed in the presence of DNA-degrading enzyme.',draw:(cx,y)=>dish(cx,y+56,46,colonySet(6,11,46))+T(cx+60,y+30,'+ DNase','note start f12'),
    pred:[['none','reversion rate is nil'],['none','DNA destroyed'],['none','no stable change'],['prototrophs','DNase cannot reach inside cells']],obs:['prototrophs','recombinants still appear']}]};
@@ -515,9 +515,9 @@ function scL6(n){
 
 function scL7(n){
   const cx=n?180:180, by=n?170:180;
-  let s=G('a-fade',0,utube(cx,by,{w:150,h:100,labels:['strain LT-22','strain LT-2']}));
+  let s=G('a-fade',0,utube(cx,by,{w:150,h:100,fb:26,labels:['strain LT-22','strain LT-2']}));
   s+=G('a-fade',.8,`<g transform="translate(${cx} ${by-38}) scale(.6)"><path d="M0 -24 l10 6 v12 l-10 6 l-10 -6 v-12z" fill="#C9A9D6" stroke="${INK}"/><rect x="-2" y="0" width="4" height="12" fill="#D6CDB8" stroke="${INK}"/></g>`+arw(cx-34,by-66,cx+34,by-66,{blue:1})+arw(cx+34,by-32,cx-34,by-32,{red:1})+T(cx,by-78,'P22 crosses both ways','note mid f11'));
-  const b=n?bullets(24,by+56,[['Contact not needed','With Norton Zinder (1952), Lederberg found Salmonella recombinants even across the U-tube filter, and the agent was resistant to DNase.'],['A phage carried the genes','The agent was the temperate phage P22, carried by LT-22. It grew on LT-2, and a few particles packaged LT-2 DNA instead of their own and carried it back to LT-22: generalised transduction.'],['Three routes','Transformation (free DNA), conjugation (contact) and transduction (phage) are still the three ways bacteria exchange genes.']],44,{d0:1.4,gap:24})
+  const b=n?bullets(24,by+70,[['Contact not needed','With Norton Zinder (1952), Lederberg found Salmonella recombinants even across the U-tube filter, and the agent was resistant to DNase.'],['A phage carried the genes','The agent was the temperate phage P22, carried by LT-22. It grew on LT-2, and a few particles packaged LT-2 DNA instead of their own and carried it back to LT-22: generalised transduction.'],['Three routes','Transformation (free DNA), conjugation (contact) and transduction (phage) are still the three ways bacteria exchange genes.']],44,{d0:1.4,gap:24})
     :bullets(330,44,[['Contact not needed','With Norton Zinder (1952), Lederberg found Salmonella recombinants even across the U-tube filter, and the agent was resistant to DNase.'],['A phage carried the genes','The agent was the temperate phage P22, carried by LT-22. It grew on LT-2, and a few particles packaged LT-2 DNA instead of their own and carried it back to LT-22: generalised transduction.'],['Three routes','Transformation (free DNA), conjugation (contact) and transduction (phage) are still the three ways bacteria exchange genes.']],40,{d0:1.4,gap:24});
   return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,by+50)),s:s+b.s};
 }

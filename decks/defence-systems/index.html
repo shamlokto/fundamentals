@@ -514,7 +514,7 @@ function scD1(n){
         +Tc(132,y+5,g[0],'#3A2E22',11,'mono start','600')
         +wrap(g[1],30).map((l,j)=>T(132,y+22+j*14,l,'note start f11')).join(''));});
   }
-  let y=n?74+4*54+22:cy+102;
+  let y=n?74+4*54+22:cy+116;
   const b=bullets(n?24:30,y,[['Defence is layered, and most of it is not CRISPR','A given strain typically carries several systems acting at different stages. Surveys of sequenced genomes find a median of five or six anti-phage systems per genome, and CRISPR is present in well under half of bacteria.'],
    ['Two strategies, not one','Either destroy the invading nucleic acid and survive, or detect the infection and die before the phage finishes — abortive infection sacrifices the cell to protect its clonal neighbours. The second strategy only makes sense because the neighbours are relatives.'],
    ['Defence systems cluster in the genome','They sit together in “defence islands”, next to each other and next to mobile elements. That observation is itself a discovery tool: genes of unknown function that repeatedly appear in those islands usually turn out to be new defence systems.'],
@@ -523,7 +523,7 @@ function scD1(n){
 }
 
 function scD2(n){
-  let s='';const x=n?18:40, W=n?324:340, y=n?60:62;
+  let s='';const x=n?18:40, W=n?324:340, y=n?72:76;
   /* two strands, EcoRI site GAATTC; M.EcoRI methylates the second A on each strand, R.EcoRI cuts G^AATTC */
   const cw=n?13:15, sx=x+W/2-3*cw, top='GAATTC', bot='CTTAAG';
   const site=(yy,meth,cut)=>{const y1=yy-8,y2=yy+10;let t='';
@@ -534,12 +534,12 @@ function scD2(n){
     if(meth){const mx1=sx+2*cw+cw/2, mx2=sx+3*cw+cw/2;
       t+=`<circle cx="${FX(mx1)}" cy="${FX(y1-17)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`+ln(mx1,y1-13,mx1,y1-10,INK,.8)
         +`<circle cx="${FX(mx2)}" cy="${FX(y2+11)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`+ln(mx2,y2+4,mx2,y2+7,INK,.8)
-        +T(FX(mx1+8),FX(y1-14),'CH₃ (N6-methyl-A)','note start f12 halo')+T(FX(mx2+8),FX(y2+15),'CH₃','note start f12 halo');}
+        +T(FX(mx1+8),FX(y1-19),'CH₃ (N6-methyl-A)','note start f12 halo')+T(FX(mx2+8),FX(y2+21),'CH₃','note start f12 halo');}
     if(cut){const c1=sx+cw, c2=sx+5*cw, ym=(y1+y2)/2-3;
       t+=`<path d="M${FX(c1)} ${FX(y1-15)} V${FX(ym)} H${FX(c2)} V${FX(y2+7)}" stroke="${PHG}" stroke-width="2.2" fill="none"/>`;}
     return t;};
   const side=(yy,l1,l2)=>n?'':T(x+W+20,yy-4,l1,'note start f13')+T(x+W+20,yy+13,l2,'note start f13');
-  s+=G('a-fade',0,T(x,y-36,n?'host DNA: site methylated on both strands':'host DNA: M.EcoRI has methylated the site on both strands','note start f12')
+  s+=G('a-fade',0,T(x,y-46,n?'host DNA: site methylated on both strands':'host DNA: M.EcoRI has methylated the site on both strands','note start f12')
     +site(y,true,false)+side(y,'R.EcoRI cannot cut:','DNA left alone'));
   const y2=y+(n?92:96);
   s+=G('a-fade',.6,T(x,y2-36,n?'phage DNA: unmethylated, so R.EcoRI cuts':'incoming phage DNA: unmethylated, so R.EcoRI cuts G↓AATTC','note start f12')
@@ -562,7 +562,7 @@ function scD3(n){
   let s='';const x=n?18:40, y=n?54:60, W=n?320:560;
   /* CRISPR array */
   const unit=W/7;
-  s+=G('a-fade',0,gArrow(x,y,unit*1.3,'cas genes',RECC,{h:17}));
+  s+=G('a-fade',0,gArrow(x,y,unit*1.3,n?'cas':'cas genes',RECC,{h:17}));
   /* leader, then repeat–spacer units, ending in a terminal repeat */
   const L0=x+unit*1.4, lw=unit*.5, rw=unit*.3, sw=unit*.62;
   let ax=L0+lw+unit*.05, arr=`<rect x="${FX(L0)}" y="${FX(y-7)}" width="${FX(lw)}" height="14" rx="2" fill="#EFE6D2" stroke="${INK}" stroke-width=".6"/>`;
@@ -581,7 +581,7 @@ function scD3(n){
    ['Interference','The crRNA guides an effector — Cascade plus Cas3, Cas9, Cas12, Cas13 — to a matching sequence. In types I, II and V, base pairing beside a correct PAM licenses cleavage; the same sequence inside the array has no PAM, so the cell does not cut itself. Type III instead checks that the crRNA tag does not pair with a repeat.']];
   if(n){steps.forEach((st,i)=>{const b=boxItem(16,yy,332,st[0],st[1],{num:i+1,cw:6.1});s+=G('a-fade',(1.4+i*.3).toFixed(1),b.s);yy+=b.h+9;});}
   else{steps.forEach((st,i)=>{const b=boxItem(24,yy,592,st[0],st[1],{num:i+1,cw:6.3});s+=G('a-fade',(1.4+i*.3).toFixed(1),b.s);yy+=b.h+10;});}
-  const b2=bullets(n?24:30,yy+8,[['Two classes, six types','Class 1 systems — types I, III and IV — use a multi-subunit effector complex and account for most CRISPR in nature. Class 2 — types II, V and VI — use a single protein, which is precisely why Cas9 and Cas12a became tools.'],
+  const b2=bullets(n?24:30,yy+20,[['Two classes, six types','Class 1 systems — types I, III and IV — use a multi-subunit effector complex and account for most CRISPR in nature. Class 2 — types II, V and VI — use a single protein, which is precisely why Cas9 and Cas12a became tools.'],
    ['Heritable, sequence-specific, and acquired','This is the only bacterial defence system with a memory. A population records the phages it has met, and that record is readable: spacer content dates and orders past encounters, and matches spacers to the phages circulating in the same environment.'],
    ['Not only phages','CRISPR targets plasmids and ICEs as well, which makes it a genuine barrier to horizontal gene transfer — and a cost, when the element being excluded carries something useful.']],n?44:88,{d0:2.4,gap:24});
   return {vb:n?slim(b2.y-6):wide(b2.y-6),s:s+b2.s};
@@ -628,16 +628,16 @@ function scD5(n){
 
 function scD6(n){
   let s='';const y=n?52:58, cx=n?180:320;
-  const stepW=n?104:168;
+  const stepW=n?104:184;
   const nodes=[['sensor','detects infection',INTC],[n?'messenger':'second messenger','a cyclic nucleotide',METC],['effector','kills the cell or the phage',PHG]];
   nodes.forEach((nd,i)=>{const x=cx+(i-1)*stepW;
-    s+=G('a-fade',(i*.4).toFixed(1),`<rect x="${FX(x-(n?44:66))}" y="${y}" width="${n?88:132}" height="58" rx="5" fill="#E7DEC9" stroke="${INK}"/>`
+    s+=G('a-fade',(i*.4).toFixed(1),`<rect x="${FX(x-(n?44:76))}" y="${y}" width="${n?88:152}" height="58" rx="5" fill="#E7DEC9" stroke="${INK}"/>`
       +Tc(x,y+(n?18:20),nd[0],'#3A2E22',n?11:12,'mono mid','600')
       +wrap(nd[1],n?14:20).map((l,j)=>T(x,y+36+j*14,l,'note mid f12')).join(''));
-    if(i<2)s+=G('a-fade',(.3+i*.4).toFixed(1),arw(x+(n?46:68),y+29,x+stepW-(n?46:68),y+29,{blue:1}));});
+    if(i<2)s+=G('a-fade',(.3+i*.4).toFixed(1),arw(x+(n?46:78),y+29,x+stepW-(n?46:78),y+29,{blue:1}));});
   s+=G('a-fade',1.4,`<circle cx="${cx}" cy="${y+(n?80:84)}" r="7" fill="${METC}" fill-opacity=".6" stroke="${INK}"/>`
     +Tc(cx,y+(n?102:106),'cGAMP, cyclic tri-AMP, cyclic ADP-ribose','#6A5B47',10,'mono mid'));
-  let yy=y+(n?124:130);
+  let yy=y+(n?134:142);
   const rows=[['CBASS','a cGAS/DncV-like cyclase','cyclic di- or tri-nucleotide','phospholipase, nuclease, or a transmembrane pore'],
    ['Thoeris','a TIR-domain protein','cyclic ADP-ribose isomer','a SIR2 domain that destroys NAD⁺'],
    ['Type III CRISPR','Cas10, on target recognition','cyclic oligoadenylate','Csm6/Csx1, a promiscuous RNase'],
@@ -654,7 +654,8 @@ function scD7(n){
   s+=G('a-fade',0,T(n?16:24,28,'A defence island, and how it is read','cname start f14'));
   s+=G('a-fade',.2,dLine(x,W,y,'#D6CDB8',5));
   const H=n?'':'hyp';
-  const g=[['RM',RECC,.00,.13],[H,CLOUD,.14,.08],['abiE',PHG,.23,.11],[H,CLOUD,.35,.08],['cas',INTC,.44,.16],[H,CLOUD,.61,.08],['TA',METC,.70,.10],[H,CLOUD,.81,.08],['BREX',PLS,.90,.10]];
+  const g=n?[['RM',RECC,.00,.11],[H,CLOUD,.115,.05],['abiE',PHG,.17,.16],[H,CLOUD,.335,.05],['cas',INTC,.39,.14],[H,CLOUD,.535,.05],['TA',METC,.59,.11],[H,CLOUD,.705,.05],['BREX',PLS,.76,.165]]
+    :[['RM',RECC,.00,.13],[H,CLOUD,.14,.08],['abiE',PHG,.23,.11],[H,CLOUD,.35,.08],['cas',INTC,.44,.16],[H,CLOUD,.61,.08],['TA',METC,.70,.10],[H,CLOUD,.81,.08],['BREX',PLS,.90,.10]];
   g.forEach((p,i)=>{s+=G('a-fade',(.3+i*.12).toFixed(2),gArrow(x+p[2]*W,y,p[3]*W-4,p[0],p[1],{h:16,fs:n?8:10}));});
   s+=G('a-fade',1.6,Tc(x,y+28,n?'known systems in colour; others grey':'known systems in colour; genes of unknown function in grey','#6A5B47',10,'mono start'));
   let yy=y+(n?52:56);

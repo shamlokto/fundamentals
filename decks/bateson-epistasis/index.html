@@ -426,7 +426,7 @@ function scPrint(n){
   const bins=[9,3,3,1], start=[0,9,12,15], heads=['A_ B_','A_ bb','aa B_','aa bb'];
   const P=n?{x0:16,u:328/16,hy:30,ry:i=>52+i*90,bo:30,bh:34,lx:16,h:510}:{x0:200,u:420/16,hy:44,ry:i=>62+i*66,bo:0,bh:40,lx:20,h:400};
   let s='';
-  heads.forEach((h,i)=>s+=G('a-fade',0,T((P.x0+(start[i]+bins[i]/2)*P.u).toFixed(1),P.hy,h,'gam mid')));
+  heads.forEach((h,i)=>s+=G('a-fade',0,T((P.x0+(start[i]+bins[i]/2)*P.u).toFixed(1),P.hy-(n&&i===3?16:0),h,'gam mid')));
   rows.forEach((r,i)=>{
     const y=P.ry(i), by=y+P.bo, d=.3+i*.6;
     let g=n?T(P.lx,y+20,r[0],'mono cname start')+T(P.lx+(r[0].length*9.5+10),y+20,r[1],'note start')

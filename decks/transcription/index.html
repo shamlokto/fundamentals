@@ -200,7 +200,7 @@ function scMessenger(n){
 
 function scFindPol(n){
   const card=(x,y,w,h,col,title,sub,eq,res,ok,dl)=>G('a-fade',dl,box(x,y,w,h,'#E7DEC9',4)+`<rect x="${x}" y="${y}" width="8" height="${h}" fill="${col}"/>`+T(x+20,y+28,title,'cname start')+T(x+20,y+48,sub,'note start f12')
-    +Tc(x+20,y+80,eq,'#3A2E22',n?12:13,'mono start')+T(x+20,y+106,res,'note start '+(n?'f13':''))+mark(x+w-22,y+24,ok,10));
+    +Tc(x+20,y+80,eq,'#3A2E22',n?12:13,'mono start')+T(x+20,y+106,res,'note start '+(n?'f13':''))+mark(x+w-22,y+h-24,ok,10));
   if(!n){
     let s=card(20,30,290,130,'#B4766E','Polynucleotide phosphorylase','Ochoa & Grunberg-Manago, 1955','NDPs  →  RNA + Pi','makes RNA, but copies nothing',false,0);
     s+=card(330,30,290,130,POLD,'DNA-dependent RNA polymerase','Weiss; Hurwitz; Stevens, 1959–60','NTPs + DNA  →  RNA + PPi','RNA complementary to the DNA',true,1.0);
@@ -221,7 +221,7 @@ function scSigma(n){
   s+=G('a-fade',.6,`<path d="M${hx+(n?40:50)} ${hy} h${n?30:50}" class="arrow"/>`+`<rect x="${hx+(n?78:110)}" y="${hy-36}" width="22" height="72" rx="4" fill="#E3D9C3" stroke="${INK}"/>`+T(hx+(n?89:121),hy+52,n?'column':'phosphocellulose','note mid f12'));
   s+=G('a-fade',1.2,`<path d="M${hx+(n?104:136)} ${hy-10} l${n?24:34} -12" class="arrow"/><path d="M${hx+(n?104:136)} ${hy+10} l${n?28:40} 16" class="arrow"/>`+rnap(hx+(n?168:220),hy-28,n?.9:1,false)+T(hx+(n?168:220)+(n?36:42),hy-24,'core','note start f12')
     +`<ellipse cx="${hx+(n?162:214)}" cy="${hy+32}" rx="14" ry="8" fill="${SIG}" stroke="${INK}" class="tint"/>`+T(hx+(n?162:214)+(n?22:24),hy+36,'σ','mono start f15'));
-  const r1=n?150:172, r2=n?230:252, x1=n?14:40, x2=n?346:600;
+  const r1=n?166:172, r2=n?246:252, x1=n?14:40, x2=n?346:600;
   const row=(y,title)=>T(x1,y-26,title,'cname start '+(n?'f15':''))+dsDNA(x1,x2,y,DNA,7);
   s+=G('a-fade',1.8,row(r1,n?'Core alone':'Core alone: starts anywhere'));
   (n?[60,150,240,310]:[90,230,360,520]).forEach((x,i)=>s+=G('a-pop',(2.2+i*.15).toFixed(2),wave(x,x+(n?26:40),r1-10,RNAC,2,2.5,8)));
@@ -240,10 +240,10 @@ function scThree(n){
   let s=G('a-fade',0,ln(P.x0,P.y1,P.x1,P.y1,'#6A5B47',1.4)+ln(P.x0,P.y0,P.x0,P.y1,'#6A5B47',1.4)+T((P.x0+P.x1)/2,P.y1+24,'salt gradient  →','note mid f12')+T(P.x0+4,P.y0-10,'activity','note start f12'));
   [[.2,.06,.75,'I'],[.5,.06,.9,'II'],[.8,.06,.5,'III']].forEach((p,i)=>{s+=G('a-fade',(.5+i*.5).toFixed(1),`<path d="${peak(p[0],p[1],p[2])}" stroke="${[ROSE,BLUE,TEAL][i]}" stroke-width="2.6" fill="none"/>`+Tc(P.x0+W*p[0],P.y1-H*p[2]-10,p[3],[ROSE,BLUE,TEAL][i],15,'mono mid','600'));});
   const rows=[['Pol I','rRNA (nucleolus)','resistant',0],['Pol II','mRNA','very sensitive',3],['Pol III','tRNA, 5S rRNA','moderate',2]];
-  const tx=n?14:400, ty=n?P.y1+60:52;
-  s+=G('a-fade',2.2,T(tx,ty,'','')+T(n?14:400,ty-14+ (n?0:0),'','')+T(tx,ty,'enzyme','note start f12')+T(tx+(n?70:72),ty,'makes','note start f12')+T(tx+(n?220:170),ty,'α-amanitin','note start f12')+ln(tx,ty+8,tx+(n?330:230),ty+8));
-  rows.forEach((r,i)=>{const y=ty+32+i*(n?30:40);s+=G('a-fade',(2.4+i*.3).toFixed(1),T(tx,y,r[0],'cname start '+(n?'f15':''))+T(tx+(n?70:72),y,r[1],'note start '+(n?'f12':'f13'))
-    +[0,1,2].map(j=>`<rect x="${tx+(n?220:170)+j*14}" y="${y-10}" width="11" height="11" rx="2" fill="${j<r[3]?RED:'none'}" stroke="${INK}" stroke-width=".7"/>`).join('')+(n?'':T(tx+(n?220:170),y+16,r[2],'note start f11')));});
+  const tx=n?14:390, ty=n?P.y1+60:52;
+  s+=G('a-fade',2.2,T(tx,ty,'','')+T(n?14:400,ty-14+ (n?0:0),'','')+T(tx,ty,'enzyme','note start f12')+T(tx+(n?70:70),ty,'makes','note start f12')+T(tx+(n?220:182),ty,'α-amanitin','note start f12')+ln(tx,ty+8,tx+(n?330:244),ty+8));
+  rows.forEach((r,i)=>{const y=ty+32+i*(n?30:40);s+=G('a-fade',(2.4+i*.3).toFixed(1),T(tx,y,r[0],'cname start '+(n?'f15':''))+T(tx+(n?70:70),y,r[1],'note start '+(n?'f12':'f13'))
+    +[0,1,2].map(j=>`<rect x="${tx+(n?220:182)+j*14}" y="${y-10}" width="11" height="11" rx="2" fill="${j<r[3]?RED:'none'}" stroke="${INK}" stroke-width=".7"/>`).join('')+(n?'':T(tx+182,y+16,r[2],'note start f11')));});
   const by=n?ty+32+3*30+10:P.y1+56;
   s+=G('a-fade',3.4,T(n?180:320,by,'Roeder & Rutter, 1969','note mid'));
   return {vb:n?slim(by+14):wide(by+14),s};
@@ -263,8 +263,8 @@ function scRoger(n){
     s+=G('a-fade',.8,T(250,40,'1959','mono acc start f13')+T(300,40,'aged 12, in Stockholm for his father’s Nobel','lab start f15'));
     s+=G('a-fade',1.4,T(250,80,'1974','mono acc start f13')+T(300,80,'at the MRC lab in Cambridge, he proposes','lab start f15')+T(300,100,'the nucleosome: DNA wound on histone spools','lab start f15'));
     s+=G('a-fade',2.0,nucleosomes(250,620,170,1.1,4));
-    s+=G('a-fade',2.6,T(435,222,'~147 bp around 8 histones (2 each of H2A, H2B, H3, H4), repeating every ~200 bp','note mid f12')+T(435,244,'Chromatin, not bare DNA, is what RNA polymerase must read','lab mid f15'));
-    return {vb:wide(280),s};
+    s+=G('a-fade',2.6,T(435,222,'~147 bp around 8 histones (2 each of H2A, H2B,','note mid f12')+T(435,238,'H3, H4), repeating every ~200 bp','note mid f12')+T(435,262,'Chromatin, not bare DNA, is what','lab mid f15')+T(435,281,'RNA polymerase must read','lab mid f15'));
+    return {vb:wide(296),s};
   }
   let s=G('a-pop',0,portrait(70,72,.5,false))+G('a-fade',.4,T(130,52,'Roger D. Kornberg','cname start')+T(130,72,'born 1947','note start')+T(130,90,'son of Arthur Kornberg','note start f12'));
   s+=G('a-fade',.8,T(14,152,'1959','mono acc start f13')+T(56,152,'aged 12, at his father’s Nobel','lab start f14'));
@@ -335,7 +335,7 @@ function scVs(n){
   // a transcription bubble: duplex upstream, ~9-bp RNA–DNA hybrid at the polymerase, RNA 5' end peeling away
   const hb=tx2-74, bs=tx2-92, rx=tx1+(tx2-tx1)*.2;
   s+=G('a-fade',2.4,`<path d="M${tx1} ${yb+30} H${tx2}" stroke="${DNA}" stroke-width="2.4"/>`+`<path d="M${tx1} ${yb+40} H${bs} Q${bs+10} ${yb+52} ${bs+24} ${yb+52} H${tx2}" stroke="${DNA}" stroke-width="2.2" fill="none" opacity=".75"/>`+rungs(tx1,bs,yb+30,yb+40)
-    +T(tx1-4,yb+34,'3′','mono end f12')+T(tx1-4,yb+45,'5′','mono end f12')+T(tx1,yb+68,'below: non-template strand','note start f12')+T(tx1,yb+20,'template strand','note start f12'));
+    +T(tx1-4,yb+32,'3′','mono end f12')+T(tx1-4,yb+50,'5′','mono end f12')+T(tx1,yb+68,'below: non-template strand','note start f12')+T(tx1,yb+20,'template strand','note start f12'));
   s+=G('a-fade',2.8,`<path d="M${hb} ${yb+22} H${tx2-20}" stroke="${RNAC}" stroke-width="2.6"/>`+rungs(hb,tx2-20,yb+22,yb+30)
     +`<path d="M${hb} ${yb+22} C ${hb-30} ${yb+20}, ${rx+60} ${yb-6}, ${rx} ${yb-8}" stroke="${RNAC}" stroke-width="2.6" fill="none"/>`+T(rx-4,yb-4,'5′','mono end f12')+T(rx+(n?70:110),yb-16,'RNA leaves the template','note mid f12')+rnap(tx2-14,yb+26,n?.7:.85,false));
   return {vb:n?slim(yb+76):wide(yb+78),s};
@@ -401,15 +401,15 @@ function scInside(n){
   let s=G('a-fade',0,`<g transform="translate(${ox} 0) scale(${k})">${ecShapes()}</g>`);
   const pos=[[598,128,'downstream DNA'],[222,30,'upstream DNA'],[300,124,'RNA–DNA hybrid, ~9 bp'],[150,256,'RNA exit, under the β flap'],[324,190,'active site, Mg²⁺'],[384,112,'β′ bridge helix'],[408,232,'β′ trigger loop'],[372,284,'secondary channel (NTPs)'],[200,74,'β′ clamp'],[214,236,'β wall'],[500,206,'β′ jaw']];
   pos.forEach((p,i)=>s+=G('a-pop',(1+i*.08).toFixed(2),badge(ox+p[0]*k,p[1]*k,i+1)));
-  const top=n?186:330, cols=n?2:3, cw=n?172:210;
-  pos.forEach((p,i)=>{const c=i%cols,r=Math.floor(i/cols),x=(n?16:30)+c*cw,y=top+r*24;s+=G('a-fade',(1.8+i*.05).toFixed(2),badge(x,y,i+1)+T(x+14,y+5,p[2],'lab start '+(n?'f13':'f14')));});
+  const top=n?186:330, cols=n?1:3, cw=n?172:210;
+  pos.forEach((p,i)=>{const c=i%cols,r=Math.floor(i/cols),x=(n?16:30)+c*cw,y=top+r*(n?22:24);s+=G('a-fade',(1.8+i*.05).toFixed(2),badge(x,y,i+1)+T(x+14,y+5,p[2],'lab start '+(n?'f13':'f14')));});
   if(!n)s+=G('a-fade',1.2,`<path d="M560 60 h50" stroke="${INK}" stroke-width="1.6" marker-end="url(#ahp)"/>`+T(585,52,'moves','note mid f12'));
   const rows=Math.ceil(pos.length/cols);
-  return {vb:n?slim(top+rows*24):wide(top+rows*24),s};
+  return {vb:n?slim(top+rows*22):wide(top+rows*24),s};
 }
 
 function scAdd(n){
-  const panels=[['NTP arrives','enters through the pore'],['Trigger loop closes','checks the base pair'],['Bond forms','PPi released'],['Translocate','one step downstream']];
+  const panels=[['NTP arrives','enters through the pore'],[n?'Trigger loop closes':'Loop closes',n?'checks the base pair':'trigger loop checks the pair'],['Bond forms','PPi released'],['Translocate','one step downstream']];
   const pw=n?170:150, ph=n?140:150, cols=n?2:4;
   let s='';
   panels.forEach((p,i)=>{const c=i%cols,r=Math.floor(i/cols),ox=(n?10:10)+c*(pw+(n?0:8)),oy=(n?10:20)+r*(ph+30);
@@ -421,7 +421,7 @@ function scAdd(n){
     if(i===1)g+=`<circle cx="${as+2}" cy="${ty-14}" r="6" fill="${BLUE}" stroke="${INK}"/><path d="M${as+16} ${ty-40} C ${as+26} ${ty-20}, ${as+20} ${ty-4}, ${as+8} ${ty-6}" stroke="${ROSE}" stroke-width="3" fill="none"/>`;
     if(i===2)g+=`<path d="M${as-8} ${ty-12} H${as+4}" stroke="${RNAC}" stroke-width="2.6"/>`+[0,1].map(j=>`<circle cx="${as+6+j*10}" cy="${ty-46}" r="4" fill="${SIG}" stroke="${INK}"/>`).join('')+T(as+30,ty-42,'PPi','mono start f10');
     if(i===3)g+=`<path d="M${as-20} ${ty-12} H${as-8}" stroke="${RNAC}" stroke-width="2.6"/>`+`<path d="M${ox+20} ${oy+ph-10} h40" stroke="${INK}" stroke-width="1.4" marker-end="url(#ahp)"/>`+T(ox+66,oy+ph-6,'1 nt','mono start f10');
-    g+=T(ox+(pw-6)/2,oy+40,p[1],'note mid f12');
+    g+=wrap(p[1],n?40:22).map((l,j)=>T(ox+(pw-6)/2,oy+40+j*15,l,'note mid f12')).join('');
     s+=G('a-fade',(i*.7).toFixed(1),g);});
   const H=n?(10+2*(ph+30)):(20+ph+30);
   s+=G('a-fade',3.0,T(n?180:320,H+(n?4:6),n?'Repeat ~50 times a second':'Repeat about 50 times every second','lab mid'));
@@ -430,11 +430,11 @@ function scAdd(n){
 
 function scBack(n){
   const panels=[['A wrong base','the 3′ end mispairs'],['Backtrack','the RNA end slides into the pore'],['Cut and resume','GreB or TFIIS stimulates cleavage']];
-  const pw=n?340:200, ph=n?110:170;
+  const pw=n?340:200, ph=n?110:184;
   let s='';
   panels.forEach((p,i)=>{const ox=n?10:10+i*210, oy=n?10+i*(ph+14):20;
-    let g=box(ox,oy,pw,ph,'#E7DEC9',4)+badge(ox+14,oy+14,i+1)+T(ox+28,oy+19,p[0],'lab start f14')+T(ox+pw/2,oy+38,p[1],'note mid f12');
-    const ty=oy+ph-(n?28:50), x0=ox+16, x1=ox+pw-16, as=ox+pw*.6;
+    let g=box(ox,oy,pw,ph,'#E7DEC9',4)+badge(ox+14,oy+14,i+1)+T(ox+28,oy+19,p[0],'lab start f14')+wrap(p[1],n?60:27).map((l,j)=>T(ox+pw/2,oy+38+j*15,l,'note mid f12')).join('');
+    const ty=oy+ph-(n?28:58), x0=ox+16, x1=ox+pw-16, as=ox+pw*.6;
     g+=`<path d="M${x0} ${ty} H${x1}" stroke="${DNA}" stroke-width="2.2"/>`;
     const end=i===1?as-24:as;
     g+=`<path d="M${x0} ${ty-12} H${end-8}" stroke="${RNAC}" stroke-width="2.6"/>`+rungs(x0,end-8,ty-12,ty);
@@ -453,7 +453,7 @@ function scPIC(n){
   const kink=`M${x1} ${y} H${t0} l${tw/2} 16 l${tw/2} -16 H${x2}`;
   let s=G('a-fade',0,`<path d="${kink}" stroke="${DNA}" stroke-width="2.6" fill="none"/>`+box(t0,y-6,tw,12,'#8C8270')+T(t0+tw/2,y+40,'TATA','mono mid f12'));
   const P=n?[['TBP',t0+tw/2,y-20,26,11,'#D9B85A'],['IIB',t0-24,y-22,18,11,ROSE],['Pol II + IIF',t0+tw+56,y-36,44,24,POLC],['IIE',t0+tw+56,y-80,18,11,TEAL],['IIH',t0+tw+124,y-44,20,13,'#9C7FB0'],['Mediator',t0+tw+40,y-124,46,16,'#B9A0C8']]
-           :[['TBP / TFIID',t0+tw/2,y-22,46,13,'#D9B85A'],['TFIIB',t0-58,y-24,26,12,ROSE],['Pol II + TFIIF',t0+tw+82,y-38,56,28,POLC],['TFIIE',t0+tw+82,y-88,26,12,TEAL],['TFIIH',t0+tw+178,y-50,30,15,'#9C7FB0'],['Mediator',t0+tw+64,y-140,64,18,'#B9A0C8']];
+           :[['TBP / TFIID',t0+tw/2,y-22,52,13,'#D9B85A'],['TFIIB',t0-64,y-24,30,12,ROSE],['Pol II + TFIIF',t0+tw+86,y-40,62,28,POLC],['TFIIE',t0+tw+86,y-90,31,12,TEAL],['TFIIH',t0+tw+186,y-50,34,15,'#9C7FB0'],['Mediator',t0+tw+64,y-140,64,18,'#B9A0C8']];
   P.forEach((p,i)=>s+=G('a-drop',(.4+i*.5).toFixed(1),blob(p[1],p[2],p[3],p[4],p[5])+T(p[1],p[2]+4,p[0],'lab mid '+(n?'f11':'f13'))));
   const ax=n?36:110;
   s+=G('a-fade',3.4,box(ax-22,y-7,44,14,PURP)+blob(ax,y-22,16,10,'#B4766E')+T(ax,y+28,'activator','note mid f12')+`<path d="M${ax+12} ${y-32} C ${ax+40} ${y-(n?110:130)}, ${P[5][1]-P[5][3]-60} ${P[5][2]}, ${P[5][1]-P[5][3]} ${P[5][2]}" stroke="${PURP}" stroke-width="1.4" stroke-dasharray="4 3" fill="none"/>`);
@@ -513,10 +513,10 @@ function rnapCore(cx,cy,k,o={}){const S=v=>v*k;
 function scOnePol(n){
   let s=G('a-pop',0,rnapCore(n?180:150,n?110:140,n?1:1.25,{sigma:true,labels:true}));
   const rows=[['β′','Rpb1','clamp, active site, bridge helix'],['β','Rpb2','second pincer, RNA exit flap'],['α₂','Rpb3 + Rpb11','assembly; activator contacts'],['ω','Rpb6','holds β′ in place'],['σ','TFIIB-like roles','finds and opens promoters']];
-  const tx=n?12:300, ty=n?220:40;
-  s+=G('a-fade',.8,T(tx,ty,'bacteria','note start f12')+T(tx+(n?52:60),ty,'Pol II','note start f12')+T(tx+(n?150:150),ty,'job','note start f12')+ln(tx,ty+8,n?350:620,ty+8));
-  rows.forEach((r,i)=>{const y=ty+30+i*(n?26:30);s+=G('a-fade',(1+i*.2).toFixed(1),Tc(tx,y,r[0],'#2F5276',14,'mono start','600')+T(tx+(n?52:60),y,r[1],'note start '+(n?'f11':'f13'))+T(tx+(n?150:150),y,r[2],'lab start '+(n?'f12':'f14')));});
-  const yb=n?ty+30+5*26+8:260;
+  const tx=n?12:280, ty=n?220:40;
+  s+=G('a-fade',.8,T(tx,ty,'bacteria','note start f12')+T(tx+(n?52:60),ty,'Pol II','note start f12')+T(tx+(n?150:164),ty,'job','note start f12')+ln(tx,ty+8,n?350:620,ty+8));
+  rows.forEach((r,i)=>{const y=ty+30+i*(n?26:30);s+=G('a-fade',(1+i*.2).toFixed(1),Tc(tx,y,r[0],'#2F5276',14,'mono start','600')+T(tx+(n?52:60),y,r[1],'note start '+(n?'f11':'f13'))+T(tx+(n?150:164),y,r[2],'lab start '+(n?'f12':'f14')));});
+  const yb=n?ty+30+5*26+8:274;
   s+=G('a-fade',2.4,T(n?180:320,yb,n?'One enzyme makes every RNA':'One enzyme makes every bacterial RNA: mRNA, rRNA and tRNA alike','lab mid'));
   return {vb:n?slim(yb+12):wide(yb+14),s};
 }
@@ -559,7 +559,7 @@ function scBactStruct(n){
   let s=G('a-pop',0,rnapCore(n?180:170,n?120:150,n?1:1.3,{labels:true}));
   const tx=n?14:330, ty=n?220:50;
   const ev=[['1999','Seth Darst’s lab: core RNA polymerase of Thermus aquaticus, 3.3 Å'],['2002','Holoenzymes with σ, from the Darst and Yokoyama labs'],['2007','Elongation complexes with DNA, RNA and NTP in place']];
-  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],40);s+=G('a-fade',(.8+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+14;});
+  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:35);s+=G('a-fade',(.8+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+14;});
   s+=G('a-fade',2.2,wrap(n?'A crab claw, made of β′ and β, around a cleft that holds the DNA. Pol II has the same core.':'A crab claw of β′ and β around the DNA-binding cleft. Bacterial RNAP and Pol II share the same core.',n?44:40).map((l,i)=>T(tx,yy+8+i*20,l,'lab start '+(n?'f14':''))).join(''));
   return {vb:n?slim(yy+52):wide(Math.max(290,yy+60)),s};
 }
@@ -570,7 +570,7 @@ function scSigmas(n){
   let s=G('a-fade',0,T(x0,y0-14,'E. coli σ factors','cname start')+ln(x0,y0-4,n?350:420,y0-4));
   rows.forEach((r,i)=>{const y=y0+18+i*dy;s+=G('a-fade',(.2+i*.15).toFixed(2),Tc(x0,y,r[0],'#2F5276',15,'start','600')+Tc(x0+(n?82:100),y,r[1],'#6A5B47',12,'mono start')+T(x0+(n?132:160),y,r[2],'lab start '+(n?'f12':'f14')).replace('lab start','note start'));});
   const bx=n?12:450, by=n?y0+18+7*dy+14:30;
-  s+=G('a-fade',1.6,box(bx,by,n?338:170,n?86:118,'#E7DEC9',4)+T(bx+12,by+22,'B. subtilis spores','lab start f14')+Tc(bx+12,by+50,'σF → σE → σG → σK','#2F5276',13,'mono start','600')+T(bx+12,by+72,n?'a cascade sets the timing':'a cascade times each step','note start f12'));
+  s+=G('a-fade',1.6,box(bx,by,n?338:170,n?86:118,'#E7DEC9',4)+T(bx+12,by+22,'B. subtilis spores','lab start f14')+Tc(bx+(n?12:10),by+50,'σF → σE → σG → σK','#2F5276',n?13:12,'mono start','600')+T(bx+12,by+72,n?'a cascade sets the timing':'a cascade times each step','note start f12'));
   const cy=n?by+100:by+132;
   s+=G('a-fade',2.2,box(bx,cy,n?338:170,n?66:96,'#E7DEC9',4)+T(bx+12,cy+22,n?'S. pneumoniae competence':'S. pneumoniae','lab start f14')+Tc(bx+12,cy+48,n?'σX (ComX) → DNA uptake genes':'σX (ComX)','#2F5276',13,'mono start','600')+(n?'':T(bx+12,cy+72,'switches on competence','note start f12')));
   const yb=n?cy+66+22:y0+18+7*dy+18;
@@ -619,12 +619,12 @@ function scSRNA(n){
     +box(x1+w*.26,yA-7,w*.10,14,'#8FB1CF')+Tc(x1+w*.31,yA+4,'RBS','#1E2632',10,'mono mid','600')
     +box(x1+w*.44,yA-7,w*.30,14,BLUE)+Tc(x1+w*.59,yA+4,'gene','#F3EDE0',11,'mono mid','600'));
   s+=G('a-fade',.9,pair(x1+w*.22,x1+w*.40,yA)
-    +blob(x1+w*.16,yA-22,13,9,'#C17A2C')+Tc(x1+w*.16,yA-18,'Hfq','#1E2632',10,'mono mid','600')
+    +blob(x1+w*.16,yA-22,17,10,'#C17A2C')+Tc(x1+w*.16,yA-18,'Hfq','#1E2632',10,'mono mid','600')
     +Tc(x1+w*.42,yA-30,'sRNA','#7D4A98',11,'mono start','600'));
   s+=G('a-fade',1.4,ribo(x1+w*.31,yA+34,n?1.3:1.6)+mark(x1+w*.31+(n?20:24),yA+30,false,8)
     +T(x1,yA+(n?60:64),n?'RBS covered: no initiation; RNase E degrades both':'the ribosome binding site is covered: no initiation, and RNase E then degrades both strands','note start f12'));
-  const yB=yA+(n?128:150);
-  s+=G('a-fade',1.9,T(x1,yB-(n?40:44),n?'And one that switches a message on':'And one that activates: pairing opens a sequestered site','cname start '+(n?'f14':'f15')));
+  const yB=yA+(n?144:162);
+  s+=G('a-fade',1.9,T(x1,yB-(n?56:58),n?'And one that switches a message on':'And one that activates: pairing opens a sequestered site','cname start '+(n?'f14':'f15')));
   s+=G('a-fade',2.2,mrna(yB)
     +box(x1+w*.27,yB-7,w*.10,14,'#8FB1CF')+Tc(x1+w*.32,yB+4,'RBS','#1E2632',10,'mono mid','600')
     +box(x1+w*.44,yB-7,w*.30,14,BLUE)+Tc(x1+w*.59,yB+4,'gene','#F3EDE0',11,'mono mid','600'));

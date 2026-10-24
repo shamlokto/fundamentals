@@ -79,9 +79,9 @@ function scM7(n){
   const D=.21, f=t=>-t/D;
   let s=A.s+G('a-fade',.3,curve(A,f,{col:'#2F5276',to:12*D})+ln(A.x,FX(A.py(0)),A.x+A.w,FX(A.py(0)),'#9A9384',.8,'3 3'));
   const x1=A.px(0), x2=A.px(D);
-  s+=G('a-fade',.6,`<path d="M${FX(x1)} ${FX(A.py(0))} H${FX(x2)} V${FX(A.py(-1))}" stroke="${RED}" stroke-width="1.4" fill="none"/>`+T(FX(x2+6),FX(A.py(-.9)),'one D: tenfold fewer','note start f11 halo')
+  s+=G('a-fade',.6,`<path d="M${FX(x1)} ${FX(A.py(0))} H${FX(x2)} V${FX(A.py(-1))}" stroke="${RED}" stroke-width="1.4" fill="none"/>`+T(FX(x2+4),FX(A.py(.5)),'one D: tenfold fewer','note start f11 halo')
     +ln(FX(A.px(12*D)),FX(A.py(0)),FX(A.px(12*D)),FX(A.py(-12)),RED,1,'4 3')+T(FX(A.px(12*D)-6),FX(A.py(-4)),'12D ≈ 2.5 min','mono end f11 halo')
-    +T(FX(A.px(.9)),FX(A.py(0)-5),'1 spore per can','note start f11 halo'));
+    +T(FX(A.px(2.45)),FX(A.py(0)-5),'1 spore per can','note end f11 halo'));
   const items=[['D-value','Time at a set temperature to kill 90% of a population. For C. botulinum spores at 121 °C it is about 0.2 minutes.'],['z-value','Temperature rise that cuts D tenfold, about 10 °C for these spores.'],['The 12D cook','Low-acid canned foods are heated to reduce botulinum spores by 12 log units: from 1 spore per can to 1 in a trillion cans.'],['Hurdles','Mild barriers combined, such as acidity, low water activity, salt, preservatives, chilling and packaging, stop growth where no single one would.']];
   const b=n?bullets(24,A.y+A.h+58,items,44,{d0:.9,gap:16}):bullets(400,52,items,33,{d0:.9,gap:16});
   const H=n?b.y-6:Math.max(b.y-6,A.y+A.h+46);
