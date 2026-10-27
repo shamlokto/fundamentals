@@ -6,13 +6,20 @@ on:
 jobs:
   diag:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mode: [nodeps, deps-minus-extra-fonts]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: |
-          npm install --no-save --no-package-lock playwright@1.63.0
+      - run: npm install --no-save --no-package-lock playwright@1.63.0
+      - if: matrix.mode == 'nodeps'
+        run: npx playwright install chromium
+      - if: matrix.mode == 'deps-minus-extra-fonts'
+        run: |
           npx playwright install --with-deps chromium
+          sudo apt-get remove -y fonts-unifont fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-freefont-ttf fonts-wqy-zenhei xfonts-unifont || true
+          fc-cache -f
       - run: node tools/.fontdiag.js
-      - run: fc-match monospace; fc-match "IBM Plex Mono"; fc-list | wc -l
