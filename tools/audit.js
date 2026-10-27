@@ -27,7 +27,12 @@ const probe = () => {
   const sr = svg.getBoundingClientRect();
   const vb = svg.viewBox.baseVal, k = vb.width / sr.width;
   const toVB = r => ({ x: (r.left - sr.left) * k + vb.x, y: (r.top - sr.top) * k + vb.y, w: r.width * k, h: r.height * k });
-  const texts = [...svg.querySelectorAll('text')].filter(t => eff(t) > 0.3 && t.textContent.trim()).map(t => ({ s: t.textContent.trim().slice(0, 50), b: toVB(t.getBoundingClientRect()), el: t }));
+  // Text height comes from the font's line metrics, which Chromium reports differently between machines
+  // (27 px on GitHub's runner vs 20 px locally for the same 12 px label), so cap it at 1.25 em around the centre.
+  const inv = svg.getScreenCTM().inverse();
+  const capH = (t, b) => { const m = inv.multiply(t.getScreenCTM()), em = parseFloat(getComputedStyle(t).fontSize) * Math.hypot(m.a, m.b) * 1.25;
+    return b.h > em && Math.abs(m.b) < 1e-6 ? { ...b, y: b.y + (b.h - em) / 2, h: em } : b; };  // unrotated text only
+  const texts = [...svg.querySelectorAll('text')].filter(t => eff(t) > 0.3 && t.textContent.trim()).map(t => ({ s: t.textContent.trim().slice(0, 50), b: capH(t, toVB(t.getBoundingClientRect())), el: t }));
   const arrows = [...svg.querySelectorAll('line,path,polyline')].filter(p => {
     const cs = getComputedStyle(p); return (cs.markerEnd && cs.markerEnd !== 'none' || cs.markerStart && cs.markerStart !== 'none') && eff(p) > 0.3; }).map(p => {
       const L = p.getTotalLength(), m = p.getScreenCTM(), pts = [];
