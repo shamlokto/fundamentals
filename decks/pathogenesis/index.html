@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pathogenesis and Epidemiology</title>
-<meta name="description" content="Steps of infection, virulence factors and toxins, secretion-system effectors, immune evasion and antigenic variation, colonization resistance and dysbiosis, Koch’s postulates, and epidemiology basics.">
+<meta name="description" content="Steps of infection, virulence factors and toxins, secretion-system effectors, immune evasion and antigenic variation, colonisation resistance and dysbiosis, Koch’s postulates, and epidemiology basics.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Fundamentals">
 <meta property="og:title" content="Pathogenesis and Epidemiology">
-<meta property="og:description" content="Steps of infection, virulence factors and toxins, secretion-system effectors, immune evasion and antigenic variation, colonization resistance and dysbiosis, Koch’s postulates, and epidemiology basics.">
+<meta property="og:description" content="Steps of infection, virulence factors and toxins, secretion-system effectors, immune evasion and antigenic variation, colonisation resistance and dysbiosis, Koch’s postulates, and epidemiology basics.">
 <meta property="og:url" content="https://shamlokto.github.io/fundamentals/decks/pathogenesis/">
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -670,7 +670,7 @@ let toxSel=0;
 function adhesin(cx,cy){return rodCell2(cx,cy,46,14)+[-14,-4,6,16].map(d=>ln(cx+d,cy+14,cx+d,cy+26,INK,1)+`<circle cx="${cx+d}" cy="${cy+28}" r="2.4" fill="${PAL.gold}" stroke="${INK}" stroke-width=".6"/>`).join('');}
 function scP1(n){return introPlate(n,{q:'Why do only some microbes make us ill, and what decides how far an outbreak spreads?',
   belief:'Disease is an outcome of the meeting between a microbe’s weapons and a host’s defences, shaped by dose and by the host’s state. Pathogenesis asks how a single microbe attaches, invades, resists killing and causes damage. Epidemiology scales that up to populations: who gets infected, how fast, and how to stop it.',
-  items:['Steps of infection','Virulence factors','Toxins and effectors','Immune evasion and antigenic variation','Colonization resistance and dysbiosis','Koch’s postulates, briefly','R0, incidence, outbreaks'],
+  items:['Steps of infection','Virulence factors','Toxins and effectors','Immune evasion and antigenic variation','Colonisation resistance and dysbiosis','Koch’s postulates, briefly','R0, incidence, outbreaks'],
   art:(cx,cy)=>adhesin(cx,cy-6)+T(cx,cy+42,'adhesins grip the host','note mid f11'),artH:150});}
 function scP2(n){
   const items=[
@@ -758,12 +758,12 @@ function scP6(n){
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }
 function scP7(n){
-  const N=n?{he:{x:180,y:36,w:230,t:'healthy microbiota|(colonization resistance)',f:PAL.green},
+  const N=n?{he:{x:180,y:36,w:230,t:'healthy microbiota|(colonisation resistance)',f:PAL.green},
      ab:{x:180,y:128,w:200,t:'broad antibiotics',f:PAL.rose},
      dy:{x:180,y:206,w:200,t:'dysbiosis: niches open',f:PAL.gold},
      cd:{x:76,y:290,w:126,t:'C. difficile|overgrows',f:PAL.lilac},
      ft:{x:266,y:290,w:172,t:'faecal transplant|restores community',f:PAL.green}}
-   :{he:{x:128,y:60,w:212,t:'healthy microbiota|colonization resistance',f:PAL.green},
+   :{he:{x:128,y:60,w:212,t:'healthy microbiota|colonisation resistance',f:PAL.green},
      ab:{x:360,y:60,w:160,t:'broad-spectrum|antibiotics',f:PAL.rose},
      dy:{x:560,y:60,w:150,t:'dysbiosis:|niches open',f:PAL.gold},
      cd:{x:420,y:190,w:160,t:'C. difficile|overgrows, colitis',f:PAL.lilac},
@@ -772,7 +772,7 @@ function scP7(n){
     :[['he','ab',''],['ab','dy',''],['dy','cd','',{side:1}],['cd','ft','treat',{side:1}]];
   let s=G('a-fade',0,flow(N,E));
   const b=bullets(n?24:30,n?360:290,[
-    ['Commensals defend us','The resident microbiota occupies niches, consumes nutrients, lowers pH and makes inhibitory compounds, so incoming pathogens cannot gain a foothold. This is colonization resistance.'],
+    ['Commensals defend us','The resident microbiota occupies niches, consumes nutrients, lowers pH and makes inhibitory compounds, so incoming pathogens cannot gain a foothold. This is colonisation resistance.'],
     ['Antibiotics break it','Wiping out commensals opens the field. Clostridioides difficile seizes it, causing severe colitis, the classic antibiotic-associated infection.'],
     ['Restoring the community','Transplanting stool from a healthy donor re-establishes the microbiota and cures recurrent C. difficile in most cases, a striking demonstration that the community itself is the defence.']],
     n?44:82,{d0:.6,gap:22});
@@ -815,7 +815,7 @@ const S=[
  {p:2,title:'Toxins',chips:'tox',draw:scP4,text:"Toxins do damage at a distance or on contact. AB toxins have a binding part and an enzymatic part that attacks a precise target inside the cell; pore-forming toxins punch holes; superantigens hijack the immune system itself. Endotoxin is the wall of the Gram-negative microbe, not a secreted protein. Pick one."},
  {p:3,title:'Secretion-system effectors',draw:scP5,text:"Gram-negative pathogens use molecular machines to inject effector proteins directly into host cells. The type III system is a syringe related to the flagellum, used by Salmonella and Yersinia; the type IV system, kin to conjugation machinery, lets Legionella build a home inside a macrophage. Both reprogramme the host from within."},
  {p:3,title:'Immune evasion and antigenic variation',draw:scP6,text:"To persist, microbes hide, attack the immune response, or keep changing their surface. Antigenic variation is the most elegant: Neisseria, trypanosomes and Borrelia each switch their surface coat from a genetic archive faster than antibodies can catch up, which is why they cause recurrent or chronic disease and defy vaccines."},
- {p:3,title:'Colonization resistance and dysbiosis',draw:scP7,text:"The normal microbiota is itself a defence, occupying niches so pathogens cannot settle. Broad-spectrum antibiotics break this colonization resistance, and Clostridioides difficile seizes the opening to cause colitis. Transplanting a healthy donor’s stool restores the community and cures it, showing the community was the defence."},
+ {p:3,title:'Colonisation resistance and dysbiosis',draw:scP7,text:"The normal microbiota is itself a defence, occupying niches so pathogens cannot settle. Broad-spectrum antibiotics break this colonisation resistance, and Clostridioides difficile seizes the opening to cause colitis. Transplanting a healthy donor’s stool restores the community and cures it, showing the community was the defence."},
  {p:4,title:'The epidemic curve',draw:scP8,text:"Plotting new cases against their date of onset shows an outbreak’s shape. A single sharp peak points to a common point source; a series of rising waves spaced one incubation period apart points to person-to-person spread. The curve guides the investigation before the lab confirms the cause."},
  {p:4,title:'Epidemiology basics',draw:scP9,text:"A few measures frame population disease: R0 and the effective Re for transmissibility, incidence and prevalence for how much disease there is, attack rate and case-fatality within an outbreak. Koch’s postulates and their molecular revision tie a specific microbe, or gene, to a specific disease."}];
 const CHIPS={tox:{list:TOX.map(t=>t.k),get:()=>toxSel,set:k=>toxSel=k}};

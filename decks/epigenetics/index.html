@@ -562,7 +562,7 @@ function scE3(n){
          :wtable(n,['Method','What it measures','Notes'],rows,[[24,16],[180,20],[350,44]],{y0:30});
   const b=bullets(n?24:30,t.y+14,[['A methylome is a list of motifs','The output is not a per-base map but a set of recognition motifs, each with the fraction of sites methylated. REBASE collects these and links them to the methyltransferases that write them, so a new methylome can usually be assigned to specific genes.'],
    ['Partially methylated motifs are the interesting ones','A motif methylated at 99 percent of sites is doing housekeeping. One methylated at 60 percent either has sites blocked by bound proteins — which is how regulatory sites are found — or belongs to a phase-variable methyltransferase that is off in part of the population.'],
-   ['Which means a methylome is a population average','Unless the sequencing is done on single cells or very few, the number reported is the average over millions. Two subpopulations with opposite states give exactly the same mean as a uniform intermediate state, and only single-molecule data can tell them apart.']],n?44:88,{d0:1.8,gap:24});
+   ['Which means a methylome is a population average','Unless each read is analysed on its own, the number reported is the average over millions of molecules. Two subpopulations with opposite states give exactly the same mean as a uniform intermediate state; only per-read, single-molecule analysis can tell them apart.']],n?44:88,{d0:1.8,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:t.s+b.s};
 }
 /* ===================== Part II · switching ===================== */
@@ -637,7 +637,7 @@ function scE6(n){
   s+=G('a-fade',.6,dish(cx+(n?82:128),y+R,R,colonySet(14,9,R).map(c=>[c[0],c[1],c[2],'#CBB98C']),{label:'opaque'}));
   s+=G('a-fade',1.1,arw(cx-(n?18:44),y+R-6,cx+(n?18:44),y+R-6,{blue:1})+arw(cx+(n?18:44),y+R+10,cx-(n?18:44),y+R+10,{blue:1}));
   let yy=y+2*R+(n?46:50);
-  const rows=[['Transparent','more teichoic acid and more surface protein, less capsule','Adheres better to nasopharyngeal cells and colonises better. The state that dominates in carriage.'],
+  const rows=[['Transparent','more teichoic acid and the adhesin CbpA, less capsule','Adheres better to nasopharyngeal cells and colonises better. The state that dominates in carriage.'],
    ['Opaque','more capsule, less surface protein exposed','Resists complement and phagocytosis, and survives in blood. The state recovered from invasive disease.']];
   const t=n?wtable(n,['Variant','What differs, and what it does'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,12],[110,40]],{y0:yy,d0:1.4})
          :wtable(n,['Variant','What differs','Where it wins'],rows,[[24,13],[140,26],[380,38]],{y0:yy,d0:1.4});
