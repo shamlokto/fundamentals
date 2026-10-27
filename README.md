@@ -2,6 +2,8 @@
 
 Animated, click-through teaching primers on bacterial molecular biology, drawn as hand-tinted plates.
 
+**Internal draft.** The content has not all been fact-checked yet, so the published site is password-protected (see [Publishing](#publishing)). Ask the site owner for the password.
+
 Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html` locally. Each deck is one self-contained HTML file.
 
 54 primers in 12 sections: 613 plates, 69 of them interactive, across 51 primers.
@@ -82,3 +84,26 @@ Each History deck's title plate shows a photograph of its scientist inside the o
 | Woese | Carl Woese, 2004, by Don Hamerman | `woese.jpg` | [Commons](https://commons.wikimedia.org/wiki/File:Carl_Woese.jpg) (Institute for Genomic Biology, Illinois) | CC BY 3.0 (cropped and toned) |
 
 To add or replace a photograph, put a portrait crop (about 250 × 300 px or larger) in the deck folder, or link a Wikimedia Commons file. Set `PHOTO.src` (or the `addCameo(...)` line) near the top of the deck's script, fill in the credit with the photographer, source and licence, and add a row to the table above. Use only public-domain or openly licensed images, and check the licence on the file's own page; images marked "non-free" or "fair use" on Wikipedia may not be used.
+
+## Working on the site
+
+Generated decks are written in `src/<slug>.js` and built into `decks/<slug>/index.html`; the other decks are edited directly. `tools/AUTHORING.md` covers the format, the helpers and the tools.
+
+    python3 tools/build.py [slug ...]   # build generated decks (all if none named)
+    python3 tools/hub.py                # rebuild index.html and the table above from tools/hub.json
+    tools/check_all.sh                  # build everything, then audit every plate at desktop and phone width
+    python3 tools/site_check.py         # links, local assets and page markup
+
+The tools need Python 3, Node 22 and Playwright with Chromium (`npm i -D playwright && npx playwright install chromium`).
+
+Every push and pull request runs the same checks on GitHub Actions (`.github/workflows/check.yml`). They fail on a build error, on committed decks that differ from a fresh build, on new audit findings or console errors, or on a broken local link.
+
+## Team workflow
+
+The site is maintained by several Claude Code sessions coordinated by an HQ session. Each session works on its own branch and edits only the files it owns. Before pushing, it runs the audit on anything it touched and gets it clean. It then sends HQ the branch, commit and a list of changes. HQ reviews every branch and is the only session that merges into `main`.
+
+## Publishing
+
+`.github/workflows/pages.yml` publishes the site on every push to `main`. It runs `tools/protect.mjs`, which encrypts every page with the password held in the repository secret `SITE_PASSWORD`, and deploys the result to GitHub Pages. One correct entry unlocks every page in that browser. Only the pages and their images are published, not `src/`, `tools/` or this README. To change the password, update the secret and re-run the workflow.
+
+The repository's own visibility is set separately on GitHub: while it is public, the unencrypted decks can still be read there.

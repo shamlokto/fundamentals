@@ -74,7 +74,8 @@ All checking tools live in `tools/` and need Python 3 with Pillow, Node, and Pla
     python3 tools/site_check.py         # links, local assets, page weight, lang/title/description/Open Graph
     python3 tools/meta.py [--write]     # add description and Open Graph tags to hand-built decks
 
-`.audit/` is git-ignored. Set `AUDIT_OUT=dir` to write somewhere else (useful when several people audit at once).
+The audit loads the real web fonts, since label widths depend on them; offline, set `AUDIT_NOFONTS=1` to
+measure with fallback fonts instead (results then differ from what readers see). `.audit/` is git-ignored. Set `AUDIT_OUT=dir` to write somewhere else (useful when several people audit at once).
 
 The audit flags overlapping text, arrows running through text, crossing arrows, text cut off at the plate
 edge, page errors and console errors, at desktop (900 px) and phone (390 px) width and for every chip. It
