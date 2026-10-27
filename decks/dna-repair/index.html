@@ -747,7 +747,7 @@ function scCompare(n){
    ['End joining','none (Ku, LigD in other bacteria)','Ku70–Ku80, DNA-PKcs, XRCC4–ligase IV'],
    ['Translesion synthesis','Pol II, Pol IV, Pol V','Pol η, ι, κ, ζ; Rev1'],
    ['Damage signalling','SOS: RecA*, LexA','ATM, ATR, p53']];
-  const t=wtable(n,['Pathway','E. coli','Humans'],rows,n?[[8,12],[106,17],[226,17]]:[[24,22],[200,32],[420,28]],{y0:30});
+  const t=wtable(n,['Pathway','E. coli','Humans'],rows,n?[[8,12],[104,16],[220,14]]:[[24,22],[200,32],[420,28]],{y0:30});
   const p=para(n?16:24,t.y+14,'Some pathways use clearly related proteins: RecA and RAD51 and the glycosylase families in all domains of life, MutS and MutL in bacteria and eukaryotes. Others solved the same chemical problem with unrelated machinery (nucleotide excision repair, damage signalling).',n?50:92,'note start f13',17,1.4);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }

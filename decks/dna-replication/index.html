@@ -532,7 +532,7 @@ function scProof(n){
   const xw=x0+5*dx+dx/2;
   s+=G('a-out',.6,box(xw-dx*.36,yN-12,dx*.72,24,'#E8B4A8',3)+Tc(xw,yN+5,'G',RED,fs,'mono mid','600')+Tc(xw,yN+28,'✕',RED,13,'mono mid'),'--dx:24px;--dy:-30px;animation-delay:2.2s');
   s+=G('a-pop',3.0,box(xw-dx*.36,yN-12,dx*.72,24,NEWL,3)+Tc(xw,yN+5,'A',INK,fs,'mono mid','600'));
-  s+=G('a-fade',.8,blob(xw+dx*1.05,yN-6,22*(n?.7:1),16*(n?.7:1),POL3)+T(xw+dx*1.05,yN-28,'ε','mono mid f15'));
+  s+=G('a-fade',.8,blob(xw+dx*1.05,yN-6,22*(n?.7:1),16*(n?.7:1),POL3)+T(xw+dx*1.05+(n?20:28),yN-1,'ε','mono start f15'));
   s+=G('a-fade',1.4,T(xw,yN-44,n?'G·T mismatch':'G opposite T: a mismatch','note mid f12'));
   const by=yT+(n?50:56), lvl=[['base selection by Pol III',5],['+ proofreading by ε (3′→5′ exo)',7],['+ mismatch repair',10]];
   const bw=n?21:40;
@@ -700,7 +700,7 @@ const S=[
  {p:2,title:'The replication fork',draw:scFork,
   text:"At the fork, DnaB helicase unwinds the parental DNA while gyrase relieves the twisting ahead of it. SSB coats the exposed single strand. Primase lays down short RNA primers on the lagging strand. Pol III, held on the DNA by its β sliding clamp, extends both strands at about 1,000 nucleotides a second. Behind it, Pol I replaces the primers with DNA and ligase seals the nicks."},
  {p:2,title:'The trombone',draw:scTrombone,
-  text:"The two Pol III cores are tied together in one replisome, so they move with the fork in the same direction. To copy the lagging strand 5′ to 3′, its template loops out behind the replisome, and the loop grows as each Okazaki fragment is made. When the fragment is finished, the loop is released and a new one begins from the next primer, like a trombone slide."},
+  text:"The Pol III cores, two or often three, are tied together in one replisome, so they move with the fork in the same direction. To copy the lagging strand 5′ to 3′, its template loops out behind the replisome, and the loop grows as each Okazaki fragment is made. When the fragment is finished, the loop is released and a new one begins from the next primer, like a trombone slide."},
  {p:2,title:'Finishing the lagging strand',draw:scMature,
   text:"An Okazaki fragment begins with about a dozen nucleotides of RNA. When the next fragment reaches it, Pol I takes over. Its 5′ to 3′ exonuclease chews away the RNA primer as its polymerase fills the gap with DNA. A single nick remains, and DNA ligase seals it, using NAD⁺ in E. coli. This is the job Pol I was doing all along."},
  {p:2,title:'Proofreading',draw:scProof,

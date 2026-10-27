@@ -82,7 +82,7 @@ function scE4(n){
   s+=G('a-fade',.6,ln(FX(A.px(5000)),A.y+6,FX(A.px(5000)),A.y+A.h,'#A4473A',1.2,'4 3')+T(FX(A.px(5000)+5),A.y+14,'rarefy to 5000','note start f11 halo')
     +T(FX(A.px(17500)),FX(A.py(c1(18000))+20),'sample 1 (deep)','note end f11 halo')+T(FX(A.px(6400)),FX(A.py(c2(6000))+24),'sample 2 (shallow)','note start f11 halo'));
   const items=[['Why rarefy','Samples are sequenced to very different depths, and deeper samples find more taxa. Rarefaction subsamples every sample to the same number of reads before comparing diversity.'],['The pitfalls','It throws away data and adds random noise. McMurdie and Holmes (2014) showed that rarefying counts before testing which taxa differ loses power and inflates false positives, and recommended statistical models of the counts instead.'],['Still useful','Rarefaction curves show whether sampling is near saturation, and subsampling remains a common, defensible way to compare alpha and beta diversity when depths differ.']];
-  const b=n?bullets(24,A.y+A.h+64,items,44,{d0:.9,gap:20}):bullets(410,52,items,28,{d0:.9,gap:16});
+  const b=n?bullets(24,A.y+A.h+64,items,44,{d0:.9,gap:20}):bullets(410,52,items,28,{d0:.9,gap:22});
   const H=n?b.y-4:Math.max(b.y-4,A.y+A.h+50);
   return {vb:n?slim(H):wide(H),s:s+b.s};
 }
@@ -103,7 +103,7 @@ function scE6(n){
   let s=G('a-fade',0,cycle(cx,cy,R,it,{}));
   s+=G('a-fade',.6,rodCell2(cx,cy,46,12,{fill:'#E4E8D4'})+coccus(cx-12,cy,5,{fill:'#8C6D46'})+T(cx,cy+30,'Bdellovibrio inside','note mid f11')+T(cx,cy+44,'its prey','note mid f11'));
   const items=[['Bdellovibrio','Discovered by Stolp and Petzold in 1962, these small vibrios hunt other Gram-negative bacteria, growing inside the prey’s periplasm. They are being explored as living antibiotics.'],['Protist grazers','Flagellates and ciliates eat a large share of bacterial production in water and soil. They prefer certain sizes, so bacteria escape by forming filaments, aggregates or biofilms, or by being very small or fast.'],['Training grounds','Some bacteria survive being eaten: Legionella multiplies inside amoebae, and the same tricks later let it grow in human macrophages.']];
-  const b=n?bullets(24,cy+R+74,items,44,{d0:1,gap:20}):bullets(398,52,items,30,{d0:1,gap:16});
+  const b=n?bullets(24,cy+R+74,items,44,{d0:1,gap:20}):bullets(398,52,items,30,{d0:1,gap:22});
   const H=n?b.y-4:Math.max(b.y-4,cy+R+56);
   return {vb:n?slim(H):wide(H),s:s+b.s};
 }
@@ -111,7 +111,7 @@ function scE7(n){
   const N=n?{ph:{x:100,y:40,w:150,t:'phytoplankton'},zo:{x:260,y:150,w:150,t:'zooplankton,|fish'},dm:{x:100,y:150,w:130,t:'dissolved|organic matter',f:PAL.gold},ba:{x:80,y:270,w:110,t:'bacteria',f:PAL.green},pr:{x:280,y:270,w:110,t:'protists',f:PAL.blue}}
     :{ph:{x:90,y:50,w:140,t:'phytoplankton'},zo:{x:520,y:50,w:150,t:'zooplankton, fish'},dm:{x:90,y:190,w:140,t:'dissolved|organic matter',f:PAL.gold},ba:{x:310,y:190,w:110,t:'bacteria',f:PAL.green},pr:{x:520,y:190,w:110,t:'protists',f:PAL.blue}};
   const E=n?[['ph','zo','grazing',{side:-1}],['ph','dm','exudation',{side:-1}],['dm','ba','uptake',{side:-1,bend:-24}],['ba','dm','viral lysis',{red:1,dash:'4 3',bend:-24,side:-1}],['ba','pr','grazing',{side:-1}],['pr','zo','',{}]]
-    :[['ph','zo','grazing'],['ph','dm','exudation, lysis',{side:-1}],['dm','ba','uptake',{bend:-22}],['ba','dm','viral lysis',{red:1,dash:'4 3',bend:-22}],['ba','pr','grazing'],['pr','zo','',{}]];
+    :[['ph','zo','grazing'],['ph','dm','exudation, lysis',{side:-1}],['dm','ba','uptake',{bend:-22,off:14}],['ba','dm','viral lysis',{red:1,dash:'4 3',bend:-22,off:14}],['ba','pr','grazing'],['pr','zo','',{}]];
   let s=G('a-fade',0,flow(N,E));
   const by=n?340:270;
   const b=bullets(n?24:30,by,[['Abundant and lethal','Surface seawater holds about ten million virus particles per mL, roughly ten for every bacterium. Viral lysis is estimated to kill 20–40% of marine bacteria each day.'],['The viral shunt','Lysis returns cell contents to the dissolved pool, where other bacteria take them up, instead of passing carbon up the food chain to grazers (Wilhelm and Suttle, 1999).'],['Kill the winner','Lytic phages multiply fastest on the most abundant host, so whoever wins the competition for nutrients is cut back. This keeps many host strains coexisting (Thingstad and colleagues). At high host density, temperate phages may instead favour lysogeny.']],n?44:88,{d0:1,gap:22});

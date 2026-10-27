@@ -50,7 +50,7 @@ function scSB5(n){
   let s=A.s+G('a-fade',.3,curve(A,old,{col:'#A4473A'})+curve(A,yng,{col:'#2F5276'}));
   s+=G('a-fade',.6,T(FX(A.px(11.8)),FX(A.py(old(11))-10),'aged (10-day) cells','note end f11 halo')+T(FX(A.px(11.8)),FX(A.py(yng(11))-10),'young (1-day) cells','note end f11 halo'));
   const items=[['The experiment','Zambrano, Kolter and colleagues (1993) mixed a few cells from a 10-day-old E. coli culture into a 1-day-old culture. The old cells took over and the young ones died out.'],['Why','The winners carried mutations, first found in rpoS, that weakened the general stress response and let them grow on nutrients released by dead cells. Later waves carried other mutations, for example in lrp.'],['Long-term stationary phase','Without any added food, E. coli cultures keep about a million viable cells per mL for months to years, as successive mutants rise and fall.']];
-  const b=n?bullets(24,A.y+A.h+62,items,44,{d0:.9,gap:20}):bullets(408,52,items,29,{d0:.9,gap:16});
+  const b=n?bullets(24,A.y+A.h+62,items,44,{d0:.9,gap:20}):bullets(408,52,items,29,{d0:.9,gap:22});
   const H=n?b.y-4:Math.max(b.y-4,A.y+A.h+50);
   return {vb:n?slim(H):wide(H),s:s+b.s};
 }

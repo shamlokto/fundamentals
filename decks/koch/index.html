@@ -480,7 +480,7 @@ function scK3(n){
 
 function scK4(n){
   const C=[['Potato slices, 1881','A cut, steamed potato, as Joseph Schröter had used in 1872 for pigmented bacteria. Colonies stay apart.',(cx,cy)=>potato(cx,cy+6,110,[[-26,-2,5],[0,-8,4],[22,0,6,'#B4766E'],[-8,10,4],[30,12,3,'#9DB4AE']])],
-   ['Gelatin plates','Nutrient gelatin on glass. But it melts at body temperature, and many bacteria digest it.',(cx,cy)=>`<rect x="${cx-56}" y="${cy-18}" width="112" height="44" rx="3" fill="${GLASSF}" stroke="${GLASSE}" stroke-width="1.4"/><path d="M${cx-48} ${cy+12} q20 -16 40 -4 q20 12 50 -6 v18 h-90z" fill="#E9DDB8" opacity=".9"/>`+T(cx,cy+40,'melts at 37 °C','note mid f11')],
+   ['Gelatin plates','Nutrient gelatin on glass. But it melts at body temperature, and many bacteria digest it.',(cx,cy)=>`<rect x="${cx-56}" y="${cy-18}" width="112" height="44" rx="3" fill="${GLASSF}" stroke="${GLASSE}" stroke-width="1.4"/><path d="M${cx-48} ${cy+12} q20 -16 40 -4 q20 12 50 -6 v18 h-90z" fill="#E9DDB8" opacity=".9"/>`+T(cx,cy+40,'liquid at 37 °C','note mid f11')],
    ['Agar, 1881–82','Fanny Hesse suggested the jelly she used in her kitchen. Agar stays solid at 37 °C and few microbes eat it.',(cx,cy)=>dish(cx,cy+4,36,colonySet(10,4,36))],
    ['Petri’s dish, 1887','Julius Petri’s shallow lidded dish. Streaked out, single cells give single colonies: a pure culture.',(cx,cy)=>dish(cx,cy+4,36,[[-18,-14,2.4],[-10,-8,2.6],[-2,-2,2.8],[6,4,3],[14,10,3.6],[22,16,3]].concat(colonySet(5,9,10).map(c=>[c[0]-20,c[1]-16,1.6])))]];
   let s='',y;
@@ -498,7 +498,7 @@ function scK5(n){
   let s='',y;
   if(!n){steps.forEach((st,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx-58,28,i+1)+T(cx-44,32,st[0],'cname start f14')+st[2](cx,96)+wrap(st[1],24).map((l,j)=>T(cx,160+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+50,96,cx+104,96));});y=266;}
   else{y=24;steps.forEach((st,i)=>{const L=wrap(st[1],30);s+=G('a-fade',(i*.6).toFixed(1),badge(24,y-4,i+1)+T(40,y,st[0],'cname start f14')+L.map((l,j)=>T(16,y+20+j*15,l,'note start f12')).join('')+st[2](280,y+30));y+=Math.max(100,28+L.length*15)+12;});}
-  const p=para(n?16:24,y+6,'Announced in Berlin on 24 March 1882, now World Tuberculosis Day. The difficulties were real: the bacillus resists ordinary stains, which is why it is now called acid-fast, and it divides only about once a day.',n?50:92,'note start f13',17,2.6);
+  const p=para(n?16:24,y+6,'Announced in Berlin on 24 March 1882, now World Tuberculosis Day. The difficulties were real: the bacillus takes up ordinary stains poorly and, once stained, resists acid decolourisation, which is why it is called acid-fast, and it divides only about once a day.',n?50:92,'note start f13',17,2.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 

@@ -272,7 +272,7 @@ function scGrow(n){
     s+=T(bx+P.bw/2,P.baseY+16,m.n,'mono mid f11');
     x+=P.bw+P.gap;}
   s+=`<line x1="${P.x0-6}" y1="${P.baseY}" x2="${x-P.gap+6}" y2="${P.baseY}" class="ax"/>`;
-  s+=G('a-fade',2.6,T(n?180:320,P.H-16,n?'Essential-gene mutants cannot grow — they drop out':'After growth: mutants in essential genes cannot divide and vanish from the pool','lab mid'));
+  s+=G('a-fade',2.6,n?T(180,P.H-32,'Essential-gene mutants cannot grow —','lab mid')+T(180,P.H-12,'they drop out','lab mid'):T(320,P.H-16,'After growth: mutants in essential genes cannot divide and vanish from the pool','lab mid'));
   return {vb:n?slim(P.H):wide(P.H),s};
 }
 

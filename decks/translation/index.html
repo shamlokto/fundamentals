@@ -322,7 +322,7 @@ function scAdaptor(n){
   s+=G('a-fade',1.2,T(cx+24,my-104,'amino acid','note start f12')+T(cx+18,my-50,'adaptor','lab start')+T(cx+18,my-32,'pairs by bases','note start f12'));
   const L=n?{x:14,y:280,dy:44}:{x:300,y:60,dy:52};
   const ev=[['1955','Crick proposes an adaptor: amino acids cannot pair with bases, so something must carry them'],['1957–58','Hoagland and Zamecnik find amino acids attached to a small “soluble RNA”'],['1965','Holley sequences the first tRNA, for alanine: 77 nucleotides']];
-  const tl=timeline(L.x,L.y,ev,n?38:42,n?'f13':'f14',n?72:76,14,1.6);s+=tl.s;
+  const tl=timeline(L.x,L.y,ev,n?38:38,n?'f13':'f14',n?72:76,14,1.6);s+=tl.s;
   return {vb:n?slim(tl.y):wide(Math.max(260,tl.y)),s};
 }
 

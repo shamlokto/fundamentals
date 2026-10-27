@@ -392,7 +392,8 @@ function cameo(n,x,y,key,name,dates,note){const c=CAMEOS[key];if(!c||!c.ok)retur
    +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="2.4"/></g>`;
   const tx=x+92;s+=T(tx,y+30,name,'cname start f14')+T(tx,y+48,dates,'note start f12');
   let ty=y+48;if(note){const L=wrap(note,n?32:64);L.forEach((l,i)=>{s+=T(tx,y+66+i*15,l,'note start f12');});ty=y+66+(L.length-1)*15;}
-  if(c.credit)s+=T(tx,ty+18,c.credit,'note start f10');
+  if(c.credit){const C=n?c.credit.split(' · ').reduce((a,w)=>{const l=a[a.length-1];if(l&&(l+' · '+w).length<=38)a[a.length-1]=l+' · '+w;else a.push(w);return a;},[]):[c.credit];
+    C.forEach((l,i)=>{s+=T(tx,ty+18+i*13,l,'note start f10');});ty+=(C.length-1)*13;}
   return {s:G('a-fade',1.4,s),y:Math.max(y+96,ty+24)};}
 addCameo('griffith','griffith.jpg','Photo 1936: Alvin Coburn · public domain · NLM');
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+photo(cx,cy,k)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12')+(PHOTO.ok&&PHOTO.credit?PHOTO.credit.split(' · ').reduce((L,w)=>{const t=L[L.length-1];(t&&(t+' · '+w).length<=30)?L[L.length-1]=t+' · '+w:L.push(w);return L;},[]).map((l,i)=>T(cx,cy+112*k+54+i*15,l,'note mid f10')).join(''):'');}
@@ -543,11 +544,11 @@ function scA8(n){
 }
 
 function scA9(n){
-  const ev=[['1944','DNA is the transforming principle (strain R36A, from D39)'],['1960s','R6, a single-colony isolate of R36A made in Rollin Hotchkiss’s laboratory, becomes the standard laboratory strain for the next four decades'],['1995','Leiv Håvarstein and colleagues find the competence-stimulating peptide (CSP), the signal that switches on transformation'],
+  const ev=[['1944','DNA is the transforming principle (strain R36A, from D39)'],['1950s–60s','R6, a single-colony isolate of R36A made in Rollin Hotchkiss’s laboratory, becomes the standard laboratory strain for the next four decades'],['1995','Leiv Håvarstein and colleagues find the competence-stimulating peptide (CSP), the signal that switches on transformation'],
    ['2006','Stephen Bentley and colleagues sequence the capsule (cps) loci of 90 serotypes'],
    ['2007','Lanie, Winkler and colleagues sequence D39 and find that R6 carries 71 point changes, six deletions and four insertions, and has lost the cryptic plasmid pDP1'],
    ['today','Many laboratories work in D39, or in unencapsulated derivatives made from it, rather than in R6']];
-  const t=n?timeline(14,30,ev,42,'f13',56,10,0):timeline(24,32,ev,60,'f13',60,12,0);
+  const t=n?timeline(14,30,ev,35,'f13',88,10,0):timeline(24,32,ev,56,'f13',82,12,0);
   let s=t.s;
   if(!n)s+=G('a-fade',2.2,pneumo(540,90,2,true)+T(540,140,'Griffith’s observation,','note mid f12')+T(540,156,'still happening','note mid f12'));
   const p=para(n?16:24,Math.max(t.y,170)+8,'The experiment that identified the genetic material was done on the organism’s most important virulence factor. Capsule switching by natural transformation is Griffith’s mouse experiment, happening in the human nasopharynx.',n?50:92,'note start f13',17,2.6);
