@@ -2,6 +2,8 @@
 
 Animated, click-through teaching primers on bacterial molecular biology, drawn as hand-tinted plates.
 
+**Internal draft.** The content has not all been fact-checked yet, so the published site is password-protected (see [Publishing](#publishing)). Ask the site owner for the password.
+
 Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html` locally. Each deck is one self-contained HTML file.
 
 54 primers in 12 sections: 613 plates, 69 of them interactive, across 51 primers.
@@ -63,10 +65,45 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | LIII | Lederberg and Bacterial Genetics | History | 8 | 2 | [`decks/lederberg/`](decks/lederberg/) |
 | LIV | Woese and the Tree of Life | History | 7 | 1 | [`decks/woese/`](decks/woese/) |
 
-Historical attributions, dates and figures are rounded for teaching and should be checked against primary sources.
+Historical attributions, dates and figures in the History decks have been fact-checked twice; some are rounded for teaching.
 
 ## Portraits in the History decks
 
-Each History deck's title plate can show a photograph of its scientist inside the oval frame. Pasteur, Koch and Beijerinck link to public-domain photographs on Wikimedia Commons. Avery, Joshua Lederberg and Woese use photographs stored in their deck folders (`avery.jpg`, `joshua.jpg`, `woese.jpg`), and smaller portraits of Frederick Griffith and Esther Lederberg appear on the "Griffith's mice" and "Replica plating" plates (`griffith.jpg`, `esther.jpg`). Winogradsky still shows the engraved bust. To add or replace a photograph, put a portrait crop (about 250 × 300 px or larger) in the deck folder, set `PHOTO.src` (or the `addCameo(...)` line) near the top of the deck's script, and fill in the credit with the photographer, source and licence. If a file is missing, the engraved bust is shown instead. Photographs are toned sepia to match the plates.
+Each History deck's title plate shows a photograph of its scientist inside the oval frame, and two plates carry a smaller cameo portrait. Photographs are toned sepia to match the plates, and each shows its credit beneath it. If a file fails to load, the engraved bust is shown instead (cameos are simply left out).
 
-Use only public-domain or openly licensed images, and check the licence on the file's own page. Older portraits such as Pasteur, Koch, Winogradsky and Beijerinck are public domain. Photographs of Griffith, Avery, the Lederbergs and Woese may still be in copyright, so check each one.
+| Deck | Portrait | File | Source | Licence |
+|---|---|---|---|---|
+| Pasteur | Louis Pasteur, by Paul Nadar | linked from Commons | Wikimedia Commons | Public domain |
+| Koch | Robert Koch, c. 1907 | linked from Commons | NLM via Wikimedia Commons | Public domain |
+| Winogradsky | Sergei Winogradsky, 1890s | linked from Commons ([`Sergei_Winogradsky.jpg`](https://commons.wikimedia.org/wiki/File:Sergei_Winogradsky.jpg)) | Wikimedia Commons | Public domain (author unknown, 1890s) |
+| Beijerinck | Martinus Beijerinck in his laboratory, 1921 | linked from Commons | Delft archives via Wikimedia Commons | Public domain |
+| Griffith–Avery | Oswald Avery, 1937 | `avery.jpg` | [Commons](https://commons.wikimedia.org/wiki/File:Oswald_T._Avery_portrait_1937.jpg), from a Rockefeller Institute staff photograph (NLM) | Public domain (as tagged on Commons) |
+| Griffith–Avery (cameo) | Frederick Griffith, 1936, photographed by Alvin F. Coburn; cropped from a snapshot with his dog "Bobby" | `griffith.jpg` | [Commons](https://commons.wikimedia.org/wiki/File:Fred_Griffith_and_%22Bobby%22_1936.jpg) (NLM) | Public domain (as tagged on Commons) |
+| Lederberg | Joshua Lederberg | `joshua.jpg` | [Commons](https://commons.wikimedia.org/wiki/File:Joshua_Lederberg_crop.jpg) (NLM Profiles in Science) | Public domain (as tagged on Commons) |
+| Lederberg (cameo) | Esther Lederberg at Stanford, 1977 | `esther.jpg` | [Commons](https://commons.wikimedia.org/wiki/File:Esther_Lab.jpg) | Free to use with credit to Esther M. Zimmer Lederberg |
+| Woese | Carl Woese, 2004, by Don Hamerman | `woese.jpg` | [Commons](https://commons.wikimedia.org/wiki/File:Carl_Woese.jpg) (Institute for Genomic Biology, Illinois) | CC BY 3.0 (cropped and toned) |
+
+To add or replace a photograph, put a portrait crop (about 250 × 300 px or larger) in the deck folder, or link a Wikimedia Commons file. Set `PHOTO.src` (or the `addCameo(...)` line) near the top of the deck's script, fill in the credit with the photographer, source and licence, and add a row to the table above. Use only public-domain or openly licensed images, and check the licence on the file's own page; images marked "non-free" or "fair use" on Wikipedia may not be used.
+
+## Working on the site
+
+Generated decks are written in `src/<slug>.js` and built into `decks/<slug>/index.html`; the other decks are edited directly. `tools/AUTHORING.md` covers the format, the helpers and the tools.
+
+    python3 tools/build.py [slug ...]   # build generated decks (all if none named)
+    python3 tools/hub.py                # rebuild index.html and the table above from tools/hub.json
+    tools/check_all.sh                  # build everything, then audit every plate at desktop and phone width
+    python3 tools/site_check.py         # links, local assets and page markup
+
+The tools need Python 3, Node 22 and Playwright with Chromium (`npm i -D playwright && npx playwright install chromium`).
+
+Every push and pull request runs the same checks on GitHub Actions (`.github/workflows/check.yml`). They fail on a build error, on committed decks that differ from a fresh build, on new audit findings or console errors, or on a broken local link.
+
+## Team workflow
+
+The site is maintained by several Claude Code sessions coordinated by an HQ session. Each session works on its own branch and edits only the files it owns. Before pushing, it runs the audit on anything it touched and gets it clean. It then sends HQ the branch, commit and a list of changes. HQ reviews every branch and is the only session that merges into `main`.
+
+## Publishing
+
+`.github/workflows/pages.yml` publishes the site on every push to `main`. It runs `tools/protect.mjs`, which encrypts every page with the password held in the repository secret `SITE_PASSWORD`, and deploys the result to GitHub Pages. One correct entry unlocks every page in that browser. Only the pages and their images are published, not `src/`, `tools/` or this README. To change the password, update the secret and re-run the workflow.
+
+The repository's own visibility is set separately on GitHub: while it is public, the unencrypted decks can still be read there.

@@ -62,17 +62,30 @@ Diagrams
 
 ## Checking
 
-Copy the audit script into a private folder (so parallel runs do not overwrite each other) and run it:
+All checking tools live in `tools/` and need Python 3 with Pillow, Node, and Playwright with Chromium
+(`tools/pw.js` finds them; set `PLAYWRIGHT_MODULE` or `CHROMIUM_PATH` if they are somewhere unusual).
 
-    mkdir -p $W/shots $W/sheets
-    cp /tmp/claude-0/-home-user-fundamentals/70d5423a-8f77-5f4b-9ef0-f7aeeefbd21d/scratchpad/{audit.js,sheet.py} $W/
-    node $W/audit.js <slug>       # prints counts; details in $W/report.json; screenshots in $W/shots
-    python3 $W/sheet.py <slug> wide; python3 $W/sheet.py <slug> narrow   # contact sheets in $W/sheets
+    tools/check_all.sh                  # build every generated deck, then audit every deck (no screenshots)
+    tools/check_all.sh --shots          # the same, with screenshots of every plate at both widths
+    node tools/audit.js <slug> ...      # audit chosen decks; report in .audit/report.json, shots in .audit/shots
+    NOSHOT=1 node tools/audit.js <slug> # faster, no screenshots
+    python3 tools/sheet.py <slug> wide  # contact sheets from the shots (also: narrow) in .audit/sheets
+    node tools/plates.js <slug>         # settled screenshots of every plate and chip, in .audit/plates
+    python3 tools/site_check.py         # links, local assets, page weight, lang/title/description/Open Graph
+    python3 tools/meta.py [--write]     # add description and Open Graph tags to hand-built decks
 
-The audit flags overlapping text, arrows running through text, and text cut off at the plate edge, at
-both widths and for every chip. Fix every finding, then look at every contact sheet and fix anything
-else that overlaps or looks wrong (labels on lines, arrows into boxes, crowded drawings). Rotated axis
-labels can trigger false text-text flags; judge those by eye.
+The audit loads the real web fonts, since label widths depend on them; offline, set `AUDIT_NOFONTS=1` to
+measure with fallback fonts instead (results then differ from what readers see). `.audit/` is git-ignored. Set `AUDIT_OUT=dir` to write somewhere else (useful when several people audit at once).
+
+The audit flags overlapping text, arrows running through text, crossing arrows, text cut off at the plate
+edge, page errors and console errors, at desktop (900 px) and phone (390 px) width and for every chip. It
+exits non-zero on any finding not listed in `tools/audit_ignore.json` (known false positives, as regular
+expressions over keys such as `woese/wide/05`). Fix every finding, then look at every contact sheet and fix
+anything else that overlaps or looks wrong (labels on lines, arrows into boxes, text spilling out of boxes).
+Rotated labels can trigger false text-text flags; judge those by eye and add them to the ignore list only
+when a person has checked them.
+
+Plate text must not be smaller than 12 px: the classes `f8` to `f16` and `Tc()` sizes are floored at 12.
 
 ## Content rules
 
@@ -81,3 +94,15 @@ labels can trigger false text-text flags; judge those by eye.
 * British spelling, plain sentences, no em-dash chains, no marketing tone.
 * 6–9 plates per deck, at least one interactive (chips) plate and at least two real diagrams
   (flow, cycle, plot or drawing), not only cards and tables.
+
+## Password protection
+
+The live site is published by `.github/workflows/pages.yml`, which runs
+
+    SITE_PASSWORD=... node tools/protect.mjs _site
+
+and deploys `_site/`. Every HTML page is AES-GCM encrypted under the password and replaced by
+an unlock page; one correct entry unlocks every page in that browser. The password lives only
+in the repository secret `SITE_PASSWORD`; to change it, update the secret and re-run the
+workflow. To lock a browser again, clear the site's storage (key `fundamentals-key`).
+The five portrait JPEGs under `decks/` are copied unencrypted.

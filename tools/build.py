@@ -11,6 +11,7 @@ The output is a single self-contained page that shares the look and runtime of t
 import json, re, sys, html, pathlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 T = ROOT / 'tools'
+SITE = 'https://shamlokto.github.io/fundamentals/'
 
 def build(slug):
     src = (ROOT / 'src' / f'{slug}.js').read_text()
@@ -18,8 +19,15 @@ def build(slug):
     meta = json.loads(m.group(1)); body = src[m.end():]
     head = (T / 'base_head.html').read_text()
     head = re.sub(r'<title>.*?</title>', f'<title>{html.escape(meta["title"])}</title>', head)
-    if meta.get('description'):
-        head = head.replace('<link rel="preconnect"', f'<meta name="description" content="{html.escape(meta["description"])}">\n<link rel="preconnect"', 1)
+    desc = meta.get('description') or meta['h1']
+    tags = (f'<meta name="description" content="{html.escape(desc)}">\n'
+            f'<meta property="og:type" content="website">\n'
+            f'<meta property="og:site_name" content="Fundamentals">\n'
+            f'<meta property="og:title" content="{html.escape(meta["title"])}">\n'
+            f'<meta property="og:description" content="{html.escape(desc)}">\n'
+            f'<meta property="og:url" content="{SITE}decks/{slug}/">\n'
+            f'<meta name="twitter:card" content="summary">\n')
+    head = head.replace('<link rel="preconnect"', tags + '<link rel="preconnect"', 1)
     parts = '\n'.join(f'    <button id="part{i+1}" type="button">{roman(i+1)} · {html.escape(p)}</button>' for i, p in enumerate(meta['parts']))
     wrap = f'''<div class="wrap">
   <a class="hubback" href="../../">← All primers</a>
