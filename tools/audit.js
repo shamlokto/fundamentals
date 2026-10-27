@@ -56,7 +56,8 @@ const probe = () => {
     }
   });
   function segX(p1, p2, p3, p4) { const d = (a, b, c) => (c[0] - a[0]) * (b[1] - a[1]) - (b[0] - a[0]) * (c[1] - a[1]); const d1 = d(p3, p4, p1), d2 = d(p3, p4, p2), d3 = d(p1, p2, p3), d4 = d(p1, p2, p4); return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0)) && d1 && d2 && d3 && d4; }
-  texts.forEach(t => { const b = t.b; if (b.x < vb.x - 1 || b.y < vb.y - 1 || b.x + b.w > vb.x + vb.width + 1 || b.y + b.h > vb.y + vb.height + 1) issues.push(['clipped', t.s, `${Math.round(b.x)},${Math.round(b.y)},${Math.round(b.w)}x${Math.round(b.h)}`, `vb ${vb.width}x${vb.height}`]); });
+  // Text widths vary by 1-2% between platforms (GitHub's runner sets labels wider than local runs), so allow 2%.
+  texts.forEach(t => { const b = { ...t.b, x: t.b.x - t.b.w * 0.01, w: t.b.w * 1.02 }; if (b.x < vb.x - 1 || b.y < vb.y - 1 || b.x + b.w > vb.x + vb.width + 1 || b.y + b.h > vb.y + vb.height + 1) issues.push(['clipped', t.s, `${Math.round(b.x)},${Math.round(b.y)},${Math.round(b.w)}x${Math.round(b.h)}`, `vb ${vb.width}x${vb.height}`]); });
   return issues;
 };
 
