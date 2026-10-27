@@ -1,0 +1,56 @@
+# Builds every generated deck and runs the site checks on every push and pull request.
+# Fails on: a build error, committed decks that differ from a fresh build of src/,
+# new layout-audit findings or console/page errors (tools/check_all.sh), broken local
+# links or assets (tools/site_check.py), or a failed protected-site build.
+name: Checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  PLAYWRIGHT_VERSION: 1.63.0
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@$PLAYWRIGHT_VERSION
+          npx playwright install --with-deps chromium
+      - name: Build and audit every deck
+        run: tools/check_all.sh
+      - name: Committed decks match a fresh build
+        if: always()
+        run: |
+          git diff --stat --exit-code -- decks index.html \
+            || { echo "::error::Rebuild with python3 tools/build.py and commit the result."; exit 1; }
+      - name: Links, assets and page markup
+        if: always()
+        run: python3 tools/site_check.py
+      - name: Protected site builds
+        if: always()
+        run: SITE_PASSWORD=ci-check node tools/protect.mjs _site
+      - name: Upload audit report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-report
+          path: .audit/report.json
+          if-no-files-found: ignore
