@@ -606,8 +606,9 @@ function scElong(n){
     if(p[2].g)g+=blob(cx+k*62,my-k*40,22,12,'#B4766E')+Tc(cx+k*62,my-k*40+3,'EF-G','#3A2E22',9,'mono mid','600');
     s+=G('a-fade',(i*.8).toFixed(1),g);});
   const yb=n?pos[3][1]+H+24:2*(H+12)+26;
-  s+=G('a-fade',3.4,T(n?180:320,yb,n?'~15–20 amino acids per second (E. coli)':'The cycle repeats about 15–20 times a second in E. coli','lab mid'));
-  return {vb:n?slim(yb+12):wide(yb+14),s};
+  s+=G('a-fade',3.4,T(n?180:320,yb,n?'~15–20 amino acids per second (E. coli)':'The cycle repeats about 15–20 times a second in E. coli','lab mid')
+    +T(n?180:320,yb+20,n?'anticodons are written 3′→5′ under codons':'Codons read 5′→3′; each anticodon is written 3′→5′ beneath its codon','note mid f12'));
+  return {vb:n?slim(yb+32):wide(yb+34),s};
 }
 
 function scFidelity(n){
@@ -802,7 +803,7 @@ const S=[
  {p:3,title:'Two subunits',draw:scComposition,
   text:"Every ribosome has a large and a small subunit, named by how fast they sediment in a centrifuge. The bacterial 70S ribosome has a 30S subunit built around 16S rRNA and a 50S subunit built around 23S and 5S rRNA. Eukaryotic 80S ribosomes are larger, with more RNA and proteins. In both, most of the mass is RNA: about two-thirds in bacteria, a little over half in eukaryotes."},
  {p:3,title:'Where the work happens',draw:scSites,
-  text:"The mRNA runs through a channel in the small subunit, where the decoding centre checks each codon against an anticodon. Above it, the large subunit holds the peptidyl transferase centre, where peptide bonds form, and a tunnel through which the new chain leaves. tRNAs move through three sites in turn: A for the incoming aminoacyl-tRNA, P for the tRNA holding the chain, and E for the exit."},
+  text:"The mRNA runs through a channel in the small subunit, where the decoding centre checks each codon against an anticodon. Above it, the large subunit holds the peptidyl transferase centre, where peptide bonds form, and a tunnel through which the new chain leaves. tRNAs move through three sites in turn: A for the incoming aminoacyl-tRNA, P for the tRNA holding the chain, and E for the exit. In these drawings the mRNA runs 5′ to 3′ from left to right, so each anticodon, which pairs antiparallel, is written 3′ to 5′ beneath its codon."},
  {p:3,title:'A ribozyme at the core',draw:scRibozyme,
   text:"Which part of the ribosome makes peptide bonds? In 1992 Harry Noller showed the large subunit kept its activity after most of its protein was stripped away. In 2000 Thomas Steitz and Peter Moore's structure of the large subunit settled it: no protein reaches the catalytic site. The ribosome is a ribozyme. Ada Yonath, who had pioneered ribosome crystals, and Venki Ramakrishnan solved the small subunit. Steitz, Yonath and Ramakrishnan shared the 2009 Nobel Prize in Chemistry."},
  {p:4,title:'The coding problem',draw:scProblem,

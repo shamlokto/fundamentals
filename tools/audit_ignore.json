@@ -1,0 +1,5 @@
+[
+ "^woese/(wide|narrow)/05$",
+ "^protein-targeting/narrow/23(c\\d+)?$",
+ "^regulation/(wide|narrow)/06$"
+]
