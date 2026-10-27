@@ -355,6 +355,15 @@ function tube(cx,by,o={}){const w=o.w||18,h=o.h||70,top=by-h,lvl=by-h*(o.full||.
   if(o.turbid)s+=microbes(cx,(lvl+by)/2,w*.3,(by-lvl)*.38,6,o.seed||3);
   if(o.label)s+=T(cx,by+16,o.label,'note mid f11');
   return s;}
+/* guinea pig: rounder, tailless, with patches; Koch's tuberculosis animal */
+function guineaPig(cx,cy,k=1){
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${24*k}" ry="${14*k}" fill="#E8DCC4" stroke="${INK}" stroke-width="1"/>`
+   +`<path d="M${cx-6*k} ${cy-13*k} q${10*k} ${-4*k} ${16*k} ${4*k} q${-4*k} ${12*k} ${-14*k} ${10*k} z" fill="#B07A4A" opacity=".85"/>`
+   +`<path d="M${cx-22*k} ${cy-2*k} q${4*k} ${-10*k} ${12*k} ${-8*k} q${-2*k} ${10*k} ${-12*k} ${8*k} z" fill="#3A2E22" opacity=".55"/>`
+   +`<ellipse cx="${cx+22*k}" cy="${cy-4*k}" rx="${10*k}" ry="${9*k}" fill="#E8DCC4" stroke="${INK}" stroke-width="1"/>`
+   +`<path d="M${cx+16*k} ${cy-12*k} q${3*k} ${-5*k} ${7*k} ${-1*k}" fill="#C9A68A" stroke="${INK}" stroke-width=".9"/>`
+   +`<circle cx="${cx+26*k}" cy="${cy-6*k}" r="${1.7*k}" fill="${INK}"/>`
+   +`<path d="M${cx-12*k} ${cy+13*k} v${3*k} M${cx+10*k} ${cy+13*k} v${3*k}" stroke="${INK}" stroke-width="1.4"/>`;}
 function mouse(cx,cy,k=1,o={}){
   const f=o.dead?'#B8B0A2':MOUSEC;
   let g=`<path d="M${cx-19*k} ${cy+2*k} q${-14*k} ${-2*k} ${-22*k} ${-12*k}" stroke="${INK}" stroke-width="1.2" fill="none"/>`
@@ -484,7 +493,7 @@ function scK4(n){
 function scK5(n){
   const steps=[['Stain','Alkaline methylene blue for a day, then a brown counterstain: thin blue rods stand out in brown tissue.',(cx,cy)=>field(cx,cy,34,`<circle cx="${cx}" cy="${cy}" r="33" fill="#D9B98C" opacity=".5"/>`+[[-14,-6,30],[6,-12,-20],[10,8,50],[-6,12,10],[18,-2,80]].map(q=>rod(cx+q[0],cy+q[1],12,3,q[2],'#3E5F82')).join(''))],
    ['Culture','On coagulated blood serum at body temperature. Nothing visible for about two weeks, then small dry scales.',(cx,cy)=>tube(cx-14,cy+34,{h:64,w:20,fill:'#D8B9A0',full:.6})+tube(cx+14,cy+34,{h:64,w:20,fill:'#D8B9A0',full:.6})+[[-14,4],[14,0],[14,10]].map(q=>`<circle cx="${cx+q[0]}" cy="${cy+q[1]}" r="2.2" fill="#EEE5CF" stroke="${INK}" stroke-width=".5"/>`).join('')],
-   ['Inoculate','Cultures injected into guinea pigs and rabbits produce tuberculosis.',(cx,cy)=>syringe(cx-48,cy-24,22,30)+mouse(cx+8,cy+6,1.05)],
+   ['Inoculate','Cultures injected into guinea pigs and rabbits produce tuberculosis.',(cx,cy)=>syringe(cx-48,cy-24,22,30)+guineaPig(cx+8,cy+6,1.0)],
    ['Re-isolate','The same bacilli are seen in, and grown again from, the inoculated animals.',(cx,cy)=>field(cx,cy,34,[[-14,-6,30],[6,-12,-20],[10,8,50]].map(q=>rod(cx+q[0],cy+q[1],12,3,q[2],'#3E5F82')).join(''))]];
   let s='',y;
   if(!n){steps.forEach((st,i)=>{const cx=88+i*156;s+=G('a-fade',(i*.6).toFixed(1),badge(cx-58,28,i+1)+T(cx-44,32,st[0],'cname start f14')+st[2](cx,96)+wrap(st[1],24).map((l,j)=>T(cx,160+j*16,l,'note mid f12')).join(''));if(i<3)s+=G('a-fade',(i*.6+.3).toFixed(1),arw(cx+50,96,cx+104,96));});y=266;}
@@ -548,7 +557,7 @@ function scK8(n){
 }
 
 function scK9(n){
-  const rows=[['1876','anthrax','Koch'],['1879','gonorrhoea','Neisser'],['1880','typhoid','Eberth; grown by Gaffky, 1884'],['1882','tuberculosis','Koch'],['1883','cholera','Koch'],['1884','diphtheria','Klebs; Loeffler'],['1884','tetanus','Nicolaier; grown by Kitasato, 1889'],['1886','pneumococcus','Fraenkel, after Pasteur and Sternberg, 1881'],['1894','plague','Yersin; Kitasato'],['1905','syphilis','Schaudinn and Hoffmann']];
+  const rows=[['1876','anthrax','Koch'],['1879','gonorrhoea','Neisser'],['1880','typhoid','Eberth; grown by Gaffky, 1884'],['1882','tuberculosis','Koch'],['1883','cholera','Koch'],['1883','diphtheria','Klebs; grown by Loeffler, 1884'],['1884','tetanus','Nicolaier; grown by Kitasato, 1889'],['1886','pneumococcus','Fraenkel, after Pasteur and Sternberg, 1881'],['1894','plague','Yersin; Kitasato'],['1905','syphilis','Schaudinn and Hoffmann']];
   const t=wtable(n,['Year','Disease','Agent described by'],rows.map(r=>[r[0],r[1],r[2]]),n?[[12,6],[60,14],[160,30]]:[[24,6],[100,22],[280,50]],{y0:30});
   const p=para(n?16:24,t.y+14,'The golden age of bacteriology followed directly from pure culture. Koch’s own later claim, that tuberculin cured tuberculosis (1890), failed badly; tuberculin survived as a diagnostic skin test. He received the Nobel Prize in 1905.',n?50:92,'note start f13',17,1.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};

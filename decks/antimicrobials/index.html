@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Antimicrobials and Resistance</title>
 <meta name="description" content="Selective toxicity, drug targets by class, resistance mechanisms and genes, MIC and breakpoints, synergy, tolerance and persistence, PK/PD indices, stewardship and the discovery pipeline.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fundamentals">
+<meta property="og:title" content="Antimicrobials and Resistance">
+<meta property="og:description" content="Selective toxicity, drug targets by class, resistance mechanisms and genes, MIC and breakpoints, synergy, tolerance and persistence, PK/PD indices, stewardship and the discovery pipeline.">
+<meta property="og:url" content="https://shamlokto.github.io/fundamentals/decks/antimicrobials/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Young+Serif&display=swap">
 <style>
@@ -74,7 +80,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
 #stage .acc{fill:var(--accent);font-weight:600}
 #stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
-#stage .f10{font-size:12px} #stage .f11{font-size:12.5px} #stage .f12{font-size:13.5px} #stage .f13{font-size:14.5px} #stage .f14{font-size:15.5px} #stage .f15{font-size:16.5px} #stage .f16{font-size:17.5px}
+#stage .f8{font-size:12px} #stage .f9{font-size:12px} #stage .f10{font-size:12px} #stage .f11{font-size:12.5px} #stage .f12{font-size:13.5px} #stage .f13{font-size:14.5px} #stage .f14{font-size:15.5px} #stage .f15{font-size:16.5px} #stage .f16{font-size:17.5px}
 #stage .card{fill:var(--surface2);stroke:var(--line)}
 #stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
 #stage .okc{fill:#4F7A3F} #stage .badc{fill:#A4473A}
@@ -783,10 +789,10 @@ function scA8(n){
   return {vb:n?slim(t.y+6):wide(t.y+8),s:s+t.s};
 }
 function scA9(n){
-  const ev=[['sulfonamides',1935],['penicillins',1942],['aminoglycosides',1946],['tetracyclines',1948],['chloramphenicol',1949],['macrolides',1952],['glycopeptides',1958],['quinolones',1962],['oxazolidinones',2000],['lipopeptides',2003],['diarylquinolines (TB)',2012],['triazaacenaphthylenes',2025]];
+  const ev=[['sulfonamides',1935],['penicillins',1942],['aminoglycosides',1946],['tetracyclines',1948],['chloramphenicol',1949],['macrolides',1952],['glycopeptides',1958],['quinolones',1967],['oxazolidinones',2000],['lipopeptides',2003],['diarylquinolines (TB)',2012],['triazaacenaphthylenes',2025]];
   const lw=n?132:170, x0=(n?10:24)+lw, x1=n?340:600, y0=34, rh=n?17:18, yr=v=>x0+(v-1930)/(2030-1930)*(x1-x0);
-  let s=G('a-fade',0,T(n?10:24,20,'first clinical use of each class (approximate)','note start f12')+box(FX(yr(1962.5)),y0-6,FX(yr(1999.5)-yr(1962.5)),ev.length*rh+4,'#E7DEC9',2)
-    +T(FX((yr(1962.5)+yr(1999.5))/2),y0+ev.length*rh+18,'few new classes','note mid f11'));
+  let s=G('a-fade',0,T(n?10:24,20,'first clinical use of each class (approximate)','note start f12')+box(FX(yr(1967.5)),y0-6,FX(yr(1999.5)-yr(1967.5)),ev.length*rh+4,'#E7DEC9',2)
+    +T(FX((yr(1967.5)+yr(1999.5))/2),y0+ev.length*rh+18,'few new classes','note mid f11'));
   ev.forEach((e,i)=>{const y=y0+i*rh+6;s+=G('a-fade',(.1+i*.06).toFixed(2),T(x0-8,y+4,e[0],'lab end '+(n?'f11':'f12'))+ln(x0,y,x1,y,'#C9BFAB',.6)+`<circle cx="${FX(yr(e[1]))}" cy="${y}" r="4" fill="${i<8?'#2F5276':RED}"/>`);});
   const ay=y0+ev.length*rh+26;
   s+=G('a-fade',.8,ln(x0,ay,x1,ay,'#6A5B47',1)+[1940,1980,2020].map(v=>T(FX(yr(v)),ay+14,String(v),'mono mid f10')).join(''));
