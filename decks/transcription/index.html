@@ -561,7 +561,7 @@ function scBactStruct(n){
   const ev=[['1999','Seth Darst’s lab: core RNA polymerase of Thermus aquaticus, 3.3 Å'],['2002','Holoenzymes with σ, from the Darst and Yokoyama labs'],['2007','Elongation complexes with DNA, RNA and NTP in place']];
   let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:35);s+=G('a-fade',(.8+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+14;});
   s+=G('a-fade',2.2,wrap(n?'A crab claw, made of β′ and β, around a cleft that holds the DNA. Pol II has the same core.':'A crab claw of β′ and β around the DNA-binding cleft. Bacterial RNAP and Pol II share the same core.',n?44:40).map((l,i)=>T(tx,yy+8+i*20,l,'lab start '+(n?'f14':''))).join(''));
-  return {vb:n?slim(yy+52):wide(Math.max(290,yy+60)),s};
+  return {vb:n?slim(yy+62):wide(Math.max(290,yy+60)),s};
 }
 
 function scSigmas(n){

@@ -318,7 +318,7 @@ function scVector(n){
   let s=G('a-fade',0,plasmid(cx,cy,r,feats,{name:'pUC-type',sub:'~2.7 kb',fs:n?10:12}));
   const items=[['ori','how many copies per cell; which hosts'],['selection','antibiotic resistance, or a nutrient'],['promoter','how strongly, and when, the gene is read'],['MCS','a cluster of unique restriction sites'],['tags','His₆, FLAG, GFP — added in frame'],['terminator','stops transcription running on']];
   const tx=n?14:350, ty=n?cy+r+40:40;
-  let vy=ty;items.forEach((it,i)=>{const yy=vy, VL=wrap(it[1],n?32:23);s+=G('a-fade',(.4+i*.2).toFixed(1),Tc(tx,yy,it[0],'#2F5276',13,'mono start','600')+VL.map((l,j)=>T(tx+(n?100:118),yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));vy+=(VL.length-1)*18+(n?30:28);});
+  let vy=ty;items.forEach((it,i)=>{const yy=vy, VL=wrap(it[1],n?32:22);s+=G('a-fade',(.4+i*.2).toFixed(1),Tc(tx,yy,it[0],'#2F5276',13,'mono start','600')+VL.map((l,j)=>T(tx+(n?100:118),yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));vy+=(VL.length-1)*18+(n?30:28);});
   const yb=vy+(n?0:16);
   const SL=wrap(n?'Shuttle vectors carry two oris, for E. coli and the host':'A shuttle vector carries two oris: one for E. coli, one for the organism you study',n?44:36);
   s+=G('a-fade',1.8,SL.map((l,i)=>T(n?14:350,yb+i*18,l,'note start '+(n?'f12':''))).join(''));

@@ -123,7 +123,7 @@ function scG7(n){
   s+=G('a-fade',.7,meds.map(l=>curve(A,u=>r(l)+(l-u)*(.5-r(l))/l,{col:'#A4473A',dash:'4 3',w:1.4,from:l*.25,to:l})).join(''));
   s+=G('a-fade',.9,T(FX(A.px(1.62)),FX(A.py(r(1.6))+24),'richer media','note start f11 halo')+T(FX(A.px(.12)),FX(A.py(.56)),'+ chloramphenicol','note start f11 halo'));
   const items=[['Copenhagen, 1958','Schaechter, Maaløe and Kjeldgaard found that in Salmonella grown in different media, cell mass and RNA per cell rose exponentially with growth rate. Growth rate, not the medium itself, set cell composition.'],['A linear law, 2010','Scott, Hwa and colleagues showed that in E. coli the ribosome share of the proteome rises linearly with growth rate when nutrients are varied: faster growth needs more ribosomes, each working near full speed.'],['The other line','Slowing translation with chloramphenicol makes cells raise their ribosome share as growth falls (red). Together the lines describe a proteome split between ribosomes, metabolic enzymes and a fixed core.']];
-  const b=n?bullets(24,A.y+A.h+62,items,44,{d0:1,gap:20}):bullets(400,50,items,29,{d0:1,gap:16});
+  const b=n?bullets(24,A.y+A.h+62,items,44,{d0:1,gap:20}):bullets(400,50,items,29,{d0:1,gap:22});
   const H=n?b.y-4:Math.max(b.y-4,A.y+A.h+50);
   return {vb:n?slim(H):wide(H),s:s+b.s};
 }
@@ -135,7 +135,7 @@ function scG8(n){
   const rng=rnd(4);let dots='';for(let i=0;i<26;i++){const b=.7+rng()*.6,d=1+(rng()-.5)*.28;dots+=`<circle cx="${FX(A.px(b))}" cy="${FX(A.py(d))}" r="2.4" fill="#2F5276" opacity=".55"/>`;}
   s+=G('a-fade',.5,dots);
   const items=[['The adder','E. coli, B. subtilis and Caulobacter add a roughly constant size between birth and division, whatever size they were born at (Campos and colleagues 2014; Taheri-Araghi and colleagues 2015). Deviations from average size shrink by half each generation.'],['Size and growth rate','Average cell size rises roughly exponentially with growth rate across media, as Schaechter and colleagues found. In the Cooper–Helmstetter picture, replication takes about 40 min and division about 20 min more, so fast-growing cells start new rounds before the last has finished.'],['Why not a sizer or a timer?','A timer would let size errors grow; a sizer would need a precise size sensor. An adder is simple and still keeps sizes stable.']];
-  const b=n?bullets(24,A.y+A.h+62,items,44,{d0:.9,gap:20}):bullets(380,50,items,31,{d0:.9,gap:16});
+  const b=n?bullets(24,A.y+A.h+62,items,44,{d0:.9,gap:20}):bullets(380,50,items,31,{d0:.9,gap:22});
   const H=n?b.y-4:Math.max(b.y-4,A.y+A.h+50);
   return {vb:n?slim(H):wide(H),s:s+b.s};
 }

@@ -299,7 +299,7 @@ function scSecGenes(n){
   s+=G('a-pop',.5,chan(cx,e.Y.im,SECY,24,9,6));
   s+=G('a-fade',.9,`<path d="M${cx} ${e.Y.im+22} v28" stroke="${RED}" stroke-width="4"/>`+blob(cx,e.Y.im+60,n?30:36,n?18:20,'#C9A0B8')+Tc(cx,e.Y.im+64,'LacZ','#3A2E22',11,'mono mid','600')+beadChain(cx-4,e.Y.im-20,3,0,-8,CHAIN[1])+T(cx+(n?36:44),e.Y.im-12,'MalE','mono start f11'));
   s+=G('a-pop',1.4,mark(cx+(n?50:60),e.Y.im+32,false,10)+T(cx+(n?66:76),e.Y.im+36,'jammed','note start f12'));
-  const tx=n?14:430, ty=n?e.Y.bottom+90:40;
+  const tx=n?14:416, ty=n?e.Y.bottom+90:40;
   const L=n?['Beckwith and Silhavy fused LacZ to','exported proteins: the fusions jammed','the export machine. Selecting suppressors','found prlA (secY); other screens found','secA, secB, secD, secE, secF, secG.','','Yeast sec mutants (Schekman, 1980)','mapped the eukaryotic pathway.']
            :['Jon Beckwith and Tom Silhavy','fused LacZ to exported proteins:','the fusions jammed the machine.','','Suppressors found prlA (secY);','other screens found secA, secB,','secD, secE, secF and secG.','','Yeast sec mutants (Schekman,','1980) mapped the eukaryotic','pathway; Nobel Prize 2013.'];
   s+=G('a-fade',1.8,L.map((l,i)=>T(tx,ty+i*19,l,(l?'lab start ':'')+(n?'f13':'f14'))).join(''));
@@ -317,7 +317,7 @@ function scSignals(n){
     s+=G('a-fade',(i*.6).toFixed(1),(n?T(x,y-10,r[0],'cname start f15'):T(x-14,y+16,r[0],'cname end'))+sigBar(x,y,w,r[2])+`<path d="M${x+w*r[3]} ${y-4} v30" stroke="${RED}" stroke-width="2" stroke-dasharray="3 2"/>`+T(x+w*r[3],y+42,r[1]+' cuts','note mid f11'));});
   const yb=n?40+3*86+6:40+3*76+10;
   s+=G('a-fade',2,wrap(n?'Lipoproteins become lipid-anchored on the cysteine. Tat signals carry twin arginines. Eukaryotic ER signals look like Sec signals.':'Positive charges, then a hydrophobic core, then a cleavage site. Lipoproteins are lipid-anchored on the cysteine; Tat signals carry twin arginines. Eukaryotic ER signals look like Sec signals.',n?46:78).map((l,i)=>T(n?14:30,yb+i*20,l,'lab start '+(n?'f13':''))).join(''));
-  return {vb:n?slim(yb+60):wide(yb+44),s};
+  return {vb:n?slim(yb+60):wide(yb+52),s};
 }
 
 /* ===================== Part II · crossing the inner membrane ===================== */
@@ -424,7 +424,7 @@ function scDsb(n){
 }
 
 function scOM(n){
-  const x1=n?66:100, x2=n?350:620, e=envelope('neg',x1,x2,20,{labels:x1-6}), w=x2-x1;
+  const x1=n?66:100, x2=n?350:620, e=envelope('neg',x1,x2,n?34:20,{labels:x1-6}), w=x2-x1;
   let s=G('a-fade',0,e.s);
   const a=x1+w*.12, b=x1+w*.38, c=x1+w*.62, d=x1+w*.86;
   s+=G('a-pop',.3,chan(a,e.Y.im,SECY)+lab(a,e.Y.im+38,'SecYEG','mono mid f10'));

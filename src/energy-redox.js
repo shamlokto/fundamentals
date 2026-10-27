@@ -61,14 +61,14 @@ function scE3(n){
 }
 function scE4(n){
   let s='';const L=n?16:24;
-  s+=G('a-fade',0,T(L,34,'Each redox couple has a standard potential, E°′','cname start'));
-  const hx=n?[180,180]:[170,470], hy=n?[54,114]:[54,54], bw=n?328:240, dy=n?60:0;
+  s+=G('a-fade',0,n?T(L,30,'Each redox couple has a','cname start')+T(L,52,'standard potential, E°′','cname start'):T(L,34,'Each redox couple has a standard potential, E°′','cname start'));
+  const hx=n?[180,180]:[170,470], hy=n?[74,134]:[54,54], bw=n?328:240, dy=n?80:0;
   s+=G('a-fade',.3,box(hx[0]-bw/2,hy[0],bw,52,'#EFE6D2',4)+Tc(hx[0],hy[0]+22,'NAD⁺ + 2H⁺ + 2e⁻ → NADH + H⁺','#3A2E22',n?9.5:12,'mono mid','600')+T(hx[0],hy[0]+42,'E°′ = −0.32 V: a good donor','note mid f11')
     +box(hx[1]-bw/2,hy[1],bw,52,'#EFE6D2',4)+Tc(hx[1],hy[1]+22,'½O₂ + 2H⁺ + 2e⁻ → H₂O','#3A2E22',n?9.5:12,'mono mid','600')+T(hx[1],hy[1]+42,'E°′ = +0.82 V: a good acceptor','note mid f11'));
   s+=G('a-fade',.8,`<rect x="${n?8:60}" y="${128+dy}" width="${n?344:520}" height="${n?72:60}" rx="4" fill="#E7DEC9" stroke="${INK}"/>`
     +Tc(n?180:320,152+dy,'ΔG°′ = −nF ΔE°′','#2F5276',n?14:16,'mono mid','600')
     +T(n?180:320,174+dy,n?'= −2 × 96.5 × (0.82 − (−0.32))':'= −2 × 96.5 kJ/(mol·V) × (+0.82 − (−0.32) V) = −220 kJ/mol','note mid f13')+(n?T(180,192+dy,'= −220 kJ/mol','note mid f13'):''));
-  const b=bullets(n?24:30,n?292:222,[['Electrons flow downhill','Electrons move spontaneously from the couple with the more negative potential to the one with the more positive potential. The bigger the gap, the more energy per electron pair.'],
+  const b=bullets(n?24:30,n?312:222,[['Electrons flow downhill','Electrons move spontaneously from the couple with the more negative potential to the one with the more positive potential. The bigger the gap, the more energy per electron pair.'],
     ['n and F','n is the number of electrons transferred; Faraday’s constant converts volts into kJ per mole. A 0.1 V step with two electrons is worth about 19 kJ/mol.'],
     ['Standard is not actual','E′ shifts with the ratio of oxidised to reduced forms (the Nernst equation), and with pH when protons are involved.']],n?44:88,{d0:1.2,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
