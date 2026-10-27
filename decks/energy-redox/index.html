@@ -163,8 +163,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <p class="foot">Potentials are standard biochemical values (pH 7, 25 °C) rounded as usually tabulated; real ΔG depends on concentrations, as the last part shows.</p>
 </div>
 <script>
-/* optional picture for the opening plate: decks/energy-redox/cover.jpg */
-const COVER=null;
+/* optional picture for the opening plate: decks/energy-redox/cover.webp (transparent paper) or cover.jpg */
+const COVER='cover.webp';
 const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
       RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
 const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
@@ -520,7 +520,7 @@ function introPlate(n,o){
   const ax=n?16:20, ay=n?14:30;
   if(typeof COVER!=='undefined'&&COVER){const fh=n?Math.max(ah,200):Math.max(ah,250);
     s+=G('a-fade',0,`<clipPath id="covclip"><rect x="${ax}" y="${ay}" width="${aw}" height="${fh}" rx="4"/></clipPath>`
-      +`<image href="${COVER}" x="${ax}" y="${ay}" width="${aw}" height="${fh}" preserveAspectRatio="xMidYMid slice" clip-path="url(#covclip)" style="filter:sepia(.25) saturate(.9)"/>`
+      +`<image href="${COVER}" x="${ax}" y="${ay}" width="${aw}" height="${fh}" preserveAspectRatio="xMidYMid meet" clip-path="url(#covclip)"/>`
       +`<rect x="${ax}" y="${ay}" width="${aw}" height="${fh}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
       +`<rect x="${ax-5}" y="${ay-5}" width="${aw+10}" height="${fh+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/>`);
     ah=fh;}

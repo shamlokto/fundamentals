@@ -7,7 +7,7 @@ function introPlate(n,o){
   const ax=n?16:20, ay=n?14:30;
   if(typeof COVER!=='undefined'&&COVER){const fh=n?Math.max(ah,200):Math.max(ah,250);
     s+=G('a-fade',0,`<clipPath id="covclip"><rect x="${ax}" y="${ay}" width="${aw}" height="${fh}" rx="4"/></clipPath>`
-      +`<image href="${COVER}" x="${ax}" y="${ay}" width="${aw}" height="${fh}" preserveAspectRatio="xMidYMid slice" clip-path="url(#covclip)" style="filter:sepia(.25) saturate(.9)"/>`
+      +`<image href="${COVER}" x="${ax}" y="${ay}" width="${aw}" height="${fh}" preserveAspectRatio="xMidYMid meet" clip-path="url(#covclip)"/>`
       +`<rect x="${ax}" y="${ay}" width="${aw}" height="${fh}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
       +`<rect x="${ax-5}" y="${ay-5}" width="${aw+10}" height="${fh+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/>`);
     ah=fh;}

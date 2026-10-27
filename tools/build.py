@@ -47,8 +47,8 @@ def build(slug):
 <script>
 '''
     d = ROOT / 'decks' / slug
-    cover = "'cover.jpg'" if (d / 'cover.jpg').exists() else 'null'
-    out = head + wrap + f'/* optional picture for the opening plate: decks/{slug}/cover.jpg */\nconst COVER={cover};\n' + (T / 'base_helpers.js').read_text() + '\n' + (T / 'lib.js').read_text() + '\n/* ===================== deck ===================== */\n' + body.strip() + "\nconst NAR='Narrator';\n" + (T / 'base_runtime.html').read_text()
+    cover = next((f"'{c}'" for c in ('cover.webp', 'cover.jpg') if (d / c).exists()), 'null')
+    out = head + wrap + f'/* optional picture for the opening plate: decks/{slug}/cover.webp (transparent paper) or cover.jpg */\nconst COVER={cover};\n' + (T / 'base_helpers.js').read_text() + '\n' + (T / 'lib.js').read_text() + '\n/* ===================== deck ===================== */\n' + body.strip() + "\nconst NAR='Narrator';\n" + (T / 'base_runtime.html').read_text()
     d.mkdir(parents=True, exist_ok=True)
     (d / 'index.html').write_text(out)
     import subprocess, tempfile
