@@ -512,7 +512,7 @@ function scP1(n){
   y+=22;
   const q=para(n?16:24,y,'The replicon is the origin of replication plus whatever protein and RNA elements control initiation from it. Everything else a plasmid carries — resistance, virulence, metabolism, nothing at all — is cargo. Two plasmids with the same replicon cannot be stably co-inherited; two with different replicons can, which is why a single cell routinely carries several.',n?50:92,'note start f13',17,2);
   const rows=[['Small, high copy','1–10 kb, 15–500 copies','Cloning vectors, small resistance plasmids. Usually rolling-circle or ColE1-type, and segregated by sheer numbers.'],
-   ['Medium','10–60 kb, 1–20 copies','Most natural resistance plasmids. Often conjugative or mobilizable, with partition and addiction systems.'],
+   ['Medium','10–60 kb, 1–20 copies','Most natural resistance plasmids. Often conjugative or mobilisable, with partition and addiction systems.'],
    ['Large','60 kb to >1 Mb, 1–2 copies','Megaplasmids and second chromosomes: symbiosis plasmids of Rhizobium, the virulence plasmids of Shigella and Bacillus anthracis.']];
   const t=wtable(n,['Size class','Typical numbers','What lives there'],rows,n?[[10,13],[118,15],[230,20]]:[[24,16],[180,20],[370,40]],{y0:q.y+22,d0:2.4});
   return {vb:n?slim(t.y+8):wide(t.y+10),s:s+q.s+t.s};
@@ -777,7 +777,7 @@ function scP9(n){
    ['Rep_3, Inc18','Gram-positive','The pAMβ1 and pIP501 families of Enterococcus and Streptococcus: broad-host-range, conjugative, and the route by which vanA reached Staphylococcus aureus.']];
   const t=n?wtable(n,['Family','Host range, and why it matters'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,10],[98,41]],{y0:30})
           :wtable(n,['Family','Host range','Why it matters'],rows,[[24,12],[130,18],[300,46]],{y0:30});
-  const b=bullets(n?24:30,t.y+14,[[n?'Self-transmissible or mobilizable':'Self-transmissible, mobilizable, or neither','A conjugative plasmid encodes the whole apparatus and is usually large. A mobilizable one carries only oriT and a relaxase and borrows the rest — small, and therefore far more common. A non-mobilizable plasmid moves only by transformation or transduction, which is what makes a cloning vector safe to use.'],
+  const b=bullets(n?24:30,t.y+14,[[n?'Self-transmissible or mobilisable':'Self-transmissible, mobilisable, or neither','A conjugative plasmid encodes the whole apparatus and is usually large. A mobilisable one carries only oriT and a relaxase and borrows the rest — small, and therefore far more common. A non-mobilisable plasmid moves only by transformation or transduction, which is what makes a cloning vector safe to use.'],
    [n?'Host range is set by replication':'Host range is set by replication, not by transfer','Conjugation delivers DNA to a much wider range of species than the plasmid can replicate in. Broad-host-range plasmids are broad because their replication is independent of host-specific initiation factors — IncQ carries its own primase, IncP its own Rep and a trans-acting control system.']],n?44:88,{d0:1.8,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:t.s+b.s};
 }

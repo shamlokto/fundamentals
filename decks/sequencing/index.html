@@ -572,7 +572,7 @@ function scN3(n){
 
 function scN4(n){
   const steps=[['Fragment','Sonication, enzymes, or tagmentation — a transposase that cuts and inserts adapters in one step.'],
-   ['Repair and A-tail','Blunt the ends and add a single A, so the adapter’s T overhang ligates in the right orientation.'],
+   ['Repair and A-tail','Blunt the ends and add a single A. It pairs with the adapter’s T overhang, so fragments cannot join each other.'],
    ['Ligate adapters','Adapters carry the sequences that bind the flow cell, the primer sites, and the index.'],
    ['Index','A short barcode per sample. Dual indexes on both ends let you spot and discard mis-assigned reads.'],
    ['Amplify or not','A few PCR cycles raise yield but introduce duplicates and GC bias. PCR-free needs more input but gives flatter coverage.'],
@@ -610,7 +610,7 @@ function scN5(n){
       s+=G('a-fade',(i*.5).toFixed(1),badge(24,y,i+1)+T(40,y+4,st[0],'cname start f14')+L.map((l,j)=>T(16,y+24+j*16,l,'note start f12')).join('')+pic(i,288,y+30+Math.max(3,L.length)*8));
       y+=Math.max(104,34+L.length*16+16);});}
   const b=bullets(n?20:30,y+8,[['Why amplify at all','One fluorophore on one molecule is too dim to image reliably. A cluster of about a thousand copies gives a spot a camera can read.'],
-   ['Patterned flow cells','Newer instruments etch billions of nanowells at fixed positions and seed one molecule per well by an isothermal reaction (ExAmp), which packs clusters more densely and makes their positions known in advance.'],
+   ['Patterned flow cells','Newer instruments etch billions of nanowells at fixed positions and seed one molecule per well, then amplify it isothermally (ExAmp). This packs clusters more densely and makes their positions known in advance.'],
    ['The failure mode','If two molecules seed one well or cluster, the spot gives a mixed signal and is discarded as a polyclonal cluster.']],n?44:88,{d0:2.4,gap:24});
   const Lk=vendorLine(n,b.y,['illumina']);
   return {vb:n?slim(Lk.y+2):wide(Lk.y+2),s:s+b.s+Lk.s};

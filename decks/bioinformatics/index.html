@@ -684,7 +684,7 @@ function scI1(n){return introPlate(n,{q:'How do millions of short reads become a
     return s+T(cx,cy-64,'overlapping reads','note mid f11')+T(cx,cy+66,'contig','note mid f11');},artH:160});}
 function scI2(n){
   const p=PIPE[pipeSel];
-  return explorer(n,{h:p.k,rows:[['Input',p.in],['Output',p.out],['Tools',p.tools],['Check',p.chk]],note:'Arrows show the usual order. Mapping feeds variant calling and, for RNA-seq, gene counts; assembly feeds binning and annotation; profiling skips assembly altogether.',art:(cx,cy)=>pipeArt(cx,cy,n),artH:n?290:168},{y:20});
+  return explorer(n,{h:p.k,rows:[['Input',p.in],['Output',p.out],['Tools',p.tools],['Check',p.chk]],note:'Arrows show the usual order. Mapping feeds variant calling and, for RNA-seq, gene counts; assembly feeds annotation, through binning for metagenomes; profiling skips assembly altogether.',art:(cx,cy)=>pipeArt(cx,cy,n),artH:n?290:168},{y:20});
 }
 function scI3(n){
   const x0=n?16:24, y0=40;

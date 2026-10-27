@@ -429,7 +429,7 @@ function scAdd(n){
 }
 
 function scBack(n){
-  const panels=[['A wrong base','the 3′ end mispairs'],['Backtrack','the RNA end slides into the pore'],['Cut and resume','GreB or TFIIS stimulates cleavage']];
+  const panels=[['A wrong base','the 3′ end mispairs'],['Backtrack','the RNA end slides into the pore'],['Cut and resume','GreA or TFIIS stimulates cleavage']];
   const pw=n?340:200, ph=n?110:184;
   let s='';
   panels.forEach((p,i)=>{const ox=n?10:10+i*210, oy=n?10+i*(ph+14):20;
@@ -441,7 +441,7 @@ function scBack(n){
     g+=`<ellipse cx="${(i===1?as-24:as)}" cy="${ty-10}" rx="${n?40:44}" ry="${n?22:28}" fill="${POLC}" opacity=".35" stroke="${INK}" stroke-width=".8"/>`;
     if(i===0)g+=`<rect x="${end-8}" y="${ty-16}" width="9" height="8" fill="${RED}"/>`;
     if(i===1)g+=`<path d="M${end-8} ${ty-12} q12 4 16 20" stroke="${RNAC}" stroke-width="2.6" fill="none"/><rect x="${end+5}" y="${ty+4}" width="8" height="8" fill="${RED}"/>`;
-    if(i===2)g+=`<text x="${as-8}" y="${ty+18}" class="mid" style="fill:${RED};font-size:16px">✂</text><rect x="${as+14}" y="${ty+8}" width="8" height="8" fill="${RED}" opacity=".5"/>`+blob(as+(n?44:36),ty+(n?12:24),12,8,'#9C7FB0')+(n?T(as+60,ty+16,'GreB','mono start f12'):T(as+36,ty+45,'GreB','mono mid f12'));
+    if(i===2)g+=`<text x="${as-8}" y="${ty+18}" class="mid" style="fill:${RED};font-size:16px">✂</text><rect x="${as+14}" y="${ty+8}" width="8" height="8" fill="${RED}" opacity=".5"/>`+blob(as+(n?44:36),ty+(n?12:24),12,8,'#9C7FB0')+(n?T(as+60,ty+16,'GreA','mono start f12'):T(as+36,ty+45,'GreA','mono mid f12'));
     s+=G('a-fade',(i*.9).toFixed(1),g);});
   const H=n?10+3*(ph+14):20+ph+16;
   s+=G('a-fade',2.8,T(n?180:320,H+8,n?'Accuracy: ~1 error in 10⁴–10⁵':'Backtracking and cleavage keep errors near 1 in 10⁴–10⁵','lab mid'));
@@ -622,7 +622,7 @@ function scSRNA(n){
     +blob(x1+w*.16,yA-22,17,10,'#C17A2C')+Tc(x1+w*.16,yA-18,'Hfq','#1E2632',10,'mono mid','600')
     +Tc(x1+w*.42,yA-30,'sRNA','#7D4A98',11,'mono start','600'));
   s+=G('a-fade',1.4,ribo(x1+w*.31,yA+34,n?1.3:1.6)+mark(x1+w*.31+(n?20:24),yA+30,false,8)
-    +T(x1,yA+(n?60:64),n?'RBS covered: no initiation; RNase E degrades both':'the ribosome binding site is covered: no initiation, and RNase E then degrades both strands','note start f12'));
+    +T(x1,yA+(n?60:64),n?'RBS covered: no initiation; RNase E degrades both':'the ribosome binding site is covered: no initiation, and RNase E then degrades both RNAs','note start f12'));
   const yB=yA+(n?144:162);
   s+=G('a-fade',1.9,T(x1,yB-(n?56:58),n?'And one that switches a message on':'And one that activates: pairing opens a sequestered site','cname start '+(n?'f14':'f15')));
   s+=G('a-fade',2.2,mrna(yB)
@@ -681,7 +681,7 @@ const S=[
  {p:1,title:'Mediator, 1990',draw:scMediator,
   text:"Back at Stanford, Kornberg's group rebuilt yeast transcription from purified parts: Pol II and the general factors. It made RNA from a promoter, but it ignored activators bound to enhancers upstream. Adding back a crude fraction restored the response. The missing piece was a large complex they called Mediator. It bridges activators and Pol II, carrying the 'on' signal from distant DNA to the polymerase."},
  {p:1,title:'Bacterial activators touch the polymerase',draw:scActivators,
-  text:"Bacteria need no Mediator. Their activators contact RNA polymerase directly. CAP, bound to cAMP when glucose is scarce, sits just upstream of the lac promoter and touches the α subunit's C-terminal domain, recruiting the enzyme. Bacteria even have enhancers. Promoters read by σ⁵⁴ stay closed until an activator such as phosphorylated NtrC, bound about 100 bp away, loops over with IHF's help and uses ATP to open the DNA."},
+  text:"Bacteria need no Mediator. Their activators contact RNA polymerase directly. CAP, bound to cAMP when glucose is scarce, sits just upstream of the lac promoter and touches the α subunit's C-terminal domain, recruiting the enzyme. Bacteria even have enhancers. Promoters read by σ⁵⁴ stay closed until an activator such as phosphorylated NtrC, bound about 100 bp away, loops over, often with IHF's help, and uses ATP to open the DNA."},
  {p:1,title:'Twenty years to a picture, 2001',draw:scStructure,
   text:"Kornberg wanted to see Pol II at work. It took more than two decades: growing two-dimensional crystals on lipid layers in the 1980s, then three-dimensional crystals of yeast Pol II, then solving the phase problem. In 2001 his group published Pol II at 2.8 Å resolution, and Pol II caught in the act, holding DNA and a growing RNA chain."},
  {p:1,title:'The bacterial enzyme, seen',draw:scBactStruct,
@@ -691,7 +691,7 @@ const S=[
  {p:2,title:'RNA polymerase vs DNA polymerase',draw:scVs,
   text:"RNA polymerase shares the 5′ to 3′ chemistry of DNA polymerase, but works differently. It copies one strand, needs no primer, and uses NTPs with U in place of T. The RNA peels away from the template a few bases behind the active site. It is slower and less accurate, which a short-lived message can afford."},
  {p:2,title:'Many σ factors',draw:scSigmas,
-  text:"E. coli makes seven σ factors. σ⁷⁰ runs housekeeping genes; the others redirect the core enzyme to new sets of promoters for heat shock, starvation, flagella, envelope stress or nitrogen. Anti-σ factors hold some in reserve until needed. B. subtilis times spore formation with a cascade of σ factors, and the pneumococcus switches on competence for DNA uptake with its own σ, ComX."},
+  text:"E. coli makes seven σ factors. σ⁷⁰ runs housekeeping genes; the others redirect the core enzyme to new sets of promoters for heat shock, starvation, flagella, envelope stress, nitrogen or iron citrate uptake. Anti-σ factors hold some in reserve until needed. B. subtilis times spore formation with a cascade of σ factors, and the pneumococcus switches on competence for DNA uptake with its own σ, ComX."},
  {p:2,title:'The transcription cycle',draw:scCycle,
   text:"In bacteria, σ guides the polymerase to a promoter. It melts about 13 base pairs to form the open complex. The enzyme then makes many short RNAs it cannot hold, until one grows long enough to push the polymerase off the promoter. σ is released, the core elongates, and a terminator ends the cycle."},
  {p:2,title:'Inside the elongation complex',draw:scInside,
@@ -699,7 +699,7 @@ const S=[
  {p:2,title:'Adding one nucleotide',draw:scAdd,
   text:"Each step is a small cycle. An NTP enters through the pore and pairs with the template. The trigger loop folds over it, checking the fit; only a correct pair lets it close fully. The bond forms and pyrophosphate leaves. Then the polymerase translocates one base forward, ratcheting along with the help of the bridge helix, and the active site is free again."},
  {p:2,title:'Backtracking',draw:scBack,
-  text:"When a wrong nucleotide gets in, the mispaired end does not fit. The polymerase slides backwards, threading the RNA's 3′ end out through the pore. A cleavage factor, GreB in bacteria or TFIIS in eukaryotes, reaches into the active site and helps cut off the last few nucleotides, including the error. Transcription then resumes from a correct end."},
+  text:"When a wrong nucleotide gets in, the mispaired end does not fit. The polymerase slides backwards, threading the RNA's 3′ end out through the pore. A cleavage factor, GreA (GreB for longer backtracks) in bacteria or TFIIS in eukaryotes, reaches into the active site and helps cut off the last few nucleotides, including the error. Transcription then resumes from a correct end."},
  {p:2,title:'Attenuation: translation decides',draw:scAtten,
   text:"Bacteria can decide whether to finish a transcript while it is being made. The trp operon leader carries two Trp codons and four regions that can pair in different ways. With tryptophan plentiful, the ribosome races through region 1 and covers region 2, so regions 3 and 4 form a terminator and transcription stops. When tryptophan is scarce, the ribosome stalls at the Trp codons, regions 2 and 3 pair instead, and the polymerase continues into the trp genes."},
  {p:2,title:'Riboswitches',draw:scRiboswitch,
@@ -707,7 +707,7 @@ const S=[
  {p:2,title:'Small RNAs',draw:scSRNA,
   text:"Not all regulation happens at the promoter. Small RNAs of fifty to three hundred nucleotides base-pair with messages and change their fate: most block the ribosome binding site and recruit degradation, while some open a sequestered site and switch translation on. Trans-encoded sRNAs pair imperfectly and need the chaperone Hfq to find their targets, so one sRNA can control a whole set of genes. Others work without pairing at all, sequestering a regulatory protein or, in the case of 6S RNA, the polymerase itself."},
  {p:2,title:'Eukaryotes need helpers',draw:scPIC,
-  text:"Bacterial RNA polymerase needs only σ to find and open a promoter, with no ATP. Pol II cannot find promoters by itself. TFIID's TATA-binding protein grips the TATA box and bends the DNA sharply. TFIIB, then Pol II with TFIIF, then TFIIE and TFIIH join to form the preinitiation complex. TFIIH unwinds the DNA and phosphorylates the polymerase tail. Mediator relays signals from activators bound far upstream."},
+  text:"With σ⁷⁰, bacterial RNA polymerase needs no other factor and no ATP to find and open a promoter. Pol II cannot find promoters by itself. TFIID's TATA-binding protein grips the TATA box and bends the DNA sharply. TFIIB, then Pol II with TFIIF, then TFIIE and TFIIH join to form the preinitiation complex. TFIIH unwinds the DNA and phosphorylates the polymerase tail. Mediator relays signals from activators bound far upstream."},
  {p:2,title:'The CTD: a tail that coordinates',draw:scCTD,
   text:"Pol II's largest subunit ends in a long tail of repeated heptads, YSPTSPS. Its phosphorylation changes as the polymerase moves. Near the promoter, serine 5 is phosphorylated, recruiting the enzyme that caps the RNA. Further along, serine 2 phosphorylation builds up, recruiting splicing and 3′-end processing factors. The mRNA is processed while it is still being made."},
  {p:2,title:'Bacteria couple instead',draw:scExpressome,
