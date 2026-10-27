@@ -393,17 +393,17 @@ function cameo(n,x,y,key,name,dates,note){const c=CAMEOS[key];if(!c||!c.ok)retur
   if(c.credit)s+=T(tx,ty+18,c.credit,'note start f10');
   return {s:G('a-fade',1.4,s),y:Math.max(y+96,ty+24)};}
 addCameo('esther','esther.jpg','Photo 1977: Esther Lederberg · used with credit');
-function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+photo(cx,cy,k)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12')+(PHOTO.ok&&PHOTO.credit?T(cx,cy+112*k+54,PHOTO.credit,'note mid f10'):'');}
+function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+photo(cx,cy,k)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12')+(PHOTO.ok&&PHOTO.credit?PHOTO.credit.split(' · ').reduce((L,w)=>{const t=L[L.length-1];(t&&(t+' · '+w).length<=30)?L[L.length-1]=t+' · '+w:L.push(w);return L;},[]).map((l,i)=>T(cx,cy+112*k+54+i*15,l,'note mid f10')).join(''):'');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
   s+=G('a-fade',0,medallion(mx,my,k,o.name,o.dates,o.glasses));
-  let x=n?16:270, y=n?my+112*k+76:44;
+  let x=n?16:270, y=n?my+112*k+76+(PHOTO.ok&&PHOTO.credit?18:0):44;
   s+=G('a-fade',.5,T(x,y,'The question','mono acc start f12'));
   const Q=wrap(o.q,n?40:40);s+=G('a-fade',.6,Q.map((l,i)=>T(x,y+24+i*22,l,'cname start')).join(''));y+=24+Q.length*22+18;
   s+=G('a-fade',1,T(x,y,'What was believed','mono acc start f12'));
   const B=wrap(o.belief,n?50:56);s+=G('a-fade',1.1,B.map((l,i)=>T(x,y+20+i*17,l,'note start f13')).join(''));y+=20+B.length*17+16;
   if(o.items){s+=G('a-fade',1.5,T(x,y,'In this deck','mono acc start f12'));y+=20;o.items.forEach((it,i)=>{s+=G('a-fade',(1.6+i*.15).toFixed(2),T(x,y+i*18,'• '+it,'note start f13'));});y+=o.items.length*18;}
-  const H=n?y+12:Math.max(y+14,my+112*k+56);
+  const H=n?y+12:Math.max(y+14,my+112*k+(PHOTO.ok&&PHOTO.credit?90:56));
   return {vb:n?slim(H):wide(H),s};
 }
 /* hypothesis-testing plate: spec={hyps:[[name,short]],conds:[{n,d,draw(cx,y,n),pred:[...],obs,note}],dh} */
