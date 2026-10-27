@@ -292,7 +292,7 @@ function scMediator(n){
 }
 
 function scStructure(n){
-  const steps=[['1980s','2D crystals of polymerase on lipid layers'],['1990s','3D crystals of yeast Pol II'],['2000','first structure, 3.5 Å'],['2001','2.8 Å, and Pol II caught mid-transcription with DNA and RNA']];
+  const steps=[['1980s','2D crystals of polymerase on lipid layers'],['1990s','3D crystals of yeast Pol II'],['2000','first structure, a 3 Å backbone model'],['2001','2.8 Å, and Pol II caught mid-transcription with DNA and RNA']];
   let s='';
   const L=n?{x:14,y:30,dy:46,wrap:40}:{x:30,y:40,dy:48,wrap:60};
   steps.forEach((st,i)=>{const y=L.y+i*L.dy;s+=G('a-fade',(i*.5).toFixed(1),`<circle cx="${L.x+6}" cy="${y-5}" r="5" fill="${i===3?RED:'#2F5276'}"/>`+T(L.x+20,y,st[0],'mono acc start f13')+wrap(st[1],n?38:46).map((l,j)=>T(L.x+(n?72:80),y+j*18,l,'lab start '+(n?'f14':''))).join(''));});
