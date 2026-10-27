@@ -377,7 +377,7 @@ function syringe(x,y,len=46,ang=0){return `<g transform="rotate(${ang} ${x} ${y}
 /* A photograph, if one is supplied, is laid over the engraved bust inside the oval frame.
    Put a public-domain or openly licensed portrait at PHOTO.src (relative to this page) and fill in PHOTO.credit.
    If the file is missing the browser draws nothing for it and the engraved bust shows through. */
-const PHOTO={src:'avery.jpg',credit:'Photo 1937 · public domain · NLM via Wikimedia Commons',ok:false};
+const PHOTO={src:'avery.jpg',credit:'Photo 1937 · public domain · NLM',ok:false};
 {const im=new Image();im.onload=()=>{PHOTO.ok=true;if(typeof cur!=='undefined'&&cur===0)render();};im.src=PHOTO.src;}
 function photo(cx,cy,k){if(!PHOTO.ok)return '';return `<g transform="translate(${cx} ${cy}) scale(${k})"><clipPath id="pclip"><ellipse rx="83" ry="101"/></clipPath>`
   +`<image href="${PHOTO.src}" x="-84" y="-102" width="168" height="204" preserveAspectRatio="xMidYMin slice" clip-path="url(#pclip)" style="filter:sepia(.55) contrast(1.05) brightness(.97)"/>`
