@@ -3,3 +3,4 @@ __pycache__/
 .audit/
 tools/.probe.js
 _site/
+node_modules/
