@@ -532,7 +532,7 @@ function scProof(n){
   const xw=x0+5*dx+dx/2;
   s+=G('a-out',.6,box(xw-dx*.36,yN-12,dx*.72,24,'#E8B4A8',3)+Tc(xw,yN+5,'G',RED,fs,'mono mid','600')+Tc(xw,yN+28,'✕',RED,13,'mono mid'),'--dx:24px;--dy:-30px;animation-delay:2.2s');
   s+=G('a-pop',3.0,box(xw-dx*.36,yN-12,dx*.72,24,NEWL,3)+Tc(xw,yN+5,'A',INK,fs,'mono mid','600'));
-  s+=G('a-fade',.8,blob(xw+dx*1.05,yN-6,22*(n?.7:1),16*(n?.7:1),POL3)+T(xw+dx*1.05,yN-28,'ε','mono mid f15'));
+  s+=G('a-fade',.8,blob(xw+dx*1.05,yN-6,22*(n?.7:1),16*(n?.7:1),POL3)+T(xw+dx*1.05+(n?20:28),yN-1,'ε','mono start f15'));
   s+=G('a-fade',1.4,T(xw,yN-44,n?'G·T mismatch':'G opposite T: a mismatch','note mid f12'));
   const by=yT+(n?50:56), lvl=[['base selection by Pol III',5],['+ proofreading by ε (3′→5′ exo)',7],['+ mismatch repair',10]];
   const bw=n?21:40;

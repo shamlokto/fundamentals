@@ -25,11 +25,11 @@ function scC3(n){
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scC4(n){
-  const cx=n?180:204, cy=n?200:214, R=n?128:142;
+  const cx=n?180:204, cy=n?200:214, R=n?116:142;
   const items=n?[{t:'citrate|6C',w:62,fs:10},{t:'isocitrate|6C',w:84,fs:10},{t:'2-oxo-|glutarate 5C',w:96,fs:10,f:PAL.gold},{t:'succinyl-|CoA 4C',w:76,fs:10,f:PAL.gold},{t:'succinate|4C',w:80,fs:10},{t:'fumarate|4C',w:74,fs:10},{t:'malate|4C',w:54,fs:10},{t:'oxalo-|acetate 4C',w:86,fs:10,f:PAL.gold}]
     :[{t:'citrate (6C)',w:110},{t:'isocitrate (6C)',w:126},{t:'2-oxoglutarate (5C)',w:162,f:PAL.gold},{t:'succinyl-CoA (4C)',w:148,f:PAL.gold},{t:'succinate (4C)',w:118},{t:'fumarate (4C)',w:112},{t:'malate (4C)',w:96},{t:'oxaloacetate (4C)',w:150,f:PAL.gold}];
   const labs=n?['','NADH|CO₂','NADH|CO₂','ATP or|GTP','QH₂|(via FAD)','','NADH','+ acetyl-|CoA (2C)']:['','NADH, CO₂','NADH, CO₂','ATP (GTP in some)','QH₂ (via FAD,|complex II)','','NADH','+ acetyl-CoA (2C)'];
-  let s=G('a-fade',0,cycle(cx,cy,R,items,{labs,lr:n?22:26}));
+  let s=G('a-fade',0,cycle(cx,cy,R,items,{labs,lr:n?16:26}));
   const b=n?bullets(24,cy+R+64,[['Per acetyl-CoA','3 NADH, 1 reduced quinone (QH₂, via the FAD of succinate dehydrogenase), 1 ATP or GTP, 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave for biosynthesis and must be replaced.'],['Variants','Anaerobic E. coli runs it as a branched pathway; many bacteria have a glyoxylate shunt.']],44,{d0:1,gap:20})
     :bullets(452,52,[['Per acetyl-CoA','3 NADH, 1 reduced quinone from succinate dehydrogenase (complex II), 1 GTP or ATP, and 2 CO₂.'],['Also a hub','2-oxoglutarate, succinyl-CoA and oxaloacetate leave the cycle for biosynthesis, so it must be refilled.'],['Variants','Without oxygen, E. coli runs a branched pathway: an oxidative arm to 2-oxoglutarate and a reductive arm to succinate. Many organisms lack 2-oxoglutarate dehydrogenase.'],['Run backwards','The reductive TCA cycle fixes CO₂ in Chlorobium and Aquifex.']],23,{d0:1,gap:20});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,cy+R+40)),s:s+b.s};

@@ -740,7 +740,7 @@ function scM7(n){
     +ln(FX(A.px(12*D)),FX(A.py(0)),FX(A.px(12*D)),FX(A.py(-12)),RED,1,'4 3')+T(FX(A.px(12*D)-6),FX(A.py(-4)),'12D ≈ 2.5 min','mono end f11 halo')
     +T(FX(A.px(2.45)),FX(A.py(0)-5),'1 spore per can','note end f11 halo'));
   const items=[['D-value','Time at a set temperature to kill 90% of a population. For C. botulinum spores at 121 °C it is about 0.2 minutes.'],['z-value','Temperature rise that cuts D tenfold, about 10 °C for these spores.'],['The 12D cook','Low-acid canned foods are heated to reduce botulinum spores by 12 log units: from 1 spore per can to 1 in a trillion cans.'],['Hurdles','Mild barriers combined, such as acidity, low water activity, salt, preservatives, chilling and packaging, stop growth where no single one would.']];
-  const b=n?bullets(24,A.y+A.h+58,items,44,{d0:.9,gap:16}):bullets(400,52,items,33,{d0:.9,gap:16});
+  const b=n?bullets(24,A.y+A.h+58,items,44,{d0:.9,gap:16}):bullets(400,52,items,33,{d0:.9,gap:22});
   const H=n?b.y-6:Math.max(b.y-6,A.y+A.h+46);
   const p=para(n?16:24,H+12,'HACCP (hazard analysis and critical control points), developed with NASA and Pillsbury in the 1960s, has seven principles: analyse hazards, set critical control points and their limits, monitor them, plan corrective actions, verify, and keep records.',n?50:92,'note start f13',17,1.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+b.s+p.s};
