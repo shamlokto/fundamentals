@@ -102,6 +102,13 @@ Every push and pull request runs the same checks on GitHub Actions (`.github/wor
 
 The site is maintained by several Claude Code sessions coordinated by an HQ session. Each session works on its own branch and edits only the files it owns. Before pushing, it runs the audit on anything it touched and gets it clean. It then sends HQ the branch, commit and a list of changes. HQ reviews every branch and is the only session that merges into `main`.
 
+| Owner | Files |
+|---|---|
+| Scientist 1 | The 47 science decks (sections I–XLVII), fact-checked by Scientist 2 |
+| Historian | The seven History decks (XLVIII–LIV) |
+| Software | `tools/` (except `STYLE.md`), the front page (`index.html`), this README and CI (`.github/`) |
+| Artwork | `tools/STYLE.md` and the art |
+
 ## Publishing
 
 `.github/workflows/pages.yml` publishes the site on every push to `main`. It runs `tools/protect.mjs`, which encrypts every page with the password held in the repository secret `SITE_PASSWORD`, and deploys the result to GitHub Pages. One correct entry unlocks every page in that browser. Only the pages and their images are published, not `src/`, `tools/` or this README. To change the password, update the secret and re-run the workflow.
