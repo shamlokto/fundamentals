@@ -23,8 +23,12 @@ for(const d of process.argv.slice(2)){const p=await b.newPage();await p.route(/f
 console.log(JSON.stringify(out));await b.close();})();
 """.replace('ROOT', str(ROOT))
 tmp = ROOT / 'tools' / '.probe.js'; tmp.write_text(probe)
-info = json.loads(subprocess.run(['node', str(tmp)] + slugs, capture_output=True, text=True, check=True).stdout)
-tmp.unlink()
+try:
+    run = subprocess.run(['node', str(tmp)] + slugs, capture_output=True, text=True)
+finally:
+    tmp.unlink()
+if run.returncode: sys.exit('deck probe failed:\n' + run.stderr)
+info = json.loads(run.stdout)
 
 def roman(n):
     r = ''
