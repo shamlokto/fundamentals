@@ -104,5 +104,6 @@ The live site is published by `.github/workflows/pages.yml`, which runs
 and deploys `_site/`. Every HTML page is AES-GCM encrypted under the password and replaced by
 an unlock page; one correct entry unlocks every page in that browser. The password lives only
 in the repository secret `SITE_PASSWORD`; to change it, update the secret and re-run the
-workflow. To lock a browser again, clear the site's storage (key `fundamentals-key`).
+workflow. The key is derived with a fixed salt, so readers stay unlocked across deploys; changing
+the password (or setting an optional `SITE_SALT` secret) signs everyone out. To lock a browser again, clear the site's storage (key `fundamentals-key`).
 The five portrait JPEGs under `decks/` are copied unencrypted.
