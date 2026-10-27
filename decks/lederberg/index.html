@@ -390,9 +390,10 @@ function cameo(n,x,y,key,name,dates,note){const c=CAMEOS[key];if(!c||!c.ok)retur
    +`<ellipse rx="84" ry="102" fill="none" stroke="#3A2E22" stroke-width="2.4"/></g>`;
   const tx=x+92;s+=T(tx,y+30,name,'cname start f14')+T(tx,y+48,dates,'note start f12');
   let ty=y+48;if(note){const L=wrap(note,n?32:64);L.forEach((l,i)=>{s+=T(tx,y+66+i*15,l,'note start f12');});ty=y+66+(L.length-1)*15;}
-  if(c.credit)s+=T(tx,ty+18,c.credit,'note start f10');
+  if(c.credit){const C=n?c.credit.split(' · ').reduce((a,w)=>{const l=a[a.length-1];if(l&&(l+' · '+w).length<=38)a[a.length-1]=l+' · '+w;else a.push(w);return a;},[]):[c.credit];
+    C.forEach((l,i)=>{s+=T(tx,ty+18+i*13,l,'note start f10');});ty+=(C.length-1)*13;}
   return {s:G('a-fade',1.4,s),y:Math.max(y+96,ty+24)};}
-addCameo('esther','esther.jpg','Photo 1977: Esther Lederberg · used with credit');
+addCameo('esther','esther.jpg','Photo 1977: Esther M. Zimmer Lederberg · free use with attribution · Wikimedia Commons');
 function medallion(cx,cy,k,name,dates,glasses=false){return portrait(cx,cy,k,glasses)+photo(cx,cy,k)+T(cx,cy+112*k+20,name,'cname mid f14')+T(cx,cy+112*k+38,dates,'note mid f12')+(PHOTO.ok&&PHOTO.credit?PHOTO.credit.split(' · ').reduce((L,w)=>{const t=L[L.length-1];(t&&(t+' · '+w).length<=30)?L[L.length-1]=t+' · '+w:L.push(w);return L;},[]).map((l,i)=>T(cx,cy+112*k+54+i*15,l,'note mid f10')).join(''):'');}
 function titlePlate(n,o){ // o: {name,dates,glasses,q,belief,items}
   let s='';const mx=n?180:130, my=n?118:132, k=n?.8:.95;
