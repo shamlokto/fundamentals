@@ -20,14 +20,19 @@ const NOFONTS = !!process.env.AUDIT_NOFONTS, noFonts = new Set();
 const IGNORE = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'audit_ignore.json'), 'utf8')); } catch (e) { return []; } })();
 fs.mkdirSync(SHOTS, { recursive: true });
 
-const probe = () => {
+const probe = WM => {
   const svg = document.getElementById('stage');
   document.getAnimations().forEach(a => { try { a.finish(); } catch (e) {} });
   const eff = el => { let o = 1; for (let e = el; e && e !== svg.parentElement; e = e.parentElement) { const cs = getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden') return 0; o *= parseFloat(cs.opacity); } return o; };
   const sr = svg.getBoundingClientRect();
   const vb = svg.viewBox.baseVal, k = vb.width / sr.width;
   const toVB = r => ({ x: (r.left - sr.left) * k + vb.x, y: (r.top - sr.top) * k + vb.y, w: r.width * k, h: r.height * k });
-  const texts = [...svg.querySelectorAll('text')].filter(t => eff(t) > 0.3 && t.textContent.trim()).map(t => ({ s: t.textContent.trim().slice(0, 50), b: toVB(t.getBoundingClientRect()), el: t }));
+  // Text height comes from the font's line metrics, which Chromium reports differently between machines
+  // (27 px on GitHub's runner vs 20 px locally for the same 12 px label), so cap it at 1.25 em around the centre.
+  const inv = svg.getScreenCTM().inverse();
+  const capH = (t, b) => { const m = inv.multiply(t.getScreenCTM()), em = parseFloat(getComputedStyle(t).fontSize) * Math.hypot(m.a, m.b) * 1.25;
+    return b.h > em && Math.abs(m.b) < 1e-6 ? { ...b, y: b.y + (b.h - em) / 2, h: em } : b; };  // unrotated text only
+  const texts = [...svg.querySelectorAll('text')].filter(t => eff(t) > 0.3 && t.textContent.trim()).map(t => ({ s: t.textContent.trim().slice(0, 50), b: capH(t, toVB(t.getBoundingClientRect())), el: t }));
   const arrows = [...svg.querySelectorAll('line,path,polyline')].filter(p => {
     const cs = getComputedStyle(p); return (cs.markerEnd && cs.markerEnd !== 'none' || cs.markerStart && cs.markerStart !== 'none') && eff(p) > 0.3; }).map(p => {
       const L = p.getTotalLength(), m = p.getScreenCTM(), pts = [];
@@ -51,7 +56,9 @@ const probe = () => {
     }
   });
   function segX(p1, p2, p3, p4) { const d = (a, b, c) => (c[0] - a[0]) * (b[1] - a[1]) - (b[0] - a[0]) * (c[1] - a[1]); const d1 = d(p3, p4, p1), d2 = d(p3, p4, p2), d3 = d(p1, p2, p3), d4 = d(p1, p2, p4); return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0)) && d1 && d2 && d3 && d4; }
-  texts.forEach(t => { const b = t.b; if (b.x < vb.x - 1 || b.y < vb.y - 1 || b.x + b.w > vb.x + vb.width + 1 || b.y + b.h > vb.y + vb.height + 1) issues.push(['clipped', t.s, `${Math.round(b.x)},${Math.round(b.y)},${Math.round(b.w)}x${Math.round(b.h)}`, `vb ${vb.width}x${vb.height}`]); });
+  // Text sets a few percent wider on GitHub's runner than in local runs, and varies on readers' platforms too:
+  // CI (the reference) measures exactly; local runs require 4% slack as an early warning.
+  texts.forEach(t => { const b = { ...t.b, x: t.b.x - t.b.w * WM / 2, w: t.b.w * (1 + WM) }; if (b.x < vb.x - 1 || b.y < vb.y - 1 || b.x + b.w > vb.x + vb.width + 1 || b.y + b.h > vb.y + vb.height + 1) issues.push(['clipped', t.s, `${Math.round(b.x)},${Math.round(b.y)},${Math.round(b.w)}x${Math.round(b.h)}`, `vb ${vb.width}x${vb.height}`]); });
   return issues;
 };
 
@@ -77,7 +84,7 @@ const ignored = key => IGNORE.some(rx => new RegExp(rx).test(key));
         for (const v of variants) {
           if (v !== null) await page.evaluate(([v]) => { document.querySelectorAll('#chips button')[v].click(); }, [v]);
           await page.waitForTimeout(30);
-          const issues = await page.evaluate(probe);
+          const issues = await page.evaluate(probe, process.env.CI ? 0 : 0.04);
           const key = `${deck}/${mode}/${String(i + 1).padStart(2, '0')}${v !== null ? 'c' + v : ''}`;
           if (issues.length) report[key] = issues;
           if (SHOOT) await page.locator('.stage').screenshot({ path: path.join(SHOTS, key.replace(/\//g, '__') + '.png') });

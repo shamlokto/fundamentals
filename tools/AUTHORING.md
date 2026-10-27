@@ -75,7 +75,12 @@ All checking tools live in `tools/` and need Python 3 with Pillow, Node, and Pla
     python3 tools/meta.py [--write]     # add description and Open Graph tags to hand-built decks
 
 The audit loads the real web fonts, since label widths depend on them; offline, set `AUDIT_NOFONTS=1` to
-measure with fallback fonts instead (results then differ from what readers see). `.audit/` is git-ignored. Set `AUDIT_OUT=dir` to write somewhere else (useful when several people audit at once).
+measure with fallback fonts instead (results then differ from what readers see). `.audit/` is git-ignored.
+
+CI on GitHub is the reference result. Its Chromium sets text slightly wider than local containers, so
+local runs flag text within 4% of the plate edge as an early warning (CI flags only text that actually
+crosses it). If CI fails on a plate that passes locally, download the `audit-report` artifact from the
+failed run and fix what it lists. Set `AUDIT_OUT=dir` to write somewhere else (useful when several people audit at once).
 
 The audit flags overlapping text, arrows running through text, crossing arrows, text cut off at the plate
 edge, page errors and console errors, at desktop (900 px) and phone (390 px) width and for every chip. It
