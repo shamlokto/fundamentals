@@ -8,7 +8,7 @@ const FERM=[
  {k:'Mixed acid',p:'acetate, lactate, succinate, ethanol, formate → H₂ + CO₂',org:'E. coli, Salmonella, Shigella',atp:2.5,note:'Strongly acidic end products: methyl red positive. Formate hydrogen lyase splits formate to H₂ and CO₂ (gas in Durham tubes).'},
  {k:'Butanediol',p:'2,3-butanediol, ethanol, CO₂, less acid',org:'Enterobacter, Klebsiella, Serratia',atp:2,note:'The intermediate acetoin gives a positive Voges–Proskauer test; less acid, so methyl red negative. Together these tests distinguish E. coli from Klebsiella.'},
  {k:'Butyric / solventogenic',p:'butyrate, acetate, H₂; later acetone and butanol',org:'Clostridium acetobutylicum',atp:3,note:'The acetone–butanol fermentation, developed by Chaim Weizmann during the First World War for acetone.'},
- {k:'Propionic',p:'propionate, acetate, CO₂',org:'Propionibacterium (Cutibacterium)',atp:'about 4',note:'Gives Swiss cheese its holes and flavour.'}];
+ {k:'Propionic',p:'propionate, acetate, CO₂',org:'Propionibacterium (Cutibacterium)',atp:'about 3–4',note:'Gives Swiss cheese its holes and flavour.'}];
 let fermSel=0;
 function scB1(n){return introPlate(n,{q:'How do cells turn the energy of electron flow into ATP?',
   belief:'Respiring cells pump protons across a membrane and let them flow back through ATP synthase; Peter Mitchell called this chemiosmosis. Fermenting cells have no external acceptor and make ATP only from substrate-level phosphorylation. Which a cell does depends on the acceptors available.',
