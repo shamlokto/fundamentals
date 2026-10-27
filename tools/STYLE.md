@@ -50,6 +50,9 @@ Rules:
 * Red is reserved. If something is red, the reader should be able to say what it inhibits or what was lost.
 * A comparison (wild type vs mutant, before vs after) uses one neutral and one meaning colour, not two
   unrelated washes.
+* Categories with no meaning (gene A, B, C; systems; steps) take `PAL` washes, never the strong `RED`,
+  `BLUE`, `GREEN` or `RNAC`. Orange-brown is RNA, so it is not used for other things on a plate that
+  shows RNA.
 
 ## 3. Standard drawings
 
@@ -79,9 +82,11 @@ triangular head. Blue arrows (`blue:1`) for the pathway that matters, red (`red:
 An arrow starts and ends at the edge of what it connects (`flow` does this), never inside a box or a label.
 Arrow labels sit beside the shaft, on `side`, never on it.
 
-**Inhibition.** Draw drug ⊣ target: a red line ending in a short perpendicular bar at the target, with the
-drug named at the tail. A red cross over a step is acceptable for "this step is blocked". Do not use a plain
-arrow for inhibition.
+**Inhibition.** Write it as *drug ⊣ target* in red italics beside the step it blocks (envelope 05:
+"fosfomycin ⊣ MurA"), or draw a red line ending in a short perpendicular bar at the target with the drug
+named at the tail. A red ✕ on the target protein or step marks "this is what fails" (dna-replication 23,
+tn-seq 10). Never use a plain or red arrow for inhibition, and never use red for an ordinary path, product
+or category.
 
 **Plots** (`axes`, `curve`, `hbars`). L-shaped axes in `#6A5B47`, 1.3 wide, outward ticks. Tick labels
 `note f10`; axis titles `note f12` in italics with units in parentheses, for example *time (h)*,
@@ -105,7 +110,10 @@ label each bar at the left and give its value at the right.
 ## 5. Text
 
 * Fonts: `--plate` (IM Fell English) for labels and notes; `mono` (IBM Plex Mono) for sequences, gene and
-  site names, numbers in tables, 5′/3′ and chip labels.
+  site names, numbers in tables, 5′/3′ and chip labels. Descriptive captions ("one strand enters…",
+  "the infected cell dies…") are always `note` italics, never `mono`.
+* Labels on a coloured fill (gene arrows, boxes) are dark ink, upright, on a plain wash; never pale or
+  white italic on a textured or mid-tone fill.
 * Classes, in plate units: `lab` 17, `cname` 18, `note` 15 italic muted; sizes `f10` 12 to `f16` 17.5.
   `Tc` clamps to at least 12. **Nothing is ever below 12 px.** If a label does not fit at 12, the drawing
   is too crowded: enlarge it, split the plate or move the words to the caption.
@@ -126,7 +134,22 @@ label each bar at the left and give its value at the right.
 * Interactive chips change one thing on the plate and leave the layout still, so the reader sees what
   changed.
 
-## 7. Pictures
+## 7. Model plates
+
+Copy these when in doubt. All checked at desktop width after their animations finish.
+
+| Plate | What it shows well |
+|---|---|
+| dna-replication 23, *Break the replisome* | parental brown, new blue, primer orange with a key; 5′/3′ on every strand; red ✕ on the failed protein |
+| dna-replication 11 and 12 | base-level and fork-level DNA with 5′/3′ and labelled leading/lagging strands |
+| translation 31, *Antibiotics that hit the ribosome* | ribosome with E/P/A, mRNA 5′/3′, drug site ringed in red, the blocked step as a red pill |
+| envelope 05, *Building the wall* | pathway across a labelled membrane (cytoplasm/outside), every drug as red *drug ⊣ target* |
+| protein-targeting 05 and pathogenesis 05 | full envelopes with every layer named on the left, restrained washes |
+| molecular-cloning 02 and defence-systems 02 | sequences in `mono` with 5′/3′, cut marks, short italic captions |
+| microscopy-structure 07 | log-scale bar chart: labelled ticks with units, labelled dashed limits |
+| statistics 06 | scatter plot with log axis title, labelled thresholds clear of the data, small legend |
+
+## 8. Pictures
 
 Generated pictures follow `tools/IMAGES.md`: engraved, hand-tinted, no text, no real people, checked for
 accuracy, and placed on the plate paper rather than in a white box.
