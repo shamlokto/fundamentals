@@ -74,7 +74,8 @@ All checking tools live in `tools/` and need Python 3 with Pillow, Node, and Pla
     python3 tools/site_check.py         # links, local assets, page weight, lang/title/description/Open Graph
     python3 tools/meta.py [--write]     # add description and Open Graph tags to hand-built decks
 
-`.audit/` is git-ignored. Set `AUDIT_OUT=dir` to write somewhere else (useful when several people audit at once).
+The audit loads the real web fonts, since label widths depend on them; offline, set `AUDIT_NOFONTS=1` to
+measure with fallback fonts instead (results then differ from what readers see). `.audit/` is git-ignored. Set `AUDIT_OUT=dir` to write somewhere else (useful when several people audit at once).
 
 The audit flags overlapping text, arrows running through text, crossing arrows, text cut off at the plate
 edge, page errors and console errors, at desktop (900 px) and phone (390 px) width and for every chip. It
@@ -93,3 +94,15 @@ Plate text must not be smaller than 12 px: the classes `f8` to `f16` and `Tc()` 
 * British spelling, plain sentences, no em-dash chains, no marketing tone.
 * 6–9 plates per deck, at least one interactive (chips) plate and at least two real diagrams
   (flow, cycle, plot or drawing), not only cards and tables.
+
+## Password protection
+
+The live site is published by `.github/workflows/pages.yml`, which runs
+
+    SITE_PASSWORD=... node tools/protect.mjs _site
+
+and deploys `_site/`. Every HTML page is AES-GCM encrypted under the password and replaced by
+an unlock page; one correct entry unlocks every page in that browser. The password lives only
+in the repository secret `SITE_PASSWORD`; to change it, update the secret and re-run the
+workflow. To lock a browser again, clear the site's storage (key `fundamentals-key`).
+The five portrait JPEGs under `decks/` are copied unencrypted.
