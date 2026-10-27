@@ -657,7 +657,7 @@ function scSOS(n){
 
 function scFirm(n){
   const rows=[['Replicase','Pol III (α = DnaE)','PolC; DnaE helps start fragments','Pol III','PolC + DnaE'],['Helicase','DnaB','DnaC (same family as DnaB)','DnaB','DnaC (!)'],['Helicase loader','DnaC','DnaI, with DnaD and DnaB','DnaC','DnaI, DnaD, DnaB'],
-    ['Fork trap','Tus–Ter','Rtp–Ter','Tus–Ter','Rtp–Ter'],['Origin','oriC ~40 kb from dnaA','oriC split around dnaA','oriC, apart','oriC (split)']];
+    ['Fork trap','Tus–Ter','Rtp–Ter','Tus–Ter','Rtp–Ter'],['Origin','oriC ~40 kb from dnaA','oriC split around dnaA','oriC, apart from dnaA','oriC split by dnaA']];
   const t=cmpTable(n,['E. coli','B. subtilis and kin'],rows,{w1:200,w2:400,n1:104,n2:224});
   let s=t.s;
   const L=wrap(n?'Low-GC Gram-positives, including staphylococci and streptococci such as the pneumococcus, use PolC. Watch the names: their DnaC is the helicase.':'Low-GC Gram-positives, including staphylococci and streptococci such as the pneumococcus, use PolC as their main replicase. Watch the names: in these bacteria, DnaC is the helicase.',n?46:84);

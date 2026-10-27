@@ -26,6 +26,7 @@ jobs:
       - name: Encrypt pages
         env:
           SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+          SITE_SALT: ${{ secrets.SITE_SALT }}
         run: node tools/protect.mjs _site
       - uses: actions/upload-pages-artifact@v3
         with:

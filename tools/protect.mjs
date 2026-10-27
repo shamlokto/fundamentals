@@ -21,7 +21,10 @@ const ITER = 600000;
 if (!PASSWORD) { console.error('Set SITE_PASSWORD to the site password.'); process.exit(1); }
 
 const b64 = u8 => Buffer.from(u8).toString('base64');
-const salt = crypto.getRandomValues(new Uint8Array(16));
+// A fixed, site-specific salt keeps the derived key the same across deploys, so readers stay
+// unlocked after each push. Changing SITE_PASSWORD (or SITE_SALT) signs everyone out.
+const salt = new Uint8Array(await crypto.subtle.digest('SHA-256',
+  new TextEncoder().encode('fundamentals-site-v1:' + (process.env.SITE_SALT || '')))).slice(0, 16);
 const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(PASSWORD), 'PBKDF2', false, ['deriveKey']);
 const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: ITER, hash: 'SHA-256' },
   base, { name: 'AES-GCM', length: 256 }, true, ['encrypt']);
