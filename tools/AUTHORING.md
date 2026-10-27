@@ -81,3 +81,15 @@ labels can trigger false text-text flags; judge those by eye.
 * British spelling, plain sentences, no em-dash chains, no marketing tone.
 * 6–9 plates per deck, at least one interactive (chips) plate and at least two real diagrams
   (flow, cycle, plot or drawing), not only cards and tables.
+
+## Password protection
+
+The live site is published by `.github/workflows/pages.yml`, which runs
+
+    SITE_PASSWORD=... node tools/protect.mjs _site
+
+and deploys `_site/`. Every HTML page is AES-GCM encrypted under the password and replaced by
+an unlock page; one correct entry unlocks every page in that browser. The password lives only
+in the repository secret `SITE_PASSWORD`; to change it, update the secret and re-run the
+workflow. To lock a browser again, clear the site's storage (key `fundamentals-key`).
+The five portrait JPEGs under `decks/` are copied unencrypted.
