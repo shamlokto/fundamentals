@@ -105,7 +105,7 @@ function scI8(n){
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scI9(n){
-  const L=[['$ zcat reads.fastq.gz | awk \'NR%4==2\' | wc -l','# count reads'],['$ grep -c \'&gt;\' assembly.fasta','# count contigs'],['$ samtools view -c -q 30 sample.bam','# reads with MAPQ ≥ 30'],['$ snakemake --cores 8 --use-conda','# rerun the whole pipeline']];
+  const L=[['$ zcat reads.fastq.gz | awk \'NR%4==2\' | wc -l','# count reads'],['$ grep -c \'&gt;\' assembly.fasta','# count contigs'],['$ samtools view -c -q 30 sample.bam','# reads with MAPQ ≥ 30'],['$ snakemake --cores 8 --sdm conda','# rerun the whole pipeline']];
   const x0=n?10:24, w=n?340:592, lh=n?34:36;
   let t=`<rect x="${x0}" y="20" width="${w}" height="${n?L.length*lh+20:L.length*lh+22}" rx="6" fill="#2B2620"/>`;
   L.forEach(([c,m],i)=>{const y=40+i*lh;t+=n?Tc(x0+10,y,c,'#EFE8D8',10.5,'mono start')+Tc(x0+10,y+14,m,'#A9C49A',10,'mono start'):Tc(x0+12,y,c,'#EFE8D8',12,'mono start')+Tc(x0+40,y+16,m,'#A9C49A',12,'mono start');});

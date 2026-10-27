@@ -521,7 +521,7 @@ function scN1(n){
       +T(x0,yy-4,o[0],'lab start '+(n?'f12':'f13'))+Tc(FX(X(o[2])+6),FX(yy+(n?11:12)),o[1],'#6A5B47',10,'mono start','600'));});
   let yb=y+OUT.length*rh+(n?2:4);
   s+=G('a-fade',1.6,[5,7,9,11,13].map(e=>ln(FX(X(Math.pow(10,e))),yb,FX(X(Math.pow(10,e))),yb+5)+T(FX(X(Math.pow(10,e))),yb+18,'10'+SP(e),'note mid f11')).join('')+ln(x0,yb,x1,yb));
-  const BL=[['A millionfold in fifteen years','A capillary machine reads 96 fragments at a time. A modern instrument reads billions, because the reactions are miniaturised and read in parallel rather than one lane at a time.'],['The cost followed','A human genome cost on the order of 100 million dollars in 2001 and a few hundred today. The same shift turned bacterial genomes from a thesis into an afternoon.']];
+  const BL=[['A hundred-millionfold in twenty years','A capillary machine reads 96 fragments at a time; a modern instrument reads tens of billions in one run, because the reactions are miniaturised and read in parallel rather than one lane at a time.'],['The cost followed','A human genome cost on the order of 100 million dollars in 2001 and a few hundred today. The same shift turned bacterial genomes from a thesis into an afternoon.']];
   const b=bullets(n?20:30,yb+(n?42:46),BL,n?44:92,{d0:2,gap:24});
   const p=para(n?16:30,b.y+4,'Output figures are order-of-magnitude, for a maximum run on a typical configuration; real yields depend on the flow cell, read length and run mode.',n?50:92,'note start f12',16,2.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+b.s+p.s};
@@ -741,7 +741,7 @@ const PLAT=[
   pro:['Cheapest per base by a wide margin','Very high per-base accuracy','Enormous installed base; every tool supports it','Mature multiplexing: hundreds of samples per lane'],
   con:['Reads too short to span most repeats','GC-extreme regions covered unevenly if PCR is used','Index hopping on patterned flow cells','Large instruments, long turnaround, batching needed'],
   use:'Variant calling, RNA-seq, Tn-seq, amplicon and metagenomic surveys, anything needing depth and accuracy.'},
- {n:'Ion Torrent',link:'ion',sub:'semiconductor, pH detection',read:'200–600 bp',acc:'~99%, indel errors in homopolymers',out:'up to ~50 Gb per run',time:'2–8 hours',
+ {n:'Ion Torrent',link:'ion',sub:'semiconductor, pH detection',read:'200–600 bp',acc:'~99%, indel errors in homopolymers',out:'up to ~50 Gb per run (560 chip)',time:'2–8 hours',
   pro:['Fast runs and inexpensive instruments','No optics, so simple and robust','Good for targeted panels in clinical labs'],
   con:['Homopolymer indels corrupt reading frames','Lower throughput than Illumina','Shrinking ecosystem and tool support'],
   use:'Targeted clinical panels and rapid typing where turnaround beats throughput.'},
@@ -861,7 +861,7 @@ function scN15(n){
 
 const NAR='Narrator';
 const S=[
- {p:1,title:'From one read to billions',draw:scN1,text:"For thirty years, sequencing meant one reaction, one capillary, one trace. What changed after 2005 was not the chemistry of reading DNA but the scale: the reactions were miniaturised and run side by side in their millions, so that output rose by about a millionfold and cost fell just as far. That shift is what the term next-generation sequencing names."},
+ {p:1,title:'From one read to billions',draw:scN1,text:"For thirty years, sequencing meant one reaction, one capillary, one trace. What changed after 2005 was not the chemistry of reading DNA but the scale: the reactions were miniaturised and run side by side in their millions, so that output per run rose some hundred-millionfold and the cost of a human genome fell from a hundred million dollars to a few hundred. That shift is what the term next-generation sequencing names."},
  {p:1,title:'Where it started: Sanger',draw:scN2,text:"Fred Sanger's chain-termination method reads a single template by making copies that stop at random positions, then sorting them by length. It gives long, extremely accurate reads, and it remains the right tool for checking one clone or one mutation. Its limit is throughput: ninety-six reactions at a time cannot assemble a genome."},
  {p:1,title:'The shared recipe',draw:scN3,text:"Every platform that followed runs the same five steps. Fragment the DNA and attach known adapters; spread the fragments out so each can be read separately; usually copy each one into a clonal group so its signal is detectable; cycle through the bases while recording what is added; and turn the raw signal into sequence. Platforms differ only in how they do the spreading and the detecting."},
  {p:1,title:'Preparing a library',draw:scN4,text:"The library is where most experiments are won or lost. Fragment size sets what the reads can reach; the adapters carry everything the machine needs to bind and prime; the index lets many samples share a run; and the choice to amplify or not decides how evenly the genome is covered. A poor library cannot be rescued by a good instrument."},
