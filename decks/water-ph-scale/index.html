@@ -710,7 +710,7 @@ function scW6(n){
 function scW7(n){
   let s='';const cx=n?180:170, y=n?60:70;
   s+=G('a-fade',0,box(cx-(n?150:140),y-30,n?300:280,58,'#E7DEC9',4)+Tc(cx,y-6,'Re = ρ v L / η','#2F5276',n?15:17,'mono mid','600')+T(cx,y+16,'inertial forces ÷ viscous forces','note mid f12'));
-  const rows=[['a swimmer','~10⁶'],['a goldfish','~10²'],['a bacterium','~10⁻⁵']];
+  const rows=[['a human swimmer','~10⁶'],['a goldfish','~10²'],['a bacterium','~10⁻⁵']];
   rows.forEach((r,i)=>{s+=G('a-fade',(.4+i*.2).toFixed(1),T(cx-(n?120:110),y+60+i*24,r[0],'lab start f13')+T(cx+(n?120:110),y+60+i*24,r[1],'mono end f13'));});
   const b=n?bullets(24,y+150,[['No coasting','Stop the flagella and a bacterium coasts less than the width of an atom, as Edward Purcell calculated in 1977.'],['The scallop theorem','A reciprocal stroke, like opening and closing a hinge, gets nowhere. Swimmers need a non-reciprocal motion, such as a rotating helix.'],['Flow carries little','Nearby fluid moves with the cell; to reach new food, a bacterium must swim farther than diffusion carries it, or it gains nothing by moving.']],44,{d0:1,gap:22})
     :bullets(350,52,[['No coasting','Stop the flagella and a bacterium coasts less than the width of an atom, as Edward Purcell calculated in 1977.'],['The scallop theorem','A reciprocal stroke, like opening and closing a hinge, gets nowhere. Swimmers need a non-reciprocal motion, such as a rotating helix.'],['Outswimming diffusion','To reach new food a bacterium must move farther than diffusion would bring it, which is why chemotaxis works by runs of a second or so.']],36,{d0:1,gap:22});

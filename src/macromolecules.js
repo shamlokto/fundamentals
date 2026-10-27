@@ -50,10 +50,12 @@ function scM5(n){
 function scM6(n){
   let s='';const y=86, xs=n?[70,180,290]:[110,320,530], r=n?36:44;
   const relaxed=(x)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${DNAC}" stroke-width="3"/>`;
-  const sc=(x,tw)=>{let d='';for(let i=0;i<=60;i++){const t=i/60*2*Math.PI;const xx=x+r*1.15*Math.sin(t), yy=y+r*.55*Math.sin(2*t)*(tw);d+=(i?' L':'M')+FX(xx)+' '+FX(yy);}return `<path d="${d}" stroke="${DNAC}" stroke-width="3" fill="none"/>`;};
+  const sc=(x,tw)=>{let d='';for(let i=0;i<=60;i++){const t=i/60*2*Math.PI;const xx=x+r*1.15*Math.sin(t), yy=y+r*.55*Math.sin(2*t)*(tw);d+=(i?' L':'M')+FX(xx)+' '+FX(yy);}let o='';for(let i=0;i<=12;i++){const t=(i/12-.5)*.5;const xx=x+r*1.15*Math.sin(t), yy=y+r*.55*Math.sin(2*t)*(tw);o+=(i?' L':'M')+FX(xx)+' '+FX(yy);}
+    // over/under at the node: the strand through t=0 passes over, giving a −1 (right-handed, negative) crossing
+    return `<path d="${d}" stroke="${DNAC}" stroke-width="3" fill="none"/><path d="${o}" stroke="#EFE8D8" stroke-width="9" fill="none"/><path d="${o}" stroke="${DNAC}" stroke-width="3" fill="none" stroke-linecap="round"/>`;};
   const nt=(x,t)=>(n?t.split('|'):[t.replace('|',' ')]).map((l,j)=>T(x,y+r+38+j*14,l,'note mid f11')).join(''), dy=n?14:0;
   s+=G('a-fade',0,relaxed(xs[0])+T(xs[0],y+r+22,'relaxed','lab mid f13')+nt(xs[0],'nicked or|topo I'));
-  s+=G('a-fade',.4,sc(xs[1],1)+T(xs[1],y+r+22,'negatively supercoiled','lab mid f13')+nt(xs[1],'made by gyrase,|with ATP'));
+  s+=G('a-fade',.4,sc(xs[1],1)+T(xs[1],y+r+22,'negatively supercoiled','lab mid f13')+nt(xs[1],'made by gyrase,|with ATP')+T(xs[1]+(n?0:0),y-r*.55-10,'node: −1','mono mid f12'));
   s+=G('a-fade',.8,`<circle cx="${xs[2]-12}" cy="${y}" r="${r*.7}" fill="none" stroke="${DNAC}" stroke-width="3"/><circle cx="${xs[2]+12}" cy="${y}" r="${r*.7}" fill="none" stroke="#8C6D46" stroke-width="3"/>`+(()=>{const R=r*.7,hh=Math.sqrt(R*R-144),t0=Math.atan2(-hh,12),pt=t=>FX(xs[2]-12+R*Math.cos(t))+' '+FX(y+R*Math.sin(t)),arc=a=>`M${pt(t0-a)} A${R} ${R} 0 0 1 ${pt(t0+a)}`;return `<path d="${arc(.22)}" fill="none" stroke="#EFE8D8" stroke-width="8"/><path d="${arc(.34)}" fill="none" stroke="${DNAC}" stroke-width="3"/>`;})()+T(xs[2],y+r+22,'catenated','lab mid f13')+nt(xs[2],'unlinked by|topo IV'));
   s+=G('a-fade',1.1,box(n?20:150,y+r+56+dy,n?320:340,34,'#E7DEC9',4)+Tc(n?180:320,y+r+78+dy,'Lk = Tw + Wr','#2F5276',15,'mono mid','600'));
   const b=bullets(n?24:30,y+r+122+dy,[['Linking number','In a closed circle the number of times one strand winds round the other cannot change without cutting. It can only be traded between twist and writhe.'],

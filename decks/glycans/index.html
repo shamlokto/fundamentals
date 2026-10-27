@@ -506,7 +506,7 @@ const MONO=[
  {n:'N-Acetylglucosamine',sym:'GlcNAc',subs:{1:['OH','up'],2:['NHAc','down'],3:['OH','up'],4:['OH','down'],6:['CH₂OH','up']},hi:[2],t:'An amino sugar: the C2 hydroxyl is replaced by an acetylated amine. One of the two sugars of peptidoglycan; donated as UDP-GlcNAc, the hub of amino-sugar metabolism.'},
  {n:'N-Acetylmuramic acid',sym:'MurNAc',subs:{1:['OH','up'],2:['NHAc','down'],3:['O–lactyl','up'],4:['OH','down'],6:['CH₂OH','up']},hi:[3],t:'GlcNAc with a lactyl ether added to C3. That lactyl group’s carboxyl carries the stem peptide of peptidoglycan. Found only in bacteria — a target with no human counterpart.'},
  {n:'D-Glucuronic acid',sym:'GlcA',subs:{1:['OH','up'],2:['OH','down'],3:['OH','up'],4:['OH','down'],6:['COOH','up']},hi:[6],t:'Glucose with carbon 6 oxidised to a carboxyl. It gives many capsules their negative charge. UDP-GlcA is made from UDP-Glc by a dehydrogenase.'},
- {n:'L-Rhamnose',sym:'Rha',subs:{1:['OH','down'],2:['OH','down'],3:['OH','down'],4:['OH','up'],6:['CH₃','down']},hi:[6],t:'6-deoxy-L-mannose: an L-sugar with a methyl where glucose has CH₂OH. Being L-series, every group sits on the opposite face to its position in D-mannose, which is why the ring looks inverted here. Absent from humans, common in bacterial walls and capsules; built as dTDP-L-rhamnose by RmlABCD, itself a drug target.'}];
+ {n:'L-Rhamnose',sym:'Rha',subs:{1:['OH','up'],2:['OH','down'],3:['OH','down'],4:['OH','up'],6:['CH₃','down']},hi:[6],t:'6-deoxy-L-mannose: an L-sugar with a methyl where glucose has CH₂OH, drawn as the α-L anomer found in bacterial glycans (C1-OH on the face opposite the methyl). Being L-series, every group sits on the opposite face to its position in D-mannose, which is why the ring looks inverted here. Absent from humans, common in bacterial walls and capsules; built as dTDP-L-rhamnose by RmlABCD, itself a drug target.'}];
 let monoSel=0;
 function scG2(n){
   const m=MONO[monoSel];let s='';
@@ -595,16 +595,16 @@ function scG7(n){
   {const L=undp(X[2],my,h,'in',2);st.push(L.s+sugarChain(X[2],L.end+7,['Glc','Rha','GlcA'],1,6,13));}
   {const L=undp(X[3],my,h,'out',2);st.push(L.s+sugarChain(X[3],L.end-7,['Glc','Rha','GlcA'],-1,6,13));}
   {const L=undp(X[4],my,h,'out',2);st.push(L.s);}
-  st.forEach((d,i)=>{s+=G('a-fade',(.3+i*.35).toFixed(2),d+T(i?X[i]:X[0]-4,my+h+(n?74:78),names[i],'lab '+(i?'mid ':'start ')+(n?'f10':'f11'))+(who[i]?who[i].split('|').map((l,j)=>T(i?X[i]:X[0]-4,my+h+(n?88:93)+j*14,l,'note '+(i?'mid ':'start ')+(n?'f9':'f10'))).join(''):''));
+  st.forEach((d,i)=>{s+=G('a-fade',(.3+i*.35).toFixed(2),d+T(i?X[i]:X[0]-4,my+h+(n?74:78),names[i],'lab '+(i?'mid ':'start ')+(n?'f10':'f11'))+(who[i]?who[i].split('|').map((l,j)=>T(i?X[i]:X[0]-4,my+h+(n?88:93)+j*14,l,'note '+(i?'mid ':'start ')+(n?'f10':'f10'))).join(''):''));
     if(i<4)s+=G('a-fade',(.5+i*.35).toFixed(2),arw(X[i]+(n?16:22),my-66,X[i+1]-(n?16:22),my-66,{w:1.2}));});
   /* recycling: Und-PP is dephosphorylated and returns to the inner face */
   const ry=my+h+(n?112:134);
   s+=G('a-fade',2.2,`<path d="M${X[4]} ${my+h+(n?98:104)} V${ry} H${X[0]-(n?9:14)} V${my+h+6} H${X[0]-7}" stroke="#6A5B47" stroke-width="1.3" fill="none" stroke-dasharray="4 3" marker-end="url(#ahp)"/>`
-    +T((X[0]+X[4])/2,ry+14,n?'phosphatase, then flipped back: Und-P again':'a phosphatase removes one phosphate and the carrier flips back: Und-P again, ready for the next round','note mid '+(n?'f10':'f11'))
+    +T((X[0]+X[4])/2,ry+14,n?'dephosphorylated outside, flipped back: Und-P':'BacA or PgpB removes one phosphate on the outer face; Und-P then flips back in, ready again','note mid '+(n?'f10':'f11'))
     +Tc((X[1]+X[2])/2,ry-6,'bacitracin ⊣ this step','#A4473A',n?10:11,'mono mid','600'));
   const y=ry+(n?34:36);
   const b=bullets(n?20:30,y,[['One lipid, many jobs','Undecaprenyl phosphate, a C55 isoprenoid, carries sugars across the membrane for peptidoglycan, capsule, O-antigen and wall teichoic acids alike — so these pathways all draw on one small shared pool.'],
-   ['The cycle','A phosphoglycosyltransferase loads the first sugar-phosphate, giving Und-PP-sugar; GTs extend it; a flippase moves it out; the polymer is built; and the spent Und-PP is dephosphorylated and returned.'],
+   ['The cycle','A phosphoglycosyltransferase loads the first sugar-phosphate, giving Und-PP-sugar; GTs extend it; a flippase moves it out; the polymer is built; and the spent Und-PP is dephosphorylated on the outer face (BacA, PgpB) before Und-P flips back to the inner face.'],
    ['Where it breaks','Bacitracin binds Und-PP and stops the recycling step, so every carrier-dependent pathway starves at once. Blocking a middle step of any one pathway traps the carrier the same way (plate 11).']],n?44:88,{d0:2.6,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
