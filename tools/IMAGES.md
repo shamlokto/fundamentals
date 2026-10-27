@@ -8,7 +8,7 @@ file exists, so nothing breaks while a picture is missing.
 |---|---|---|---|
 | Hub header | `img/hero.jpg` | replaces the drawn "Plate I" vignette at the top of the hub | `python3 tools/hub.py` |
 | Hub card | `img/cards/<slug>.jpg` | fills the tinted strip at the top of that primer's card, behind its numeral | `python3 tools/hub.py` |
-| Opening plate | `decks/<slug>/cover.jpg` | replaces the drawing on the opening plate of a generated primer (one with `src/<slug>.js`) | `python3 tools/build.py <slug>` |
+| Opening plate | `decks/<slug>/cover.webp` (preferred) or `cover.jpg` | replaces the drawing on the opening plate of a generated primer (one with `src/<slug>.js`); fitted inside the frame without cropping | `python3 tools/build.py <slug>` |
 
 History primers have their own portrait slots (see the README).
 
@@ -36,3 +36,17 @@ A prompt that works as a starting point:
 
 Check every picture for scientific accuracy (cell shapes, flagella, phage structure, DNA handedness) before
 committing it, and do not use pictures of real, identifiable people made by an image model.
+
+## Current set (October 2026)
+
+The hub header, all 54 card strips and the 26 opening-plate covers were made with xAI's Grok Imagine 2.0
+(`XAI_API_KEY`), one square picture per primer, using the prompt above with the subjects in
+`tools/art_subjects.json`. Each picture was then processed so it sits on the site's own paper:
+
+* Card strips: the subject is cut out to its bounding box, the paper is whitened, and it is placed right of
+  centre on a 900 × 260 white strip. The hub draws card art with `mix-blend-mode:multiply`, so white becomes
+  the plate's paper and the numeral on the left stays clear.
+* Covers: the subject is cut out, the paper is turned into transparency (colour-to-alpha against white, with
+  paper grain dropped), and the result saved as a transparent WebP of at most 520 px, under 160 KB.
+
+Corrections made by hand: the antibiotic plate's paper discs were painted into the clear zones.
