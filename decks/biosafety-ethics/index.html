@@ -700,7 +700,10 @@ function beCab(cx,by,k){let s='';const w=96,h=118,x=cx-w/2,top=by-h;
   if(k===2){s+=`<rect x="${x+8}" y="${top+4}" width="${w-16}" height="7" fill="${PAL.gold}" stroke="${INK}" stroke-width=".6"/>`+[cx-16,cx+4,cx+24].map(xx=>arw(xx,top+13,xx,by-32,{w:1.2,col:'#4F7A3F'})).join('');}
   if(k===3){s+=[cx-18,cx+18].map(xx=>`<circle cx="${xx}" cy="${by-52}" r="9" fill="${PAL.grey}" stroke="${INK}" stroke-width="1"/>`).join('')+T(cx,by-30,'glove ports','note mid f12')
     +`<rect x="${x+w-3}" y="${top+16}" width="8" height="18" fill="${PAL.gold}" stroke="${INK}" stroke-width=".7"/>`+arw(x+w+24,top+25,x+w+7,top+25,{blue:1,w:1.2});}
-  s+=arw(cx,top-16,cx,top-40,{red:1,w:1.4});
+  if(k===3){s+=`<rect x="${x+12}" y="${top-30}" width="${w-24}" height="12" fill="${PAL.gold}" stroke="${INK}" stroke-width=".8"/>`+Tc(cx,top-21,'HEPA','#3A2E22',9,'mono mid','600')
+    +T(x+w-8,top-34,'two in series','note start f12');
+    s+=arw(cx,top-32,cx,top-54,{red:1,w:1.4});}
+  else s+=arw(cx,top-16,cx,top-40,{red:1,w:1.4});
   return s;}
 function scE4(n){
   const lab=[['Class I','protects user and environment'],['Class II','protects user, sample and environment'],['Class III','sealed glove box, highest protection']];

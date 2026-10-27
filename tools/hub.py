@@ -14,8 +14,8 @@ groups = json.loads((ROOT / 'tools' / 'hub.json').read_text())
 slugs = [d['slug'] for g in groups for d in g['decks']]
 
 probe = r"""
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
-(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});const out={};
+const { chromium, launchOptions } = require('./pw');
+(async()=>{const b=await chromium.launch(launchOptions());const out={};
 for(const d of process.argv.slice(2)){const p=await b.newPage();await p.route(/fonts/,r=>r.abort());
  await p.goto('file://ROOT/decks/'+d+'/index.html');
  out[d]=await p.evaluate(()=>({n:S.length,i:S.filter(s=>s.chips||s.explore).length,parts:[...document.querySelectorAll('nav.parts button')].map(b=>b.textContent.replace(/^([IVXL]+|[0-9]+) · /,''))}));

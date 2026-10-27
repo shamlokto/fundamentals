@@ -681,18 +681,18 @@ function scE9(n){
   let yy=y+d3+(n?40:44);
   const b=bullets(n?24:30,yy,[['Bacteria recombine, but not like us','There is no meiosis and no reciprocal exchange of whole genomes. A fragment arrives, and homologous recombination replaces the matching stretch — a patch, typically a few kilobases.'],
    ['The clonal frame','Most of the chromosome descends vertically, punctuated by imported patches. Reconstructing a phylogeny means finding and masking those patches first, or the tree will be wrong.'],
-   ['r/m','The ratio of nucleotide changes brought in by recombination to those from mutation. It is near zero in Mycobacterium tuberculosis and around ten in Helicobacter pylori and Streptococcus pneumoniae (estimates vary with the method) — the same species concept does not stretch across that range.']],n?44:88,{d0:1.6,gap:24});
+   ['r/m','The ratio of nucleotide changes brought in by recombination to those from mutation. It is near zero in Mycobacterium tuberculosis, below 1 in Staphylococcus aureus and Escherichia coli, and about 14 in Helicobacter pylori and 23 in Streptococcus pneumoniae (MLST estimates; other methods give different numbers) — the same species concept does not stretch across that range.']],n?44:88,{d0:1.6,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+b.s};
 }
 
 function scE10(n){
-  const sp=[['Mycobacterium tuberculosis',0.1,'essentially clonal',CORE],['Staphylococcus aureus',1.5,'',CORE],
-   ['Escherichia coli',4,'',SHELL],['Streptococcus pneumoniae',8,'naturally competent',PHG],
-   ['Helicobacter pylori',14,'recombination exceeds mutation many times over',PHG]];
-  const TL=n?['Relative contribution of recombination','(r/m), order of magnitude']:['Relative contribution of recombination (r/m), order of magnitude'], t0=(TL.length-1)*18;
+  const sp=[['Mycobacterium tuberculosis',0.02,'essentially clonal',CORE,'≈ 0'],['Staphylococcus aureus',0.1,'',CORE,'0.1'],
+   ['Escherichia coli',0.7,'',SHELL,'0.7'],['Neisseria meningitidis',7.1,'naturally competent',PHG,'7'],
+   ['Helicobacter pylori',13.6,'naturally competent',PHG,'14'],['Streptococcus pneumoniae',23.1,'naturally competent',PHG,'23']];
+  const TL=n?['Recombination relative to mutation','(r/m, MLST estimates)']:['Recombination relative to mutation (r/m, MLST estimates, Vos & Didelot 2009)'], t0=(TL.length-1)*18;
   let s=G('a-fade',0,TL.map((l,i)=>T(n?16:24,28+i*18,l,'cname start '+(n?'f13':'f14'))).join(''));
   const bw=n?150:280, bx=n?170:300;
-  s+=G('a-fade',.3,barRow(n?16:24,62+t0,bw,sp.map(x=>[x[0],x[1],x[3],String(x[1])]),15,{bx:bx-(n?16:24),rh:n?34:30,fs:n?'f11':'f12'}));
+  s+=G('a-fade',.3,barRow(n?16:24,62+t0,bw,sp.map(x=>[x[0],x[1],x[3],x[4]]),25,{bx:bx-(n?16:24),rh:n?34:30,fs:n?'f11':'f12'}));
   let y=62+t0+sp.length*(n?34:30)+(n?16:18);
   s+=G('a-fade',1.2,sp.filter(x=>x[2]).map((x,i)=>'').join(''));
   const b=bullets(n?24:30,y,[['Why it matters for typing','In a highly recombining species two isolates can share most of their genome and still differ at the locus you sequenced. MLST was designed around this; whole-genome approaches must still mask recombinant regions.'],

@@ -783,10 +783,10 @@ function scA8(n){
   return {vb:n?slim(t.y+6):wide(t.y+8),s:s+t.s};
 }
 function scA9(n){
-  const ev=[['sulfonamides',1935],['penicillins',1942],['aminoglycosides',1946],['tetracyclines',1948],['chloramphenicol',1949],['macrolides',1952],['glycopeptides',1958],['quinolones',1962],['oxazolidinones',2000],['lipopeptides',2003],['diarylquinolines (TB)',2012],['triazaacenaphthylenes',2025]];
+  const ev=[['sulfonamides',1935],['penicillins',1942],['aminoglycosides',1946],['tetracyclines',1948],['chloramphenicol',1949],['macrolides',1952],['glycopeptides',1958],['quinolones',1967],['oxazolidinones',2000],['lipopeptides',2003],['diarylquinolines (TB)',2012],['triazaacenaphthylenes',2025]];
   const lw=n?132:170, x0=(n?10:24)+lw, x1=n?340:600, y0=34, rh=n?17:18, yr=v=>x0+(v-1930)/(2030-1930)*(x1-x0);
-  let s=G('a-fade',0,T(n?10:24,20,'first clinical use of each class (approximate)','note start f12')+box(FX(yr(1962.5)),y0-6,FX(yr(1999.5)-yr(1962.5)),ev.length*rh+4,'#E7DEC9',2)
-    +T(FX((yr(1962.5)+yr(1999.5))/2),y0+ev.length*rh+18,'few new classes','note mid f11'));
+  let s=G('a-fade',0,T(n?10:24,20,'first clinical use of each class (approximate)','note start f12')+box(FX(yr(1967.5)),y0-6,FX(yr(1999.5)-yr(1967.5)),ev.length*rh+4,'#E7DEC9',2)
+    +T(FX((yr(1967.5)+yr(1999.5))/2),y0+ev.length*rh+18,'few new classes','note mid f11'));
   ev.forEach((e,i)=>{const y=y0+i*rh+6;s+=G('a-fade',(.1+i*.06).toFixed(2),T(x0-8,y+4,e[0],'lab end '+(n?'f11':'f12'))+ln(x0,y,x1,y,'#C9BFAB',.6)+`<circle cx="${FX(yr(e[1]))}" cy="${y}" r="4" fill="${i<8?'#2F5276':RED}"/>`);});
   const ay=y0+ev.length*rh+26;
   s+=G('a-fade',.8,ln(x0,ay,x1,ay,'#6A5B47',1)+[1940,1980,2020].map(v=>T(FX(yr(v)),ay+14,String(v),'mono mid f10')).join(''));
