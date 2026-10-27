@@ -4,6 +4,9 @@
 // Usage: node tools/audit.js [slug ...]       (all decks if none given)
 //   AUDIT_OUT=dir   where report.json and shots/ go (default: .audit/ in the repo, git-ignored)
 //   NOSHOT=1        skip screenshots (much faster)
+//   AUDIT_NOFONTS=1 block the web fonts and measure with fallback fonts (offline use; results differ from
+//                   what readers see). Without it, a deck whose plate font fails to load is reported, and
+//                   under CI the run fails.
 // Known false positives are listed in tools/audit_ignore.json and reported separately.
 // Exit code 1 if any finding is not in the ignore list.
 const fs = require('fs'), path = require('path');
@@ -13,6 +16,7 @@ const SHOTS = path.join(OUT, 'shots');
 const decks = process.argv.slice(2).length ? process.argv.slice(2)
   : fs.readdirSync(path.join(ROOT, 'decks')).filter(d => fs.existsSync(path.join(ROOT, 'decks', d, 'index.html')));
 const SHOOT = !process.env.NOSHOT;
+const NOFONTS = !!process.env.AUDIT_NOFONTS, noFonts = new Set();
 const IGNORE = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'audit_ignore.json'), 'utf8')); } catch (e) { return []; } })();
 fs.mkdirSync(SHOTS, { recursive: true });
 
@@ -62,8 +66,10 @@ const ignored = key => IGNORE.some(rx => new RegExp(rx).test(key));
       const errs = [];
       page.on('pageerror', e => errs.push('pageerror: ' + String(e)));
       page.on('console', m => { if (m.type() === 'error' && !/fonts\.(googleapis|gstatic)|ERR_FAILED/.test(m.text())) errs.push('console: ' + m.text()); });
-      await page.route(/fonts\.(googleapis|gstatic)/, r => r.abort());
+      if (NOFONTS) await page.route(/fonts\.(googleapis|gstatic)/, r => r.abort());
       await page.goto(deckURL(deck));
+      if (!NOFONTS && !await page.evaluate(async () => { await document.fonts.ready;
+        return [...document.fonts].some(f => f.family.replace(/"/g, '') === 'IM Fell English' && f.status === 'loaded'); })) noFonts.add(deck);
       const n = await page.evaluate(() => S.length);
       for (let i = 0; i < n; i++) {
         const chipList = await page.evaluate(i => { go(i); const c = document.getElementById('chips'); return c && !c.hidden ? c.querySelectorAll('button').length : 0; }, i);
@@ -88,5 +94,6 @@ const ignored = key => IGNORE.some(rx => new RegExp(rx).test(key));
   console.log('findings:', counts);
   if (Object.keys(known).length) console.log('known false positives (tools/audit_ignore.json):', known);
   console.log('report:', path.join(OUT, 'report.json'));
-  process.exitCode = Object.keys(counts).length ? 1 : 0;
+  if (noFonts.size) console.log(`WARNING: web fonts did not load for ${[...noFonts].join(', ')}; those results use fallback fonts.`);
+  process.exitCode = Object.keys(counts).length || (noFonts.size && process.env.CI) ? 1 : 0;
 })();
