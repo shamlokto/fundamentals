@@ -63,11 +63,11 @@ function scL5(n){
 function scL6(n){
   const A=n?axes(54,40,280,140,{xr:[0,40],yr:[0,1],xt:[[0,'0'],[10,'10'],[20,'20'],[30,'30'],[40,'40']],yt:[],xlab:'cycle',ylab:'fluorescence'})
     :axes(60,40,280,160,{xr:[0,40],yr:[0,1],xt:[[0,'0'],[10,'10'],[20,'20'],[30,'30'],[40,'40']],yt:[],xlab:'cycle',ylab:'fluorescence'});
-  const mids=[18,21.3,24.6], cols=['#2F5276','#4F7A3F','#A4473A'], thr=.12;
+  const mids=[20.7,24,27.3], cols=['#2F5276','#4F7A3F','#A4473A'], thr=.12;
   const sig=m=>x=>.95/(1+Math.exp(-(x-m)/1.4));
   let s=A.s+G('a-fade',.2,ln(A.x,FX(A.py(thr)),A.x+A.w,FX(A.py(thr)),'#6A5B47',1,'4 3')+T(A.x+A.w-2,FX(A.py(thr)-5),'threshold','note end f10 halo'));
   mids.forEach((m,i)=>{const ct=m-1.4*Math.log(.95/thr-1);s+=G('a-fade',(.4+i*.2).toFixed(1),curve(A,sig(m),{col:cols[i],n:160})+`<circle cx="${FX(A.px(ct))}" cy="${FX(A.py(thr))}" r="3" fill="${cols[i]}"/>`);});
-  s+=G('a-fade',1,T(FX(A.px(14.5)),FX(A.py(.7)),'10⁶','mono end f11')+T(FX(A.px(28)),FX(A.py(.7)),'10⁴ copies','mono start f11')+T(FX(A.px(15.3)),FX(A.py(.03)+0),'Ct','note mid f10 halo'));
+  s+=G('a-fade',1,T(FX(A.px(17.2)),FX(A.py(.7)),'10⁶','mono end f11')+T(FX(A.px(30.7)),FX(A.py(.7)),'10⁴ copies','mono start f11')+T(FX(A.px(18)),FX(A.py(.03)+0),'Ct','note mid f10 halo'));
   const B=n?axes(54,A.y+A.h+90,280,110,{xr:[2,7],yr:[14,32],xt:[[2,'10²'],[4,'10⁴'],[6,'10⁶']],yt:[[15,'15'],[25,'25']],xlab:'starting copies (log)',ylab:'Ct'})
     :axes(410,40,190,160,{xr:[2,7],yr:[14,32],xt:[[2,'10²'],[4,'10⁴'],[6,'10⁶']],yt:[[15,'15'],[25,'25']],xlab:'starting copies (log)',ylab:'Ct'});
   const ct=x=>18+3.32*(6-x);
