@@ -357,9 +357,9 @@ function scCharge(n){
   s+=G('a-fade',2.0,box(ex,ey,ew,n?150:110,'#E7DEC9',4)+badge(ex+14,ey+14,3)+T(ex+28,ey+19,'Edit','lab start f14')
     +wrap(n?'Isoleucyl-tRNA synthetase sometimes activates valine, one carbon smaller. A second, editing site admits valine but not isoleucine, and destroys the mistake: a double sieve.':'Isoleucyl-tRNA synthetase sometimes activates valine, which is one carbon smaller. A second, editing site admits valine but not isoleucine and hydrolyses the mistake: a “double sieve”.',n?44:84).map((l,i)=>T(ex+16,ey+44+i*19,l,'note start f13')).join(''));
   const yb=ey+(n?150:110)+(n?22:26);
-  const YL=n?['Synthetases, not ribosomes, pair amino acid with anticodon']:['Usually one synthetase per amino acid: they, not the ribosome,','match amino acid to anticodon'];
+  const YL=n?['Synthetases, not ribosomes,','match amino acid to anticodon']:['Usually one synthetase per amino acid: they, not the ribosome,','match amino acid to anticodon'];
   s+=G('a-fade',2.6,YL.map((l,i)=>T(n?180:320,yb+i*22,l,'lab mid')).join(''));
-  return {vb:n?slim(yb+12):wide(yb+(YL.length-1)*22+14),s};
+  return {vb:n?slim(yb+(YL.length-1)*22+12):wide(yb+(YL.length-1)*22+14),s};
 }
 
 /* ===================== Part III · the ribosome ===================== */
