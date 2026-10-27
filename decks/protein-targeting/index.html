@@ -505,7 +505,7 @@ function scEukGly(n){
   s+=G('a-pop',1.2,`<rect x="${ox-20}" y="${y-6}" width="40" height="30" rx="6" fill="#7FA59B" stroke="${INK}" class="tint"/>`+T(ox,y+48,'OST','mono mid f11'));
   s+=G('a-fade',1.6,beadChain(ox+40,gy-30,6,10,0)+Tc(ox+70,gy-12,'N-X-S/T','#A4473A',11,'mono mid','600')+`<path d="M${gx+20} ${gy-40} C ${ox-60} ${gy-80}, ${ox} ${gy-80}, ${ox+60} ${gy-40}" class="arrow"/>`);
   const ty=y+(n?70:76);
-  const L=wrap(n?'A 14-sugar tree built on dolichol is moved whole onto Asn in N-X-S/T, then trimmed and rebuilt in the ER and Golgi. Bacteria use a similar plan with undecaprenol.':'In eukaryotes, oligosaccharyltransferase moves a 14-sugar tree, prebuilt on dolichol, onto Asn in N-X-S/T as the chain enters the ER. It is trimmed and rebuilt in the ER and Golgi. Bacteria follow the same plan with a different lipid, undecaprenyl phosphate.',n?46:78);
+  const L=wrap(n?'A 14-sugar tree built on dolichol is moved whole onto Asn in N-X-S/T, then trimmed and rebuilt in the ER and Golgi. Bacteria use a similar plan with undecaprenyl phosphate.':'In eukaryotes, oligosaccharyltransferase moves a 14-sugar tree, prebuilt on dolichol, onto Asn in N-X-S/T as the chain enters the ER. It is trimmed and rebuilt in the ER and Golgi. Bacteria follow the same plan with a different lipid, undecaprenyl phosphate.',n?46:78);
   s+=G('a-fade',2.2,L.map((l,i)=>T(n?14:30,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20):wide(ty+L.length*20+4),s};
 }
