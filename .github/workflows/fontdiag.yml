@@ -1,0 +1,18 @@
+# TEMPORARY: font diagnostic for the CI audit (to be removed)
+name: Font diagnostic
+on:
+  push:
+    branches: [claude/epic-turing-qv54qj]
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - run: node tools/.fontdiag.js
+      - run: fc-match monospace; fc-match "IBM Plex Mono"; fc-list | wc -l
