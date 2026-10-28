@@ -524,18 +524,18 @@ function scA8(n){
   let s='';const cx=n?180:180, y0=50;
   s+=G('a-fade',0,T(n?16:24,30,'Hershey and Chase, 1952','cname start f14'));
   const col=[['³⁵S labels protein','#C9A9D6'],['³²P labels DNA','#E3B26B']];
-  col.forEach((c,i)=>{const x=n?90+i*170:110+i*180;s+=G('a-fade',(.3+i*.5).toFixed(1),phage(x,y0+40,1.4,i?'#E9DCC0':c[1])+(i?`<path d="M${x-6} ${y0+20} q6 -8 12 0 q-6 8 -12 0" stroke="#C17A2C" stroke-width="3" fill="none"/>`:'')+T(x,y0+92,c[0],'lab mid f12'));});
+  col.forEach((c,i)=>{const x=n?90+i*170:110+i*180;s+=G('a-fade',(.3+i*.5).toFixed(1),phage(x,y0+40,1.4,i?'#E9DCC0':c[1])+(i?`<path d="M${x-6} ${y0+20} q6 -8 12 0 q-6 8 -12 0" stroke="#5A4632" stroke-width="3" fill="none"/>`:'')+T(x,y0+92,c[0],'lab mid f12'));});
   const steps=[['Infect','Labelled T2 phages attach to E. coli and inject their contents.'],['Blend','A kitchen blender shears the empty phage coats off the cells.'],['Spin','Cells pellet; the detached coats stay in the supernatant.'],
    ['Result','Most ³⁵S stays outside with the coats; most ³²P goes into the cells, and some reaches the progeny phages. Protein stays out; DNA goes in.']];
   const b=n?bullets(24,y0+124,steps,44,{d0:1.2,gap:22}):bullets(400,44,steps,34,{d0:1.2,gap:22});
   /* the procedure: infect, blend, spin */
   const py=n?b.y+16:y0+130, px=n?[60,180,300]:[70,180,290];
   const cell=(x,y)=>`<rect x="${x-34}" y="${y-13}" width="68" height="26" rx="13" fill="#E4E8D4" stroke="${INK}" stroke-width="1.2"/>`;
-  let pr=cell(px[0],py+66)+[-16,10].map(dx=>phage(px[0]+dx,py+36,.75,'#C9A9D6')).join('')+wave(px[0]-22,px[0]+18,py+70,'#C17A2C',2,3,8)+T(px[0],py+100,'infect','note mid f11');
+  let pr=cell(px[0],py+66)+[-16,10].map(dx=>phage(px[0]+dx,py+36,.75,'#C9A9D6')).join('')+wave(px[0]-22,px[0]+18,py+70,'#5A4632',2,3,8)+T(px[0],py+100,'infect','note mid f11');
   pr+=arw(px[0]+42,py+60,px[1]-30,py+60);
   pr+=`<path d="M${px[1]-22} ${py+24} h44 l-8 56 h-28 z" fill="${GLASSF}" fill-opacity=".6" stroke="${GLASSE}" stroke-width="1.5"/><rect x="${px[1]-18}" y="${py+80}" width="36" height="12" rx="2" fill="#C9C2B4" stroke="${INK}"/><path d="M${px[1]-10} ${py+66} l20 -6 m-20 0 l20 6" stroke="${INK}" stroke-width="1.4"/>`+T(px[1],py+108,'blend','note mid f11');
   pr+=arw(px[1]+30,py+60,px[2]-24,py+60);
-  pr+=tube(px[2],py+92,{h:76,w:24,full:.8,fill:'#EDE3C6'})+`<ellipse cx="${px[2]}" cy="${py+84}" rx="8" ry="5" fill="#C17A2C" stroke="${INK}" stroke-width=".7"/>`+T(px[2],py+108,'spin','note mid f11')
+  pr+=tube(px[2],py+92,{h:76,w:24,full:.8,fill:'#EDE3C6'})+`<ellipse cx="${px[2]}" cy="${py+84}" rx="8" ry="5" fill="#A9C49A" stroke="${INK}" stroke-width=".7"/>`+T(px[2],py+108,'spin','note mid f11')
     +(n?'':T(px[2]+18,py+36,'coats: ³⁵S','note start f11')+T(px[2]+18,py+88,'cells: ³²P','note start f11'));
   if(n)pr+=T(16,py+128,'Supernatant: empty coats, ³⁵S. Pellet: cells, ³²P.','note start f11');
   s+=G('a-fade',1,pr);

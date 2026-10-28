@@ -426,7 +426,8 @@ function sideText(n,x,y,items,wn,o={}){return bullets(n?24:x,y,items,n?44:wn,o);
 const BACC='#3E7FA8', ARCC='#C17A2C', EUKC='#4F7A3F';
 function fingerprint(x,y,w,h,seed){const r=rnd(seed);let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#F1ECDF" stroke="${INK}" stroke-width="1.2"/>`;
   for(let i=0;i<30;i++){const px=x+8+r()*(w-16)*(.3+.7*r()),py=y+h-8-r()*(h-16)*(.2+.8*r());s+=`<ellipse cx="${FX(px)}" cy="${FX(py)}" rx="${FX(2+r()*2.5)}" ry="${FX(1.6+r()*1.6)}" fill="#3A2E22" opacity="${FX(.35+r()*.5,2)}"/>`;}
-  return s+arw(x-10,y+h,x-10,y+h-40,{w:1})+arw(x,y+h+10,x+40,y+h+10,{w:1});}
+  return s+arw(x-10,y+h,x-10,y+h-40,{w:1})+arw(x,y+h+10,x+40,y+h+10,{w:1})
+    +T(x+46,y+h+14,'1st dimension','note start f11')+`<text transform="translate(${x-16} ${y+h-55}) rotate(-90)" class="note mid f11">2nd dimension</text>`;}
 function scWo1(n){return titlePlate(n,{name:'Carl Woese',dates:'1928–2012',q:'How are all living things related, and where do bacteria fit?',
   belief:'Life was divided into prokaryotes and eukaryotes (Roger Stanier and Cornelis van Niel, 1962). Bacteria were classified by shape, staining and metabolism, which could not reveal ancestry. Many thought a bacterial phylogeny was impossible.',
   items:['A molecule as a clock','Oligonucleotide catalogues','Methanogens: bacteria or not?','Three domains and a root','The uncultured majority, and the Asgard debate']});}
@@ -455,7 +456,7 @@ function scWo3(n){
   let s='';const x0=n?16:24;let y=30;
   steps.forEach((st,i)=>{const L=wrap(st[1],n?52:50);s+=G('a-fade',(i*.4).toFixed(1),badge(x0+8,y-4,i+1)+T(x0+24,y,st[0],'cname start f14')+L.map((l,j)=>T(x0+24,y+18+j*16,l,'note start f12')).join(''));y+=26+L.length*16+10;});
   const fx=n?110:420, fy=n?y+20:50;
-  s+=G('a-fade',1,`<path d="M${fx-60} ${fy+6} h170" stroke="${RNAC}" stroke-width="2.4"/>`+'AUCGGACUAGGCUUGACG'.split('').map((c,i)=>Tc(fx-56+i*9.6,fy,c,c==='G'?'#A4473A':'#6A5B47',9,'mono mid','600')+(c==='G'?`<path d="M${fx-51+i*9.6} ${fy-10} v20" stroke="#A4473A" stroke-width="1" stroke-dasharray="2 2"/>`:'')).join(''));
+  s+=G('a-fade',1,`<path d="M${fx-60} ${fy+6} h170" stroke="${RNAC}" stroke-width="2.4"/>`+T(fx-66,fy+10,'5′','mono end f11')+T(fx+116,fy+10,'3′','mono start f11')+'AUCGGACUAGGCUUGACG'.split('').map((c,i)=>Tc(fx-56+i*9.6,fy,c,c==='G'?'#A4473A':'#6A5B47',9,'mono mid','600')+(c==='G'?`<path d="M${fx-51+i*9.6} ${fy-10} v20" stroke="#A4473A" stroke-width="1" stroke-dasharray="2 2"/>`:'')).join(''));
   s+=G('a-fade',1.6,fingerprint(fx-30,fy+30,140,110,7)+T(fx+40,fy+174,'fingerprint of T1 fragments','note mid f11'));
   const p=para(n?16:24,Math.max(y,n?fy+196:y)+8,'Painstaking work: each catalogue took weeks, and the comparisons were done by hand. Woese, with George Fox, Linda Magrum, Mitchell Sogin and others, had catalogued dozens of bacteria by the mid-1970s.',n?50:92,'note start f13',17,2.2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
