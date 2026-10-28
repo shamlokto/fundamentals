@@ -1,5 +1,7 @@
 /* ===================== shared library for the generated decks ===================== */
 const PAL={sand:'#E7DEC9',blue:'#A9C4DC',green:'#A9C49A',rose:'#E7A99B',gold:'#E0C88A',lilac:'#C9A9D6',teal:'#9DB4AE',grey:'#D8D2C2',cream:'#F3EEE2',ochre:'#D9B85A'};
+/* neutral washes for categories with no meaning (gene A, B, C; systems; steps), in order; see STYLE.md §2 */
+const CAT=[PAL.blue,PAL.green,PAL.gold,PAL.lilac,PAL.teal,PAL.sand,PAL.grey,PAL.cream];
 const lines=t=>String(t).split('|');
 /* opening plate without a portrait: art on the left (wide) or on top (narrow) */
 function introPlate(n,o){
@@ -71,6 +73,7 @@ function cycle(cx,cy,R,items,o={}){
 }
 /* axes: returns {s,px,py,...}; o:{xr,yr,xlab,ylab,xt,yt,xfmt,yfmt,logx,logy} */
 function axes(x,y,w,h,o){
+  if(!o.xlab||!o.ylab)console.warn(`axes(): no ${!o.xlab?'xlab':'ylab'}${!o.xlab&&!o.ylab?' or ylab':''} (STYLE.md: every plotted axis has a title)`);
   const lx=v=>o.logx?Math.log10(v):v, ly=v=>o.logy?Math.log10(v):v;
   const X0=lx(o.xr[0]),X1=lx(o.xr[1]),Y0=ly(o.yr[0]),Y1=ly(o.yr[1]);
   const px=v=>x+(lx(v)-X0)/(X1-X0)*w, py=v=>y+h-(ly(v)-Y0)/(Y1-Y0)*h;
@@ -125,7 +128,9 @@ function explorer(n,it,o={}){
 function rodCell2(cx,cy,L,R,o={}){return `<rect x="${cx-L/2}" y="${cy-R}" width="${L}" height="${2*R}" rx="${R}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.6}" ${o.tint===false?'':'class="tint"'}/>`;}
 function coccus(cx,cy,r,o={}){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o.fill||'#E4E8D4'}" stroke="${o.stroke||INK}" stroke-width="${o.sw||1.4}" class="tint"/>`;}
 function membraneBand(x1,x2,y,h=16,o={}){let s=`<rect x="${x1}" y="${y}" width="${x2-x1}" height="${h}" fill="${o.fill||'#EDE0B8'}"/>`;
-  s+=`<path d="M${x1+3} ${y+3} H${x2} M${x1+3} ${y+h-3} H${x2}" stroke="${o.dot||'#B89A5E'}" stroke-width="4.5" stroke-dasharray="0.1 7" stroke-linecap="round"/>`;return s;}
+  s+=`<path d="M${x1+3} ${y+3} H${x2} M${x1+3} ${y+h-3} H${x2}" stroke="${o.dot||'#B89A5E'}" stroke-width="4.5" stroke-dasharray="0.1 7" stroke-linecap="round"/>`;
+  if(o.sides){const sx=o.sideX||x1+6;s+=T(sx,y-6,o.sides[0],'note start f12')+T(sx,y+h+15,o.sides[1],'note start f12');}  // e.g. ['outside','cytoplasm']
+  return s;}
 function pill(x,y,t,fill,tc='#F3EDE0',fs=11){const w=t.length*fs*.62+18;return `<rect x="${FX(x)}" y="${y-fs-3}" width="${FX(w)}" height="${fs+9}" rx="${(fs+9)/2}" fill="${fill}"/>`+Tc(FX(x+w/2),y+1,t,tc,fs,'mono mid','600');}
 /* simple two-column text plate for wide, stacked on narrow: art on left/top, bullets right/below */
 function artBullets(n,art,artW,artH,items,o={}){
