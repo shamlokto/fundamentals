@@ -713,11 +713,11 @@ function scM1(n){return introPlate(n,{q:'How small a thing can we see, and how d
     return s+T(cx,cy+66,'a rod cell; dots stand for ribosomes (enlarged)','note mid f11');},artH:150});}
 function scM2(n){
   const g=(x,m)=>Math.exp(-((x-m)**2)/(2*.3*.3));
-  const mk=(x,y,w,h,sep,tt)=>{const A=axes(x,y,w,h,{xr:[-2,2],yr:[0,1.8],xt:[],yt:[],xlab:'position'});
+  const mk=(x,y,w,h,sep,tt)=>{const A=axes(x,y,w,h,{xr:[-2,2],yr:[0,1.8],xt:[],yt:[],xlab:'position',ylab:'intensity'});
     let s=A.s+curve(A,v=>g(v,-sep/2),{col:'#9A9384',w:1.4,dash:'4 3'})+curve(A,v=>g(v,sep/2),{col:'#9A9384',w:1.4,dash:'4 3'})+curve(A,v=>g(v,-sep/2)+g(v,sep/2),{col:'#2F5276'});
     s+=T(x+w/2,y-8,tt,'lab mid f13');return s;};
-  let s=n?G('a-fade',0,mk(40,40,290,90,1.6,'two points, resolved: a dip between'))+G('a-fade',.4,mk(40,190,290,90,.5,'closer than d: one blur'))
-    :G('a-fade',0,mk(40,40,250,110,1.6,'two points, resolved: a dip between'))+G('a-fade',.4,mk(350,40,250,110,.5,'closer than d: one blur'));
+  let s=n?G('a-fade',0,mk(56,40,290,90,1.6,'two points, resolved: a dip between'))+G('a-fade',.4,mk(56,190,290,90,.5,'closer than d: one blur'))
+    :G('a-fade',0,mk(56,40,250,110,1.6,'two points, resolved: a dip between'))+G('a-fade',.4,mk(366,40,250,110,.5,'closer than d: one blur'));
   const y0=n?340:220;
   const b=bullets(n?24:30,y0,[['d ≈ λ / 2NA','Ernst Abbe (1873): a lens images a point as a blur, and two points closer than about half the wavelength divided by the numerical aperture merge. With green light (~500 nm) and an oil objective (NA ~1.4), d is about 180–200 nm.'],['Depth is worse','Along the optical axis the limit is two to three times larger, about 500–700 nm.'],['Magnification is not resolution','Beyond about 1,000× a light microscope only enlarges the blur. A 1 µm bacterium is just five resolvable spots across.']],n?44:88,{d0:.8,gap:20});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
@@ -796,11 +796,13 @@ function scM8(n){
   const rows=[['X-ray crystallography','ordered crystals of the molecule','~1–3 Å','about four in five PDB entries; enzymes with bound ligands, drug design'],['NMR','concentrated, isotope-labelled protein in solution, usually under ~40 kDa','ensemble of models','dynamics, flexible regions, small domains'],['Cryo-EM (single particle)','purified complexes in ice, easiest above ~100 kDa','~2–4 Å','large assemblies, membrane proteins, several states'],['Cryo-ET with averaging','cells or lamellae','~10 Å; at best ~3–4 Å','complexes in their native setting']];
   const t=n?wtable(n,['Method','Typical','Sample; best for'],rows.map(r=>[r[0],r[2],r[1]+'; '+r[3]]),[[10,12],[104,9],[176,26]],{y0:30,R:354})
     :wtable(n,['Method','Sample','Typical','Best for'],rows,[[24,16],[160,30],[370,14],[470,22]],{y0:30,R:620});
-  const A=axes(n?30:60,t.y+72,n?300:520,0,{xr:[1,20],yr:[0,1],logx:1,xt:[[1,'1 Å'],[2,'2'],[5,'5'],[10,'10'],[20,'20 Å']],yt:[]});
+  const ax=n?30:60, aw=n?300:520, ay=t.y+72, px=v=>ax+aw*Math.log10(v)/Math.log10(20);
   const L=[[1.2,'atoms separate',0],[3,'side chains',1],[4.5,'β-strands part',0],[8,'helices as rods',1],[20,'overall shape',0]];
-  let s=G('a-fade',.8,A.s.replace(/<path d="M[^"]*V[^"]*H[^"]*"/,`<path d="M${A.x} ${A.y} H${A.x+A.w}"`)+L.map(([v,l,r])=>{const X=FX(A.px(v));return `<circle cx="${X}" cy="${A.y}" r="4" fill="#2F5276"/>`+T(X,A.y-12-r*15,l,`note ${v>15?'end':v<1.5?'start':'mid'} f11`);}).join(''));
+  let s=G('a-fade',.8,ln(ax,ay,ax+aw,ay,'#6A5B47',1.3)+[[1,'1 Å'],[2,'2'],[5,'5'],[10,'10'],[20,'20 Å']].map(([v,l])=>ln(FX(px(v)),ay,FX(px(v)),ay+5,'#6A5B47',1.3)+T(FX(px(v)),ay+19,l,'note mid f10')).join('')
+    +T(ax+aw/2,ay+36,'resolution (Å, log scale)','note mid f12')
+    +L.map(([v,l,r])=>{const X=FX(px(v));return `<circle cx="${X}" cy="${ay}" r="4" fill="#2F5276"/>`+T(X,ay-12-r*15,l,`note ${v>15?'end':v<1.5?'start':'mid'} f11`);}).join(''));
   s+=T(n?16:24,t.y+22,'What a map shows at each resolution (smaller is better)','lab start f13');
-  const p=para(n?16:24,A.y+40,'Resolution is quoted in ångströms: 1 Å is 0.1 nm, and a carbon–carbon bond is about 1.5 Å. The Protein Data Bank, founded in 1971, now holds over 200,000 experimental structures.',n?50:92,'note start f13',17,1.2);
+  const p=para(n?16:24,ay+54,'Resolution is quoted in ångströms: 1 Å is 0.1 nm, and a carbon–carbon bond is about 1.5 Å. The Protein Data Bank, founded in 1971, now holds over 200,000 experimental structures.',n?50:92,'note start f13',17,1.2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+s+p.s};
 }
 function scM9(n){
