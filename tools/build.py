@@ -66,6 +66,19 @@ def build(slug):
     r = subprocess.run(['node', '--check', t.name], capture_output=True, text=True)
     if r.returncode:
         print(r.stderr[:600]); raise SystemExit(f'syntax error in {slug}')
+    # Draw every plate (each chip, both widths) in node: reports helper warnings such as axes() without titles,
+    # and plates that throw. Warnings do not stop the build.
+    drive = ('const COVER=null;\n' + (T / 'base_helpers.js').read_text() + '\n' + (T / 'lib.js').read_text() + '\n' + body.strip() + '''
+;(()=>{const seen=new Set(); let at='';
+console.warn=(...a)=>{const m=at+': '+a.join(' '); if(!seen.has(m)){seen.add(m); process.stdout.write('  warning: '+m+'\\n');}};
+S.forEach((sc,i)=>[false,true].forEach(n=>{const C=sc.chips&&CHIPS[sc.chips], ks=C?C.list.map((_,k)=>k):[null], k0=C&&C.get();
+  ks.forEach(k=>{at=`plate ${i+1}`+(k===null?'':` chip ${k}`); try{if(C)C.set(k); sc.draw(n);}catch(e){console.warn('draw failed: '+e.message);}});
+  if(C)C.set(k0);}));})();''')
+    with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False) as t:
+        t.write(drive)
+    r = subprocess.run(['node', t.name], capture_output=True, text=True)
+    if r.stdout: print(f'{slug}:\n' + r.stdout.rstrip())
+    if r.returncode: print(f'{slug}: plates could not be drawn outside the browser:', r.stderr.strip().splitlines()[-1][:200])
 
 def roman(n):
     r = ''

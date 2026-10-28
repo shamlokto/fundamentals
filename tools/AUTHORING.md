@@ -54,11 +54,20 @@ Diagrams
   end at box edges automatically. Labels sit beside the arrow, on `side`.
 * `cycle(cx,cy,R,[{t,w,f},...],{labs:[...],lr})`: boxes around a circle joined by arcs, labelled outside.
 * `axes(x,y,w,h,{xr,yr,xt,yt,xlab,ylab,logx})` → `A` with `A.px(v)`, `A.py(v)`; `curve(A,f,{col,from,to})`.
+  Every plotted axis needs a title: `build.py` warns about any `axes()` call without `xlab` or `ylab`.
 * `hbars(n,x,y,w,[[label,value,colour,valueText]],{max,lw})` → `{s,y}`: horizontal bar chart.
-* `arw(x1,y1,x2,y2,{w,red,blue,q:[cx,cy]})`: single arrow. `ln(...)`, `box(x,y,w,h,fill,rx)`, `blob(cx,cy,rx,ry,fill)`.
-* Drawings: `rodCell2(cx,cy,L,R)`, `coccus(cx,cy,r,{fill})`, `membraneBand(x1,x2,y,h)`, `dsDNA(x1,x2,y)`,
+* `arw(x1,y1,x2,y2,{w,red,blue,q:[cx,cy]})`: single arrow. `inh(x1,y1,x2,y2,{drug,w,dash,dx,dy})`: inhibition, a red
+  line ending in a short perpendicular bar at (x2,y2), with the drug named in red italics at the tail (use it, never a
+  red arrow, for drug ⊣ target). `ln(...)`, `box(x,y,w,h,fill,rx)`, `blob(cx,cy,rx,ry,fill)`.
+* Drawings: `rodCell2(cx,cy,L,R)`, `coccus(cx,cy,r,{fill})`, `membraneBand(x1,x2,y,h,{sides:['outside','cytoplasm'],sideX})`
+  (labels the two faces), `dsDNA(x1,x2,y,col,gap,{ends:true|'rev',top,bottom})` (`ends` labels 5′/3′ outside both strands;
+  `top`/`bottom` colour one strand, e.g. `bottom:NEW`), `ribosome(cx,my,k,{trnas,codons,sites})` (E/P/A are labelled
+  whenever `trnas` are given; `sites:false` turns them off),
   `dish(cx,cy,R,colonies)`, `colonySet(n,seed,R)`, `tube(...)`, `flask(...)`, `mouse(cx,cy,k)`, `pill(x,y,text,fill)`.
-* Colours: `PAL.sand|blue|green|rose|gold|lilac|teal|grey`, `INK`, `RED`, `BLUE`, `GREEN`, `DNAC`.
+* Colours: `PAL.sand|blue|green|rose|gold|lilac|teal|grey`, `INK`, `RED`, `BLUE`, `GREEN`, `DNAC`, `NEW`.
+  `CAT[0..7]`: neutral washes for categories with no meaning (gene A, B, C; systems; steps), in a fixed order
+  (blue, green, gold, lilac, teal, sand, grey, cream). Use them instead of `RED`, `BLUE`, `GREEN` or `RNAC` for categories
+  (`tools/STYLE.md` §2).
 
 ## Checking
 

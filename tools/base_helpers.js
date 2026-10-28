@@ -13,7 +13,14 @@ function mark(x,y,ok,r=11){return ok?`<circle cx="${x}" cy="${y}" r="${r}" class
 function wrap(text,max){const w=text.split(' ');const L=[''];w.forEach(x=>{if((L[L.length-1]+' '+x).trim().length>max)L.push(x);else L[L.length-1]=(L[L.length-1]+' '+x).trim();});return L;}
 function badge(x,y,num){return `<circle cx="${x}" cy="${y}" r="8.5" fill="#2F5276"/>`+Tc(x,y+3.5,num,'#F3EDE0',10,'mono mid','600');}
 function rungs(x1,x2,y1,y2,step=7){let r='';for(let x=x1+3;x<x2;x+=step)r+=`M${x} ${y1} V${y2}`;return `<path d="${r}" stroke="${INK}" stroke-width=".9" opacity=".4"/>`;}
-function dsDNA(x1,x2,y,col=DNA,gap=8){return rungs(x1,x2,y,y+gap)+`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`;}
+/* o.top / o.bottom: strand colours (e.g. bottom:NEW for a new strand); o.ends:true labels 5′/3′ outside the strands, top strand 5′→3′
+   left to right ('rev' flips it) */
+function dsDNA(x1,x2,y,col=DNA,gap=8,o={}){const top=o.top||col, bot=o.bottom||col;
+  let s=rungs(x1,x2,y,y+gap)+(top===bot?`<path d="M${x1} ${y} H${x2} M${x1} ${y+gap} H${x2}" stroke="${col}" stroke-width="2.2" fill="none"/>`
+    :`<path d="M${x1} ${y} H${x2}" stroke="${top}" stroke-width="2.2" fill="none"/><path d="M${x1} ${y+gap} H${x2}" stroke="${bot}" stroke-width="2.2" fill="none"/>`);
+  if(o.ends){const [a,b]=o.ends==='rev'?['3′','5′']:['5′','3′'];
+    s+=Tc(x1,y-5,a,'#6A5B47',11,'mono start')+Tc(x2,y-5,b,'#6A5B47',11,'mono end')+Tc(x1,y+gap+14,b,'#6A5B47',11,'mono start')+Tc(x2,y+gap+14,a,'#6A5B47',11,'mono end');}
+  return s;}
 function wave(x1,x2,y,c=RNAC,sw=2.6,a=3,p=10){let d=`M${x1} ${y} q${p/4} ${-a} ${p/2} 0`;const n=Math.max(0,Math.floor((x2-x1)/(p/2))-1);for(let i=0;i<n;i++)d+=` t${p/2} 0`;return `<path d="${d}" stroke="${c}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;}
 function bend(x,y,h=18,len=14){return `<path d="M${x} ${y} V${y-h} H${x+len}" stroke="${INK}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`;}
 function hairpin(x,y,h,w,c=RNAC){let r='';for(let yy=y-4;yy>y-h+3;yy-=5)r+=`M${x} ${yy} H${x+w}`;return `<path d="${r}" stroke="${INK}" stroke-width=".8" opacity=".6"/><path d="M${x} ${y} V${y-h} a${w/2} ${w/2} 0 1 1 ${w} 0 V${y}" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;}
@@ -51,7 +58,7 @@ function ribosome(cx,my,k,o={}){
   if(o.tunnel)s+=`<path d="M${cx+S(10)} ${my-S(104)} C ${cx} ${my-S(118)}, ${cx-S(14)} ${my-S(126)}, ${cx-S(22)} ${my-S(150)}" stroke="${INK}" stroke-width="${S(1.2)}" stroke-dasharray="3 3" fill="none"/>`;
   if(o.mrna!==false){const x1=cx-S(170),x2=cx+S(170);s+=`<path d="M${x1} ${my} H${x2}" stroke="${RNAC}" stroke-width="${Math.max(2,S(2.6))}"/>`+Tc(x1-S(4),my+S(4),'5′','#6A5B47',S(11),'mono end')+Tc(x2+S(4),my+S(4),'3′','#6A5B47',S(11),'mono start');}
   (o.codons||[]).forEach(([site,c])=>{s+=Tc(sx[site],my+S(16),c,o.codonCol&&o.codonCol[site]||'#6A3E12',S(11),'mono mid','600');});
-  if(o.sites)['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
+  if(o.sites||(o.sites!==false&&(o.trnas||[]).length))['E','P','A'].forEach(k2=>s+=Tc(sx[k2],my+S(34),k2,'#2F5276',S(12),'mono mid','600'));
   (o.trnas||[]).forEach(t=>s+=trna(sx[t.site]+(t.dx||0)*k,my-S(4),k,t.ac,t.aa,t.col,t));
   if(o.chainOn){const x=sx[o.chainOn]+S(4),y=my-S(118);s+=chain(x,y,k,o.chainN||5);}
   return s;
@@ -123,6 +130,12 @@ function ring(cx,cy,rx,ry,fill,label,o={}){
 function recaFil(x1,x2,y,o={}){let s='';for(let x=x1;x<=x2-8;x+=9)s+=`<rect x="${FX(x)}" y="${FX(y-6)}" width="8" height="12" rx="3" fill="${o.col||RECAC}" stroke="${INK}" stroke-width=".7"/>`;
   return s+(o.label?Tc(FX((x1+x2)/2),FX(y-11),o.label,'#8C5A1E',10,'mono mid','600'):'');}
 function ssb(cx,y){return `<circle cx="${FX(cx)}" cy="${FX(y)}" r="5" fill="${E4}" stroke="${INK}" stroke-width=".7"/>`;}
+/* inhibition: red line ending in a perpendicular bar at (x2,y2), drug named in red italics at the tail; o:{drug,w,dash,dx,dy} */
+function inh(x1,y1,x2,y2,o={}){const L=Math.hypot(x2-x1,y2-y1)||1, ux=(x1-x2)/L, uy=(y1-y2)/L;
+  let s=`<path d="M${FX(x1)} ${FX(y1)} L${FX(x2)} ${FX(y2)}" stroke="${RED}" stroke-width="${o.w||1.6}" fill="none" marker-end="url(#tbar)"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;
+  if(o.drug){const hz=Math.abs(ux)>=Math.abs(uy), tx=x1+ux*6+(o.dx||0), ty=y1+uy*6+(hz?4:uy>0?12:-4)+(o.dy||0);
+    s+=Tc(FX(tx),FX(ty),o.drug,RED,11,'note '+(hz?(ux>0?'start':'end'):'mid'));}
+  return s;}
 function arw(x1,y1,x2,y2,o={}){const m=o.red?'ahr':o.blue?'ahb':'ahp', c=o.red?'#A4473A':o.blue?'#2F5276':(o.col||'#6A5B47');
   return `<path d="M${FX(x1)} ${FX(y1)} ${o.q?`Q${FX(o.q[0])} ${FX(o.q[1])} `:'L'}${FX(x2)} ${FX(y2)}" stroke="${c}" stroke-width="${o.w||1.6}" fill="none" marker-end="url(#${m})"${o.dash?` stroke-dasharray="${o.dash}"`:''}/>`;}
 function pairBox(cx,cy,t,b,o={}){const w=o.w||62,h=o.h||46;
