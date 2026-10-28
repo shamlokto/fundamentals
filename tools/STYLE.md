@@ -50,47 +50,56 @@ Rules:
 * Red is reserved. If something is red, the reader should be able to say what it inhibits or what was lost.
 * A comparison (wild type vs mutant, before vs after) uses one neutral and one meaning colour, not two
   unrelated washes.
-* Categories with no meaning (gene A, B, C; systems; steps) take `PAL` washes, never the strong `RED`,
-  `BLUE`, `GREEN` or `RNAC`. Orange-brown is RNA, so it is not used for other things on a plate that
+* Categories with no meaning (gene A, B, C; systems; steps) take the neutral washes `CAT[0]`…`CAT[7]`
+  in order (blue, green, gold, lilac, teal, sand, grey, cream), never the strong `RED`, `BLUE`, `GREEN` or
+  `RNAC`. Orange-brown is RNA, so it is not used for other things on a plate that
   shows RNA.
 
 ## 3. Standard drawings
 
-Use the helpers. If a helper does not do what a plate needs, ask Software to extend it rather than drawing a
-one-off variant.
+Use the helpers (documented in `tools/AUTHORING.md`). If a helper does not do what a plate needs, ask
+Software to extend it rather than drawing a one-off variant. Hand-built decks carry their own copy of the
+helpers; until Software syncs them, check that the copy in the deck has the option before relying on it.
 
 **Double-stranded DNA** (`dsDNA`, `rungs`). Two parallel strands with faint rungs. Wherever direction
-matters (replication, transcription, cloning, repair, CRISPR), label both ends of both strands with 5′ and 3′
-in `mono`, outside the strands, the top strand 5′→3′ left to right. Parental strands `DNA`, new strands `NEW`.
+matters (replication, transcription, cloning, repair, CRISPR), label both ends of both strands with 5′ and 3′:
+`dsDNA(x1,x2,y,DNA,8,{ends:true})` puts them outside the strands, top strand 5′→3′ left to right
+(`ends:'rev'` flips it). Parental strands `DNA`, new strands `NEW`: colour one strand with
+`{top:…}` or `{bottom:NEW}`, for example a hemimethylated or newly replicated duplex.
 A helix (twisted) is for title plates and pictures only and must be right-handed.
 
 **RNA** (`wave`). A wavy line in `RNAC`, 5′ end labelled where direction matters. Hairpins with `hairpin`.
 
 **Membranes** (`membraneBand`, `poreMemb`). A bilayer band with heads drawn as dots on both faces. Always
 label the two sides in `note` italics: *outside* / *cytoplasm*, or *periplasm* / *cytoplasm* for the inner
-membrane of a Gram-negative cell. Proteins in the membrane span the band; their wash follows the deck's
+membrane of a Gram-negative cell. `membraneBand(x1,x2,y,h,{sides:['outside','cytoplasm']})` does this
+(`sideX` moves the labels). Proteins in the membrane span the band; their wash follows the deck's
 convention for that class.
 
 **Ribosome** (`ribosome`). Large subunit above, small below, mRNA through the small subunit labelled 5′ and
-3′. Whenever tRNAs are shown, show the E, P and A sites (`sites:true`), with E on the left (5′ side).
+3′. Whenever tRNAs are shown, show the E, P and A sites, with E on the left (5′ side). `ribosome` labels
+them automatically whenever `trnas` are passed; do not turn them off with `sites:false` on a plate about
+elongation or decoding.
 
 **Cells.** Rods with `rodCell2` (length about 2.5–3 times the width), cocci with `coccus`, pneumococci with
 `pneumo`. Flagella are thin wavy `INK` lines from the poles or sides, never thicker than the cell outline.
 
 **Arrows.** `arw` for one arrow, `flow` for networks. Normal arrows are `#6A5B47`, 1.6 wide, filled
-triangular head. Blue arrows (`blue:1`) for the pathway that matters, red (`red:1`) for inhibition or loss.
+triangular head. Blue arrows (`blue:1`) for the pathway that matters; red (`red:1`) only for loss or release (energy
+released, a strand degraded), never for inhibition (use `inh`) and never for an ordinary route.
 An arrow starts and ends at the edge of what it connects (`flow` does this), never inside a box or a label.
 Arrow labels sit beside the shaft, on `side`, never on it.
 
-**Inhibition.** Write it as *drug ⊣ target* in red italics beside the step it blocks (envelope 05:
-"fosfomycin ⊣ MurA"), or draw a red line ending in a short perpendicular bar at the target with the drug
-named at the tail. A red ✕ on the target protein or step marks "this is what fails" (dna-replication 23,
+**Inhibition.** Draw it with `inh(x1,y1,x2,y2,{drug:'ciprofloxacin'})`: a red line from the drug to the
+target ending in a perpendicular bar (the `tbar` marker), with the drug named in red italics at the tail.
+In a pathway where the drawing has no room for a line, write *drug ⊣ target* in red italics beside the
+step it blocks (envelope 05: "fosfomycin ⊣ MurA"). A red ✕ on the target protein or step marks "this is what fails" (dna-replication 23,
 tn-seq 10). Never use a plain or red arrow for inhibition, and never use red for an ordinary path, product
 or category.
 
 **Plots** (`axes`, `curve`, `hbars`). L-shaped axes in `#6A5B47`, 1.3 wide, outward ticks. Tick labels
 `note f10`; axis titles `note f12` in italics with units in parentheses, for example *time (h)*,
-*cells per mL (log)*. Every plotted axis has a title. Log axes say so in the title or with labelled
+*cells per mL (log)*. Every plotted axis has a title (`build.py` warns when `axes()` has no `xlab` or `ylab`). Log axes say so in the title or with labelled
 decades. The curve that carries the message is `BLUE` 2.2 wide; comparison curves are dashed or muted;
 red only for the inhibited or failed case. Shaded regions use a `PAL` wash at low opacity. Bar charts
 label each bar at the left and give its value at the right.
