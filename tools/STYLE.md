@@ -27,7 +27,7 @@ on a plate where they appear with their meaning.
 | Parental / template DNA | `DNA`, `OLD`, `DNAC` | `#5A4632` | dark brown |
 | Newly made DNA (line) | `NEW` | `#3E7FA8` | blue; light fill `NEWL` `#8FB1CF` |
 | RNA (mRNA, primers, transcripts) | `RNAC` | `#C17A2C` | orange-brown, drawn as a wavy line (`wave`) |
-| Inhibition, damage, loss, "no" | `RED` | `#A4473A` | drug ⊣ target, deleted genes, failed outcomes |
+| Inhibition, damage, loss, "no"; cuts | `RED` | `#A4473A` | drug ⊣ target, deleted genes, failed outcomes; nuclease cut sites and the cut base (scissors, dashed tick) |
 | Activation, "yes", the key result | `GREEN` | `#4F7A3F` | ticks, growth, induction |
 | Emphasis, accent text, selected chip | `BLUE` / `--accent` | `#3E5F82` / `#2F5276` | headings on plates, the curve that matters |
 | Ribosome | `LSU`, `SSU` | `#BBA27A`, `#D9C89B` | large subunit darker |
