@@ -559,7 +559,7 @@ function scBactStruct(n){
   let s=G('a-pop',0,rnapCore(n?180:170,n?120:150,n?1:1.3,{labels:true}));
   const tx=n?14:330, ty=n?220:50;
   const ev=[['1999','Seth Darst’s lab: core RNA polymerase of Thermus aquaticus, 3.3 Å'],['2002','Holoenzymes with σ, from the Darst and Yokoyama labs'],['2007','Elongation complexes with DNA, RNA and NTP in place']];
-  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:35);s+=G('a-fade',(.8+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+14;});
+  let yy=ty;ev.forEach((e,i)=>{const L=wrap(e[1],n?40:30);s+=G('a-fade',(.8+i*.4).toFixed(1),T(tx,yy,e[0],'mono acc start f13')+L.map((l,j)=>T(tx+50,yy+j*18,l,'lab start '+(n?'f13':'f14'))).join(''));yy+=L.length*18+14;});
   s+=G('a-fade',2.2,wrap(n?'A crab claw, made of β′ and β, around a cleft that holds the DNA. Pol II has the same core.':'A crab claw of β′ and β around the DNA-binding cleft. Bacterial RNAP and Pol II share the same core.',n?44:40).map((l,i)=>T(tx,yy+8+i*20,l,'lab start '+(n?'f14':''))).join(''));
   return {vb:n?slim(yy+62):wide(Math.max(290,yy+60)),s};
 }
@@ -603,8 +603,8 @@ function scRiboswitch(n){
     g+=box(x1+w*.7,y-7,w*.2,14,BLUE)+Tc(x1+w*.8,y+4,'gene','#F3EDE0',11,'mono mid','600');return g;};
   let s=G('a-fade',0,T(x1,30,n?'No ligand: gene on':'No metabolite: the gene is transcribed','cname start '+(n?'f15':''))+row(n?110:120,false));
   s+=G('a-fade',1.4,T(x1,n?160:170,n?'Ligand bound: gene off':'Metabolite bound: a terminator forms','cname start '+(n?'f15':''))+row(n?240:260,true));
-  s+=G('a-fade',2.4,T(n?180:320,n?286:304,n?'Riboswitches: Breaker and others, 2002':'Riboswitches sense metabolites directly, with no protein: Breaker, Nudler and others, 2002','lab mid'));
-  return {vb:n?slim(300):wide(318),s};
+  s+=G('a-fade',2.4,n?T(180,286,'Riboswitches: Breaker and others, 2002','lab mid'):T(320,300,'Riboswitches sense metabolites directly, with no protein:','lab mid')+T(320,320,'Breaker, Nudler and others, 2002','lab mid'));
+  return {vb:n?slim(300):wide(334),s};
 }
 
 function scSRNA(n){
@@ -651,9 +651,9 @@ function scSRNA(n){
 
 function scExpressome(n){
   const x1=n?10:30, x2=n?350:610, y=n?170:190, px=n?250:450;
-  let s=G('a-fade',0,`<path d="M${x1} ${y} H${x2} M${x1} ${y+8} H${x2}" stroke="${OLD}" stroke-width="2.2"/>`+rungs(x1,x2,y,y+8));
+  let s=G('a-fade',0,`<path d="M${x1} ${y} H${x2} M${x1} ${y+8} H${x2}" stroke="${OLD}" stroke-width="2.2"/>`+rungs(x1,x2,y,y+8)+Tc(x1,y-4,'5′','#6A5B47',11,'mono start')+Tc(x1,y+20,'3′','#6A5B47',11,'mono start')+Tc(x2,y-4,'3′','#6A5B47',11,'mono end')+Tc(x2,y+20,'5′','#6A5B47',11,'mono end'));
   s+=G('a-pop',.4,rnapCore(px,y-10,n?.5:.62,{}));
-  s+=G('a-fade',.8,`<path d="M${px-40} ${y-40} C ${px-80} ${y-80}, ${px-140} ${y-70}, ${x1+20} ${y-60}" stroke="${RNAC}" stroke-width="2.6" fill="none"/>`);
+  s+=G('a-fade',.8,`<path d="M${px-40} ${y-40} C ${px-80} ${y-80}, ${px-140} ${y-70}, ${x1+20} ${y-60}" stroke="${RNAC}" stroke-width="2.6" fill="none"/>`+Tc(x1+16,y-66,'5′','#C17A2C',11,'mono end'));
   s+=G('a-pop',1.2,ribo(px-(n?92:110),y-(n?66:74),n?2:2.4));
   s+=G('a-pop',1.6,`<path d="M${px-30} ${y-34} L${px-(n?78:94)} ${y-(n?56:62)}" stroke="#7D4A98" stroke-width="4"/>`+blob(px-30,y-34,8,6,'#7D4A98')+blob(px-(n?78:94),y-(n?56:62),8,6,'#7D4A98')+T(px-(n?40:50),y-(n?70:78),'NusG','mono start f12'));
   [0,1].forEach(i=>s+=G('a-pop',(2+i*.3).toFixed(1),ribo(px-(n?150:190)-i*(n?50:70),y-(n?62:66),n?1.6:2)));

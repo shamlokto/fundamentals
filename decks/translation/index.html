@@ -322,7 +322,7 @@ function scAdaptor(n){
   s+=G('a-fade',1.2,T(cx+24,my-104,'amino acid','note start f12')+T(cx+18,my-50,'adaptor','lab start')+T(cx+18,my-32,'pairs by bases','note start f12'));
   const L=n?{x:14,y:280,dy:44}:{x:300,y:60,dy:52};
   const ev=[['1955','Crick proposes an adaptor: amino acids cannot pair with bases, so something must carry them'],['1957–58','Hoagland and Zamecnik find amino acids attached to a small “soluble RNA”'],['1965','Holley sequences the first tRNA, for alanine: 77 nucleotides']];
-  const tl=timeline(L.x,L.y,ev,n?38:38,n?'f13':'f14',n?72:76,14,1.6);s+=tl.s;
+  const tl=timeline(L.x,L.y,ev,n?38:33,n?'f13':'f14',n?72:76,14,1.6);s+=tl.s;
   return {vb:n?slim(tl.y):wide(Math.max(260,tl.y)),s};
 }
 
@@ -443,10 +443,10 @@ function scProblem(n){
 
 function scPolyU(n){
   const AAO='GAVLIPFMWSTCNQYDEKRH'.split('');
-  let s=G('a-fade',0,T(n?14:40,26,n?'Cell-free extract + poly(U) + one ¹⁴C amino acid per tube':'E. coli extract + synthetic poly(U) RNA + one radioactive amino acid per tube','lab start '+(n?'f13':'')));
+  let s=G('a-fade',0,n?T(14,22,'Cell-free extract + poly(U)','lab start f13')+T(14,40,'+ one ¹⁴C amino acid per tube','lab start f13'):T(40,26,'E. coli extract + synthetic poly(U) RNA + one radioactive amino acid per tube','lab start'));
   const x0=n?14:40, bw=n?15:26, gap=n?2:3, base=n?220:230, top=n?70:70;
   AAO.forEach((a,i)=>{const x=x0+i*(bw+gap),hi=a==='F',h=hi?(base-top):((base-top)*(.03+((i*37)%7)/120));
-    s+=G('a-grow',(.4+i*.05).toFixed(2),`<rect x="${x}" y="${(base-h).toFixed(1)}" width="${bw}" height="${h.toFixed(1)}" fill="${hi?RED:GREY}" stroke="${INK}" stroke-width=".6" class="tint"/>`)+Tc(x+bw/2,base+14,a,'#3A2E22',n?10:12,'mono mid','600');});
+    s+=G('a-grow',(.4+i*.05).toFixed(2),`<rect x="${x}" y="${(base-h).toFixed(1)}" width="${bw}" height="${h.toFixed(1)}" fill="${hi?GREEN:GREY}" stroke="${INK}" stroke-width=".6" class="tint"/>`)+Tc(x+bw/2,base+14,a,'#3A2E22',n?10:12,'mono mid','600');});
   s+=ln(x0-4,base,x0+20*(bw+gap),base,'#6A5B47',1.4)+T(x0+6*(bw+gap)+bw/2,top-8,'Phe','mono mid f12');
   if(!n)s+=G('a-fade',2,T(620,110,'UUUUUUUU…','mono end f15')+T(620,132,'→ Phe-Phe-Phe…','mono end f15')+T(620,170,'Nirenberg & Matthaei,','note end')+T(620,190,'NIH, May 1961','note end'));
   else s+=G('a-fade',2,T(180,base+40,'UUU… → Phe-Phe-Phe…','mono mid f13')+T(180,base+62,'Nirenberg & Matthaei, 1961','note mid'));
@@ -601,7 +601,7 @@ function scElong(n){
   P.forEach((p,i)=>{const [x,y]=pos[i],cx=x+W/2+(n?0:10),my=y+H-(n?26:32);
     let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,p[0],'lab start f14')+T(x+14,y+38,p[1],'note start f12');
     const cod=p[2].shift?[['E','UUC'],['P','GGU'],['A','AAA']]:[['P','UUC'],['A','GGU'],['E','GCU']];
-    g+=ribosome(cx,my,k,Object.assign({codons:cod},p[2]));
+    g+=ribosome(cx,my,k,Object.assign({codons:cod,sites:true},p[2]));
     if(p[2].tu)g+=blob(cx+k*80,my-k*58,24,11,'#7FA59B')+Tc(cx+k*80,my-k*58+3,'EF-Tu','#3A2E22',9,'mono mid','600');
     if(p[2].g)g+=blob(cx+k*62,my-k*40,22,12,'#B4766E')+Tc(cx+k*62,my-k*40+3,'EF-G','#3A2E22',9,'mono mid','600');
     s+=G('a-fade',(i*.8).toFixed(1),g);});
@@ -628,11 +628,11 @@ function scFidelity(n){
 
 function scPTC(n){
   const k=n?.9:1.2, cx=n?170:240, my=n?220:260;
-  let s=G('a-fade',0,ribosome(cx,my,k,{small:false,mrna:false,trnas:[{site:'P',ac:'',aa:''},{site:'A',ac:'',aa:'G'}],chainOn:'P',chainN:4}));
+  let s=G('a-fade',0,ribosome(cx,my,k,{small:false,mrna:false,sites:true,trnas:[{site:'P',ac:'',aa:''},{site:'A',ac:'',aa:'G'}],chainOn:'P',chainN:4}));
   const S=v=>v*k, ax=cx+S(50), px=cx;
-  s+=G('a-fade',.8,`<path d="M${ax-S(8)} ${my-S(108)} C ${ax-S(22)} ${my-S(126)}, ${px+S(20)} ${my-S(126)}, ${px+S(10)} ${my-S(116)}" stroke="${RED}" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`
+  s+=G('a-fade',.8,`<path d="M${ax-S(8)} ${my-S(108)} C ${ax-S(22)} ${my-S(126)}, ${px+S(20)} ${my-S(126)}, ${px+S(10)} ${my-S(116)}" stroke="#6A5B47" stroke-width="2" fill="none" marker-end="url(#ahp)"/>`
     +T(ax+S(16),my-S(128),n?'α-NH₂ attacks':'the A-site amino group attacks','note start f12')+T(px-S(30),my-S(128),n?'ester':'the P-site ester bond','note end f12'));
-  const tx=n?14:430, ty=n?my+30:150;
+  const tx=n?14:430, ty=n?my+52:150;
   const L=n?['The chain moves to the A-site tRNA,','one residue longer. RNA positions the','substrates; no protein side chain','does the chemistry.']:['The growing chain is handed','to the A-site tRNA, one','residue longer.','','RNA positions the substrates','and the tRNA itself helps;','no protein side chain does','the chemistry.'];
   s+=G('a-fade',1.6,L.map((l,i)=>T(tx,ty+i*20,l,'lab start '+(n?'f14':''))).join(''));
   return {vb:n?slim(ty+L.length*20+4):wide(Math.max(my+20,ty+L.length*20+4)),s};
@@ -647,13 +647,13 @@ function scTerm(n){
     const cod=[['P','CUG'],['A','UAA']];
     const mr=`<path d="M${x+20} ${my} H${x+W-20}" stroke="${RNAC}" stroke-width="2.4"/>`+Tc(x+11,my+4,'5′','#6A5B47',11,'mono mid')+Tc(x+W-11,my+4,'3′','#6A5B47',11,'mono mid');
     if(!n)g+=mr;
-    if(i<2)g+=ribosome(cx,my,k,{mrna:n,codons:cod,codonCol:{A:'#A4473A'},trnas:[{site:'P',ac:'GAC',aa:''}],chainOn:i===0?'P':null,chainN:5})+`<path d="M${cx+k*44} ${my-k*8} v${-k*70} h${k*14} v${k*70} z" fill="#7D4A98" stroke="${INK}" class="tint"/>`+Tc(cx+k*62,my-k*50,'RF','#7D4A98',11,'mono start halo','600');
+    if(i<2)g+=ribosome(cx,my,k,{mrna:n,codons:cod,sites:true,codonCol:{A:'#A4473A'},trnas:[{site:'P',ac:'GAC',aa:''}],chainOn:i===0?'P':null,chainN:5})+`<path d="M${cx+k*44} ${my-k*8} v${-k*70} h${k*14} v${k*70} z" fill="#7D4A98" stroke="${INK}" class="tint"/>`+Tc(cx+k*62,my-k*50,'RF','#7D4A98',11,'mono start halo','600');
     if(i===1)g+=chain(cx-k*30,my-k*150,k,5);
     if(i===2)g+=`<path d="M${cx-k*110} ${my-k*70} C ${cx-k*130} ${my-k*170}, ${cx+k*130} ${my-k*170}, ${cx+k*110} ${my-k*70} Z" fill="${LSU}" opacity=".55" stroke="${INK}"/>`+`<path d="M${cx-k*120} ${my+k*14} C ${cx-k*126} ${my+k*60}, ${cx+k*126} ${my+k*60}, ${cx+k*120} ${my+k*14} Z" fill="${SSU}" opacity=".7" stroke="${INK}"/>`+(n?`<path d="M${cx-k*170} ${my-k*14} H${cx+k*170}" stroke="${RNAC}" stroke-width="2.4"/>`:'');
     s+=G('a-fade',(i*.9).toFixed(1),g);});
   const yb=n?pos[2][1]+H+24:H+42;
-  s+=G('a-fade',2.8,T(n?180:320,yb,n?'Eukaryotes: one factor, eRF1, reads all three stops':'In eukaryotes a single factor, eRF1, reads all three stop codons','lab mid'));
-  return {vb:n?slim(yb+12):wide(yb+14),s};
+  s+=G('a-fade',2.8,n?T(180,yb,'Eukaryotes: one factor, eRF1,','lab mid')+T(180,yb+20,'reads all three stops','lab mid'):T(320,yb,'In eukaryotes a single factor, eRF1, reads all three stop codons','lab mid'));
+  return {vb:n?slim(yb+32):wide(yb+14),s};
 }
 
 function scPolysome(n){
@@ -670,11 +670,11 @@ function scPolysome(n){
 /* ===================== Part VI · fate and drugs ===================== */
 function scFate(n){
   const k=n?.6:.8, cx=n?122:170, my=n?250:280;
-  let s=G('a-fade',0,ribosome(cx,my,k,{small:true,trnas:[{site:'P',ac:'',aa:''}],chainOn:'P',chainN:6,tunnel:true}));
+  let s=G('a-fade',0,ribosome(cx,my,k,{small:true,sites:true,trnas:[{site:'P',ac:'',aa:''}],chainOn:'P',chainN:6,tunnel:true}));
   const ex=cx-k*36, ey=my-k*200;
   s+=G('a-pop',.6,blob(ex-k*10,ey+k*30,k*22,k*12,'#9C7FB0')+T(n?ex+k*20:ex-k*40,n?ey-k*4:ey+k*30,'trigger factor',n?'note start f12':'note end f12'));
   const rx=n?200:330;
-  s+=G('a-fade',1.2,T(rx,n?26:36,'Fold in the cytoplasm','cname start')+blob(rx+30,(n?62:76),20,14,'#7FA59B')+T(rx+56,(n?66:80),'DnaK','mono start f12')
+  s+=G('a-fade',1.2,T(n?rx-16:rx,n?26:36,'Fold in the cytoplasm','cname start')+blob(rx+30,(n?62:76),20,14,'#7FA59B')+T(rx+56,(n?66:80),'DnaK','mono start f12')
     +`<rect x="${rx+110}" y="${n?46:56}" width="${n?40:50}" height="${n?40:50}" rx="10" fill="#C9B892" stroke="${INK}" class="tint"/>`+T(rx+(n?130:135),(n?102:122),'GroEL','mono mid f12'));
   const yb=n?150:180;
   s+=G('a-fade',2.0,T(rx,yb,'…or be exported','cname start')+blob(rx+20,yb+34,18,12,'#E0B84A')+T(rx+20,yb+38,'SRP','mono mid f11')
@@ -738,7 +738,7 @@ function scTmRNA(n){
   let s='';
   P.forEach((p,i)=>{const [x,y]=pos[i],cx=x+W/2,my=y+H-(n?28:46);
     let g=box(x,y,W,H,'#E7DEC9',4)+badge(x+14,y+14,i+1)+T(x+28,y+19,p[0],'lab start f14')+T(x+14,y+38,p[1],'note start f11');
-    g+=ribosome(cx,my,k,{mrna:false,codons:i<2?[['P','CUG']]:[],trnas:i===0?[{site:'P',ac:'GAC',aa:''}]:i===1?[{site:'P',ac:'GAC',aa:''},{site:'A',ac:'',aa:'A',col:'#C9A0B8'}]:[{site:'P',ac:'',aa:'',col:'#C9A0B8'}],chainOn:i===2?'P':'P',chainN:i===2?(n?5:6):4});
+    g+=ribosome(cx,my,k,{mrna:false,sites:i<2,codons:i<2?[['P','CUG']]:[],trnas:i===0?[{site:'P',ac:'GAC',aa:''}]:i===1?[{site:'P',ac:'GAC',aa:''},{site:'A',ac:'',aa:'A',col:'#C9A0B8'}]:[{site:'P',ac:'',aa:'',col:'#C9A0B8'}],chainOn:i===2?'P':'P',chainN:i===2?(n?5:6):4});
     g+=`<path d="M${cx-k*170} ${my} H${cx+k*(i<2?20:0)}" stroke="${RNAC}" stroke-width="2.4"/>`;
     if(i>=1)g+=`<path d="M${cx+k*58} ${my-k*30} C ${cx+k*140} ${my-k*30}, ${cx+k*150} ${my+k*40}, ${cx+k*20} ${my+k*6}" stroke="#C9A0B8" stroke-width="2.4" fill="none"/>`;
     if(i===2)g+=Tc(cx,my+k*30,'tag …AANDENYALAA','#7D3F5A',Math.max(9,k*15),'mono mid','600');
@@ -750,7 +750,7 @@ function scTmRNA(n){
 
 function scStringent(n){
   const k=n?.6:.75, cx=n?120:150, my=n?200:230;
-  let s=G('a-fade',0,ribosome(cx,my,k,{codons:[['P','GCU'],['A','CUG']],trnas:[{site:'P',ac:'CGA',aa:''},{site:'A',ac:'GAC',aa:'',col:'#E7DEC9'}],chainOn:'P',chainN:3}));
+  let s=G('a-fade',0,ribosome(cx,my,k,{sites:true,codons:[['P','GCU'],['A','CUG']],trnas:[{site:'P',ac:'CGA',aa:''},{site:'A',ac:'GAC',aa:'',col:'#E7DEC9'}],chainOn:'P',chainN:3}));
   s+=G('a-fade',.6,(n?'':T(cx+k*50,my-k*130,'uncharged tRNA','note start f12')));
   s+=G('a-pop',1.0,blob(cx+k*(n?126:110),my-k*70,n?22:24,n?13:15,'#C99A2E')+Tc(cx+k*(n?126:110),my-k*66,'RelA','#3A2E22',11,'mono mid','600'));
   const gx=n?240:340, gy=n?70:90;

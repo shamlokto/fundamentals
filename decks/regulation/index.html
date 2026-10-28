@@ -562,7 +562,7 @@ function scR2(n){
   const mx=n?180:320;
   /* membrane (bilayer), histidine kinase spanning it, response regulator in the cytoplasm, DNA below */
   const my=n?86:90, L=n?16:30, R=n?344:610, hx=n?100:250, rx=n?256:430;
-  s+=G('a-fade',0,`<rect x="${L}" y="${my-8}" width="${R-L}" height="16" fill="${CELLE}" opacity=".25"/>`+ln(L,my-8,R,my-8,CELLE,1.4)+ln(L,my+8,R,my+8,CELLE,1.4)
+  s+=G('a-fade',0,`<rect x="${L}" y="${my-8}" width="${R-L}" height="16" fill="#EDE0B8"/><path d="M${L+3} ${my-5} H${R} M${L+3} ${my+5} H${R}" stroke="#B89A5E" stroke-width="4.5" stroke-dasharray="0.1 7" stroke-linecap="round"/>`
     +T(L,my-46,n?'outside':'outside (periplasm in Gram-negatives)','note start f12')+T(L,my+26,'cytoplasm','note start f12')+T(R,my-14,'membrane','note end f12'));
   /* kinase: sensor domain outside, two TM helices, DHp (H) and catalytic (ATP) domains inside */
   const hk=`<ellipse cx="${hx}" cy="${my-24}" rx="26" ry="13" fill="${INTC}" fill-opacity=".55" stroke="${INK}"/>`
@@ -579,7 +579,7 @@ function scR2(n){
     +`<rect x="${rx}" y="${ry-11}" width="30" height="22" rx="6" fill="${RECC}" fill-opacity=".3" stroke="${INK}"/>`
     +`<circle cx="${rx-16}" cy="${ry-19}" r="7" fill="${METC}" stroke="${INK}" stroke-width=".7"/>`+Tc(rx-16,ry-15,'P','#3A2E22',10,'mono mid','600')
     +T(rx+36,ry-16,n?'regulator':'response regulator','note start f12'));
-  s+=G('a-fade',.6,arw(hx+30,my+24,rx-36,ry-6,{blue:1})+T(n?hx+26:(hx+rx)/2-6,my+(n?62:16),'His~P → Asp~P','mono '+(n?'start':'mid')+' f12 acc'));
+  s+=G('a-fade',.6,arw(hx+30,my+24,rx-36,ry-6,{blue:1})+T(n?hx+26:(hx+rx)/2+10,my+(n?62:48),'His~P → Asp~P','mono '+(n?'start':'mid')+' f12 acc halo'));
   /* DNA and target genes: phosphorylated RR binds the promoter */
   const dy=my+(n?98:96);
   s+=G('a-fade',1.3,dsDNA(n?40:150,R-10,dy-4,DNA,8)+`<rect x="${rx-10}" y="${dy-9}" width="26" height="18" rx="3" fill="#EFE6D2" stroke="${INK}" stroke-width=".8"/>`

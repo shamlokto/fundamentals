@@ -208,13 +208,13 @@ function scQuestion(n){
 
 const HIST=[['1940s','Mobile genes — “jumping genes”','Barbara McClintock'],
  ['1995','Signature-tagged mutagenesis pools mutants','Hensel & Holden'],
- ['2009','Transposon insertions read by deep sequencing','Tn-seq, HITS, INSeq, TraDIS'],
+ ['2009','Transposon insertions read|by deep sequencing','Tn-seq, HITS, INSeq, TraDIS'],
  ['2015','Genome-wide essential-gene maps','many organisms'],
  ['today','Fitness screens across conditions','a standard tool']];
 function scHistory(n){
-  const st=n?56:52,y0=30,lx=n?48:92,yx=n?40:80,tx=n?60:106;
+  const st=n?56:52,y0=30,lx=n?54:92,yx=n?46:80,tx=n?66:106;
   let s=`<line x1="${lx}" y1="${y0-12}" x2="${lx}" y2="${y0+st*4+6}" stroke="#B9A889" stroke-width="2"/>`;
-  HIST.forEach((h,i)=>{const y=y0+i*st;s+=G('a-fade',(.2+i*.3).toFixed(2),`<circle cx="${lx}" cy="${y-5}" r="4.5" fill="${i>=2?TN:'#2F5276'}"/>`+T(yx,y,h[0],'mono acc end '+(n?'f12':'f13'))+T(tx,y,h[1],'lab start '+(n?'f14':'f15'))+T(tx,y+16,h[2],'note start f12'));});
+  HIST.forEach((h,i)=>{const y=y0+i*st;s+=G('a-fade',(.2+i*.3).toFixed(2),`<circle cx="${lx}" cy="${y-5}" r="4.5" fill="${i>=2?TN:'#2F5276'}"/>`+T(yx,y,h[0],'mono acc end '+(n?'f12':'f13'))+(()=>{const L=n?h[1].split('|'):[h[1].replace('|',' ')];return L.map((l,j)=>T(tx,y+j*16,l,'lab start '+(n?'f14':'f15'))).join('')+T(tx,y+16*L.length,h[2],'note start f12');})());});
   return {vb:n?slim(y0+st*4+26):wide(y0+st*4+26),s};
 }
 

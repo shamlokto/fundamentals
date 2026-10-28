@@ -520,7 +520,7 @@ function scE1(n){
 function scE2(n){
   /* two strands with 5'/3' ends; GATC sites methylated on both strands, then hemimethylated behind the fork; MutS–MutL–MutH nick the unmethylated new strand */
   let s='';const x=n?24:52, W=n?268:520, y=n?58:62, F=[.16,.38,.8], fm=.58;
-  const strand=(yy,topMe,botMe,lab,names)=>{let t=eLine(x,W,yy,'#B9AC92',3.4)+eLine(x,W,yy+14,'#B9AC92',3.4)
+  const strand=(yy,topMe,botMe,lab,names)=>{let t=eLine(x,W,yy,DNA,3.4)+eLine(x,W,yy+14,names?'#3E7FA8':DNA,3.4)
       +T(x-6,yy+4,'5′','mono end f12')+T(x-6,yy+18,'3′','mono end f12')+T(x+W+6,yy+4,names?names[0]:'3′','mono start f12')+T(x+W+6,yy+18,names?names[1]:'5′','mono start f12');
     F.forEach(f=>{
       if(topMe)t+=`<circle cx="${FX(x+f*W)}" cy="${FX(yy-7)}" r="4" fill="${METC}" stroke="${INK}" stroke-width=".6"/>`;

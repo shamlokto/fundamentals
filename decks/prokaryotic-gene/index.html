@@ -273,8 +273,8 @@ function scCDS(n){
   let beads='';for(let i=0;i<7;i++){beads+=G('a-pop',(.6+i*.32).toFixed(2),`<circle cx="${(n?40:80)+i*(n?18:24)}" cy="${n?48:50}" r="${n?7:9}" fill="${['#4F7A3F','#3E5F82','#7D4A98','#C17A2C','#2E7D78','#8C6D46','#5E7F7A'][i]}" stroke="${INK}" class="tint"/>`+Tc((n?40:80)+i*(n?18:24),(n?52:54),CODONS[i][2],'#F3EDE0',n?8:10,'mono mid','600'));}
   s+=beads+G('a-fade',.4,T(n?14:40,n?24:22,n?'growing polypeptide (N → C)':'growing polypeptide, N-terminus first','note start f12'));
   s+=G('a-pop',3.2,box(x0+per*7+per/2-(n?16:22),ry-(n?44:58),n?32:44,18,STOPC)+Tc(x0+per*7+per/2,ry-(n?31:45),'RF','#F3EDE0',11,'mono mid','600')+T(x0+per*7+per/2,ry-(n?50:64),'release factor','note mid f12'));
-  s+=G('a-fade',3.6,T(n?180:320,y+(n?50:58),n?'Stops: UAA, UAG, UGA — no tRNA matches':'Stop codons UAA, UAG and UGA have no matching tRNA; a release factor frees the chain','lab mid'));
-  return {vb:n?slim(y+66):wide(y+72),s};
+  s+=G('a-fade',3.6,n?T(180,y+50,'Stops: UAA, UAG, UGA — no tRNA matches','lab mid'):T(320,y+54,'Stop codons UAA, UAG and UGA have no matching tRNA;','lab mid')+T(320,y+74,'a release factor frees the chain','lab mid'));
+  return {vb:n?slim(y+66):wide(y+88),s};
 }
 
 function scTerm(n){

@@ -54,18 +54,18 @@ function scM5(n){
   return artBullets(n,art,270,210,[['Selection is growth','A mutant growing a fraction s faster than its parent rises along a logistic curve in frequency; a 10% advantage takes it from 1% to 99% in about a hundred generations.'],['Most new winners are lost','A single new beneficial mutant fixes with probability of only about 2s (Haldane), because drift removes most while they are rare.'],['Drift and supply','Drift scales with 1/N; the supply of new mutations with N times the mutation rate. Bacterial populations are huge, so supply rarely limits.'],['See also','The Mutation, Selection and Drift primer develops these ideas with simulations.']],{gap:22,wn:40});
 }
 function scM6(n){
-  const N=n?{o:{x:60,y:50,w:84,t:'glucose|outside'},a:{x:180,y:50,w:60,t:'A',f:PAL.gold},bm:{x:300,y:50,w:84,t:'biomass',f:PAL.green},ac:{x:180,y:140,w:84,t:'acetate',f:PAL.rose}}
-    :{o:{x:70,y:70,w:90,t:'glucose|outside'},a:{x:200,y:70,w:60,t:'A',f:PAL.gold},bm:{x:330,y:70,w:90,t:'biomass',f:PAL.green},ac:{x:200,y:170,w:90,t:'acetate',f:PAL.rose}};
+  const N=n?{o:{x:60,y:50,w:84,t:'glucose|outside'},a:{x:180,y:50,w:60,t:'A',f:PAL.gold},bm:{x:300,y:50,w:84,t:'biomass',f:PAL.green},ac:{x:180,y:140,w:84,t:'acetate',f:PAL.grey}}
+    :{o:{x:70,y:70,w:90,t:'glucose|outside'},a:{x:200,y:70,w:60,t:'A',f:PAL.gold},bm:{x:330,y:70,w:90,t:'biomass',f:PAL.green},ac:{x:200,y:170,w:90,t:'acetate',f:PAL.grey}};
   let s=G('a-fade',0,flow(N,[['o','a','v₁',{side:-1}],['a','bm','v₂',{side:-1}],['a','ac','v₃',{side:1}]]));
   const mx=n?40:40, my=n?200:228;
   s+=G('a-fade',.3,T(mx,my,'S · v = 0 for A:','mono start f12')+T(mx,my+20,'v₁ − v₂ − v₃ = 0','mono start f12')+T(mx,my+44,'bounds: v₁ ≤ 10, v₂ ≤ 8','mono start f12')+T(mx,my+64,'objective: maximise v₂','mono start f12'));
   const A=n?axes(70,my+110,250,180,{xr:[0,11],yr:[0,11],xt:[[0,'0'],[4,'4'],[8,'8']],yt:[[0,'0'],[4,'4'],[8,'8']],xlab:'v₂ (to biomass)',ylab:'v₃ (to acetate)',ydx:26})
     :axes(440,36,170,170,{xr:[0,11],yr:[0,11],xt:[[0,'0'],[4,'4'],[8,'8']],yt:[[0,'0'],[4,'4'],[8,'8']],xlab:'v₂ (to biomass)',ylab:'v₃ (to acetate)',ydx:26});
   const poly=[[0,0],[8,0],[8,2],[0,10]].map(p=>FX(A.px(p[0]))+','+FX(A.py(p[1]))).join(' ');
-  s+=A.s+G('a-fade',.6,`<polygon points="${poly}" fill="${PAL.blue}" opacity=".7" stroke="#2F5276" stroke-width="1.2"/>`+ln(FX(A.px(8)),FX(A.py(0)),FX(A.px(8)),FX(A.py(2)),'#A4473A',3.5)
+  s+=A.s+G('a-fade',.6,`<polygon points="${poly}" fill="${PAL.blue}" opacity=".7" stroke="#2F5276" stroke-width="1.2"/>`+ln(FX(A.px(8)),FX(A.py(0)),FX(A.px(8)),FX(A.py(2)),GREEN,3.5)
     +T(FX(A.px(2.6)),FX(A.py(3)),'feasible','note mid f11 halo')+T(FX(A.px(8.4)),FX(A.py(2)-8),'optimum','note start f11 halo'));
   const by=n?A.y+A.h+64:336;
-  const b=bullets(n?24:30,by,[['Steady state','S is the stoichiometric matrix (metabolites × reactions) and v the fluxes. S·v = 0 says each internal metabolite is made as fast as it is used.'],['Constraints and objective','Bounds come from measured uptake, irreversibility and enzyme capacity. Linear programming finds fluxes that maximise an objective, usually biomass.'],['Genome scale','Models of E. coli such as iML1515 have about 2,700 reactions. Optima are often not unique: here any point on the red edge maximises v₂, which flux variability analysis reports.']],n?44:88,{d0:.9,gap:22});
+  const b=bullets(n?24:30,by,[['Steady state','S is the stoichiometric matrix (metabolites × reactions) and v the fluxes. S·v = 0 says each internal metabolite is made as fast as it is used.'],['Constraints and objective','Bounds come from measured uptake, irreversibility and enzyme capacity. Linear programming finds fluxes that maximise an objective, usually biomass.'],['Genome scale','Models of E. coli such as iML1515 have about 2,700 reactions. Optima are often not unique: here any point on the green edge maximises v₂, which flux variability analysis reports.']],n?44:88,{d0:.9,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scM7(n){
@@ -75,7 +75,7 @@ function scM7(n){
   let s=A.s+G('a-fade',.1,moPath(A,D.map(p=>[p[0],p[1]]),'#2F5276',2.2))+G('a-fade',.3,moPath(A,D.map(p=>[p[0],p[2]]),'#A4473A',2.6))+G('a-fade',.5,moPath(A,D.map(p=>[p[0],p[3]]),'#4F7A3F',2.2,'6 3'));
   const ly=A.y+A.h+50, lx=n?30:A.x;
   s+=G('a-fade',.6,[['#2F5276','S susceptible',''],['#A4473A','I infectious',''],['#4F7A3F','R recovered','6 3']].map((L,i)=>{const x=lx+i*(n?104:110);return ln(x,ly-4,x+18,ly-4,L[0],2.4,L[2])+T(x+23,ly,L[1],'note start f11');}).join(''));
-  const bx=n?16:410, by=n?ly+36:52;
+  const bx=n?16:396, by=n?ly+36:52;
   const hit=c.r>1?Math.round((1-1/c.r)*100)+'%':'none';
   let t=G('a-fade',.8,T(bx,by,c.k,'cname start f15')+T(bx,by+22,'peak infectious '+Math.round(peak[2]*100)+'%'+(c.r>1?', day '+Math.round(peak[0]):''),'mono start f12')+T(bx,by+40,'ever infected '+Math.round(fin*100)+'%','mono start f12')+T(bx,by+58,'herd immunity threshold '+hit,'mono start f12'));
   const p=para(bx,by+84,'dS/dt = −βSI, dI/dt = βSI − γI, dR/dt = γI, with R₀ = β/γ and an infectious period 1/γ of 7 days. Solved here by Euler steps of 0.1 day.',n?50:30,'note start f12',16,1);
@@ -83,7 +83,7 @@ function scM7(n){
   return {vb:n?slim(q.y+6):wide(Math.max(q.y+8,ly+20)),s:s+t+p.s+q.s};
 }
 function scM8(n){
-  const it=[{t:'observe',w:84,f:PAL.blue},{t:'formulate|assumptions',w:110,f:PAL.gold},{t:'fit|parameters',w:90,f:PAL.lilac},{t:'predict',w:80,f:PAL.rose},{t:'test on|new data',w:90,f:PAL.green}];
+  const it=[{t:'observe',w:84,f:PAL.blue},{t:'formulate|assumptions',w:110,f:PAL.gold},{t:'fit|parameters',w:90,f:PAL.lilac},{t:'predict',w:80,f:PAL.teal},{t:'test on|new data',w:90,f:PAL.green}];
   const cx=n?180:150, cy=n?150:170, Rr=n?100:108;
   let s=G('a-fade',0,cycle(cx,cy,Rr,it));
   const items=[['All models are wrong','George Box’s point: models simplify on purpose. Ask whether the simplification matters for the question, not whether it is true.'],['Validate on new data','A model that fits the data it was tuned on proves little. Test predictions on independent experiments.'],['Know what is identifiable','Different parameter sets can fit equally well. Report ranges and do sensitivity analysis.'],['Check the assumptions','Well-mixed, deterministic, constant parameters? Small populations go extinct by chance; space and evolution change outcomes.']];

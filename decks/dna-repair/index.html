@@ -444,7 +444,7 @@ function scBER(n){
    {h:'DNA polymerase I',t:'Pol I fills in and, with its 5′→3′ exonuclease, removes the sugar remnant and a few nucleotides ahead.',d:berD(3),top:34},
    {h:'Ligase',t:'DNA ligase (LigA, which uses NAD⁺ in bacteria) seals the nick.',d:berD(4),top:36}];
   const r=stepsLad(n,st,{y0:26});
-  const p=para(n?16:24,r.y+4,'Each glycosylase recognises a family of damaged bases: Ung (uracil), MutM/Fpg and Nth (oxidised bases), AlkA and Tag (3-methyladenine), MutY (adenine opposite 8-oxoG). In eukaryotes: UNG, OGG1, NTHL1, MUTYH and AAG; then APE1, Pol β, and ligase III with XRCC1.',n?50:92,'note start f13',17,3.2);
+  const p=para(n?16:24,r.y+4,'Each glycosylase recognises a family of damaged bases: Ung (uracil), MutM/Fpg and Nth (oxidised bases), AlkA and Tag (3-methyladenine), MutY (adenine opposite 8-oxoG). In eukaryotes: UNG, OGG1, NTHL1, MUTYH and AAG; then APE1, Pol β, and ligase III with XRCC1.',n?46:92,'note start f13',17,3.2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:r.s+p.s};
 }
 

@@ -7,7 +7,7 @@ const BALT=[
  {k:'III · dsRNA',g:'double-stranded RNA, usually segmented',m:'a viral RNA-dependent RNA polymerase packaged in the particle copies mRNA from the negative strand inside a sub-particle',ex:'reoviruses, rotavirus (childhood diarrhoea)',enz:'viral RdRp (brought in)',note:'The cell has no way to read dsRNA, so the enzyme must travel inside the virion.'},
  {k:'IV · (+)ssRNA',g:'positive-sense single-stranded RNA',m:'the genome IS mRNA: ribosomes translate it on entry, making the polymerase that then copies the genome',ex:'picornaviruses (polio, rhinovirus), coronaviruses (SARS-CoV-2), flaviviruses (dengue, Zika)',enz:'viral RdRp (made after entry)',note:'The largest RNA class. The bare genome is infectious on its own.'},
  {k:'V · (−)ssRNA',g:'negative-sense single-stranded RNA',m:'a packaged viral polymerase first transcribes the genome into mRNA; only then can proteins be made',ex:'rhabdoviruses (rabies), paramyxoviruses (measles), filoviruses (Ebola), influenza (segmented)',enz:'viral RdRp (brought in)',note:'Like class III, the enzyme must be carried in. Influenza’s segmented genome lets strains reassort.'},
- {k:'VI · ssRNA-RT',g:'positive-sense RNA, replicated through DNA',m:'reverse transcriptase copies the RNA to DNA, which integrates into the host genome and is transcribed as a host gene',ex:'retroviruses: HIV, HTLV, many tumour viruses',enz:'reverse transcriptase + integrase',note:'Integration makes the infection permanent and is why HIV cannot be cleared.'},
+ {k:'VI · ssRNA-RT',g:'positive-sense RNA, replicated through DNA',gn:'(+)RNA, replicated through DNA',m:'reverse transcriptase copies the RNA to DNA, which integrates into the host genome and is transcribed as a host gene',ex:'retroviruses: HIV, HTLV, many tumour viruses',enz:'reverse transcriptase + integrase',note:'Integration makes the infection permanent and is why HIV cannot be cleared.'},
  {k:'VII · dsDNA-RT',g:'DNA genome, replicated through RNA',m:'the DNA is transcribed to an RNA pregenome, which reverse transcriptase copies back into the DNA genome',ex:'hepadnaviruses: hepatitis B virus',enz:'reverse transcriptase',note:'A DNA virus that still uses reverse transcription, which is why some HIV drugs also treat hepatitis B.'}];
 let baltSel=3;
 function icosa(cx,cy,r){let p='';for(let i=0;i<6;i++){const a=(-90+i*60)*Math.PI/180;p+=(i?'L':'M')+FX(cx+r*Math.cos(a))+' '+FX(cy+r*Math.sin(a));}p+='Z';
@@ -42,7 +42,7 @@ function scV2(n){
 }
 function scV3(n){
   const c=BALT[baltSel];
-  const ex=explorer(n,{h:'Baltimore class '+c.k,sub:c.g,
+  const ex=explorer(n,{h:'Baltimore class '+c.k,sub:(n&&c.gn)||c.g,
     rows:[['mRNA made by',c.m],['Examples',c.ex],['Key enzyme',c.enz]],note:c.note},{y:n?34:40});
   return ex;
 }

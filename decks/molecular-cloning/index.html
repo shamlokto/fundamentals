@@ -374,7 +374,7 @@ function scTransform(n){
   const py=n?10+3*(H+10)+60:H+96, px=n?110:190;
   s+=G('a-pop',1.8,dish(px,py,n?54:62,[['#3E5F82',10],['#F3EEE2',14]])+T(px,py+(n?70:80),'white colonies carry an insert','note mid f12'));
   const tx=n?14:300, ty=n?py+96+30:py-28;
-  s+=G('a-fade',2.4,wrap(n?'Blue–white needs X-gal and IPTG, and only works with lacZα vectors in a lacZΔM15 host such as DH5α.':'Blue–white screening needs X-gal and IPTG in the plate, a lacZα vector such as pUC19, and a host like DH5α carrying lacZΔM15. Many modern vectors use a toxic gene instead: only a clone that interrupts it survives.',n?46:48).map((l,i)=>T(tx,ty+i*19,l,'lab start '+(n?'f13':'f14'))).join(''));
+  s+=G('a-fade',2.4,wrap(n?'Blue–white needs X-gal and IPTG, and only works with lacZα vectors in a lacZΔM15 host such as DH5α.':'Blue–white screening needs X-gal and IPTG in the plate, a lacZα vector such as pUC19, and a host like DH5α carrying lacZΔM15. Many modern vectors use a toxic gene instead: only a clone that interrupts it survives.',n?46:44).map((l,i)=>T(tx,ty+i*19,l,'lab start '+(n?'f13':'f14'))).join(''));
   return {vb:n?slim(py+170):wide(py+90),s};
 }
 
@@ -677,7 +677,7 @@ function scPlan(n){
       +wrap(st[1],n?44:38).map((l,j)=>T(x+14,y+40+j*17,l,'note start f12')).join(''));
     if(!n&&i%2===0)s+=G('a-fade',(.4+i*.3).toFixed(1),`<path d="M${x+W+3} ${y+H/2} h21" class="arrow"/>`);});
   const ty=n?y0+4*(H+8)+12:y0+2*H+10+28;
-  const L=wrap(m.note,n?46:78);
+  const L=wrap(m.note,n?46:72);
   s+=G('a-fade',1.6,`<rect x="${n?10:24}" y="${ty-18}" width="${n?340:600}" height="${L.length*20+14}" rx="4" fill="#E7DEC9" opacity=".7"/>`
     +L.map((l,i)=>T(n?22:38,ty+i*20,l,'lab start '+(n?'f13':''))).join(''));
   return {vb:n?slim(ty+L.length*20+14):wide(ty+L.length*20+16),s};

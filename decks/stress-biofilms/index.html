@@ -675,10 +675,11 @@ function scSB1(n){return introPlate(n,{q:'How do bacteria survive conditions tha
     return s+T(cx,cy+58,'a biofilm on a surface','note mid f11');},artH:140});}
 function scSB2(n){
   const c=STR[strSel];
-  const ex=explorer(n,{h:c.k+' stress',sub:(n?'':'key players: ')+c.reg.replace('|',' '),rows:c.rows,note:c.note,artH:n?190:90,
+  const ex=explorer(n,{h:c.k+' stress',sub:(n?'':'key players: ')+c.reg.replace('|',' '),rows:c.rows,artH:n?190:90,
     art:(cx,cy,n)=>n?flow({a:{x:cx,y:cy-62,w:180,t:c.sig},b:{x:cx,y:cy+2,w:200,t:c.reg,f:PAL.rose},c:{x:cx,y:cy+66,w:200,t:c.out,f:PAL.blue}},[['a','b',''],['b','c','']])
       :flow({a:{x:cx-200,y:cy,w:130,t:c.sig},b:{x:cx,y:cy,w:170,t:c.reg,f:PAL.rose},c:{x:cx+200,y:cy,w:150,t:c.out,f:PAL.blue}},[['a','b',''],['b','c','']])},{y:20});
-  return ex;
+  const yy=+ex.vb.split(' ')[3]-(n?10:12), p=para(n?16:24,yy+10,c.note,n?46:92,'lab start f13',17,.6);
+  return {vb:n?slim(p.y+10):wide(p.y+12),s:ex.s+p.s};
 }
 function scSB3(n){
   const R=n?118:120, cx=n?180:190, cy=n?160:176;

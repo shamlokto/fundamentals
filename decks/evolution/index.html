@@ -518,8 +518,8 @@ function scE2(n){
    ['Under SOS induction','raised for the duration','error-prone Pol IV and Pol V']];
   const t=wtable(n,['Measure','Typical value','Note'],rows,n?[[10,13],[112,15],[224,20]]:[[24,22],[210,24],[400,34]],{y0:32});
   let y=t.y+16,s=t.s;
-  s+=G('a-fade',1.4,T(n?16:24,y,'Why the per-genome number is the one to remember','cname start f14'));
-  y+=22;
+  s+=G('a-fade',1.4,n?T(16,y,'Why the per-genome number','cname start f14')+T(16,y+20,'is the one to remember','cname start f14'):T(24,y,'Why the per-genome number is the one to remember','cname start f14'));
+  y+=n?42:22;
   const q=para(n?16:24,y,'An overnight culture reaching 10⁹ cells has gone through about 30 doublings and roughly 10⁹ divisions. At 0.001 mutations per genome per generation that is about a million mutational events in the tube — so roughly a fifth of all the bases in the genome have been changed in at least one cell, and a resistance that several different point mutations can give is almost always already there before you add the drug.',n?50:92,'note start f13',17,1.6);
   const b=bullets(n?24:30,q.y+12,[['Mutations are not uniform','Transitions outnumber transversions; some sequence contexts and homopolymer runs mutate far more often; and the two strands differ. A “mutation rate” is an average over a very uneven landscape.'],
    ['The spectrum is informative','Which changes dominate tells you which repair system is missing — the logic of the mutator plate in the DNA repair deck.']],n?44:88,{d0:2,gap:24});

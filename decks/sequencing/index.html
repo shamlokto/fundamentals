@@ -784,8 +784,8 @@ function scN11(n){
 }
 /* ===================== Part IV · using them ===================== */
 function scN12(n){
-  let s='';const x0=n?20:40, w=n?316:560, gy=n?68:66;
-  s+=G('a-fade',0,T(n?16:30,30,'A genome with three copies of one insertion sequence','cname start f14'));
+  let s='';const x0=n?20:40, w=n?316:560, gy=n?90:66;
+  s+=G('a-fade',0,n?T(16,30,'A genome with three copies','cname start f14')+T(16,52,'of one insertion sequence','cname start f14'):T(30,30,'A genome with three copies of one insertion sequence','cname start f14'));
   s+=G('a-fade',.2,`<path d="M${x0} ${gy} h${w}" stroke="${BB}" stroke-width="3"/>`
     +[[.18,.09],[.47,.09],[.76,.09]].map(r=>`<rect x="${FX(x0+r[0]*w)}" y="${gy-7}" width="${FX(r[1]*w)}" height="14" fill="#C9A9D6" stroke="${INK}" stroke-width=".8"/>`).join('')
     +T(x0+.225*w,gy-16,'IS','mono acc mid f11')+T(x0+.515*w,gy-16,'IS','mono acc mid f11')+T(x0+.805*w,gy-16,'IS','mono acc mid f11'));

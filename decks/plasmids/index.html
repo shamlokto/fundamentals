@@ -519,8 +519,8 @@ function scP1(n){
 }
 
 function scP2(n){
-  // double-stranded circles: parental strands purple (dark and light), new DNA red
-  const PA='#7D4A98', PB='#B79BCB', NEW='#A4473A', REP='#C99A2E', R=n?40:46, W=2.6;
+  // double-stranded circles: parental strands brown (dark and light), new DNA blue (site style)
+  const PA=DNA, PB='#A08664', NEW='#3E7FA8', REP='#C99A2E', R=n?40:46, W=2.6;
   const P=(cx,cy,r,t)=>{const a=t*Math.PI/180;return [+(cx+r*Math.sin(a)).toFixed(1),+(cy-r*Math.cos(a)).toFixed(1)];};
   const arc=(cx,cy,r,a1,a2,col,o={})=>{const p=P(cx,cy,r,a1),q=P(cx,cy,r,a2),big=((a2-a1+360)%360)>180?1:0;
     return `<path d="M${p[0]} ${p[1]} A${r} ${r} 0 ${big} 1 ${q[0]} ${q[1]}" fill="none" stroke="${col}" stroke-width="${o.w||W}" ${o.dash?`stroke-dasharray="${o.dash}"`:''} stroke-linecap="round"/>`;};
@@ -602,40 +602,40 @@ function scP3(n){
   /* iteron handcuffing picture (left) and antisense RNA (right) */
   const A=(x0,yy,lab,dy)=>{
     let t=pLine(x0,n?150:200,yy,'#D6CDB8',5);
-    [0,1,2,3].forEach(i=>{const ix=x0+16+i*((n?110:150)/4);t+=`<path d="M${FX(ix)} ${FX(yy-7)} l9 7 l-9 7 z" fill="${RECC}" stroke="${INK}" stroke-width=".6"/>`
+    [0,1,2,3].forEach(i=>{const ix=x0+16+i*((n?110:150)/4);t+=`<path d="M${FX(ix)} ${FX(yy-7)} l9 7 l-9 7 z" fill="${DNA}" stroke="${INK}" stroke-width=".6"/>`
       +`<ellipse cx="${FX(ix+4)}" cy="${FX(yy+dy*9)}" rx="6" ry="4.5" fill="${METC}" stroke="${INK}" stroke-width=".7"/>`;});
-    if(lab)t+=Tc(x0,yy-20,'iterons','#3E7FA8',12,'mono start','600')+Tc(x0+(n?150:200)+8,yy+14,'Rep','#8A6A1E',12,'mono start','600');
+    if(lab)t+=Tc(x0,yy-20,'iterons','#5A4632',12,'mono start','600')+Tc(x0+(n?150:200)+8,yy+14,'Rep','#8A6A1E',12,'mono start','600');
     return t;};
   if(!n){
     s+=G('a-fade',.3,[0,1,2,3].map(i=>`<path d="M${FX(50+i*37.5)} ${y+29} V${y+63}" stroke="${METC}" stroke-width="2" stroke-dasharray="3 2"/>`).join('')
       +A(30,y+20,1,1)+A(30,y+72,0,-1)
-      +Tc(30,y+96,'handcuffing: Rep on the iterons of','#6A5B47',10,'mono start')
-      +Tc(30,y+110,'one copy binds Rep on the other;','#6A5B47',10,'mono start')
-      +Tc(30,y+124,'initiation is blocked','#6A5B47',10,'mono start'));
+      +Tc(30,y+96,'handcuffing: Rep on the iterons of','#6A5B47',10,'note start')
+      +Tc(30,y+110,'one copy binds Rep on the other;','#6A5B47',10,'note start')
+      +Tc(30,y+124,'initiation is blocked','#6A5B47',10,'note start'));
     s+=G('a-fade',.9,pLine(340,246,y+28,'#D6CDB8',5)
-      +gArrow(346,y+28,190,'RNA II (primer)',CORE,{h:15})
+      +gArrow(346,y+28,190,'RNA II (primer)','#E0C88A',{h:15})
       +`<path d="M538 ${y+20} V${y+36}" stroke="${INK}" stroke-width="2"/>`+Tc(548,y+32,'ori','#3A2E22',10,'mono start','600')
-      +gArrowL(348,y+50,58,'RNA I',PHG,{h:14,fs:9})
-      +Tc(340,y+8,'ColE1: two overlapping transcripts','#6A5B47',10,'mono start')
-      +Tc(414,y+54,'← antisense, other strand,','#6A5B47',9,'mono start')
-      +Tc(428,y+68,'over the 5′ end','#6A5B47',9,'mono start')
-      +Tc(340,y+94,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
-      +Tc(340,y+108,'and stops it maturing; Rom makes','#6A5B47',10,'mono start')
-      +Tc(340,y+122,'the pairing faster — delete rom','#6A5B47',10,'mono start')
-      +Tc(340,y+136,'and the copy number rises','#6A5B47',10,'mono start'));
+      +gArrowL(348,y+50,58,'RNA I','#E0C88A',{h:14,fs:9})
+      +Tc(340,y+8,'ColE1: two overlapping transcripts','#6A5B47',10,'note start')
+      +Tc(414,y+54,'← antisense, other strand,','#6A5B47',9,'note start')
+      +Tc(428,y+68,'over the 5′ end','#6A5B47',9,'note start')
+      +Tc(340,y+94,'RNA I pairs with the RNA II primer','#6A5B47',10,'note start')
+      +Tc(340,y+108,'and stops it maturing; Rom makes','#6A5B47',10,'note start')
+      +Tc(340,y+122,'the pairing faster — delete rom','#6A5B47',10,'note start')
+      +Tc(340,y+136,'and the copy number rises','#6A5B47',10,'note start'));
   } else {
     s+=G('a-fade',.3,[0,1,2,3].map(i=>`<path d="M${FX(40+i*27.5)} ${y+31} V${y+57}" stroke="${METC}" stroke-width="2" stroke-dasharray="3 2"/>`).join('')
       +A(20,y+22,1,1)+A(20,y+66,0,-1)
-      +Tc(20,y+90,'handcuffing: Rep-bound iterons','#6A5B47',10,'mono start')
-      +Tc(20,y+104,'of two copies pair; initiation blocked','#6A5B47',10,'mono start'));
+      +Tc(20,y+90,'handcuffing: Rep-bound iterons','#6A5B47',10,'note start')
+      +Tc(20,y+104,'of two copies pair; initiation blocked','#6A5B47',10,'note start'));
     s+=G('a-fade',.9,pLine(20,318,y+144,'#D6CDB8',5)
-      +gArrow(24,y+144,220,'RNA II (primer)',CORE,{h:15})
+      +gArrow(24,y+144,220,'RNA II (primer)','#E0C88A',{h:15})
       +`<path d="M246 ${y+136} V${y+152}" stroke="${INK}" stroke-width="2"/>`+Tc(254,y+148,'ori','#3A2E22',10,'mono start','600')
-      +gArrowL(26,y+164,58,'RNA I',PHG,{h:14,fs:9})+Tc(92,y+168,'← antisense, over the 5′ end','#6A5B47',9,'mono start')
-      +Tc(20,y+126,'ColE1: two overlapping transcripts','#6A5B47',10,'mono start')
-      +Tc(20,y+188,'RNA I pairs with the RNA II primer','#6A5B47',10,'mono start')
-      +Tc(20,y+202,'and stops it maturing; Rom speeds','#6A5B47',10,'mono start')
-      +Tc(20,y+216,'that up — delete rom, copies rise','#6A5B47',10,'mono start'));
+      +gArrowL(26,y+164,58,'RNA I','#E0C88A',{h:14,fs:9})+Tc(92,y+168,'← antisense, over the 5′ end','#6A5B47',9,'note start')
+      +Tc(20,y+126,'ColE1: two overlapping transcripts','#6A5B47',10,'note start')
+      +Tc(20,y+188,'RNA I pairs with the RNA II primer','#6A5B47',10,'note start')
+      +Tc(20,y+202,'and stops it maturing; Rom speeds','#6A5B47',10,'note start')
+      +Tc(20,y+216,'that up — delete rom, copies rise','#6A5B47',10,'note start'));
   }
   let yy=n?y+246:y+162;
   const b=bullets(n?24:30,yy,[['The inhibitor is counted, not the plasmid','In every system the cell measures the concentration of something made in proportion to plasmid number — an antisense RNA, a Rep protein, a set of binding sites — and shuts initiation down above a threshold. Copy number is the steady state of that loop.'],

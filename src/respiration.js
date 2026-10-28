@@ -23,7 +23,7 @@ function scB2(n){
     +`<ellipse cx="${cx('Q')}" cy="${y}" rx="${n?13:16}" ry="10" fill="${PAL.gold}" stroke="${INK}"/>`+Tc(cx('Q'),y+4,'Q','#3A2E22',12,'mono mid','600')
     +`<circle cx="${cx('c')}" cy="${y-42}" r="10" fill="#E8B4A0" stroke="${INK}"/>`+Tc(cx('c'),y-38,'c','#3A2E22',12,'mono mid','600')
     +T(n?6:cx('I'),y+66,'NADH → NAD⁺',(n?'mono start':'mono mid')+' f12')+T(cx('IV')+(n?-4:0),y+50,'½O₂ + 2H⁺ → H₂O','mono mid f12'));
-  const e=(x1,y1,x2,y2)=>arw(x1,y1,x2,y2,{red:1,w:1.5,dash:'4 3'});
+  const e=(x1,y1,x2,y2)=>arw(x1,y1,x2,y2,{w:1.5,dash:'4 3'});
   s+=G('a-fade',.6,e(cx('I')+w/2,y,cx('Q')-(n?14:17),y)+e(cx('Q')+(n?14:17),y,cx('III')-w/2-2,y)+e(cx('III')+w/2,y-20,cx('c')-10,y-40)+e(cx('c')+10,y-40,cx('IV')-w/2-1,y-20));
   const h=(k,lab)=>arw(cx(k)-w/4,k==='I'?y+38:y+30,cx(k)-w/4,y-44,{blue:1,w:1.4})+T(cx(k)-w/4,y-52,lab,'mono mid f12');
   s+=G('a-fade',.9,h('I','4H⁺')+h('III','4H⁺')+h('IV','2H⁺'));
@@ -31,7 +31,7 @@ function scB2(n){
   s+=G('a-fade',1.2,`<rect x="${A-17}" y="${y-18}" width="34" height="36" rx="6" fill="${PAL.gold}" stroke="${INK}" class="tint"/>`+ln(A,y+18,A,y+28,INK,3)+`<circle cx="${A}" cy="${y+46}" r="18" fill="${PAL.gold}" stroke="${INK}"/>`
     +Tc(A-6,y+5,'F₀','#3A2E22',12,'mono mid','600')+Tc(A,y+50,'F₁','#3A2E22',12,'mono mid','600')+arw(A+9,y-46,A+9,y+14,{blue:1,w:1.6})+T(A+9,y-52,n?'H⁺ back':'H⁺ flow back','mono mid f12')
     +(n?T(A,y+80,'ADP + Pᵢ','mono mid f12')+T(A,y+94,'→ ATP','mono mid f12'):T(A+24,y+50,'ADP + Pᵢ → ATP','mono start f12')));
-  s+=G('a-fade',1.4,T(x1+2,y+124,'red dashed: electrons (2 e⁻ per NADH);  blue: protons','note start f12'));
+  s+=G('a-fade',1.4,T(x1+2,y+124,'dashed: electrons (2 e⁻ per NADH);  blue: protons','note start f12'));
   const cap=para(x1+2,y+146,'A mitochondrion-like chain (as in Paracoccus) moves about 10 H⁺ out per NADH: 4 at complex I, 4 at III (bc₁, via the Q cycle) and 2 at IV, while O₂ is reduced on the cytoplasmic side. E. coli has no III or IV: its quinol oxidases bo₃ (which pumps) and bd (which does not) take electrons straight from QH₂.',n?52:96,'lab start f13',17,1.5);
   s+=cap.s;
   const b=bullets(n?24:30,cap.y+22,[['Δp = Δψ − (2.3RT/F)·ΔpH','The proton motive force has an electrical part (inside negative) and a chemical part (inside alkaline). In E. coli it is about −150 to −200 mV, mostly Δψ at neutral pH.'],['It powers more than ATP','Flagellar rotation, many transporters, SecDF and Tat protein export, and the uptake of aminoglycosides all run on it.'],['Uncouplers','Molecules that carry protons across the membrane collapse Δp and stop ATP synthesis without stopping electron flow.']],n?44:88,{d0:1.2,gap:22});

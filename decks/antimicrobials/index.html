@@ -703,7 +703,7 @@ function resArt(cx,cy,n){
   s+=`<path d="M${FX(tx-14)} ${FX(ty-10)} h28 v20 h-28 z" fill="${PAL.blue}" stroke="${INK}" stroke-width="1"/><path d="M${FX(tx-5)} ${FX(ty-10)} l5 7 l5 -7" fill="#E4E8D4" stroke="${INK}" stroke-width="1"/>`+drug(tx+16,ty-18)+badge(tx-24,ty-14,2);
   // 3 efflux pump at right pole
   const px=cx+L/2-4;
-  s+=`<rect x="${FX(px-9)}" y="${FX(cy-13)}" width="18" height="26" rx="4" fill="${PAL.teal}" stroke="${INK}" stroke-width="1"/>`+arw(px-34,cy,px+30,cy,{w:1.8,red:1})+drug(px-40,cy)+drug(px+38,cy)+badge(px+18,cy-26,3);
+  s+=`<rect x="${FX(px-9)}" y="${FX(cy-13)}" width="18" height="26" rx="4" fill="${PAL.teal}" stroke="${INK}" stroke-width="1"/>`+arw(px-34,cy,px+30,cy,{w:1.8})+drug(px-40,cy)+drug(px+38,cy)+badge(px+18,cy-26,3);
   // 4 porin loss at top
   const qx=cx-L*.12, qy=cy-R;
   s+=`<rect x="${FX(qx-7)}" y="${FX(qy-6)}" width="14" height="12" fill="${PAL.grey}" stroke="${INK}" stroke-width="1"/>`+drug(qx,qy-26)+`<path d="M${FX(qx-6)} ${FX(qy-17)} l12 0" stroke="${RED}" stroke-width="2.4"/>`+badge(qx-24,qy-20,4);

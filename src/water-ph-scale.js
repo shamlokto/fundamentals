@@ -70,7 +70,7 @@ const CELLS=[['Mycoplasma',0.15,'one of the smallest free-living cells'],['Pelag
 function scW8(n){
   const items=CELLS.map(c=>[`${c[0]} (r ${c[1]} µm)`,3/c[1],c[1]<1?PAL.green:c[1]<5?PAL.blue:PAL.rose,(3/c[1]).toFixed(c[1]<1?0:2)+' µm⁻¹']);
   const top=para(n?16:24,30,'For a sphere, surface area divided by volume is 3/r. Halve the radius and each unit of cytoplasm has twice the membrane through which to feed.',n?50:92,'lab start f13',17,0);
-  const max=10;const h=hbars(n,n?10:30,top.y+14,n?340:560,items.map(i=>[i[0],Math.min(i[1],max),i[2],i[3]]),{max,lw:n?150:180});
+  const max=10;const h=hbars(n,n?10:30,top.y+14,n?340:560,items.map(i=>[i[0],Math.min(i[1],max),i[2],i[3]]),{max,lw:n?150:180,vw:n?58:46});
   const p=para(n?16:24,h.y+10,'Values are 3/r for a sphere of the radius shown; bars are capped at 10 µm⁻¹. Giant bacteria cheat the rule: Thiomargarita fills most of its volume with a vacuole, so its living cytoplasm is a thin shell, and Epulopiscium carries tens of thousands of genome copies near its surface.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:top.s+h.s+p.s};
 }

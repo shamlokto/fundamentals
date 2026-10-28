@@ -529,39 +529,39 @@ function scH2(n){
   let s='', y;
   /* donor duplex -> one strand imported (EndA degrades the other) -> RecA-coated ssDNA -> pairs into one strand of the chromosome */
   const ds=(x1,x2,yy,col,patch)=>`<path d="M${x1} ${yy} H${x2}" stroke="${col}" stroke-width="3" stroke-linecap="round"/><path d="M${x1} ${yy+7} H${x2}" stroke="${col}" stroke-width="3" stroke-linecap="round" opacity=".6"/>`
-     +(patch?`<path d="M${patch[0]} ${yy} h${patch[1]}" stroke="${INTC}" stroke-width="4"/>`:'');
-  const deg=(x,yy,dx,dy)=>[0,1,2,3].map(i=>`<path d="M${FX(x+i*dx)} ${FX(yy+i*dy)} l${FX(dx*.55)} ${FX(dy*.55)}" stroke="${INTC}" stroke-width="2.6" opacity=".55" stroke-linecap="round"/>`).join('');
-  const recA=(x1,x2,yy)=>{let t=`<path d="M${x1} ${yy} H${x2}" stroke="${INTC}" stroke-width="3" stroke-linecap="round"/>`;for(let x=x1+6;x<=x2-6;x+=11)t+=`<ellipse cx="${x}" cy="${yy}" rx="5" ry="6.5" fill="${RECC}" stroke="${INK}" stroke-width=".6" opacity=".9"/>`;return t;};
+     +(patch?`<path d="M${patch[0]} ${yy} h${patch[1]}" stroke="#3E7FA8" stroke-width="4"/>`:'');
+  const deg=(x,yy,dx,dy)=>[0,1,2,3].map(i=>`<path d="M${FX(x+i*dx)} ${FX(yy+i*dy)} l${FX(dx*.55)} ${FX(dy*.55)}" stroke="#3E7FA8" stroke-width="2.6" opacity=".55" stroke-linecap="round"/>`).join('');
+  const recA=(x1,x2,yy)=>{let t=`<path d="M${x1} ${yy} H${x2}" stroke="#3E7FA8" stroke-width="3" stroke-linecap="round"/>`;for(let x=x1+6;x<=x2-6;x+=11)t+=`<ellipse cx="${x}" cy="${yy}" rx="5" ry="6.5" fill="${RECC}" stroke="${INK}" stroke-width=".6" opacity=".9"/>`;return t;};
   if(!n){
     const my=100;
     s+=G('a-fade',0,`<rect x="214" y="56" width="392" height="88" rx="10" fill="${CELLF}" stroke="${CELLE}" stroke-width="2"/>`
-      +Tc(596,136,'inside the competent cell','#6A5B47',12,'mono end'));
-    s+=G('a-fade',.3,ds(36,150,my-4,INTC)+T(36,my-16,'donor double-stranded DNA','note start f12'));
+      +Tc(596,136,'inside the competent cell','#6A5B47',12,'note end'));
+    s+=G('a-fade',.3,ds(36,150,my-4,'#3E7FA8')+T(36,my-16,'donor double-stranded DNA','note start f12'));
     s+=G('a-fade',.5,arw(156,my,198,my,{blue:1}));
     s+=G('a-fade',.7,`<rect x="206" y="${my-20}" width="16" height="40" rx="3" fill="${INTC}" stroke="${INK}"/>`
       +Tc(214,46,'ComEA / ComEC','#2E7D78',12,'mono mid','600')+deg(198,my+24,-10,7));
-    s+=G('a-fade',1,`<path d="M226 ${my} H246" stroke="${INTC}" stroke-width="3" stroke-linecap="round"/>`+recA(246,330,my)
+    s+=G('a-fade',1,`<path d="M226 ${my} H246" stroke="#3E7FA8" stroke-width="3" stroke-linecap="round"/>`+recA(246,330,my)
       +T(234,my-16,'RecA on the single strand','note start f12')
-      +Tc(36,168,'one strand enters; EndA','#6A5B47',12,'mono start')+Tc(36,184,'degrades the other outside','#6A5B47',12,'mono start'));
+      +Tc(36,168,'one strand enters; EndA','#6A5B47',12,'note start')+Tc(36,184,'degrades the other outside','#6A5B47',12,'note start'));
     s+=G('a-fade',1.3,arw(338,my,370,my,{blue:1}));
     s+=G('a-fade',1.6,ds(380,586,my-4,CHR,[456,60])
-      +Tc(586,my-14,'chromosome','#6A5B47',12,'mono end')
-      +Tc(400,168,'donor strand replaces one','#6A5B47',12,'mono start')+Tc(400,184,'strand: a heteroduplex patch','#6A5B47',12,'mono start'));
+      +Tc(586,my-14,'chromosome','#6A5B47',12,'note end')
+      +Tc(400,168,'donor strand replaces one','#6A5B47',12,'note start')+Tc(400,184,'strand: a heteroduplex patch','#6A5B47',12,'note start'));
     y=212;
   } else {
-    s+=G('a-fade',0,ds(26,156,54,INTC)+T(26,40,'donor dsDNA','note start f12'));
+    s+=G('a-fade',0,ds(26,156,54,'#3E7FA8')+T(26,40,'donor dsDNA','note start f12'));
     s+=G('a-fade',.4,arw(90,70,90,96,{blue:1}));
     s+=G('a-fade',.6,`<rect x="24" y="106" width="312" height="96" rx="10" fill="${CELLF}" stroke="${CELLE}" stroke-width="2"/>`
       +`<rect x="82" y="100" width="34" height="14" rx="3" fill="${INTC}" stroke="${INK}"/>`
       +Tc(124,100,'ComEA / ComEC','#2E7D78',12,'mono start','600')+deg(78,98,-8,-5));
-    s+=G('a-fade',1,`<path d="M99 120 V152 H106" stroke="${INTC}" stroke-width="3" fill="none"/>`+recA(106,160,152)
+    s+=G('a-fade',1,`<path d="M99 120 V152 H106" stroke="#3E7FA8" stroke-width="3" fill="none"/>`+recA(106,160,152)
       +T(132,136,'RecA','note mid f12')
-      +Tc(26,226,'one strand enters; EndA','#6A5B47',12,'mono start')
-      +Tc(26,242,'degrades the other outside','#6A5B47',12,'mono start'));
+      +Tc(26,226,'one strand enters; EndA','#6A5B47',12,'note start')
+      +Tc(26,242,'degrades the other outside','#6A5B47',12,'note start'));
     s+=G('a-fade',1.3,arw(166,152,186,152,{blue:1}));
     s+=G('a-fade',1.6,ds(194,326,148,CHR,[236,40])
-      +Tc(326,136,'chromosome','#6A5B47',12,'mono end')
-      +Tc(256,184,'heteroduplex patch','#6A5B47',12,'mono mid'));
+      +Tc(326,136,'chromosome','#6A5B47',12,'note end')
+      +Tc(256,184,'heteroduplex patch','#6A5B47',12,'note mid'));
     y=272;
   }
   s+=G('a-fade',1.6,T(n?16:24,y,'Competence in the pneumococcus','cname start f14'));y+=22;
@@ -727,13 +727,13 @@ function scH7(n){
   let s='';const cx=n?180:320, cy=n?92:96;
   const W=n?300:420, x=cx-W/2;
   /* chromosome with integrated ICE */
-  s+=G('a-fade',0,dnaLine(x,W,cy,'#D6CDB8')
+  s+=G('a-fade',0,dnaLine(x,W,cy,DNA)
     +`<rect x="${FX(x+W*.34)}" y="${FX(cy-8)}" width="${FX(W*.32)}" height="16" rx="2" fill="${PLS}" fill-opacity=".45" stroke="${PLS}" stroke-width="1.4"/>`
     +Tc(cx,cy-18,'ICE, integrated','#7D4A98',11,'mono mid','600')
     +Tc(x+W*.34,cy+22,'attL','#2E7D78',10,'mono mid','600')+Tc(x+W*.66,cy+22,'attR','#2E7D78',10,'mono mid','600'));
   const ry=cy+(n?110:104);
   const lx=cx-(n?74:118), rx2=cx+(n?80:118);
-  s+=G('a-fade',.7,arw(cx-(n?20:30),cy+30,lx+16,ry-44,{blue:1})+Tc(cx+(n?-4:40),cy+46,n?'excision leaves attB':'excision leaves','#6A5B47',12,'mono start')+Tc(cx+(n?-4:40),cy+61,n?'in the chromosome':'attB in the chromosome','#6A5B47',12,'mono start'));
+  s+=G('a-fade',.7,arw(cx-(n?20:30),cy+30,lx+16,ry-44,{blue:1})+Tc(cx+(n?-4:40),cy+46,n?'excision leaves attB':'excision leaves','#6A5B47',12,'note start')+Tc(cx+(n?-4:40),cy+61,n?'in the chromosome':'attB in the chromosome','#6A5B47',12,'note start'));
   s+=G('a-fade',1,pRing(lx,ry,20,{col:PLS,w:3,lfs:12,feats:[{a0:-160,a1:-110,col:METC,lab:'cargo'},{a0:-70,a1:-20,col:RECC,lab:'T4SS, oriT'},{a0:110,a1:170,col:TNC,lab:'int'}]})
     +`<circle cx="${lx}" cy="${ry-20}" r="3.2" fill="${INK}"/>`+Tc(lx,ry-30,'attP','#2E7D78',12,'mono mid','600')
     +T(lx,ry+54,'circular intermediate','note mid f11'));
