@@ -315,7 +315,7 @@ function scFitness(n){
   let s=T(P.mid,26,'Fitness in human serum vs rich medium','lab mid');
   s+=`<line x1="${P.zx}" y1="${P.y0-16}" x2="${P.zx}" y2="${bottom-8}" class="ax"/>`+T(P.zx,P.y0-22,'log₂ fold-change','note mid f12')+T(P.zx+6,P.y0-6,'0','mono start f10')+[1,2,3].map(k=>T(P.zx-k*P.sc,P.y0-6,'−'+k,'mono mid f10')).join('');
   const thr=P.zx-1*P.sc;
-  s+=`<line x1="${thr}" y1="${P.y0-6}" x2="${thr}" y2="${bottom-8}" stroke="${RED}" stroke-width="1" stroke-dasharray="4 3"/>`;
+  s+=`<line x1="${thr}" y1="${P.y0+4}" x2="${thr}" y2="${bottom-8}" stroke="${RED}" stroke-width="1" stroke-dasharray="4 3"/>`;
   data.forEach((d,i)=>{const y=P.y0+i*P.rowH,w=d.lfc*P.sc,dep=d.lfc<-1,bx=d.lfc<0?P.zx+w:P.zx;
     s+=T(P.lblX,y+4,d.n,'mono start f12')
       +G('a-fade',(.2+i*.22).toFixed(2),`<rect x="${bx.toFixed(1)}" y="${y-11}" width="${Math.abs(w).toFixed(1)}" height="22" rx="3" fill="${dep?'#E7A99B':GREY}" stroke="${dep?RED:INK}" stroke-width="${dep?1.2:.8}" class="tint"/>`
