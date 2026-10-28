@@ -91,7 +91,7 @@ function scM7(n){
 function scM8(n){
   const top=para(n?16:24,28,'Typical time to an answer for a bloodstream infection, in hours',n?50:92,'note start f13',17,0);
   const items=[['blood culture flags positive',24,PAL.grey,'~12–48 h'],['growth to colonies',18,PAL.grey,'~18 h'],['MALDI-TOF identification',.2,PAL.blue,'minutes'],['phenotypic AST',18,PAL.gold,'~16–20 h'],['syndromic PCR panel',1,PAL.green,'~1 h'],['metagenomic sequencing',24,PAL.lilac,'~1 day']];
-  const h=hbars(n,n?10:30,top.y+14,n?340:560,items,{max:30,lw:n?150:200});
+  const h=hbars(n,n?10:30,top.y+14,n?340:560,items,{max:30,lw:n?166:200});
   const b=bullets(n?24:30,h.y+24,[['MALDI-TOF mass spectrometry','A smear of colony is ionised and the mass fingerprint of abundant proteins, mostly ribosomal, is matched to a database. Routine since about 2010, it replaced days of biochemical tests.'],['Antimicrobial susceptibility','Still needs growth: broth microdilution or disc diffusion read against breakpoints. Rapid systems that follow growth directly cut this to several hours.'],['Molecular and metagenomic tests','Multiplex PCR panels detect dozens of pathogens and a few resistance genes (mecA, KPC, CTX-M) in about an hour. Sequencing all DNA in a sample can find unexpected or unculturable pathogens, but host DNA, contamination and cost limit it, and neither predicts every resistance.']],n?44:88,{d0:.8,gap:20});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:top.s+h.s+b.s};
 }

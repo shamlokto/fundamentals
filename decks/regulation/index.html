@@ -579,7 +579,7 @@ function scR2(n){
     +`<rect x="${rx}" y="${ry-11}" width="30" height="22" rx="6" fill="${RECC}" fill-opacity=".3" stroke="${INK}"/>`
     +`<circle cx="${rx-16}" cy="${ry-19}" r="7" fill="${METC}" stroke="${INK}" stroke-width=".7"/>`+Tc(rx-16,ry-15,'P','#3A2E22',10,'mono mid','600')
     +T(rx+36,ry-16,n?'regulator':'response regulator','note start f12'));
-  s+=G('a-fade',.6,arw(hx+30,my+24,rx-36,ry-6,{blue:1})+T(n?hx+26:(hx+rx)/2+10,my+(n?62:48),'His~P → Asp~P','mono '+(n?'start':'mid')+' f12 acc halo'));
+  s+=G('a-fade',.6,arw(hx+30,my+24,rx-36,ry-6,{blue:1})+T(n?hx+26:(hx+rx)/2-40,my+(n?62:52),'His~P → Asp~P','mono '+(n?'start':'mid')+' f12 acc halo'));
   /* DNA and target genes: phosphorylated RR binds the promoter */
   const dy=my+(n?98:96);
   s+=G('a-fade',1.3,dsDNA(n?40:150,R-10,dy-4,DNA,8)+`<rect x="${rx-10}" y="${dy-9}" width="26" height="18" rx="3" fill="#EFE6D2" stroke="${INK}" stroke-width=".8"/>`

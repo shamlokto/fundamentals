@@ -40,8 +40,8 @@ function scG3(n){
   s+=ex.s;
   const items=[['Vibrio natriegens',1.0,PAL.green,'~10 min'],['E. coli, rich broth',1.3,PAL.green,'~20 min'],['E. coli, glucose minimal',1.78,PAL.blue,'~60 min'],['baker’s yeast',1.95,PAL.lilac,'~90 min'],['Mycobacterium tuberculosis',3.08,PAL.rose,'~20 h'],['Prochlorococcus, in the sea',3.16,PAL.rose,'~1 day']];
   const t=T(x,ex.y+18,'Typical doubling times (log scale)','note start f12');
-  const h=hbars(n,n?6:24,ex.y+30,n?344:560,items,{max:3.3,lw:n?150:200,vw:56});
-  const bx=(n?6:24)+(n?150:200), bw=(n?344:560)-(n?150:200)-56, ay=h.y+2, tx=v=>FX(bx+bw*v/3.3);
+  const h=hbars(n,n?6:24,ex.y+30,n?344:560,items,{max:3.3,lw:n?168:200,vw:56});
+  const bx=(n?6:24)+(n?168:200), bw=(n?344:560)-(n?168:200)-56, ay=h.y+2, tx=v=>FX(bx+bw*v/3.3);
   const ax=G('a-fade',.9,ln(bx,ay,bx+bw,ay,'#6A5B47',1)+[[1,'10 min'],[Math.log10(60),'1 h'],[Math.log10(600),'10 h'],[Math.log10(1440),'1 day']].map(([v,l])=>ln(tx(v),ay,tx(v),ay+4,'#6A5B47',1)+(n&&(l==='1 h'||l==='10 h')?'':T(l==='10 h'?tx(v)+8:l==='1 day'?tx(v)-4:tx(v),ay+17,l,'mono '+(l==='10 h'?'end':l==='1 day'?'start':'mid')+' f12'))).join(''));
   h.y+=26;
   return {vb:n?slim(h.y+4):wide(h.y+6),s:s+t+h.s+ax};
