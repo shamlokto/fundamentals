@@ -72,7 +72,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .cname{font-family:var(--plate);font-size:18px}
 #stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
 #stage .acc{fill:var(--accent);font-weight:600}
-#stage .gl{font-family:var(--mono);font-size:11px;font-style:italic;fill:#F3EDE0}
+#stage .gl{font-family:var(--mono);font-size:12px;fill:#3A2E22}
 #stage .f10{font-size:12px} #stage .f11{font-size:12.5px} #stage .f12{font-size:13.5px} #stage .f13{font-size:14.5px} #stage .f14{font-size:15.5px} #stage .f15{font-size:16.5px} #stage .f16{font-size:17.5px}
 #stage .card{fill:var(--surface2);stroke:var(--line)}
 #stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
@@ -143,7 +143,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 <script>
 const INK='#3A2E22', TN='#7D4A98', MARK='#C99A2E', RED='#B4473A', S1='#3E5F82', S2='#5B7B40',
-      GREEN='#4F7A3F', ESS='#B4766E', DISP='#3E5F82', COND='#C99A2E', GREY='#BDB3A0', PAPER2='#E8E0CC';
+      GREEN='#4F7A3F', ESS='#E7A99B', DISP='#A9C4DC', COND='#E0C88A', GREY='#BDB3A0', PAPER2='#E8E0CC';
 const roman=n=>[['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
 const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
 const G=(c,d,inner,st='')=>`<g class="${c}" style="--d:${d}s;${st}">${inner}</g>`;
@@ -313,12 +313,12 @@ function scFitness(n){
   const P=n?{lblX:16,zx:300,rowH:40,y0:74,sc:56,mid:180}:{lblX:44,zx:540,rowH:46,y0:64,sc:100,mid:330};
   const bottom=P.y0+data.length*P.rowH;
   let s=T(P.mid,26,'Fitness in human serum vs rich medium','lab mid');
-  s+=`<line x1="${P.zx}" y1="${P.y0-16}" x2="${P.zx}" y2="${bottom-8}" class="ax"/>`+T(P.zx,P.y0-22,'log₂ fold-change','note mid f12')+T(P.zx+6,P.y0-6,'0','mono start f10');
+  s+=`<line x1="${P.zx}" y1="${P.y0-16}" x2="${P.zx}" y2="${bottom-8}" class="ax"/>`+T(P.zx,P.y0-22,'log₂ fold-change','note mid f12')+T(P.zx+6,P.y0-6,'0','mono start f10')+[1,2,3].map(k=>T(P.zx-k*P.sc,P.y0-6,'−'+k,'mono mid f10')).join('');
   const thr=P.zx-1*P.sc;
   s+=`<line x1="${thr}" y1="${P.y0-6}" x2="${thr}" y2="${bottom-8}" stroke="${RED}" stroke-width="1" stroke-dasharray="4 3"/>`;
   data.forEach((d,i)=>{const y=P.y0+i*P.rowH,w=d.lfc*P.sc,dep=d.lfc<-1,bx=d.lfc<0?P.zx+w:P.zx;
     s+=T(P.lblX,y+4,d.n,'mono start f12')
-      +G('a-fade',(.2+i*.22).toFixed(2),`<rect x="${bx.toFixed(1)}" y="${y-11}" width="${Math.abs(w).toFixed(1)}" height="22" rx="3" fill="${dep?RED:GREY}" stroke="${INK}" stroke-width=".8" class="tint"/>`
+      +G('a-fade',(.2+i*.22).toFixed(2),`<rect x="${bx.toFixed(1)}" y="${y-11}" width="${Math.abs(w).toFixed(1)}" height="22" rx="3" fill="${dep?'#E7A99B':GREY}" stroke="${dep?RED:INK}" stroke-width="${dep?1.2:.8}" class="tint"/>`
       +(dep?mark(bx+12,y,false):''));});
   const yb=bottom+(n?8:12);
   s+=G('a-fade',1.7,T(thr,yb,'← depleted','note mid f12')+T(P.mid,yb+22,n?'cps2E drops out — capsule is needed in serum':'cps2E insertions deplete in serum: the capsule is needed there, not in rich medium','lab mid'));

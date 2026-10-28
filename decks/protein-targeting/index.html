@@ -632,7 +632,7 @@ function scRoute(n){
   s+=G('a-pop',.2,ribosome(rx,rY,n?.26:.3,{mrna:false}));
   let pts=[[rx,rY-20]];m.stops.forEach(st=>pts.push([x1+w*st[3],ry(st[2])]));
   let d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L');
-  s+=G('a-fade',.4,`<path d="${d}" stroke="${RED}" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ahp)"/>`);
+  s+=G('a-fade',.4,`<path d="${d}" stroke="${BLUE}" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ahp)"/>`);
   m.stops.forEach((st,i)=>{const [x,y]=pts[i+1];s+=G('a-pop',(.8+i*.5).toFixed(1),blob(x,y,12,9,st[1])+badge(x+(n?14:16),y-14,i+1));});
   const ty=e.Y.cyto+(n?86:84);
   const OL=n?wrap(m.org+' → '+m.dest,58):[m.org+' → '+m.dest], dy=(OL.length-1)*16;

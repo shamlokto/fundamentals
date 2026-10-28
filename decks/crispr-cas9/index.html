@@ -72,7 +72,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #stage .cname{font-family:var(--plate);font-size:18px}
 #stage .big{font-family:var(--plate);font-style:italic;font-size:40px}
 #stage .acc{fill:var(--accent);font-weight:600}
-#stage .gl{font-family:var(--mono);font-size:11.5px;font-style:italic;fill:#F3EDE0}
+#stage .gl{font-family:var(--mono);font-size:12px;fill:#3A2E22}
 #stage .f10{font-size:12px} #stage .f11{font-size:12.5px} #stage .f12{font-size:13.5px} #stage .f13{font-size:14.5px} #stage .f14{font-size:15.5px} #stage .f15{font-size:16.5px} #stage .f16{font-size:17.5px}
 #stage .card{fill:var(--surface2);stroke:var(--line)}
 #stage .arrow{stroke:var(--muted);stroke-width:2;fill:none;marker-end:url(#ah)}
@@ -143,7 +143,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </div>
 
 <script>
-const INK='#3A2E22', PH='#7D4A98', PAMC='#C99A2E', RNA='#B4473A', TR='#8C6D46', S1='#3E5F82', S2='#5B7B40', S3='#9A5B3C',
+const INK='#3A2E22', PH='#7D4A98', PAMC='#C99A2E', RNA='#C17A2C', TR='#8C6D46', S1='#3E5F82', S2='#5B7B40', S3='#9A5B3C',
       CAS_A='#9DB4AE', CAS_B='#5E7F7A', PAPER2='#E8E0CC', GREEN='#4F7A3F', GREY='#BDB3A0';
 const roman=n=>[['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
 const T=(x,y,s,c='')=>`<text x="${x}" y="${y}" class="${c}">${s}</text>`;
@@ -210,8 +210,8 @@ function scHistory(n){
 
 /* ---------- Part II ---------- */
 function scLocus(n){
-  const g=n?{y:56,h:26,list:[[16,48,TR,'tracr'],[68,92,CAS_B,'cas9'],[164,56,CAS_A,'cas1'],[224,56,CAS_A,'cas2'],[284,58,CAS_A,'csn2']],by:96,bx:[68,342]}
-           :{y:150,h:28,list:[[24,56,TR,'tracr'],[86,130,CAS_B,'cas9'],[222,50,CAS_A,'cas1'],[278,40,CAS_A,'cas2'],[324,50,CAS_A,'csn2']],by:192,bx:[86,374]};
+  const g=n?{y:56,h:26,list:[[16,48,'#D9C8A8','tracr'],[68,92,'#B9CBC6','cas9'],[164,56,CAS_A,'cas1'],[224,56,CAS_A,'cas2'],[284,58,CAS_A,'csn2']],by:96,bx:[68,342]}
+           :{y:150,h:28,list:[[24,56,'#D9C8A8','tracr'],[86,130,'#B9CBC6','cas9'],[222,50,CAS_A,'cas1'],[278,40,CAS_A,'cas2'],[324,50,CAS_A,'csn2']],by:192,bx:[86,374]};
   let s='';
   /* SF370: tracrRNA is encoded on the opposite strand to the cas genes, so its arrow points left */
   const geneL=(x,y,w,h,fill,label)=>`<path d="M${x+w} ${y} h${-(w-10)} l-10 ${h/2} l10 ${h/2} h${w-10} z" fill="${fill}" stroke="${INK}" stroke-width="1" class="tint"/>`+T(x+10+(w-10)/2-2,y+h/2+4,label,'gl mid');
@@ -314,7 +314,7 @@ function scCut(n){
   s+=G('a-fade',1.4,T(X(10),yR-(n?18:24),'displaced strand','note mid')+T(X(2)-(n?10:14),yG,n?'guide':'guide RNA','note end'));
   if(!n)s+=G('a-fade',.2,T(x0-6,yT,'5′','mono f12 end')+T(x0+N*dx+6,yT,'3′','mono f12 start')+T(x0-6,yB,'3′','mono f12 end')+T(x0+N*dx+6,yB,'5′','mono f12 start'));
   const bx=x0+19*dx;
-  s+=G('a-pop',3.4,`<path d="M${bx} ${yR-fs-8} V${yR+6} M${bx} ${yB-fs-4} V${yB+8}" stroke="${RNA}" stroke-width="2.2" stroke-dasharray="4 3"/>`
+  s+=G('a-pop',3.4,`<path d="M${bx} ${yR-fs-8} V${yR+6} M${bx} ${yB-fs-4} V${yB+8}" stroke="#A4473A" stroke-width="2.2" stroke-dasharray="4 3"/>`
     +T(bx+5,yR-fs-10,'RuvC','mono f12 start')+T(bx+5,yB+(n?20:24),'HNH','mono f12 start'));
   s+=G('a-fade',3.9,T(n?180:320,H-14,n?'Blunt break, 3 bp from the PAM':'Blunt double-strand break, 3 bp from the PAM','lab mid'));
   return {vb:n?slim(H):wide(H),s};

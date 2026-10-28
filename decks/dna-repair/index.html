@@ -517,12 +517,13 @@ function scTCR(n){
 }
 
 function mmrD(k){return (x,y,w)=>{const n=26,dx=w/n,g=24,c=i=>x+i*dx+dx/2;
+  const end=Tc(x-4,y+4,'5′','#6A5B47',10,'mono end')+Tc(x-4,y+g+4,'3′','#6A5B47',10,'mono end')+Tc(x+w+4,y+4,'3′','#6A5B47',10,'mono start')+Tc(x+w+4,y+g+4,'5′','#6A5B47',10,'mono start');
   const lab=[{i:4.5,t:'GATC',col:'#8C5A1E',dy:14},{i:18,t:'G',dy:k<2?28:0}], me=[{i:4,s:'t'}];
-  if(k===0)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[...lab,{i:18,s:'b',t:'T',col:LESU}]})+ring(c(18),y+g/2,15,22,E4,'MutS',{ldx:40,ldy:-16})+prot(c(13.4),y-20,22,10,E5,'MutL');
-  if(k===1)return lad(x,y,n,{dx,g,mk:{18:{b:LESU}},me,lab:[{i:18,t:'G',dy:28},{i:18,s:'b',t:'T',col:LESU}],nick:[{i:6,s:'b'}]})+ring(c(18),y+g/2,15,22,E4,'')+prot(c(13.4),y-20,22,10,E5,'MutL')
+  if(k===0)return lad(x,y,n,{dx,g,bot:[[0,n,NEW]],mk:{18:{b:LESU}},me,lab:[...lab,{i:18,s:'b',t:'T',col:LESU}]})+end+ring(c(18),y+g/2,15,22,E4,'MutS',{ldx:40,ldy:-16})+prot(c(13.4),y-20,22,10,E5,'MutL');
+  if(k===1)return lad(x,y,n,{dx,g,bot:[[0,n,NEW]],mk:{18:{b:LESU}},me,lab:[{i:18,t:'G',dy:28},{i:18,s:'b',t:'T',col:LESU}],nick:[{i:6,s:'b'}]})+end+ring(c(18),y+g/2,15,22,E4,'')+prot(c(13.4),y-20,22,10,E5,'MutL')
     +prot(c(5),y+g+16,22,10,E3,'MutH')+`<path d="M${FX(c(11.6))} ${y-16} Q${FX(c(8))} ${y-36} ${FX(c(6))} ${y+g+4}" stroke="#2F5276" stroke-width="1.2" stroke-dasharray="3 3" fill="none" marker-end="url(#ahb)"/>`+cut(x+6*dx,y+g+5);
-  if(k===2)return lad(x,y,n,{dx,g,bot:[[0,6],[20,26]],me,lab:[{i:18,t:'G'}]})+prot(c(8),y+g+16,22,10,E4,'UvrD')+T(c(14),y+g+20,'exonucleases','note mid f11');
-  return lad(x,y,n,{dx,g,bot:[[0,6],[6,20,NEW],[20,26]],me:[{i:4,s:'t'},{i:4,s:'b',op:.6}],lab:[{i:18,t:'G'},{i:18,s:'b',t:'C',col:NEW},{i:4.5,t:'GATC',col:'#8C5A1E',dy:14}]})+prot(c(13),y+g+16,34,10,E5,'Pol III');};}
+  if(k===2)return lad(x,y,n,{dx,g,bot:[[0,6,NEW],[20,26,NEW]],me,lab:[{i:18,t:'G'}]})+end+prot(c(8),y+g+16,22,10,E4,'UvrD')+T(c(14),y+g+20,'exonucleases','note mid f11');
+  return lad(x,y,n,{dx,g,bot:[[0,n,NEW]],me:[{i:4,s:'t'},{i:4,s:'b',op:.6}],lab:[{i:18,t:'G'},{i:18,s:'b',t:'C',col:NEW},{i:4.5,t:'GATC',col:'#8C5A1E',dy:14}]})+end+prot(c(13),y+g+16,34,10,E5,'Pol III');};}
 function scMMR(n){
   const st=[{h:'Recognise',t:'Dam methylates GATC, but a newly made strand is briefly unmethylated. MutS clamps on the mismatch; MutL joins it.',d:mmrD(0),top:40,dh:44},
    {h:'Nick',t:'MutL activates MutH, which nicks the unmethylated new strand at a GATC that may be a kilobase away.',d:mmrD(1),top:40,dh:56},
@@ -570,9 +571,9 @@ function scDSB(n){
         +`<circle cx="${xf-27}" cy="${ly-36}" r="10" fill="none" stroke="${LESU}" stroke-width="1.6"/>`+Tc(xf-10,ly-34,'free end','#A4473A',11,'mono start','600'));}
     else{const x0=n?40:120, nn=n?10:14;
       d+=lad(x0,ly,nn,{dx,g})+lad(x0+nn*dx+10,ly,nn,{dx,g})+prot(x0+nn*dx+5,ly+g/2,30,20,E1,'',{op:.75})+Tc(x0+nn*dx+5,ly+g/2+4,'gyrase','#3A2E22',11,'mono mid','600')
-        +`<circle cx="${x0+nn*dx-14}" cy="${ly-6}" r="5" fill="${LESU}" stroke="${INK}"/><circle cx="${x0+nn*dx+24}" cy="${ly+g+6}" r="5" fill="${LESU}" stroke="${INK}"/>`+T(x0+nn*dx+44,ly-8,'drug','note start f11');}
+        +`<circle cx="${x0+nn*dx-14}" cy="${ly-6}" r="5" fill="${LESU}" stroke="${INK}"/><circle cx="${x0+nn*dx+24}" cy="${ly+g+6}" r="5" fill="${LESU}" stroke="${INK}"/>`+Tc(x0+nn*dx+5,ly+g+24,'ciprofloxacin ⊣ gyrase','#A4473A',12,'note mid');}
     s+=G('a-fade',(k*.9).toFixed(1),badge(n?24:28,y-4,k+1)+T(n?40:44,y,r[0],'cname start f14')+L.map((l,j)=>T(n?16:24,y+20+j*16,l,'note start f12')).join('')+d);
-    y=ly+g+(k<2?(n?80:100):30);});
+    y=ly+g+(k<2?(n?80:100):44);});
   const b=bullets(n?24:30,y+6,[['Why one break matters','A circular chromosome with a break cannot be finished or segregated. E. coli has no end-joining, so it must copy the missing information from an intact sister.'],
    ['Where the sister comes from','Fast-growing E. coli runs overlapping rounds of replication, so most of the chromosome is present in two or more copies.'],
    ['Other sources','Ionising radiation, clusters of oxidative lesions repaired at the same time, and the processing of interstrand crosslinks.']],n?44:88,{d0:2.8,gap:24});

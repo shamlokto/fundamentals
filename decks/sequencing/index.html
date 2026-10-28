@@ -724,8 +724,8 @@ function scN10(n){
   s+=G('a-fade',.6,arw(cx+(n?84:96),my+(n?50:54),cx+(n?84:96),my+(n?4:6),{blue:1})+T(cx+(n?90:102),my+(n?34:36),'ion current','note start f11'));
   const r=rnd(11);const sq=[];for(let i=0;i<80;i++){const lvl=.25+.5*((Math.sin(i/7)+Math.sin(i/3.1)+1.4)/3.4);sq.push(lvl+(r()-.5)*.06);}
   const px=n?18:30, pw=n?326:580, py=my+(n?104:110);
-  s+=G('a-fade',1.2,trace(px,py,pw,n?54:60,sq,{col:'#C17A2C',w:1.6})+T(px+pw/2,py+(n?74:80),'the current depends on all the bases inside the pore at once, not one','note mid f11'));
-  let y=py+(n?96:104);
+  s+=G('a-fade',1.2,trace(px,py,pw,n?54:60,sq,{col:'#3E5F82',w:2})+T(px+pw/2,py+(n?68:74),'time','note mid f11')+`<text transform="translate(${px-6} ${py+(n?27:30)}) rotate(-90)" class="note mid f11">current (pA)</text>`+T(px+pw/2,py+(n?88:94),'the current depends on all the bases inside the pore at once, not one','note mid f11'));
+  let y=py+(n?110:118);
   s+=G('a-fade',1.8,arw(px+pw/2,y-10,px+pw/2,y+10,{w:1.4})+T(px+pw/2,y+30,'a neural network converts the squiggle into bases','lab mid f12'));
   y+=n?52:54;
   const b=bullets(n?20:30,y,[['No polymerase, no copying','The native strand itself is read, so base modifications such as 5-methylcytosine and 6-methyladenine change the current and can be called directly, without bisulfite treatment.'],
