@@ -1,0 +1,41 @@
+{
+  "voice": "eve",
+  "plates": [
+    {
+      "title": "Selective toxicity",
+      "say": "How can a drug kill a bacterium living inside a person, without harming the person? That is the central question of this primer. An antibiotic is useful only if it harms the microbe far more than the patient. Paul Ehrlich called this idea the magic bullet, and today we call it selective toxicity. The best targets are structures that bacteria have and we lack, like the peptidoglycan wall, or that they make differently, like the seventy-S ribosome, bacterial topoisomerases and folate synthesis. Bacteria answer with resistance, and the gap between the two is what the clinic measures and manages. The dish on the left shows the idea at a glance: paper discs soaked in antibiotic, each surrounded by a clear zone where bacteria could not grow."
+    },
+    {
+      "title": "Targets and drug classes",
+      "say": "Antibiotics are grouped by what they hit. The drawing shows a rod-shaped bacterium, and the buttons above it light up one target at a time: the cell wall, the membranes, the two ribosomal subunits, nucleic acid synthesis, folate, and a handful of specialised targets. For each one, the plate lists the drug classes that act there, how they act, whether they kill the cell or only stop its growth, and their usual spectrum. Drugs that kill are called bactericidal; drugs that only halt growth are bacteriostatic. The beta-lactams, which attack the wall, kill only growing cells. Aminoglycosides on the thirty-S subunit kill, while tetracyclines on the same subunit only stop growth. Keep in mind that the line between killing and stopping is less sharp in practice than on paper, and depends on the dose and the organism. Try each target in turn."
+    },
+    {
+      "title": "Five ways to resist",
+      "say": "Bacteria resist antibiotics in a handful of ways, numbered one to five on the drawing. One: inactivate the drug. Beta-lactamases cut open the beta-lactam ring, and other enzymes chemically tag aminoglycosides. Two: change the target, for example a mutated gyrase or RNA polymerase, or a methylated ribosomal RNA. Three: pump the drug out, using efflux pumps that can expel many unrelated drugs. Four: keep the drug out, by losing or narrowing the porins in the outer membrane. And five: bypass the target, bringing in a second enzyme that the drug cannot touch, as MRSA does with its extra penicillin-binding protein. Many clinical isolates combine several of these at once, and Gram-negative bacteria add their outer membrane as a barrier to everything."
+    },
+    {
+      "title": "Mutations and acquired genes",
+      "say": "Resistance arises in two ways. A bacterium can mutate its own genes, or it can acquire a resistance gene from somewhere else. The table sorts the important examples. Point mutations in genes such as gyr-A or rpo-B arise during treatment and pass only to the cell's descendants. Acquired genes arrive ready-made, by conjugation, transformation or transduction, usually on plasmids, transposons and integrons that can carry several resistance genes together, so that one drug can select for resistance to many. The most feared resistances are mostly acquired: extended-spectrum beta-lactamases and carbapenemases in Gram-negative bacteria, the mec-A gene that makes MRSA, and van-A in vancomycin-resistant enterococci. These genes travel between strains and even between species."
+    },
+    {
+      "title": "MIC and breakpoints",
+      "say": "This plate shows how resistance is measured. The row of tubes is a broth dilution, with the drug doubling in concentration from left to right. The cloudy tubes on the left have growth; the clear ones on the right do not. The minimum inhibitory concentration, or MIC, is the lowest concentration that stops visible growth overnight, here four milligrams per litre. On its own, an MIC is just a number. Breakpoints, set by EUCAST in Europe and CLSI in the United States, translate it into advice: susceptible, susceptible at increased exposure, or resistant, for a given drug, organism and dose. The coloured bar below shows illustrative breakpoints, with green for susceptible and red for resistant."
+    },
+    {
+      "title": "Synergy and the checkerboard",
+      "say": "Two drugs can be tested together in a checkerboard. One drug is diluted along the bottom, the other up the side, each in twofold steps, and every well holds a different combination. Brown wells have growth; pale wells are clear. To read it, find the first clear well, which is ringed in red. Here it holds a quarter of each drug's own MIC. The fractional inhibitory concentration index adds those fractions: a quarter plus a quarter makes one half. A sum of one half or less is called synergy, and above four, antagonism. The classic example is a beta-lactam with gentamicin against enterococci: the beta-lactam damages the wall and lets the gentamicin in, which is why the pair is used to treat endocarditis."
+    },
+    {
+      "title": "Tolerance, resistance, persistence",
+      "say": "Not every treatment failure is resistance. The graph shows the number of living bacteria over a day in the drug, on a logarithmic scale. Susceptible bacteria, in blue, die fast. Resistant bacteria, in red, keep growing, because their MIC has risen. Tolerant bacteria, the dashed orange line, have an unchanged MIC, but the whole population dies more slowly. And persisters, in purple, give a two-phase curve: most cells die quickly, but a small dormant subpopulation survives for a long time. Grow the survivors up again, and they give a perfectly normal, sensitive culture. Tolerance and persistence matter because they cause relapse and can be a stepping stone to resistance, yet a routine MIC cannot see them. Time-kill curves and the minimum duration for killing show what the MIC cannot."
+    },
+    {
+      "title": "PK/PD: dosing to the bug",
+      "say": "Pharmacokinetics describes how the drug concentration in the body changes over time. Pharmacodynamics links that concentration to killing. The curve shows a single dose: it rises to a peak, called C-max, then falls away, crossing the MIC, shown by the dashed red line. Three measures matter. Aminoglycosides kill best at high peaks, so they are given as one large daily dose. Beta-lactams need time above the MIC, so they are given often, or as extended infusions. And many others, such as fluoroquinolones and vancomycin, depend on total exposure: the area under the curve, shaded blue. Dosing regimens follow directly from which of these three a drug depends on."
+    },
+    {
+      "title": "Stewardship and the pipeline",
+      "say": "The timeline shows when each class of antibiotic was first used in the clinic. Most arrived between the nineteen-thirties and the early nineteen-sixties. Then comes a long gap, boxed on the chart, with few new classes; and those that have arrived since, shown in red, mostly treat Gram-positive or tuberculosis infections. The pipeline is thin because the easy targets were found early, most new compounds cannot cross the Gram-negative envelope, and a new drug held in reserve earns little. So the existing drugs must be used carefully. Stewardship means the right drug, dose and duration, narrowing the spectrum once culture results are back, and less use in farming. That buys time while new incentives and new sources of compounds try to restart discovery."
+    }
+  ]
+}

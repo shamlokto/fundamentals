@@ -1,0 +1,41 @@
+{
+  "voice": "eve",
+  "plates": [
+    {
+      "title": "Microbes at work",
+      "say": "How do we turn microbes into factories, cleaners, crop partners, food and medical tools, and keep the dangerous ones out? Applied microbiology uses what microbes already do well. They grow fast, they can make and break almost any molecule, and they partner with plants. Microbes make our antibiotics, amino acids, enzymes, fuels and foods. They clean polluted ground and feed crops with nitrogen. And they are themselves the targets of food safety and clinical microbiology, because the same knowledge of growth and death applies to all of it. This primer follows that knowledge from the factory, to the farm, to the hospital laboratory, and ends with synthetic biology, which now designs new behaviours from parts."
+    },
+    {
+      "title": "Industrial products",
+      "say": "Industrial microbiology began with alcohol and vinegar, and grew in the twentieth century with citric acid, wartime penicillin and amino acids. Use the buttons to pick a product, and the plate shows the organism that makes it, the scale of production, and how the process is run. Penicillin titres rose from a few milligrams to tens of grams per litre through strain improvement, starting from a strain found on a mouldy cantaloupe in Peoria in nineteen forty-three. A soil bacterium, Corynebacterium glutamicum, makes millions of tonnes of glutamate and lysine each year. Yeast makes about a hundred billion litres of fuel ethanol, and the mould Aspergillus niger makes citric acid. Human insulin made in E. coli became the first recombinant drug, in nineteen eighty-two. Most modern production strains are heavily engineered."
+    },
+    {
+      "title": "Bioreactors and scale-up",
+      "say": "A stirred-tank bioreactor is a sealed vessel that controls temperature, pH, oxygen and feeding while keeping contaminants out. There are three ways to run one. Batch is the simplest. Fed-batch adds the sugar gradually, which avoids wasteful overflow metabolism and reaches high cell densities; it is the industrial workhorse. Continuous culture is rare outside ethanol and research. Oxygen is usually the limit, because it dissolves poorly, and how fast it can be transferred into the broth often caps productivity. And scale-up is not just making things bigger. In a hundred cubic metre tank, mixing takes far longer, so cells cycle through zones of high sugar and low oxygen. What works in a shake flask often fails at production scale."
+    },
+    {
+      "title": "Bioremediation",
+      "say": "Microbes can destroy many pollutants, or lock them away. The row of boxes shows the clean-up of a common chlorinated solvent, P-C-E. Under anaerobic conditions, bacteria strip off one chlorine at a time: P-C-E to T-C-E, to cis-D-C-E, to vinyl chloride, and finally to harmless ethene. At each step the bacteria are breathing the solvent, using it as their electron acceptor. For most of its history, only Dehalococcoides was known to finish the job; without it, sites stall at cis-D-C-E and carcinogenic vinyl chloride. Engineers have two options. They can stimulate the native community by adding what it lacks, such as electron donors, nutrients or oxygen. Or they can add the organisms that are missing. Other microbes break down oil after spills, and Geobacter can trap dissolved uranium underground as an insoluble solid."
+    },
+    {
+      "title": "Plants and microbes",
+      "say": "The chain of boxes at the top shows how legumes and rhizobia exchange signals before building a nodule. The root releases flavonoids. These switch on the bacterial nod genes, and the bacteria reply with Nod factor. Plant receptors detect it, the root hair curls around the bacteria, and an infection thread carries them inward, while cells in the root divide to form the nodule. Inside it, the bacteria fix nitrogen from the air. The four boxes below show other partnerships. Most land plants rely on mycorrhizal fungi, a partnership more than four hundred million years old. Many soil bacteria promote growth or protect against disease. And Agrobacterium, a pathogen that naturally inserts its own genes into plant chromosomes, became, once disarmed, the standard tool for making transgenic plants."
+    },
+    {
+      "title": "Food: fermentation and pathogens",
+      "say": "Fermentation is one of the oldest ways to keep food. Lactic acid bacteria make yoghurt, cheese, sauerkraut and kimchi; yeasts make bread, beer and wine; and moulds ripen cheese. Controlled fermentation preserves food and gives it flavour, while spoilage and pathogens are the same growth, uncontrolled. Use the buttons to pick a pathogen, and the plate shows where it comes from, the illness it causes, how long it takes to appear, and how it is controlled. Salmonella and Campylobacter come mostly from poultry. Shiga toxin-producing E. coli can infect with fewer than a hundred cells. Clostridium botulinum makes a nerve toxin, and its spores survive boiling. And Listeria is unusual, because it grows even at refrigeration temperatures, which is why it is a hazard in ready-to-eat foods."
+    },
+    {
+      "title": "Killing microbes in food",
+      "say": "Heat kills microbes exponentially, so food processing is planned in decimal reductions. The graph shows spores in a can, on a logarithmic scale, falling in a straight line as time at one hundred and twenty-one degrees goes by. The D-value is the time needed to kill ninety percent of the population: each D cuts the count tenfold. The twelve-D cook for low-acid canned foods is designed around Clostridium botulinum spores. It reduces them by twelve log units, from one spore per can to one in a trillion cans. Hurdle technology combines milder barriers, such as acidity, salt, chilling and packaging, that together stop growth where no single one would. And HACCP organises the whole process around the critical points where hazards can be controlled."
+    },
+    {
+      "title": "Clinical diagnostics",
+      "say": "The bar chart shows the typical time to an answer for a bloodstream infection. Culture remains the backbone of clinical microbiology, because it yields a live isolate that can be tested against antibiotics. But it is slow. A blood culture takes half a day to two days to flag positive, then colonies must grow. Once they do, MALDI-TOF mass spectrometry identifies the organism within minutes, by matching the mass fingerprint of its proteins to a database. Susceptibility testing still needs growth, and takes most of another day. Molecular panels can detect dozens of pathogens, and a few resistance genes, in about an hour. And metagenomic sequencing can look for anything at once, though host DNA, contamination and cost still limit it."
+    },
+    {
+      "title": "Synthetic biology",
+      "say": "Synthetic biology treats genes as parts, to be assembled into circuits with predictable behaviour. Two circuits published in the year two thousand launched the field, and both are drawn here. On the left, the toggle switch: two repressors, each shutting off the other, so the cell rests in one of two stable states until a pulse of inducer flips it. On the right, the repressilator: three repressors in a ring, each shutting off the next, which makes E. coli cells blink in oscillating cycles. The field now designs chassis organisms, biosensors that glow in the presence of pollutants such as arsenic, and production strains, such as yeast engineered to make a precursor of the antimalarial drug artemisinin. Still, biology remains noisier than the engineering analogy suggests."
+    }
+  ]
+}

@@ -18,8 +18,17 @@ function render(){
   for(let k=1;k<=NPARTS;k++)$('part'+k).setAttribute('aria-current',sc.p===k);
   $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
 }
-function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
-$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();if(reading)speak(true);}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=()=>{render();if(reading)speak(true);};
+/* Read to me: plays decks/<slug>/audio/NN.mp3 for each plate and turns the page when a plate ends */
+const rd=$('read'), aud=VOICE?new Audio():null; let reading=false, turn;
+function speak(fresh){clearTimeout(turn);const src='audio/'+VOICE[cur];
+  if(fresh||!aud.src.endsWith(src)||aud.ended){aud.src=src;}
+  aud.play().catch(()=>setReading(false));}
+function setReading(on){reading=on;rd.setAttribute('aria-pressed',on);rd.textContent=on?'❚❚ Pause':'▶ Read to me';
+  if(on)speak(false);else{clearTimeout(turn);aud.pause();}}
+if(aud){rd.hidden=false;aud.preload='none';rd.onclick=()=>setReading(!reading);
+  aud.onended=()=>{if(reading&&cur<S.length-1)turn=setTimeout(()=>go(cur+1),900);else setReading(false);};}
 for(let k=1;k<=NPARTS;k++)$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k));
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
 let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});

@@ -109,6 +109,20 @@ Plate text must not be smaller than 12 px: the classes `f8` to `f16` and `Tc()` 
 * 6–9 plates per deck, at least one interactive (chips) plate and at least two real diagrams
   (flow, cycle, plot or drawing), not only cards and tables.
 
+## Narration ("Read to me")
+
+A deck gets a "Read to me" button when `decks/<slug>/audio/` holds narration. Write one spoken script per plate
+in `voice/<slug>.json` (`{"voice": "eve", "plates": [{"title": ..., "say": ...}]}`, titles in deck order),
+about 600–900 characters each: describe what the plate shows and walk the reader through it, in words that
+read well aloud (say "beta-lactams", "seventy-S", "four milligrams per litre"). Use only facts already on the
+plate, so the script needs no separate fact-check. Then
+
+    XAI_API_KEY=... python3 tools/voice.py <slug>
+    python3 tools/build.py <slug>
+
+`voice.py` calls xAI text to speech and only re-records plates whose script or voice changed (about
+US$0.003 per plate). The button plays each plate and turns the page when it ends.
+
 ## Password protection
 
 The live site is published by `.github/workflows/pages.yml`, which runs
@@ -120,4 +134,4 @@ an unlock page; one correct entry unlocks every page in that browser. The passwo
 in the repository secret `SITE_PASSWORD`; to change it, update the secret and re-run the
 workflow. The key is derived with a fixed salt, so readers stay unlocked across deploys; changing
 the password (or setting an optional `SITE_SALT` secret) signs everyone out. To lock a browser again, clear the site's storage (key `fundamentals-key`).
-The five portrait JPEGs under `decks/` are copied unencrypted.
+The five portrait JPEGs and the narration audio under `decks/` are copied unencrypted.

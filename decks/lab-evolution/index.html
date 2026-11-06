@@ -63,6 +63,8 @@ h2{margin:0;font-family:var(--plate);font-style:italic;font-weight:400;font-size
 .controls button{font:inherit;font-size:15px;font-weight:500;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .controls button:disabled{opacity:.4;cursor:default}
+.controls button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+@media (max-width:600px){ .controls #read{flex:1 0 100%} }
 .dots{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
 .dots button{width:10px;height:10px;padding:0;border-radius:50%;border:none;background:var(--line);cursor:pointer}
 .dots button.p2{border-radius:2px}
@@ -161,6 +163,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
   </section>
   <div class="controls">
+    <button id="read" type="button" aria-pressed="false" hidden>▶ Read to me</button>
     <button id="prev" type="button">Back</button>
     <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
     <button id="replay" type="button">Replay</button>
@@ -171,6 +174,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 <script>
 /* optional picture for the opening plate: decks/lab-evolution/cover.webp (transparent paper) or cover.jpg */
 const COVER='cover.webp';
+const VOICE=null;
 const INK='#3A2E22', OLD='#5A4632', DNA='#5A4632', RNAC='#C17A2C', NEWL='#8FB1CF', POLC='#9DB4AE', POLD='#6F9A8E', SIG='#E0B84A',
       RED='#A4473A', GREY='#C9BFAB', PURP='#7D4A98', TEAL='#2E7D78', GREEN='#4F7A3F', ROSE='#B4766E', BROWN='#8C6D46', BLUE='#3E5F82', PAPER='#EFE8D8';
 const roman=n=>[['XX',20],['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((s,[r,v])=>{while(n>=v){s+=r;n-=v;}return s;},'');
@@ -752,8 +756,17 @@ function render(){
   for(let k=1;k<=NPARTS;k++)$('part'+k).setAttribute('aria-current',sc.p===k);
   $('prev').disabled=cur===0; $('next').disabled=cur===S.length-1;
 }
-function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();}
-$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=render;
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));render();if(reading)speak(true);}
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1); $('replay').onclick=()=>{render();if(reading)speak(true);};
+/* Read to me: plays decks/<slug>/audio/NN.mp3 for each plate and turns the page when a plate ends */
+const rd=$('read'), aud=VOICE?new Audio():null; let reading=false, turn;
+function speak(fresh){clearTimeout(turn);const src='audio/'+VOICE[cur];
+  if(fresh||!aud.src.endsWith(src)||aud.ended){aud.src=src;}
+  aud.play().catch(()=>setReading(false));}
+function setReading(on){reading=on;rd.setAttribute('aria-pressed',on);rd.textContent=on?'❚❚ Pause':'▶ Read to me';
+  if(on)speak(false);else{clearTimeout(turn);aud.pause();}}
+if(aud){rd.hidden=false;aud.preload='none';rd.onclick=()=>setReading(!reading);
+  aud.onended=()=>{if(reading&&cur<S.length-1)turn=setTimeout(()=>go(cur+1),900);else setReading(false);};}
 for(let k=1;k<=NPARTS;k++)$('part'+k).onclick=()=>go(S.findIndex(s=>s.p===k));
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);});
 let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isNarrow()!==lastNarrow)render();},150);});

@@ -45,6 +45,7 @@ def build(slug):
     <div class="narr"><div class="speaker" id="speaker"></div><p id="narr"></p></div>
   </section>
   <div class="controls">
+    <button id="read" type="button" aria-pressed="false" hidden>▶ Read to me</button>
     <button id="prev" type="button">Back</button>
     <div class="dots" id="dots" role="group" aria-label="Scenes"></div>
     <button id="replay" type="button">Replay</button>
@@ -55,8 +56,11 @@ def build(slug):
 <script>
 '''
     d = ROOT / 'decks' / slug
+    # optional narration: decks/<slug>/audio/NN.mp3, made by tools/voice.py from voice/<slug>.json
+    mf = d / 'audio' / 'manifest.json'
+    voice = json.dumps(sorted(json.loads(mf.read_text()))) if mf.exists() else 'null'
     cover = next((f"'{c}'" for c in ('cover.webp', 'cover.jpg') if (d / c).exists()), 'null')
-    out = head + wrap + f'/* optional picture for the opening plate: decks/{slug}/cover.webp (transparent paper) or cover.jpg */\nconst COVER={cover};\n' + (T / 'base_helpers.js').read_text() + '\n' + (T / 'lib.js').read_text() + '\n/* ===================== deck ===================== */\n' + body.strip() + "\nconst NAR='Narrator';\n" + (T / 'base_runtime.html').read_text()
+    out = head + wrap + f'/* optional picture for the opening plate: decks/{slug}/cover.webp (transparent paper) or cover.jpg */\nconst COVER={cover};\nconst VOICE={voice};\n' + (T / 'base_helpers.js').read_text() + '\n' + (T / 'lib.js').read_text() + '\n/* ===================== deck ===================== */\n' + body.strip() + "\nconst NAR='Narrator';\n" + (T / 'base_runtime.html').read_text()
     d.mkdir(parents=True, exist_ok=True)
     (d / 'index.html').write_text(out)
     import subprocess, tempfile

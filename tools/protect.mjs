@@ -7,7 +7,7 @@
 // AES-256-GCM under a key derived from the password (PBKDF2-SHA256), and replaced by a
 // small unlock page holding only the ciphertext. Entering the password once unlocks
 // every page in that browser (the derived key, never the password, is kept in
-// localStorage). Images are copied as they are. src/, tools/ and README.md are not
+// localStorage). Images and narration audio are copied as they are. src/, tools/ and README.md are not
 // published.
 import { webcrypto as crypto } from 'node:crypto';
 import fs from 'node:fs';
@@ -110,10 +110,10 @@ let assets = 0;
 for (const d of fs.readdirSync(path.join(ROOT, 'decks'))) {
   for (const f of fs.readdirSync(path.join(ROOT, 'decks', d))) {
     if (f === 'index.html') continue;
-    fs.copyFileSync(path.join(ROOT, 'decks', d, f), path.join(OUT, 'decks', d, f)); assets++;
+    fs.cpSync(path.join(ROOT, 'decks', d, f), path.join(OUT, 'decks', d, f), { recursive: true }); assets++;
   }
 }
 if (fs.existsSync(path.join(ROOT, 'img'))) fs.cpSync(path.join(ROOT, 'img'), path.join(OUT, 'img'), { recursive: true });
 fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
 fs.writeFileSync(path.join(OUT, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
-console.log(`protected ${pages.length} pages, copied ${assets} images -> ${path.relative(ROOT, OUT) || OUT}`);
+console.log(`protected ${pages.length} pages, copied ${assets} images and audio folders -> ${path.relative(ROOT, OUT) || OUT}`);
