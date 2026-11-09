@@ -135,3 +135,15 @@ in the repository secret `SITE_PASSWORD`; to change it, update the secret and re
 workflow. The key is derived with a fixed salt, so readers stay unlocked across deploys; changing
 the password (or setting an optional `SITE_SALT` secret) signs everyone out. To lock a browser again, clear the site's storage (key `fundamentals-key`).
 The five portrait JPEGs and the narration audio under `decks/` are copied unencrypted.
+
+### Student access codes
+
+Each page is encrypted under its own key, wrapped once for every password allowed to open it, so different
+codes can open different primers. `tools/access.json` names cohorts and the sections (by `hub.json` name) or
+single primers (by slug) each one opens; the codes themselves live in the repository secret `SITE_CODES` as
+JSON, for example `{"students": "ABC1234"}`. Codes are not case-sensitive. A code holder sees only their primers on
+the hub (counts and contents included); a primer outside their code shows the unlock page with a link back.
+The hub has "Enter another code" (`unlock.html`, which adds a code to the browser) and "Sign out". To change
+what a cohort sees, edit `access.json` and push; nobody needs to re-enter a code. To change a code, edit the
+secret and re-run the workflow; only that code's holders are signed out. A cohort with no code in the secret
+is skipped.

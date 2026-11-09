@@ -1,0 +1,14 @@
+{
+  "_about": "Which content each access code opens. The codes themselves are not stored here: they live in the repository secret SITE_CODES as JSON, e.g. {\"students\": \"ABC1234\"}, keyed by the names below. The owner password (SITE_PASSWORD) always opens everything. List sections by their name in tools/hub.json, and single primers by slug in decks. An optional notice (plain text) is shown to code holders on every page; leave it empty for none.",
+  "notice": "",
+  "cohorts": {
+    "students": {
+      "sections": [
+        "Chemistry and physics of life",
+        "The central dogma",
+        "The cell"
+      ],
+      "decks": []
+    }
+  }
+}
