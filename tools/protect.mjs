@@ -8,8 +8,8 @@
 // for every password allowed to open it. Passwords are stretched with PBKDF2-SHA256; the browser keeps the
 // derived keys (never the passwords) in localStorage, so each one is entered only once.
 //
-// SITE_PASSWORD, the owner password, opens everything. SITE_CODES (optional) is JSON mapping cohort names to
-// access codes; tools/access.json says which sections and primers each cohort opens. Code holders see only
+// SITE_PASSWORD, the owner password, opens everything. tools/access.json lists student cohorts: each one's access
+// code and the sections and primers it opens (a code may instead come from SITE_CODES, JSON by cohort name). Code holders see only
 // their primers on the hub and a "not examinable" notice on every page. Codes are not case-sensitive.
 // Images and narration audio are copied as they are. src/, tools/ and README.md are not published.
 import { webcrypto as crypto } from 'node:crypto';
@@ -48,14 +48,15 @@ const access = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'access.json'
 const codes = process.env.SITE_CODES ? JSON.parse(process.env.SITE_CODES) : {};
 const holders = [{ name: 'owner', ...(await derive(PASSWORD)), decks: null }];
 for (const [name, c] of Object.entries(access.cohorts)) {
-  if (!codes[name]) { console.warn(`no code set for cohort "${name}" in SITE_CODES; skipped`); continue; }
+  const code = c.code || codes[name];
+  if (!code) { console.warn(`no code for cohort "${name}" (set "code" in tools/access.json or SITE_CODES); skipped`); continue; }
   const decks = new Set(c.decks || []);
   for (const s of c.sections || []) {
     const g = hub.find(g => g.name === s);
     if (!g) { console.error(`tools/access.json: unknown section "${s}"`); process.exit(1); }
     g.decks.forEach(d => decks.add(d.slug));
   }
-  holders.push({ name, ...(await derive(String(codes[name]).trim().toUpperCase())), decks: [...decks].sort() });
+  holders.push({ name, ...(await derive(String(code).trim().toUpperCase())), decks: [...decks].sort() });
 }
 const opens = (h, p) => !h.decks || p === 'index.html' || h.decks.includes(p.split('/')[1]);
 // The hub hides primers a reader cannot open and shows the notice to code holders.

@@ -1,6 +1,5 @@
 # Publishes a password-protected copy of the site to GitHub Pages.
 # Needs: repo secret SITE_PASSWORD, and Settings → Pages → Source set to "GitHub Actions".
-# Optional: repo secret SITE_CODES, JSON of student access codes by cohort (see tools/access.json).
 name: Publish protected site
 on:
   push:
