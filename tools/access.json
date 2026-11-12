@@ -1,0 +1,74 @@
+{
+  "_about": "Student access codes, one per module. Each cohort has a code, a title shown on the hub, and the sections (by name in tools/hub.json) and single primers (by slug) it opens; a code holder sees only those on the hub. Codes are a convenience to keep students focused, not security. The owner password (SITE_PASSWORD secret) always opens everything. An optional notice (plain text) is shown to code holders on every page; leave it empty for none.",
+  "notice": "",
+  "cohorts": {
+    "lsm3232": {
+      "code": "LSM3232",
+      "title": "LSM3232 Microbiology",
+      "sections": [],
+      "decks": [
+        "macromolecules",
+        "energy-redox",
+        "envelope",
+        "motility",
+        "growth",
+        "central-metabolism",
+        "respiration",
+        "microscopy-structure",
+        "lab-methods",
+        "pathogenesis",
+        "antimicrobials",
+        "applied-microbiology",
+        "microbial-ecology",
+        "autotrophy-cycles",
+        "pasteur",
+        "koch",
+        "winogradsky"
+      ]
+    },
+    "lsm3225": {
+      "code": "LSM3225",
+      "title": "LSM3225 Molecular Microbiology in Human Diseases",
+      "sections": [],
+      "decks": [
+        "macromolecules",
+        "dna-replication",
+        "transcription",
+        "translation",
+        "envelope",
+        "growth",
+        "gene-transfer",
+        "virology",
+        "immunity",
+        "pathogenesis",
+        "antimicrobials",
+        "lab-methods",
+        "koch"
+      ]
+    },
+    "mdg5246": {
+      "code": "MDG5246",
+      "title": "MDG5246 Infectious Diseases: Principles and Research Methods",
+      "sections": [],
+      "decks": [
+        "envelope",
+        "prokaryotic-gene",
+        "regulation",
+        "evolution",
+        "gene-transfer",
+        "genomes",
+        "virology",
+        "immunity",
+        "pathogenesis",
+        "antimicrobials",
+        "lab-methods",
+        "molecular-cloning",
+        "sequencing",
+        "tn-seq",
+        "statistics",
+        "biosafety-ethics",
+        "koch"
+      ]
+    }
+  }
+}

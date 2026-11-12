@@ -27,6 +27,7 @@ jobs:
         env:
           SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
           SITE_SALT: ${{ secrets.SITE_SALT }}
+          SITE_CODES: ${{ secrets.SITE_CODES }}
         run: node tools/protect.mjs _site
       - uses: actions/upload-pages-artifact@v3
         with:

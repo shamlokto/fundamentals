@@ -109,6 +109,20 @@ Plate text must not be smaller than 12 px: the classes `f8` to `f16` and `Tc()` 
 * 6–9 plates per deck, at least one interactive (chips) plate and at least two real diagrams
   (flow, cycle, plot or drawing), not only cards and tables.
 
+## Narration ("Read to me")
+
+A deck gets a "Read to me" button when `decks/<slug>/audio/` holds narration. Write one spoken script per plate
+in `voice/<slug>.json` (`{"voice": "eve", "plates": [{"title": ..., "say": ...}]}`, titles in deck order),
+about 600–900 characters each: describe what the plate shows and walk the reader through it, in words that
+read well aloud (say "beta-lactams", "seventy-S", "four milligrams per litre"). Use only facts already on the
+plate, so the script needs no separate fact-check. Then
+
+    XAI_API_KEY=... python3 tools/voice.py <slug>
+    python3 tools/build.py <slug>
+
+`voice.py` calls xAI text to speech and only re-records plates whose script or voice changed (about
+US$0.003 per plate). The button plays each plate and turns the page when it ends.
+
 ## Password protection
 
 The live site is published by `.github/workflows/pages.yml`, which runs
@@ -119,5 +133,17 @@ and deploys `_site/`. Every HTML page is AES-GCM encrypted under the password an
 an unlock page; one correct entry unlocks every page in that browser. The password lives only
 in the repository secret `SITE_PASSWORD`; to change it, update the secret and re-run the
 workflow. The key is derived with a fixed salt, so readers stay unlocked across deploys; changing
-the password (or setting an optional `SITE_SALT` secret) signs everyone out. To lock a browser again, clear the site's storage (key `fundamentals-key`).
-The five portrait JPEGs under `decks/` are copied unencrypted.
+the password (or setting an optional `SITE_SALT` secret) signs everyone out. To lock a browser again, clear the site's storage (key `fundamentals-keys`), or use Sign out on the hub.
+The five portrait JPEGs and the narration audio under `decks/` are copied unencrypted.
+
+### Student access codes
+
+Each page is encrypted under its own key, wrapped once for every password allowed to open it, so different
+codes can open different primers. `tools/access.json` lists one cohort per module: its code and the sections
+(by `hub.json` name) or single primers (by slug) it opens. The codes are kept in the repo on purpose: they keep
+students focused on their module and are not meant as security. Each cohort's `title` is shown on the hub
+("Fundamentals for ..."). Codes and the owner password are not case-sensitive. Pick primers that cover the
+background a course builds on, not its lecture content. A code holder sees only their primers on
+the hub (counts and contents included); a primer outside their code shows the unlock page with a link back.
+The hub has "Enter another code" (`unlock.html`, which adds a code to the browser) and "Sign out". To change
+what a cohort sees, edit `access.json` and push; nobody needs to re-enter a code. To change a code, edit it there; only that code's holders are signed out.
