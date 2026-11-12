@@ -684,7 +684,7 @@ const FERM=[
  {k:'Homolactic',p:'2 lactate',org:'Lactococcus, Streptococcus, many Lactobacillus',atp:2,note:'Pyruvate reduced by lactate dehydrogenase. Basis of yoghurt and cheese; streptococcal lactate acidifies dental plaque.'},
  {k:'Heterolactic',up:'net 1 ATP',p:'lactate + ethanol + CO₂',org:'Leuconostoc, Lactobacillus brevis',atp:1,note:'Uses the phosphoketolase pathway. CO₂ gives the holes in some cheeses and helps sauerkraut ferment.'},
  {k:'Alcoholic',p:'2 ethanol + 2 CO₂',org:'yeast; Zymomonas (via the ED pathway, 1 ATP)',atp:'2 (yeast); 1 (Zymomonas)',note:'Pyruvate decarboxylase then alcohol dehydrogenase. Bread, beer and wine.'},
- {k:'Mixed acid',p:'acetate, lactate, succinate, ethanol, formate → H₂ + CO₂',org:'E. coli, Salmonella, Shigella',atp:2.5,note:'Strongly acidic end products: methyl red positive. Formate hydrogen lyase splits formate to H₂ and CO₂ (gas in Durham tubes).'},
+ {k:'Mixed acid',p:'acetate, lactate, succinate, ethanol, formate → H₂ + CO₂',org:'E. coli, Salmonella, Shigella',atp:2.5,note:'Strongly acidic end products: methyl red positive. Formate hydrogen lyase splits formate to H₂ and CO₂ (gas in Durham tubes); Shigella lacks it and makes no gas.'},
  {k:'Butanediol',p:'2,3-butanediol, ethanol, CO₂, less acid',org:'Enterobacter, Klebsiella, Serratia',atp:2,note:'The intermediate acetoin gives a positive Voges–Proskauer test; less acid, so methyl red negative. Together these tests distinguish E. coli from Klebsiella.'},
  {k:'Butyric / solventogenic',p:'butyrate, acetate, H₂; later acetone and butanol',org:'Clostridium acetobutylicum',atp:3,note:'The acetone–butanol fermentation, developed by Chaim Weizmann during the First World War for acetone.'},
  {k:'Propionic',p:'propionate, acetate, CO₂',org:'Propionibacterium (Cutibacterium)',atp:'about 3–4',note:'Gives Swiss cheese its holes and flavour.'}];
@@ -697,18 +697,18 @@ function scB2(n){
   let s='';const y=112, x1=n?8:24, x2=n?352:616, w=n?32:50;
   const X=n?{I:46,Q:94,III:140,c:184,IV:226,A:314}:{I:110,Q:188,III:262,c:332,IV:396,A:488};
   s+=G('a-fade',0,membraneBand(x1,x2,y-14,28)+T(x1+2,y-82,n?'periplasm: P side, + charge, acidic':'periplasm (P side): positive charge, more acidic','note start f12')+T(x1+2,y+102,n?'cytoplasm: N side, − charge, alkaline':'cytoplasm (N side): negative charge, more alkaline','note start f12'));
-  const cx=k=>X[k], cplx=(k,lab,col,bot)=>`<rect x="${cx(k)-w/2}" y="${y-26}" width="${w}" height="${26+bot}" rx="7" fill="${col}" stroke="${INK}" class="tint"/>`+Tc(cx(k)+(n?5:8),y+5,lab,'#3A2E22',12,'mono mid','600');
+  const cx=k=>X[k], cplx=(k,lab,col,bot)=>`<rect x="${cx(k)-w/2}" y="${y-26}" width="${w}" height="${26+bot}" rx="7" fill="${col}" stroke="${INK}" class="tint"/>`+Tc(cx(k)+(n?6:10),y+5,lab,'#3A2E22',12,'mono mid','600');
   s+=G('a-fade',.3,cplx('I','I','#A9C4DC',44)+cplx('III','III','#C9A9D6',26)+cplx('IV','IV','#E7A99B',26)
     +`<ellipse cx="${cx('Q')}" cy="${y}" rx="${n?13:16}" ry="10" fill="${PAL.gold}" stroke="${INK}"/>`+Tc(cx('Q'),y+4,'Q','#3A2E22',12,'mono mid','600')
     +`<circle cx="${cx('c')}" cy="${y-42}" r="10" fill="#E8B4A0" stroke="${INK}"/>`+Tc(cx('c'),y-38,'c','#3A2E22',12,'mono mid','600')
     +T(n?6:cx('I'),y+66,'NADH → NAD⁺',(n?'mono start':'mono mid')+' f12')+T(cx('IV')+(n?-4:0),y+50,'½O₂ + 2H⁺ → H₂O','mono mid f12'));
   const e=(x1,y1,x2,y2)=>arw(x1,y1,x2,y2,{w:1.5,dash:'4 3'});
   s+=G('a-fade',.6,e(cx('I')+w/2,y,cx('Q')-(n?14:17),y)+e(cx('Q')+(n?14:17),y,cx('III')-w/2-2,y)+e(cx('III')+w/2,y-20,cx('c')-10,y-40)+e(cx('c')+10,y-40,cx('IV')-w/2-1,y-20));
-  const h=(k,lab)=>arw(cx(k)-w/4,k==='I'?y+38:y+30,cx(k)-w/4,y-44,{blue:1,w:1.4})+T(cx(k)-w/4,y-52,lab,'mono mid f12');
+  const hx=k=>cx(k)-w*.36, h=(k,lab)=>arw(hx(k),k==='I'?y+38:y+30,hx(k),y-44,{blue:1,w:1.4})+T(hx(k),y-52,lab,'mono mid f12');
   s+=G('a-fade',.9,h('I','4H⁺')+h('III','4H⁺')+h('IV','2H⁺'));
   const A=cx('A');
   s+=G('a-fade',1.2,`<rect x="${A-17}" y="${y-18}" width="34" height="36" rx="6" fill="${PAL.gold}" stroke="${INK}" class="tint"/>`+ln(A,y+18,A,y+28,INK,3)+`<circle cx="${A}" cy="${y+46}" r="18" fill="${PAL.gold}" stroke="${INK}"/>`
-    +Tc(A-6,y+5,'F₀','#3A2E22',12,'mono mid','600')+Tc(A,y+50,'F₁','#3A2E22',12,'mono mid','600')+arw(A+9,y-46,A+9,y+14,{blue:1,w:1.6})+T(A+9,y-52,n?'H⁺ back':'H⁺ flow back','mono mid f12')
+    +Tc(A-7,y+5,'F₀','#3A2E22',12,'mono mid','600')+Tc(A,y+50,'F₁','#3A2E22',12,'mono mid','600')+arw(A+11,y-46,A+11,y+14,{blue:1,w:1.6})+T(A+11,y-52,n?'H⁺ back':'H⁺ flow back','mono mid f12')
     +(n?T(A,y+80,'ADP + Pᵢ','mono mid f12')+T(A,y+94,'→ ATP','mono mid f12'):T(A+24,y+50,'ADP + Pᵢ → ATP','mono start f12')));
   s+=G('a-fade',1.4,T(x1+2,y+124,'dashed: electrons (2 e⁻ per NADH);  blue: protons','note start f12'));
   const cap=para(x1+2,y+146,'A mitochondrion-like chain (as in Paracoccus) moves about 10 H⁺ out per NADH: 4 at complex I, 4 at III (bc₁, via the Q cycle) and 2 at IV, while O₂ is reduced on the cytoplasmic side. E. coli has no III or IV: its quinol oxidases bo₃ (which pumps) and bd (which does not) take electrons straight from QH₂.',n?52:96,'lab start f13',17,1.5);
