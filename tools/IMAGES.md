@@ -50,3 +50,11 @@ The hub header, all 54 card strips and the 26 opening-plate covers were made wit
   paper grain dropped), and the result saved as a transparent WebP of at most 520 px, under 160 KB.
 
 Corrections made by hand: the antibiotic plate's paper discs were painted into the clear zones.
+
+## Video
+
+No generated video on the site (owner's ruling, November 2026). The one trial, an image-to-video clip of the
+motility cover, was rejected because the flagella waved instead of rotating. If video is reconsidered, generated
+motion must be mechanically right: flagellar bundles rotate as rigid helices (they do not wave like whips),
+DNA stays right-handed, and nothing changes shape or appears from nowhere. A clip that shows the wrong
+mechanism is worse than none.
