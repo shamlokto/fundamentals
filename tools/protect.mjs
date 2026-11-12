@@ -46,7 +46,10 @@ async function seal(key, bytes) {
 const hub = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'hub.json'), 'utf8'));
 const access = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools', 'access.json'), 'utf8'));
 const codes = process.env.SITE_CODES ? JSON.parse(process.env.SITE_CODES) : {};
-const holders = [{ name: 'owner', ...(await derive(PASSWORD)), decks: null }];
+// Passwords and codes are not case-sensitive: each is stored upper-cased, and the unlock page upper-cases what is typed.
+const holders = [{ name: 'owner', ...(await derive(PASSWORD.trim().toUpperCase())), decks: null }];
+// Browsers that unlocked before this rule hold a key made from the password as typed; keep it working.
+if (PASSWORD !== PASSWORD.trim().toUpperCase()) holders.push({ name: 'owner (as typed)', ...(await derive(PASSWORD)), decks: null });
 for (const [name, c] of Object.entries(access.cohorts)) {
   const code = c.code || codes[name];
   if (!code) { console.warn(`no code for cohort "${name}" (set "code" in tools/access.json or SITE_CODES); skipped`); continue; }
@@ -56,11 +59,12 @@ for (const [name, c] of Object.entries(access.cohorts)) {
     if (!g) { console.error(`tools/access.json: unknown section "${s}"`); process.exit(1); }
     g.decks.forEach(d => decks.add(d.slug));
   }
-  holders.push({ name, ...(await derive(String(code).trim().toUpperCase())), decks: [...decks].sort() });
+  holders.push({ name, title: c.title || '', ...(await derive(String(code).trim().toUpperCase())), decks: [...decks].sort() });
 }
 const opens = (h, p) => !h.decks || p === 'index.html' || h.decks.includes(p.split('/')[1]);
 // The hub hides primers a reader cannot open and shows the notice to code holders.
 const grants = Object.fromEntries(holders.map(h => [h.id, h.decks]));
+const titles = Object.fromEntries(holders.filter(h => h.title).map(h => [h.id, h.title]));
 
 const gate = (title, payload) => `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -111,7 +115,7 @@ async function open(keys){
     if(g){var full=false,decks={};all.forEach(function(id){if(id in g){if(g[id]===null)full=true;else g[id].forEach(function(d){decks[d]=1})}});
       var notice=!full&&Object.keys(decks).length>0;
       var at=html.indexOf('<script',Math.max(0,html.indexOf('<footer')));if(at<0)at=html.indexOf('</body>');
-      html=html.slice(0,at)+'<script>('+P.filter+')('+JSON.stringify({full:full,decks:Object.keys(decks),notice:notice?P.notice:''})+')<\\/script>'+html.slice(at);}
+      html=html.slice(0,at)+'<script>('+P.filter+')('+JSON.stringify({full:full,decks:Object.keys(decks),notice:notice?P.notice:'',titles:full?[]:all.map(function(id){return P.titles[id]}).filter(Boolean)})+')<\\/script>'+html.slice(at);}
     else if(P.notice&&!all.some(function(id){return P.owner===id})){
       html=html.replace(/<body([^>]*)>/,'<body$1><div role="note" style="max-width:960px;margin:12px auto 0;padding:8px 14px;border:1px solid #B9A889;border-radius:8px;background:#F3EDE0;color:#2C2318;font:14px/1.45 system-ui,sans-serif">'+P.notice+'</div>');}
     // writing while the gate page is still loading is discarded by the browser, so wait for load
@@ -123,7 +127,7 @@ var f=document.getElementById('gate'),pw=document.getElementById('pw'),go=docume
 f.addEventListener('submit',async function(e){
   e.preventDefault();go.disabled=true;msg.textContent='Unlocking…';
   try{
-    var tries=[pw.value];if(pw.value.trim().toUpperCase()!==pw.value)tries.push(pw.value.trim().toUpperCase());
+    var tries=[pw.value.trim().toUpperCase()];if(tries[0]!==pw.value)tries.push(pw.value);
     for(var t=0;t<tries.length;t++){var raw=b64(await derive(tries[t]));
       var id=await idOf(u8(raw));
       if(P.ids?P.ids.indexOf(id)>=0:P.locks[id]){var keys=load();if(keys.indexOf(raw)<0)keys.push(raw);save(keys);if(P.ids)location.replace('./');else await open(keys);return}}
@@ -160,7 +164,8 @@ const filter = function (a) {
     document.querySelectorAll('.toc li span').forEach(function (s) { var l = s.closest('li').querySelector('a'), g = l && document.getElementById(l.getAttribute('href').slice(1)); if (g) s.textContent = g.querySelectorAll('a.card').length; });
   }
   var h = document.querySelector('header');
-  if (h) h.insertAdjacentHTML('beforeend', (a.notice ? '<p role="note" style="margin:14px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:15px"><b>' + a.notice + '</b></p>' : '') + add);
+  var esc = function (t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  if (h) h.insertAdjacentHTML('beforeend', (a.titles.length ? '<p style="margin:14px 0 0;font-size:15px">Fundamentals for <b>' + a.titles.map(esc).join('</b> and <b>') + '</b>: background primers to support the course.</p>' : '') + (a.notice ? '<p role="note" style="margin:14px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:15px"><b>' + a.notice + '</b></p>' : '') + add);
 };
 
 const pages = ['index.html', ...fs.readdirSync(path.join(ROOT, 'decks')).sort()
@@ -173,7 +178,7 @@ for (const p of pages) {
   const locks = {};
   for (const h of holders) if (opens(h, p)) locks[h.id] = await seal(h.key, raw);
   const payload = { page: await seal(pageKey, enc(html)), locks, notice: access.notice, owner: holders[0].id };
-  if (p === 'index.html') Object.assign(payload, { grants, filter: filter.toString() });
+  if (p === 'index.html') Object.assign(payload, { grants, titles, filter: filter.toString() });
   const dst = path.join(OUT, p);
   fs.mkdirSync(path.dirname(dst), { recursive: true });
   fs.writeFileSync(dst, gate('Fundamentals', payload));

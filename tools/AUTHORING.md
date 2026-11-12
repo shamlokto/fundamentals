@@ -141,7 +141,9 @@ The five portrait JPEGs and the narration audio under `decks/` are copied unencr
 Each page is encrypted under its own key, wrapped once for every password allowed to open it, so different
 codes can open different primers. `tools/access.json` lists one cohort per module: its code and the sections
 (by `hub.json` name) or single primers (by slug) it opens. The codes are kept in the repo on purpose: they keep
-students focused on their module and are not meant as security. Codes are not case-sensitive. A code holder sees only their primers on
+students focused on their module and are not meant as security. Each cohort's `title` is shown on the hub
+("Fundamentals for ..."). Codes and the owner password are not case-sensitive. Pick primers that cover the
+background a course builds on, not its lecture content. A code holder sees only their primers on
 the hub (counts and contents included); a primer outside their code shows the unlock page with a link back.
 The hub has "Enter another code" (`unlock.html`, which adds a code to the browser) and "Sign out". To change
 what a cohort sees, edit `access.json` and push; nobody needs to re-enter a code. To change a code, edit it there; only that code's holders are signed out.
