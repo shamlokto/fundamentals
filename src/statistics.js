@@ -5,10 +5,10 @@ const stPhi=z=>{const t=1/(1+.2316419*Math.abs(z)), d=.3989423*Math.exp(-z*z/2),
 const stTcrit=df=>{const z=1.959964;return z+(z**3+z)/(4*df)+(5*z**5+16*z**3+3*z)/(96*df*df);};
 const stPower=(d,nn)=>{const df=2*nn-2, tc=stTcrit(df), del=d*Math.sqrt(nn/2);return stPhi((del-tc)/Math.sqrt(1+tc*tc/(2*df)));};
 const stNeed=d=>{for(let k=2;k<500;k++)if(stPower(d,k)>=.8)return k;return 500;};
-const POW=[{k:'d = 0.5',d:.5,t:'Half a standard deviation: a subtle phenotype, such as a small change in growth rate.'},
- {k:'d = 0.8',d:.8,t:'Cohen’s conventional “large” effect. Still more cultures than most labs run.'},
- {k:'d = 1.2',d:1.2,t:'A clear shift, for example a mutant that grows noticeably more slowly.'},
- {k:'d = 2',d:2,t:'A big, clean effect, such as a knockout that abolishes a function. Small n suffices only for effects this large.'}];
+const POW=[{k:'d = 0.5',d:.5,n:64,t:'Half a standard deviation: a subtle phenotype, such as a small change in growth rate.'},
+ {k:'d = 0.8',d:.8,n:26,t:'Cohen’s conventional “large” effect. Still more cultures than most labs run.'},
+ {k:'d = 1.2',d:1.2,n:12,t:'A clear shift, for example a mutant that grows noticeably more slowly.'},
+ {k:'d = 2',d:2,n:6,t:'A big, clean effect, such as a knockout that abolishes a function. Small n suffices only for effects this large.'}];
 let powSel=1;
 const PRI=[{k:'Flat prior',a:1,b:1,t:'Beta(1, 1): every prevalence equally plausible beforehand, so the posterior has the shape of the likelihood and hides it.'},
  {k:'Sceptical prior',a:1,b:9,t:'Beta(1, 9): we expected the gene to be rare, around 10%. The posterior is pulled down.'},
@@ -40,7 +40,7 @@ function scS3(n){
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scS4(n){
-  const c=POW[powSel], need=stNeed(c.d);
+  const c=POW[powSel], need=c.n||stNeed(c.d); /* exact noncentral-t n (as G*Power, power.t.test); the curve uses an approximation */
   const A=n?axes(54,30,280,160,{xr:[2,70],yr:[0,1],xt:[[2,'2'],[10,'10'],[30,'30'],[50,'50'],[70,'70']],yt:[[0,'0'],[.5,'0.5'],[.8,'0.8'],[1,'1']],xlab:'cultures per group',ylab:'power'})
     :axes(70,36,300,190,{xr:[2,70],yr:[0,1],xt:[[2,'2'],[10,'10'],[30,'30'],[50,'50'],[70,'70']],yt:[[0,'0'],[.5,'0.5'],[.8,'0.8'],[1,'1']],xlab:'cultures per group',ylab:'power'});
   let s=A.s+ln(A.x,FX(A.py(.8)),A.x+A.w,FX(A.py(.8)),'#A4473A',1,'4 3');
