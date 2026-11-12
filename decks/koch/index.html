@@ -463,15 +463,15 @@ function scK2(n){
 function scK3(n){
   const N=n?4:8, x0=n?36:44, dx=n?56:60, y0=n?60:66;
   let s=G('a-fade',0,mouse(x0,y0,0.9,{dead:true})+T(x0,y0+34,'anthrax blood','note mid f11'));
-  for(let i=0;i<N;i++){const x=x0+50+i*dx;s+=G('a-fade',(.3+i*.25).toFixed(2),arw(x-30,y0,x-16,y0,{w:1.2})+field(x+8,y0,18,chainRods(x-6,y0,2,0))+Tc(x+8,y0+32,n?['1','2','…','8th'][i]:i===N-1?'8th':String(i+1),'#2F5276',10,'mono mid','600'));}
+  for(let i=0;i<N;i++){const x=x0+50+i*dx;s+=G('a-fade',(.3+i*.25).toFixed(2),arw(x-30,y0,x-16,y0,{w:1.2})+field(x+8,y0,18,chainRods(x-6,y0,2,0))+Tc(x+8,y0+32,n?['1','2','…','last'][i]:i===N-1?'last':i===N-2?'…':String(i+1),'#2F5276',10,'mono mid','600'));}
   const xe=x0+50+N*dx;
   s+=G('a-fade',(.4+N*.25).toFixed(2),arw(xe-26,y0,xe-10,y0)+mouse(xe+18,y0,.9,{dead:true}));
   const y=y0+70;
-  const rows=[['If the cause were a poison in the blood','Each transfer dilutes it. After eight, essentially none of the original blood is left, so the last drop should be harmless.','harmless'],
+  const rows=[['If the cause were a poison in the blood','Each transfer dilutes it. After a series of transfers, essentially none of the original blood is left, so the last drop should be harmless.','harmless'],
    ['If the cause were a living organism','It multiplies in every drop, so the last culture is as strong as the first.','still lethal']];
   let yy=y;
   rows.forEach((r,i)=>{const L=wrap(r[1],n?50:80);s+=G('a-fade',(2.6+i*.4).toFixed(1),T(n?16:24,yy,r[0],'cname start f14')+L.map((l,j)=>T(n?16:24,yy+18+j*16,l,'note start f12')).join('')+mark(n?338:606,yy-4,i===1,8));yy+=24+L.length*16+12;});
-  const OL=n?['Observed: the eighth culture killed mice','just like the original blood.']:['Observed: the eighth culture killed mice just like the original blood.'];
+  const OL=n?['Observed: the last culture killed mice','just like the original blood.']:['Observed: the last culture killed mice just like the original blood.'];
   s+=G('a-fade',3.6,`<rect x="${n?10:18}" y="${yy-14}" width="${n?340:604}" height="${8+OL.length*18}" rx="3" fill="#E7DEC9" stroke="${INK}"/>`+OL.map((l,i)=>T(n?16:24,yy+4+i*18,l,'lab start '+(n?'f12':'f13'))).join(''));
   yy+=(OL.length-1)*18;
   const p=para(n?16:24,yy+40,'Serial passage turns dilution into an argument. The same logic was used again by Beijerinck for tobacco mosaic in 1898, and it is the reasoning behind every passage experiment since.',n?50:92,'note start f13',17,4);
@@ -567,7 +567,7 @@ const NAR='Narrator';
 const S=[
  {p:1,title:'Robert Koch',draw:scK1,text:"Koch was a country doctor in Wollstein, in what is now Poland, when he began working on anthrax in a corner of his house. Within a decade he had founded the methods of medical bacteriology: pure culture on solid media, staining, photomicrography, and a standard of evidence for blaming a disease on a microbe."},
  {p:1,title:'Anthrax',draw:scK2,text:"Anthrax rods had been seen in the blood of dying sheep and cattle since the 1850s. Koch showed in 1876 that the rods multiply in the blood, form spores outside the body, and that the spores survive in soil and germinate again in a new host. The life cycle explained why some fields stayed dangerous for years."},
- {p:1,title:'Poison or organism?',draw:scK3,text:"Could something else in the blood be the cause? Koch transferred a drop from one culture to the next, eight times. By the end, the original blood was diluted out of existence, yet the last culture killed mice as surely as the first. Only something that multiplies could do that."},
+ {p:1,title:'Poison or organism?',draw:scK3,text:"Could something else in the blood be the cause? Koch transferred a drop from one culture to the next, again and again. By the end, the original blood was diluted out of existence, yet the last culture killed mice as surely as the first. Only something that multiplies could do that. Pasteur and Joubert made the argument explicit in 1877, with a long series of cultures in sterile urine."},
  {p:2,title:'Solid media',draw:scK4,text:"Liquid cultures mix everything together. Koch's laboratory moved to solid surfaces where each cell grows into a separate colony: potato slices, then gelatin, then agar, suggested by Fanny Hesse, the wife of a colleague, who used it in her kitchen. Julius Petri's dish followed in 1887."},
  {p:2,title:'Tuberculosis',draw:scK5,text:"Tuberculosis killed about one in seven people in nineteenth-century Europe. Its bacillus was hard to stain and slow to grow, which is why it took a new staining method, cultures on coagulated serum kept for weeks, and animal inoculation before Koch could announce, in March 1882, that he had found the cause."},
  {p:3,title:'The postulates',draw:scK6,text:"The logic of the anthrax and tuberculosis work was set out as four criteria. The microbe must be found in every case; it must be grown in pure culture; the culture must cause the disease in a healthy host; and it must be recovered again. They remain the clearest statement of what it means to show causation in infectious disease."},
