@@ -326,7 +326,7 @@ function scFamily(n){
 
 /* ===================== Part II · the machine ===================== */
 function scVs(n){
-  const rows=[['Template','both strands','one strand'],['Primer','required','not needed'],['Building blocks','dNTPs (T)','NTPs (U)'],['Product','stays paired','peels off'],['Errors','~1 in 10⁹','~1 in 10⁴–10⁵'],['Speed (E. coli)','~1,000 nt/s','~40–80 nt/s']];
+  const rows=[['Template','both strands','one strand'],['Primer','required','not needed'],['Building blocks','dNTPs (T)','NTPs (U)'],['Product','stays paired','peels off'],['Errors','~1 in 10⁷','~1 in 10⁴–10⁵'],['Speed (E. coli)','~1,000 nt/s','~40–80 nt/s']];
   const x0=n?12:120, c1=n?146:320, c2=n?266:480, y0=n?40:46, dy=n?32:34;
   let s=G('a-fade',0,T(c1,y0-14,'DNA polymerase','cname mid '+(n?'f14':''))+T(c2,y0-14,'RNA polymerase','cname mid '+(n?'f14':''))+ln(x0,y0-4,n?350:560,y0-4));
   rows.forEach((r,i)=>{const y=y0+20+i*dy;s+=G('a-fade',(.3+i*.3).toFixed(1),T(x0,y,r[0],'lab start '+(n?'f13':''))+T(c1,y,r[1],'note mid '+(n?'f13':''))+T(c2,y,r[2],'note mid '+(n?'f13':'')).replace('class="note mid','class="note mid acc'));});
@@ -478,7 +478,7 @@ function scCTD(n){
 
 /* ===================== Part III · drugs ===================== */
 const DRUGS=[
- {d:'Rifampicin',org:'bacteria',k:'rna',at:[300,140],step:2,src:'from a soil bacterium (Amycolatopsis)',text:'Binds the β subunit in the RNA exit path. The RNA cannot grow past 2–3 nucleotides. A first-line tuberculosis drug; resistance arises from mutations in rpoB.'},
+ {d:'Rifampicin',org:'bacteria',k:'rna',at:[300,140],step:2,src:'semisynthetic, from Amycolatopsis rifamycin',text:'Binds the β subunit in the RNA exit path. The RNA cannot grow past 2–3 nucleotides. A first-line tuberculosis drug; resistance arises from mutations in rpoB.'},
  {d:'Fidaxomicin',org:'bacteria',k:'clamp',at:[282,84],step:1,src:'from Dactylosporangium',text:'Jams the β′ clamp at its hinge, so the polymerase cannot hold melted promoter DNA. Used against Clostridioides difficile.'},
  {d:'Myxopyronin',org:'bacteria',k:'clamp',at:[214,106],step:1,src:'from Myxococcus',text:'Binds the switch region, a different site at the clamp hinge, and stops the clamp from opening to admit promoter DNA.'},
  {d:'Streptolydigin',org:'bacteria',k:'bh',at:[384,150],step:3,src:'from Streptomyces lydicus',text:'Binds beside the bridge helix and freezes the trigger loop, so no more nucleotides can be added.'},
@@ -693,7 +693,7 @@ const S=[
  {p:2,title:'Many σ factors',draw:scSigmas,
   text:"E. coli makes seven σ factors. σ⁷⁰ runs housekeeping genes; the others redirect the core enzyme to new sets of promoters for heat shock, starvation, flagella, envelope stress, nitrogen or iron citrate uptake. Anti-σ factors hold some in reserve until needed. B. subtilis times spore formation with a cascade of σ factors, and the pneumococcus switches on competence for DNA uptake with its own σ, ComX."},
  {p:2,title:'The transcription cycle',draw:scCycle,
-  text:"In bacteria, σ guides the polymerase to a promoter. It melts about 13 base pairs to form the open complex. The enzyme then makes many short RNAs it cannot hold, until one grows long enough to push the polymerase off the promoter. σ is released, the core elongates, and a terminator ends the cycle."},
+  text:"In bacteria, σ guides the polymerase to a promoter. It melts about 13 base pairs to form the open complex. The enzyme then makes many short RNAs it cannot hold, until one grows long enough to push the polymerase off the promoter. σ is usually released, the core elongates, and a terminator ends the cycle."},
  {p:2,title:'Inside the elongation complex',draw:scInside,
   text:"Bacterial RNA polymerase and Pol II are built the same way, so the bacterial names are used here. The enzyme grips DNA in a deep cleft under the mobile β′ clamp. Downstream DNA enters between the jaws and unwinds. The template strand reaches the active site, where a magnesium ion catalyses each bond. The β wall blocks a straight path, so the template turns sharply there. About nine bases of new RNA stay paired with the template before the RNA peels off and leaves under the β flap. NTPs arrive through the secondary channel, the same route Gre factors use."},
  {p:2,title:'Adding one nucleotide',draw:scAdd,
@@ -703,7 +703,7 @@ const S=[
  {p:2,title:'Attenuation: translation decides',draw:scAtten,
   text:"Bacteria can decide whether to finish a transcript while it is being made. The trp operon leader carries two Trp codons and four regions that can pair in different ways. With tryptophan plentiful, the ribosome races through region 1 and covers region 2, so regions 3 and 4 form a terminator and transcription stops. When tryptophan is scarce, the ribosome stalls at the Trp codons, regions 2 and 3 pair instead, and the polymerase continues into the trp genes."},
  {p:2,title:'Riboswitches',draw:scRiboswitch,
-  text:"Some leaders sense metabolites without any protein. A riboswitch's aptamer folds around a specific small molecule, such as a vitamin, an amino acid or a nucleobase. Binding shifts the RNA's shape to form a terminator, or to hide the ribosome binding site, switching the downstream genes off. They were described in 2002 by Ronald Breaker, Evgeny Nudler and others, and are common in bacteria."},
+  text:"Some leaders sense metabolites without any protein. A riboswitch's aptamer folds around a specific small molecule, such as a vitamin, an amino acid or a nucleobase. Binding shifts the RNA's shape, usually to form a terminator or hide the ribosome binding site and switch the downstream genes off; a few riboswitches work the other way and switch genes on. They were described in 2002 by Ronald Breaker, Evgeny Nudler and others, and are common in bacteria."},
  {p:2,title:'Small RNAs',draw:scSRNA,
   text:"Not all regulation happens at the promoter. Small RNAs of fifty to three hundred nucleotides base-pair with messages and change their fate: most block the ribosome binding site and recruit degradation, while some open a sequestered site and switch translation on. Trans-encoded sRNAs pair imperfectly and need the chaperone Hfq to find their targets, so one sRNA can control a whole set of genes. Others work without pairing at all, sequestering a regulatory protein or, in the case of 6S RNA, the polymerase itself."},
  {p:2,title:'Eukaryotes need helpers',draw:scPIC,

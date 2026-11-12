@@ -686,7 +686,7 @@ const PATHS=[
  {k:'Pentose phosphate',atp:0,nadh:0,nadph:2,rows:[['Oxidative','glucose-6-P → ribulose-5-P + CO₂, making 2 NADPH'],['Non-oxidative','transketolase and transaldolase interconvert sugars of 3–7 carbons'],['Purpose','NADPH for biosynthesis and defence; ribose-5-P for nucleotides; erythrose-4-P for aromatic amino acids'],['Flexible','can return carbon to glycolysis or run in reverse']]}];
 let pathSel=0;
 function scC1(n){return introPlate(n,{q:'How does a cell turn sugar into everything else?',
-  belief:'A dozen precursor metabolites, four energy and redox currencies, and a handful of pathways connect almost all of metabolism. Central carbon metabolism supplies all of them. Knowing its map lets you reason about growth, fermentation, antibiotic tolerance and engineering.',
+  belief:'A dozen precursor metabolites, three energy and redox currencies (ATP, NADH and NADPH), and a handful of pathways connect almost all of metabolism. Central carbon metabolism supplies all of them. Knowing its map lets you reason about growth, fermentation, antibiotic tolerance and engineering.',
   items:['Three ways to break down glucose','The twelve precursor metabolites','The TCA cycle and its variants','Gluconeogenesis and anaplerosis','Overflow metabolism','Catabolite repression'],
   art:(cx,cy)=>{const N={g:{x:cx,y:cy-70,w:90,t:'glucose'},p:{x:cx,y:cy,w:90,t:'pyruvate'},t:{x:cx,y:cy+70,w:90,t:'TCA',f:PAL.gold}};return flow(N,[['g','p',''],['p','t','']]);},artH:190});}
 function scC2(n){
