@@ -686,10 +686,10 @@ function scE9(n){
 }
 
 function scE10(n){
-  const sp=[['Mycobacterium tuberculosis',0.02,'essentially clonal',CORE,'≈ 0'],['Staphylococcus aureus',0.1,'',CORE,'0.1'],
-   ['Escherichia coli',0.7,'',SHELL,'0.7'],['Neisseria meningitidis',7.1,'naturally competent',PHG,'7'],
-   ['Helicobacter pylori',13.6,'naturally competent',PHG,'14'],['Streptococcus pneumoniae',23.1,'naturally competent',PHG,'23']];
-  const TL=n?['Recombination relative to mutation','(r/m, MLST estimates)']:['Recombination relative to mutation (r/m, MLST estimates, Vos & Didelot 2009)'], t0=(TL.length-1)*18;
+  const sp=[['Mycobacterium tuberculosis',0.02,'essentially clonal',CORE,'≈ 0'],['Staphylococcus aureus',0.1,'',CORE,'< 1'],
+   ['Escherichia coli',0.7,'',SHELL,'~ 1'],['Neisseria meningitidis',7.1,'naturally competent',PHG,'~ 10'],
+   ['Helicobacter pylori',13.6,'naturally competent',PHG,'~ 10–20'],['Streptococcus pneumoniae',23.1,'naturally competent',PHG,'~ 20']];
+  const TL=n?['Recombination relative to mutation','(r/m, approximate; varies by method)']:['Recombination relative to mutation (r/m), approximate MLST estimates','after Vos & Didelot 2009; estimates vary several-fold between methods'], t0=(TL.length-1)*18;
   let s=G('a-fade',0,TL.map((l,i)=>T(n?16:24,28+i*18,l,'cname start '+(n?'f13':'f14'))).join(''));
   const bw=n?150:280, bx=n?170:300;
   s+=G('a-fade',.3,barRow(n?16:24,62+t0,bw,sp.map(x=>[x[0],x[1],x[3],x[4]]),25,{bx:bx-(n?16:24),rh:n?34:30,fs:n?'f11':'f12'}));
