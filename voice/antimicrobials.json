@@ -15,7 +15,7 @@
     },
     {
       "title": "Mutations and acquired genes",
-      "say": "Resistance arises in two ways. A bacterium can mutate its own genes, or it can acquire a resistance gene from somewhere else. The table sorts the important examples. Point mutations in genes such as gyr-A or rpo-B arise during treatment and pass only to the cell's descendants. Acquired genes arrive ready-made, by conjugation, transformation or transduction, usually on plasmids, transposons and integrons that can carry several resistance genes together, so that one drug can select for resistance to many. The most feared resistances are mostly acquired: extended-spectrum beta-lactamases and carbapenemases in Gram-negative bacteria, the mec-A gene that makes MRSA, and van-A in vancomycin-resistant enterococci. These genes travel between strains and even between species."
+      "say": "Resistance arises in two ways. A bacterium can mutate its own genes, or it can acquire a resistance gene from somewhere else. The table sorts the important examples. Point mutations in genes such as gyr-A or rpo-B arise during treatment and pass mainly to the cell's descendants. Acquired genes arrive ready-made, by conjugation, transformation or transduction, usually on plasmids, transposons and integrons that can carry several resistance genes together, so that one drug can select for resistance to many. The most feared resistances are mostly acquired: extended-spectrum beta-lactamases and carbapenemases in Gram-negative bacteria, the mec-A gene that makes MRSA, and van-A in vancomycin-resistant enterococci. These genes travel between strains and even between species."
     },
     {
       "title": "MIC and breakpoints",
