@@ -136,7 +136,7 @@ function scA9(n){
   const lw=n?132:170, x0=(n?10:24)+lw, x1=n?340:600, y0=34, rh=n?17:18, yr=v=>x0+(v-1930)/(2030-1930)*(x1-x0);
   let s=G('a-fade',0,T(n?10:24,20,'first clinical use of each class (approximate)','note start f12')+box(FX(yr(1967.5)),y0-6,FX(yr(1999.5)-yr(1967.5)),ev.length*rh+4,'#E7DEC9',2)
     +T(FX((yr(1967.5)+yr(1999.5))/2),y0+ev.length*rh+18,'few new classes','note mid f11'));
-  ev.forEach((e,i)=>{const y=y0+i*rh+6;s+=G('a-fade',(.1+i*.06).toFixed(2),T(x0-8,y+4,e[0],'lab end '+(n?'f11':'f12'))+ln(x0,y,x1,y,'#C9BFAB',.6)+`<circle cx="${FX(yr(e[1]))}" cy="${y}" r="4" fill="${i<8?'#2F5276':RED}"/>`);});
+  ev.forEach((e,i)=>{const y=y0+i*rh+6;s+=G('a-fade',(.1+i*.06).toFixed(2),T(x0-8,y+4,e[0],'lab end '+(n?'f11':'f12'))+ln(x0,y,x1,y,'#C9BFAB',.6)+`<circle cx="${FX(yr(e[1]))}" cy="${y}" r="4" fill="#2F5276"/>`);});
   const ay=y0+ev.length*rh+26;
   s+=G('a-fade',.8,ln(x0,ay,x1,ay,'#6A5B47',1)+[1940,1980,2020].map(v=>T(FX(yr(v)),ay+14,String(v),'mono mid f10')).join(''));
   const items=[['Stewardship','The right drug, dose and duration; narrow spectrum once culture results are back; shorter courses where trials show they work; and less use in farming.'],['Why the pipeline is thin','Easy targets and soil producers were mined by the 1960s. Most new compounds cannot cross the Gram-negative envelope. A new drug held in reserve earns little: Achaogen went bankrupt in 2019, a year after its antibiotic was approved.'],['Fixes being tried','Payments decoupled from sales (the UK subscription model), public funders such as CARB-X, and new sources such as uncultured soil bacteria.']];

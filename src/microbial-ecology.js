@@ -89,8 +89,8 @@ function scE4(n){
 function scE5(n){
   const N=n?{b:{x:84,y:40,w:140,t:'butyrate'},sy:{x:84,y:130,w:150,t:'Syntrophomonas',f:PAL.green},ah:{x:84,y:220,w:128,t:'acetate + H₂',f:PAL.gold},me:{x:276,y:220,w:120,t:'methanogen',f:PAL.blue},ch:{x:270,y:310,w:140,t:'CH₄ + CO₂'}}
     :{b:{x:80,y:60,w:110,t:'butyrate'},sy:{x:240,y:60,w:140,t:'Syntrophomonas',f:PAL.green},ah:{x:420,y:60,w:130,t:'acetate + H₂',f:PAL.gold},me:{x:420,y:170,w:130,t:'methanogens',f:PAL.blue},ch:{x:240,y:170,w:130,t:'CH₄ + CO₂'}};
-  const E=n?[['b','sy',''],['sy','ah',''],['ah','me','H₂ removed',{side:1}],['me','ch',''],['me','sy','',{dash:'4 3',red:1,bend:40}]]
-    :[['b','sy',''],['sy','ah',''],['ah','me','H₂ removed',{side:-1}],['me','ch',''],['me','sy','',{dash:'4 3',red:1,bend:30}]];
+  const E=n?[['b','sy',''],['sy','ah',''],['ah','me','H₂ removed',{side:1}],['me','ch',''],['me','sy','',{dash:'4 3',blue:1,bend:40}]]
+    :[['b','sy',''],['sy','ah',''],['ah','me','H₂ removed',{side:-1}],['me','ch',''],['me','sy','',{dash:'4 3',blue:1,bend:30}]];
   let s=G('a-fade',0,flow(N,E))+G('a-fade',.4,n?T(250,138,'keeps H₂ low','note start f11 halo'):T(330,138,'keeps H₂ very low','note end f11 halo'));
   const rows=[['Syntrophy (+/+)','partners together do what neither can alone; thermodynamically coupled'],['Cross-feeding (+/0 or +/+)','one excretes what another uses: in the gut, acetate from bifidobacteria feeds butyrate producers'],['Competition (−/−)','for the same nutrients (exploitative), or by attacking rivals with bacteriocins, antibiotics and type VI secretion (interference)'],['Predation, parasitism (+/−)','protists, Bdellovibrio and phages kill bacteria (next plates)']];
   const t=wtable(n,['Interaction','What happens'],rows,n?[[10,16],[130,30]]:[[24,26],[230,58]],{y0:n?370:240,d0:.8,R:n?354:620});
@@ -128,14 +128,14 @@ function scE8(n){const m=MB[mbSel];return explorer(n,{h:m.k,rows:m.rows,note:m.n
 function scE9(n){
   const N=n?{d:{x:90,y:40,w:150,t:'type 2 diabetes'},m:{x:270,y:110,w:120,t:'metformin',f:PAL.gold},g:{x:90,y:180,w:150,t:'gut microbiome|shift',f:PAL.green}}
     :{d:{x:90,y:60,w:140,t:'type 2 diabetes'},m:{x:300,y:60,w:110,t:'metformin',f:PAL.gold},g:{x:200,y:170,w:150,t:'gut microbiome|shift',f:PAL.green}};
-  const E=n?[['d','m','treated with',{side:1}],['m','g','alters',{side:1}],['d','g','causal?',{dash:'4 3',red:1,side:-1}]]
-    :[['d','m','treated with'],['m','g','alters',{side:1}],['d','g','causal?',{dash:'4 3',red:1,side:-1}]];
+  const E=n?[['d','m','treated with',{side:1}],['m','g','alters',{side:1}],['d','g','causal?',{dash:'4 3',side:-1}]]
+    :[['d','m','treated with'],['m','g','alters',{side:1}],['d','g','causal?',{dash:'4 3',side:-1}]];
   let s=G('a-fade',0,flow(N,E));
   const bx=n?60:420, by=n?250:40, bw=n?36:40, bh=n?100:120;
-  const bar=(x,vals,lab,abs)=>{let y=by+bh, q='';const tot=vals.reduce((a,b)=>a+b,0), sc=abs?bh/120:bh/tot;vals.forEach((v,i)=>{const h=v*sc;y-=h;q+=`<rect x="${x}" y="${FX(y)}" width="${bw}" height="${FX(h)}" fill="${['#A4473A','#2F5276','#4F7A3F'][i]}" stroke="${INK}" stroke-width=".5"/>`;});return q+T(x+bw/2,by+bh+16,lab,'note mid f10');};
+  const bar=(x,vals,lab,abs)=>{let y=by+bh, q='';const tot=vals.reduce((a,b)=>a+b,0), sc=abs?bh/120:bh/tot;vals.forEach((v,i)=>{const h=v*sc;y-=h;q+=`<rect x="${x}" y="${FX(y)}" width="${bw}" height="${FX(h)}" fill="${[CAT[2],CAT[0],CAT[1]][i]}" stroke="${INK}" stroke-width=".5"/>`;});return q+T(x+bw/2,by+bh+16,lab,'note mid f10');};
   s+=G('a-fade',.6,T(bx-4,by-8,'absolute','note start f11')+bar(bx,[20,20,20],'day 1',1)+bar(bx+bw+10,[80,20,20],'day 2',1)
     +T(bx+2*bw+40,by-8,'relative','note start f11')+bar(bx+2*bw+44,[20,20,20],'day 1',0)+bar(bx+3*bw+54,[80,20,20],'day 2',0));
-  s+=G('a-fade',.8,T(bx+2*bw+44+bw+5,by+bh+34,'blue looks halved','note mid f11'));
+  s+=G('a-fade',.8,T(bx+2*bw+44+bw+5,by+bh+34,'pale blue looks halved','note mid f11'));
   const items=[['Compositional data','Sequencing gives proportions, not counts. If one taxon blooms, all others appear to fall even when unchanged (right), producing spurious correlations. Log-ratio methods or absolute counts help.'],['Confounders','Metformin explained much of the gut signature once attributed to type 2 diabetes (Forslund and colleagues, 2015). Diet, other drugs, age, alcohol and stool consistency all shift the microbiome.'],['Reverse causation','Disease changes the gut: inflammation supplies respiratory electron acceptors that favour Enterobacteriaceae, so a bloom can be a consequence rather than a cause.'],['Testing causes','Germ-free mice given human microbiota can transfer traits such as adiposity (Ridaura and colleagues, 2013), but such experiments are easy to over-interpret. Strains, mechanisms and human interventions are stronger evidence.']];
   const c=cards(n,items,{y:n?by+bh+40:Math.max(by+bh+44,230),num:1,cw:6.5});
   return {vb:n?slim(c.y+4):wide(c.y+6),s:s+c.s};

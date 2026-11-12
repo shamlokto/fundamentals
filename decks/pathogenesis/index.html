@@ -808,7 +808,7 @@ function scP8(n){
   const prop=x=>7*Math.exp(-((x-6)**2)/4)+12*Math.exp(-((x-13)**2)/6)+16*Math.exp(-((x-19)**2)/8);
   let s=A.s;
   s+=G('a-fade',.3,curve(A,point,{col:'#2F5276',from:0,to:n?20:24})+(n?'':T(FX(A.px(5)),FX(A.py(22)-6),'point source','note mid f12 halo')));
-  s+=G('a-fade',.5,curve(A,prop,{col:'#A4473A',dash:'5 4',from:0,to:n?20:24})+(n?'':T(FX(A.px(19)),FX(A.py(16)-6),'propagated','note mid f12 halo')));
+  s+=G('a-fade',.5,curve(A,prop,{col:'#6A5B47',dash:'5 4',from:0,to:n?20:24})+(n?'':T(FX(A.px(19)),FX(A.py(16)-6),'propagated','note mid f12 halo')));
   if(n)s+=G('a-fade',.6,T(200,A.y+10,'— point source','note start f12')+T(200,A.y+26,'- - propagated','note start f12'));
   const b=bullets(n?24:400,n?A.y+A.h+54:52,[
     ['The epidemic curve','Plotting cases by date of onset reveals the shape of an outbreak. A single sharp peak suggests a point source (one contaminated meal); successive rising waves, each one incubation period apart, suggest person-to-person (propagated) spread.'],

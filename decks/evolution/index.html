@@ -687,8 +687,8 @@ function scE9(n){
 
 function scE10(n){
   const sp=[['Mycobacterium tuberculosis',0.02,'essentially clonal',CORE,'≈ 0'],['Staphylococcus aureus',0.1,'',CORE,'< 1'],
-   ['Escherichia coli',0.7,'',SHELL,'~ 1'],['Neisseria meningitidis',7.1,'naturally competent',PHG,'~ 10'],
-   ['Helicobacter pylori',13.6,'naturally competent',PHG,'~ 10–20'],['Streptococcus pneumoniae',23.1,'naturally competent',PHG,'~ 20']];
+   ['Escherichia coli',0.7,'',CORE,'~ 1'],['Neisseria meningitidis',7.1,'naturally competent',CORE,'~ 10'],
+   ['Helicobacter pylori',13.6,'naturally competent',CORE,'~ 10–20'],['Streptococcus pneumoniae',23.1,'naturally competent',CORE,'~ 20']];
   const TL=n?['Recombination relative to mutation','(r/m, approximate; varies by method)']:['Recombination relative to mutation (r/m), approximate MLST estimates','after Vos & Didelot 2009; estimates vary several-fold between methods'], t0=(TL.length-1)*18;
   let s=G('a-fade',0,TL.map((l,i)=>T(n?16:24,28+i*18,l,'cname start '+(n?'f13':'f14'))).join(''));
   const bw=n?150:280, bx=n?170:300;

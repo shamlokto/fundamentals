@@ -709,7 +709,7 @@ function scF2(n){
     +`<path d="M${cx+14} ${y+14} q 16 -10 32 0 t 32 0 t 32 0${n?'':' t 32 0'}" stroke="${INK}" stroke-width="2.2" fill="none"/>`);
   s+=G('a-pop',.9,[-74,-60,60,74].map(d=>`<rect x="${cx+d-6}" y="${PG+2}" width="12" height="${IM+22-PG-2}" rx="3" fill="${STAT}" stroke="${INK}" class="tint"/>`).join('')
     +arw(cx-67,PG-10,cx-67,IM+32,{blue:1,w:2})+Tc(cx-67,PG-14,'H⁺','#2F5276',12,'mono mid','600'));
-  s+=G('a-pop',1.2,blob(cx-30,IM+62,9,6,'#B5584A')+Tc(cx-42,IM+66,'CheY-P','#A4473A',12,'mono end','600'));
+  s+=G('a-pop',1.2,blob(cx-30,IM+62,9,6,'#E0B84A')+Tc(cx-42,IM+66,'CheY-P',INK,12,'mono end','600'));
   const R=[['filament',cx+110,y+14,y+6],['hook',cx+10,y+22,y+26],['L ring',cx+22,OM+7,OM+8],['P ring',cx+22,PG+3,PG+4],['stator MotA/B',cx+80,PG+22,PG+26],['MS ring',cx+28,IM+8,IM+12],['C ring (switch)',cx+48,IM+32,IM+36],['export gate',cx+13,IM+38,IM+56]];
   if(n)R[0][1]=cx+106;
   s+=G('a-fade',1.4,R.map(l=>ln(l[1],l[2],LX-4,l[3],'#9A8E78',.8)+T(LX,l[3]+4,n&&l[0]==='stator MotA/B'?'stator':(n&&l[0]==='C ring (switch)'?'C ring':l[0]),'note start f12')).join(''));
@@ -743,7 +743,7 @@ function scF5(n){
   const A=n?axes(54,40,280,150,{xr:[0,40],yr:[0,1],xt:[0,10,20,30,40],yt:[[0,'low'],[1,'high']],xlab:'time (s)',ylab:'tumble rate'}):axes(70,40,320,170,{xr:[0,40],yr:[0,1],xt:[0,10,20,30,40],yt:[[0,'low'],[1,'high']],xlab:'time (s)',ylab:'tumble rate'});
   const f=t=>t<10?0.5:0.5-0.45*Math.exp(-(t-10)/4);
   let s=A.s+G('a-fade',.3,curve(A,f,{col:'#2F5276',n:300}));
-  s+=G('a-fade',.2,ln(FX(A.px(10)),A.y,FX(A.px(10)),A.y+A.h,'#A4473A',1.2,'4 3')+T(FX(A.px(10)+5),A.y+12,'attractant added','note start f11 halo'));
+  s+=G('a-fade',.2,ln(FX(A.px(10)),A.y,FX(A.px(10)),A.y+A.h,'#6A5B47',1.2,'4 3')+T(FX(A.px(10)+5),A.y+12,'attractant added','note start f11 halo'));
   s+=G('a-fade',.6,T(FX(A.px(26)),FX(A.py(.5)-10),'back to baseline','note mid f11 halo'));
   const b=n?bullets(24,A.y+A.h+60,[['Precise adaptation','Tumbling returns to the same baseline whatever the new level, over a range of about five orders of magnitude.'],['Robust by design','Uri Alon, Stanislas Leibler and colleagues showed in 1999 that the precision holds even when protein levels change, a property of the circuit.']],44,{d0:1,gap:22})
     :bullets(420,52,[['Precise adaptation','Tumbling returns to the same baseline whatever the new attractant level, across about five orders of magnitude.'],['Robust by design','Uri Alon, Stanislas Leibler and colleagues showed in 1999 that the precision holds even when protein levels vary, a property of the circuit rather than of fine-tuning.'],['Gain','Receptors cluster in arrays at the poles and act cooperatively, so a change of a few molecules is amplified.']],26,{d0:1,gap:22});
