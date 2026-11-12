@@ -750,7 +750,7 @@ function scA4(n){
    ['vanA','rebuilds the wall precursor to end in D-Ala-D-Lac, which binds vancomycin about 1000-fold less well','transposon Tn1546 on plasmids; enterococci, rarely S. aureus'],
    ['mcr-1','adds phosphoethanolamine to lipid A: colistin','plasmid, first reported from China in 2015']];
   const t=wtable(n,[n?'Gene':'Gene or change','Resists','Where it lives'],rows,n?[[10,12],[110,16],[246,15]]:[[24,22],[210,30],[440,24]],{y0:30,R:n?354:620});
-  const p=para(n?16:24,t.y+12,'Mutations change what the cell already has and spread only vertically. Acquired genes arrive ready-made by conjugation, transformation or transduction, usually on plasmids, transposons and integrons that collect several resistance genes together, so one drug can select for resistance to many.',n?50:92,'note start f13',17,1);
+  const p=para(n?16:24,t.y+12,'Mutations change what the cell already has and spread mainly vertically. Acquired genes arrive ready-made by conjugation, transformation or transduction, usually on plasmids, transposons and integrons that collect several resistance genes together, so one drug can select for resistance to many.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scA5(n){

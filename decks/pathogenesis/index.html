@@ -171,7 +171,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <button id="replay" type="button">Replay</button>
     <button id="next" type="button" class="primary">Next</button>
   </div>
-  <p class="foot">Mechanisms are simplified and examples are representative, not exhaustive. Epidemiological figures are rounded illustrations. Koch’s postulates are covered in full in the koch primer.</p>
+  <p class="foot">Mechanisms are simplified and examples are representative, not exhaustive. Epidemiological figures are rounded illustrations. Koch’s postulates are covered in full in the Koch primer.</p>
 </div>
 <script>
 /* optional picture for the opening plate: decks/pathogenesis/cover.webp (transparent paper) or cover.jpg */
@@ -775,7 +775,7 @@ function scP6(n){
   const items=[
    ['Hide or cloak','Capsules and surface sialic acid mimic host molecules; some microbes live inside cells (Mycobacterium, Listeria, Salmonella) where antibody cannot reach, or coat themselves in host proteins.'],
    ['Attack the response','IgA proteases cut mucosal antibody; proteins that bind or degrade complement; leukocidins that kill phagocytes; molecules that block antigen presentation.'],
-   ['Antigenic variation','Change the surface faster than immunity can track it. Neisseria gonorrhoeae shuffles pilin genes so each generation looks new; the African trypanosome switches its VSG coat from a vast silent archive; Borrelia (relapsing fever and Lyme VlsE) recombines its surface lipoproteins, giving waves of relapse.'],
+   ['Antigenic variation','Change the surface faster than immunity can track it. Neisseria gonorrhoeae recombines silent pilin copies into its expressed pilin gene, so its surface keeps changing; the African trypanosome switches its VSG coat from a vast silent archive; Borrelia (relapsing fever and Lyme VlsE) recombines its surface lipoproteins, giving waves of relapse.'],
    ['Phase variation','Switching surface genes on and off at random (by slipped-strand repeats or inversion) keeps a few cells ready for whatever the immune system has not yet seen.']];
   const c=cards(n,items,{y:20});
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
@@ -822,13 +822,13 @@ function scP9(n){
    ['R0','average secondary cases from one case in a fully susceptible population','if R0 > 1 an epidemic can grow'],
    ['Re','the effective number once some are immune or measures are in place','control aims to push Re below 1'],
    ['Incidence','new cases per population per time','measures risk and the speed of spread'],
-   ['Prevalence','existing cases at a point in time','incidence × duration; burden of chronic disease'],
+   ['Prevalence','existing cases at a point in time','≈ incidence × duration at steady state; burden of chronic disease'],
    ['Attack rate','proportion of an exposed group who fall ill','used in a defined outbreak'],
    ['Case-fatality','proportion of cases who die','severity; distinct from mortality rate'],
    ['Koch / molecular','isolate, reinoculate, re-isolate; or inactivate and restore a gene','establishes that a microbe (or gene) causes a disease']];
   const t=wtable(n,['Measure','Definition','Use'],rows,
     n?[[10,13],[104,14],[226,15]]:[[24,14],[150,30],[410,28]],{y0:30,R:n?354:620});
-  const p=para(n?16:24,t.y+14,'Epidemiology measures disease in populations. R0 is an intrinsic property of a pathogen in a setting; vaccination, treatment and behaviour lower it to Re. Koch’s postulates, and their molecular revision by Falkow (inactivate a gene, lose virulence; restore it, regain it), connect a single cause to a disease; they are covered in full in the koch primer.',n?50:92,'note start f13',17,.6);
+  const p=para(n?16:24,t.y+14,'Epidemiology measures disease in populations. R0 is an intrinsic property of a pathogen in a setting; vaccination, treatment and behaviour lower it to Re. Koch’s postulates, and their molecular revision by Falkow (inactivate a gene, lose virulence; restore it, regain it), connect a single cause to a disease; they are covered in full in the Koch primer.',n?50:92,'note start f13',17,.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 const S=[
@@ -837,7 +837,7 @@ const S=[
  {p:2,title:'Virulence factors',draw:scP3,text:"Virulence factors are the equipment of a pathogen: adhesins to grip, capsules to resist being eaten, systems to steal iron, invasins to force entry, enzymes to spread, and biofilms to persist. Many ride on mobile genetic elements, so virulence can jump between strains."},
  {p:2,title:'Toxins',chips:'tox',draw:scP4,text:"Toxins do damage at a distance or on contact. AB toxins have a binding part and an enzymatic part that attacks a precise target inside the cell; pore-forming toxins punch holes; superantigens hijack the immune system itself. Endotoxin is the wall of the Gram-negative microbe, not a secreted protein. Pick one."},
  {p:3,title:'Secretion-system effectors',draw:scP5,text:"Gram-negative pathogens use molecular machines to inject effector proteins directly into host cells. The type III system is a syringe related to the flagellum, used by Salmonella and Yersinia; the type IV system, kin to conjugation machinery, lets Legionella build a home inside a macrophage. Both reprogramme the host from within."},
- {p:3,title:'Immune evasion and antigenic variation',draw:scP6,text:"To persist, microbes hide, attack the immune response, or keep changing their surface. Antigenic variation is the most elegant: Neisseria, trypanosomes and Borrelia each switch their surface coat from a genetic archive faster than antibodies can catch up, which is why they cause recurrent or chronic disease and defy vaccines."},
+ {p:3,title:'Immune evasion and antigenic variation',draw:scP6,text:"To persist, microbes hide, attack the immune response, or keep changing their surface. Antigenic variation is the most elegant: Neisseria, trypanosomes and Borrelia each switch their surface coat from a genetic archive faster than antibodies can catch up, which helps them cause recurrent or chronic disease and makes vaccines hard to design."},
  {p:3,title:'Colonisation resistance and dysbiosis',draw:scP7,text:"The normal microbiota is itself a defence, occupying niches so pathogens cannot settle. Broad-spectrum antibiotics break this colonisation resistance, and Clostridioides difficile seizes the opening to cause colitis. Transplanting a healthy donor’s stool restores the community and cures most recurrent infections, showing the community was the defence."},
  {p:4,title:'The epidemic curve',draw:scP8,text:"Plotting new cases against their date of onset shows an outbreak’s shape. A single sharp peak points to a common point source; a series of rising waves spaced one incubation period apart points to person-to-person spread. The curve guides the investigation before the lab confirms the cause."},
  {p:4,title:'Epidemiology basics',draw:scP9,text:"A few measures frame population disease: R0 and the effective Re for transmissibility, incidence and prevalence for how much disease there is, attack rate and case-fatality within an outbreak. Koch’s postulates and their molecular revision tie a specific microbe, or gene, to a specific disease."}];
