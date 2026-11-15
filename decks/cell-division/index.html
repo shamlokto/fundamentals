@@ -679,7 +679,7 @@ function scDrugs(n){
 
 const BREAK=[
  {g:'ftsZ',p:'the ring itself',cls:'no ring at all',col:AMI,text:'Nothing assembles, so nothing else is recruited. Cells grow into smooth filaments with evenly spaced nucleoids and eventually lyse. The original fts phenotype.'},
- {g:'ftsA',p:'membrane tether',cls:'ring, but unanchored',col:AMI,text:'FtsZ can still polymerise but is not held at the membrane properly, and the late proteins never arrive. Filaments again, sometimes with faint rings visible.'},
+ {g:'ftsA',p:'membrane tether',cls:'ring, but no late proteins',col:AMI,text:'In E. coli ZipA still tethers FtsZ to the membrane, so rings form, but FtsA is needed to bring in the later divisome proteins and they never arrive. Filaments with regularly spaced rings that never constrict.'},
  {g:'ftsI (pbp3)',p:'septal transpeptidase',cls:'ring, no wall',col:'#C99A2E',text:'The divisome assembles and may even begin to constrict, but septal wall cannot be cross-linked. This is what cephalexin does chemically.'},
  {g:'ftsN',p:'the final signal',cls:'assembled but switched off',col:'#C99A2E',text:'Everything is in place and nothing happens, because the FtsQLB switch is never released. Suppressor mutations in ftsL or ftsB bypass it, which is how the switch was worked out.'},
  {g:'minCDE',p:'ring placement',cls:'minicells',col:'#7D4A98',text:'Rings form at the poles as well as midcell. Division at a pole pinches off a small, DNA-free minicell — harmless to the mother, and a classic teaching phenotype.'},
@@ -694,7 +694,7 @@ function scBreak(n){
   const k=m.g;
   if(k==='ftsZ'||k==='ftsA'||k==='ftsI (pbp3)'||k==='ftsN'||k==='sulA (induced)'){
     s+=G('a-fade',0,rodCell(cx,y,L*1.1,R,0)+[0,1,2,3].map(i=>nucleoid(cx-L*.42+i*L*.28,y,L*.1,R*.55,{seed:3+i*5})).join(''));
-    if(k==='ftsA')s+=G('a-pop',.6,`<g opacity=".45">`+[0,1,2].map(i=>zring(cx-L*.28+i*L*.28,y,R-16,{n:3,w:5})).join('')+'</g>'+T(cx,y-R-14,'faint FtsZ patches, off the membrane','note mid f12'));
+    if(k==='ftsA')s+=G('a-pop',.6,`<g opacity=".45">`+[0,1,2].map(i=>zring(cx-L*.28+i*L*.28,y,R-16,{n:3,w:5})).join('')+'</g>'+T(cx,y-R-14,'Z rings form but never constrict','note mid f12'));
     if(k==='ftsI (pbp3)'||k==='ftsN')s+=G('a-pop',.6,[0,1,2].map(i=>zring(cx-L*.28+i*L*.28,y,R-6,{n:4,w:5})).join(''));
     if(k==='sulA (induced)')s+=G('a-pop',.6,[0,1,2].map(i=>blob(cx-L*.28+i*L*.28,y,n?10:12,n?7:8,'#5E7F7A')).join('')+T(cx,y-R-14,'SulA holds FtsZ','note mid f11'));
     s+=G('a-fade',1,T(cx,y+R+(n?22:24),'a filament','note mid f12'));
