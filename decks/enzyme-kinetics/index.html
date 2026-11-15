@@ -908,7 +908,7 @@ function scDrugs(n){
   s+=G('a-fade',1.8,T(P.x+P.w/2,P.y-14,'Cheng and Prusoff, 1973','mono acc mid f12'));
   const items=[['IC50 is not Ki','For a competitive inhibitor IC50 = Ki(1 + [S]/Km), so the same drug looks weaker in an assay run at high substrate. Report Ki, or state [S].'],
    ['Blockades favour uncompetitive inhibitors','When a pathway is blocked, substrate piles up behind the block. That defeats a competitive inhibitor but strengthens an uncompetitive one.'],
-   ['Selectivity is kinetic','Trimethoprim binds bacterial dihydrofolate reductase thousands of times more tightly than the human enzyme; with a sulfonamide it blocks two steps in one pathway.'],
+   ['Selectivity is kinetic','Trimethoprim binds bacterial dihydrofolate reductase tens of thousands of times more tightly than the human enzyme; with a sulfonamide it blocks two steps in one pathway.'],
    ['MIC is not Ki','Uptake, efflux, target amount, and how much inhibition growth can tolerate all lie between a Ki and the MIC.']];
   const b=n?bullets(24,P.y+P.h+58,items,44,{d0:2.2,gap:26}):bullets(344,52,items,40,{d0:2.2,gap:24,fs:'f12'});
   return {vb:n?slim(b.y-6):wide(Math.max(b.y-6,P.y+P.h+40)),s:s+b.s};
