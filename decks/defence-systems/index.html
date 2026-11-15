@@ -553,7 +553,7 @@ function scD2(n){
   const t=n?wtable(n,['Type','How it works'],rows.map(r=>[r[0],r[1]+' — '+r[2]]),[[10,8],[80,44]],{y0:yy,d0:1})
          :wtable(n,['Type','Logic','Detail'],rows,[[24,10],[110,22],[320,44]],{y0:yy,d0:1});
   const b=bullets(n?24:30,t.y+14,[['Self and non-self by methylation pattern','Restriction–modification is not sequence-specific immunity; it is a tag. Everything made in this cell carries the tag, everything that arrives does not. The system has no memory of what it has seen.'],
-   ['Which also makes it a barrier to your cloning','Transforming a plasmid that lacks the recipient’s methylation pattern into a strain with an active restriction system fails. Passage through a host carrying the recipient’s methyltransferases, in vitro methylation, a dam⁻ dcm⁻ host where type IV systems cut methylated DNA, or a restriction-deficient strain are ways round it.'],
+   ['Which also makes it a barrier to your cloning','Transforming a plasmid that lacks the recipient’s methylation pattern into a strain with an active restriction system fails. Passage through a host carrying the recipient’s methyltransferases, in vitro methylation, preparing the plasmid in a dam⁻ dcm⁻ host when the recipient’s type IV systems cut methylated DNA, or a restriction-deficient recipient are ways round it.'],
    ['And it writes the methylome','The same methyltransferases mark thousands of sites across the chromosome, and those marks regulate genes. Restriction–modification is where bacterial epigenetics comes from.']],n?44:88,{d0:2,gap:24});
   return {vb:n?slim(b.y-6):wide(b.y-6),s:s+t.s+b.s};
 }
