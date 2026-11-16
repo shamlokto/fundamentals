@@ -13,7 +13,7 @@ Artwork crops its picture into `img/cards/<slug>.jpg` and `decks/<slug>/cover.we
 | 4 Development and tolerance | 04-development.jpg | thymus lobule: dark cortex, pale medulla with whorled (Hassall's) corpuscles | OK |
 | 5 T helper subsets | 05-th-subsets.jpg | one lymphocyte surrounded by four differently tinted lymphocytes | OK |
 | 6 Germinal centre | 06-germinal-centre.jpg | follicle in section: pale germinal centre with a darker crescent mantle | OK; shows mantle vs germinal centre, not the dark/light zones |
-| 8 Memory and vaccines | 08-memory-vaccines.jpg | clonal expansion: one lymphocyte fans out into many, most fade, a few larger memory cells remain (redrawn 16 Nov, no equipment) | **Awaiting Scientist 2** |
+| 8 Memory and vaccines | 08-memory-vaccines.jpg | clonal expansion: one lymphocyte fans out into many, most fade, a few larger memory cells remain (redrawn 16 Nov, no equipment; back-pointing arrows removed) | **Awaiting Scientist 2**; memory cells are drawn larger than in life (they are small) |
 | 9 How IgA is made | 09-iga-production.jpg | gut wall with a dome-shaped lymphoid follicle (Peyer's patch) | **Fix before use**: the dome needs follicle-associated epithelium (flatter, M cells, no goblet cells, little mucus). A 16 Nov retry (4 seeds) could not draw it; use a drawn plate |
 | 10 What IgA does | 10-iga-function.jpg | epithelium under a mucus layer holding clumped bacteria | OK (single mucus layer; colon has two) |
 | 12 Gut immunity | 12-gut-immunity.jpg | gut wall section with villi | **Fix before use**: layer order unclear; must read lumen → mucus → epithelium with villi into the lumen → lamina propria → muscle. A 16 Nov retry (4 seeds) still failed; use a drawn plate |
