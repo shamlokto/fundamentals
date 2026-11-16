@@ -5,8 +5,8 @@ no course code in `tools/access.json` lists these primers, and none should until
 
 ## Brief from the owner
 
-* Depth: start at graduate-textbook level (Janeway, Abbas) and go to research depth, citing the key primary
-  papers on the plates.
+* Depth: graduate-textbook level (Janeway, Abbas) for now. The owner may ask for research depth later;
+  until then, keep to established textbook content, citing landmark papers only where a textbook does.
 * Species: mouse and human, then compare and contrast. Say which species each result comes from, and give a
   short "mouse vs human" note wherever they differ.
 * "The paradigm": the field's paradigms (clonal selection, self/non-self and tolerance, MHC restriction, the
