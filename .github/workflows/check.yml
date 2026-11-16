@@ -32,6 +32,7 @@ jobs:
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}
       - name: Install Playwright and Chromium
         run: |
+          pip install pillow
           npm install --no-save --no-package-lock playwright@$PLAYWRIGHT_VERSION
           npx playwright install --with-deps chromium
       - name: Build and audit every deck
@@ -41,6 +42,9 @@ jobs:
         run: |
           git diff --stat --exit-code -- decks index.html \
             || { echo "::error::Rebuild with python3 tools/build.py and commit the result."; exit 1; }
+      - name: Hand-built decks' cover blocks match their cover files
+        if: always()
+        run: python3 tools/covers.py --check
       - name: Links, assets and page markup
         if: always()
         run: python3 tools/site_check.py

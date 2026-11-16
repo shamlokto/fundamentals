@@ -724,6 +724,13 @@ const S=[
  {p:3,title:'A worked example',draw:scG10,text:"In the pneumococcus the distinction between core and accessory cuts across the clinically important loci. The capsule locus is universal but its content defines the serotype and is exchanged by recombination; the penicillin-binding proteins are core genes with mosaic alleles. Neither can be understood by presence-and-absence analysis alone."},
  {p:3,title:'Reading a feature',chips:'gen',draw:scG11,text:"Most features of a genome have a small number of plausible explanations, and the distinguishing evidence is usually already in the data. Pick an observation to see what it most likely means and what would confirm it."}];
 const CHIPS={gen:{list:GENQ.map((q,i)=>String(i+1)),get:()=>gSel,set:k=>gSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

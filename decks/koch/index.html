@@ -575,6 +575,13 @@ const S=[
  {p:3,title:'Molecular Koch’s postulates',draw:scK8,text:"A century later, Stanley Falkow restated the same logic for genes. A gene is a virulence gene if it is associated with disease-causing strains, if knocking it out reduces virulence, and if putting it back restores virulence. Complementation is the modern version of re-isolation."},
  {p:3,title:'The golden age',draw:scK9,text:"Pure culture opened the floodgates. Within thirty years the causes of most of the great bacterial diseases had been identified, many of them by Koch's own students and visitors."}];
 const CHIPS={case:{list:CASES.map(c=>c.n),get:()=>caseSel,set:k=>caseSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

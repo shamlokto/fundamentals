@@ -844,6 +844,13 @@ const S=[
  {p:3,title:'What regulation costs',draw:scR10,text:"The number of transcription factors rises roughly as the square of genome size, because every new function must be coordinated with everything already present. That scaling is thought to set a practical ceiling on bacterial genome size, and in reverse it explains why reduced, host-restricted genomes shed regulators fastest."},
  {p:3,title:'Reading a regulatory phenotype',chips:'reg',draw:scR11,text:"The architecture of a circuit usually leaves a recognisable signature in its behaviour: how fast it responds, whether it filters transients, whether it is reversible, and whether new protein synthesis is required. Pick an observation to see what it points to."}];
 const CHIPS={lac:{list:LAC.map(l=>l.k),get:()=>lacSel,set:k=>lacSel=k},reg:{list:REGQ.map((q,i)=>String(i+1)),get:()=>rSel2,set:k=>rSel2=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

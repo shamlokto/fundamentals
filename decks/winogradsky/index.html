@@ -532,6 +532,13 @@ const S=[
  {p:2,title:'The Winogradsky column',chips:'col',draw:scW6,text:"A glass cylinder of mud, enriched with cellulose and sulfate and left in the light, sorts itself into coloured bands over a few weeks. Pick a variation to see which communities depend on light, on sulfate and on organic matter."},
  {p:2,title:'Microbes run the cycles',draw:scW7,text:"Winogradsky's work, with Beijerinck's, showed that the chemistry of soil and water is largely microbial. The elements cycle because different microbes oxidise and reduce them for energy. His insistence on studying microbes in their environment anticipated the field of microbial ecology."}];
 const CHIPS={nit:{list:NITRO.conds.map((c,i)=>(i+1)+'. '+c.n),get:()=>nitSel,set:k=>nitSel=k},col:{list:COLV.map(c=>c.n),get:()=>colSel,set:k=>colSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

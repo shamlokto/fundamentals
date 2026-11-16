@@ -542,6 +542,13 @@ const S=[
  {p:2,title:'Transduction',draw:scL7,text:"Looking for mating in Salmonella, Lederberg and Norton Zinder found recombinants even when the strains were separated by a filter, and DNase did not stop it. The carrier turned out to be a phage, P22, which sometimes packages pieces of its host's chromosome and delivers them to the next cell."},
  {p:2,title:'Bacterial genetics',draw:scL8,text:"These experiments made bacteria the model organisms of genetics. Lederberg shared the 1958 Nobel Prize at the age of 33. The mechanisms he and others found — conjugation, plasmids and transduction — are both the tools of molecular biology and the routes by which antibiotic resistance spreads."}];
 const CHIPS={ind:{list:INDTEST.conds.map((c,i)=>(i+1)+'. '+c.n),get:()=>indSel,set:k=>indSel=k},mate:{list:MATE.conds.map((c,i)=>(i+1)+'. '+c.n),get:()=>mateSel,set:k=>mateSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

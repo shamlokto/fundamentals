@@ -619,6 +619,13 @@ const S=[
  {p:4,title:'Attenuation',draw:scP10,text:"Returning from a summer break in 1879, Pasteur's group injected hens with an old culture of the chicken-cholera bacterium. The hens survived, and later survived a fresh, virulent culture that killed new hens. The weakened culture had become a vaccine. The new hens were the control that made the conclusion possible."},
  {p:4,title:'Pouilly-le-Fort, 1881',draw:scP11,text:"Pasteur announced in advance what would happen to a group of vaccinated sheep and a group of unvaccinated ones after both were given virulent anthrax. On the 2nd of June 1881 the vaccinated sheep were well and the controls dead or dying. The design, with a control group and a prediction stated beforehand, is still the template for a vaccine trial."}];
 const CHIPS={flask:{list:FLASKTEST.conds.map((c,i)=>(i+1)+'. '+c.n),get:()=>flaskSel,set:k=>flaskSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

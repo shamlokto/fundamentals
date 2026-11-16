@@ -568,6 +568,13 @@ const S=[
  {p:3,title:'Doubters, and the blender',draw:scA8,text:"The 1944 paper was careful and its conclusion modest, but many were not convinced, and Avery never received a Nobel Prize. In 1952 Alfred Hershey and Martha Chase labelled phage protein and phage DNA separately and showed that it is the DNA that enters the cell. Watson and Crick's structure followed the next year."},
  {p:3,title:'The pneumococcus today',draw:scA9,text:"Avery's lineage is still in use, but with a correction. R6, descended from R36A, served as the standard laboratory strain for forty years, until Lanie, Winkler and colleagues sequenced D39 in 2007 and showed that R6 differs from it by far more than the loss of its capsule: dozens of mutations in regulatory, metabolic and virulence genes, and a missing plasmid. Many laboratories now work in D39 itself, or in unencapsulated mutants made directly from it, so that the only difference from the virulent parent is the one they made on purpose. Meanwhile transformation is understood as a regulated process switched on by a secreted peptide, and capsule genes move between strains in the wild, which is one way pneumococci escape vaccines aimed at particular capsules."}];
 const CHIPS={grif:{list:GRIF.conds.map((c,i)=>(i+1)+'. '+c.n),get:()=>grSel,set:k=>grSel=k},enz:{list:ENZ.conds.map(c=>c.n),get:()=>enzSel,set:k=>enzSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

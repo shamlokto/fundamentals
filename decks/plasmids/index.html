@@ -843,6 +843,13 @@ const S=[
  {p:3,title:'Plasmids in the laboratory',draw:scP10,text:"A cloning vector is a replicon with accessories: an origin that sets copy number and host range, a selectable marker, a site to clone into, usually a promoter, and sometimes an origin of transfer. Most frustrating cloning results are properties of the replicon chosen at the beginning rather than of the insert."},
  {p:3,title:'Why is my plasmid being lost?',chips:'ploss',draw:scP11,text:"Plasmid loss has a small number of causes, and they can be told apart from the pattern of loss. Pick a symptom to see the likely explanation and what to do about it. Most of them are decisions made when the vector was chosen rather than accidents at the bench."}];
 const CHIPS={ploss:{list:PLOSS.map((q,i)=>String(i+1)),get:()=>plSel,set:k=>plSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

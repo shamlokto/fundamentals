@@ -531,6 +531,13 @@ const S=[
  {p:2,title:'Three domains, and a root',draw:scWo6,text:"In 1990 Woese, Otto Kandler and Mark Wheelis proposed three domains: Bacteria, Archaea and Eukarya. Genes that had duplicated before the last common ancestor allowed the tree to be rooted, and placed the archaea as the sister group of the eukaryotes."},
  {p:2,title:'What followed',draw:scWo7,text:"Woese's method outgrew its first purpose. Sequencing 16S rRNA genes directly from the environment revealed that most microbes had never been cultured. And newly discovered archaea have reopened the question of where eukaryotes came from, a debate that continues."}];
 const CHIPS={meth:{list:METHTEST.conds.map((c,i)=>(i+1)+'. '+c.n),get:()=>methSel,set:k=>methSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

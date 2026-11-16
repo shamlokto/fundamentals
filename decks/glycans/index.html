@@ -733,6 +733,13 @@ const S=[
  {p:4,title:'Break a step',draw:scG11,chips:'brk',text:"The consequences of blocking each step reveal how the pathway is wired. Pick a gene to disrupt. The striking result is that losing an early step is harmless, but blocking a middle step is often lethal — because trapped intermediates sequester the shared lipid carrier the cell needs for its wall."},
  {p:4,title:'Type 3, and why capsules matter',draw:scG12,text:"Not every capsule uses Wzx/Wzy. Type 3 is made by a single synthase that alternates two sugars — the simplest case, and an early model for making a capsule in a test tube. Whichever route builds it, the capsule is what the immune system sees, what vaccines target, and what the pneumococcus changes, by swapping its cps locus, to slip past them."}];
 const CHIPS={mono:{list:MONO.map(m=>m.sym),get:()=>monoSel,set:k=>monoSel=k},gt:{list:GTS.map(g=>g.n.split(' ')[0]),get:()=>gtSel,set:k=>gtSel=k},brk:{list:BRK.map(b=>b.n),get:()=>brkSel,set:k=>brkSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 const NPARTS=Math.max(...S.map(s=>s.p));

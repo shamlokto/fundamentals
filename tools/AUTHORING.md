@@ -123,6 +123,18 @@ plate, so the script needs no separate fact-check. Then
 `voice.py` calls xAI text to speech and only re-records plates whose script or voice changed (about
 US$0.003 per plate). The button plays each plate and turns the page when it ends.
 
+## Opening-plate pictures
+
+A deck's opening plate can show a picture: put `cover.webp` (transparent paper, preferred) or `cover.jpg` in
+`decks/<slug>/` (see `tools/IMAGES.md`). Generated decks pick it up when built, and the picture fills the art half
+of their opening plate. For the hand-built decks, run
+
+    python3 tools/covers.py
+
+after adding or removing a cover: it writes the cover's file name and size into the deck, and the opening plate then
+shows the framed picture in place of its drawing (the plate title and narration stay). Without a cover nothing
+changes, and no page requests a file that is not there. CI runs `python3 tools/covers.py --check`.
+
 ## Password protection
 
 The live site is published by `.github/workflows/pages.yml`, which runs

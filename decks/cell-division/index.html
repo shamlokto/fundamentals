@@ -788,6 +788,13 @@ const S=[
   text:"The same core proteins are rearranged to give very different cells. Rods elongate then septate; cocci such as Staphylococcus aureus grow mainly by septal synthesis and divide in successive perpendicular planes; ovococci such as the pneumococcus have an elongasome without MreB, which works at midcell beside the divisome, so peripheral and septal synthesis run side by side. Caulobacter divides asymmetrically into a stalked cell and a swimming swarmer, and mycobacteria grow from their poles at unequal rates, which is one reason a population of them is so variable."}
 ];
 const CHIPS={drug:{list:DRUGS.map(d=>d.d),get:()=>drugSel,set:k=>drugSel=k},break:{list:BREAK.map(b=>b.g),get:()=>brkSel,set:k=>brkSel=k}};
+/* cover: written by tools/covers.py */
+const COVER=null;
+if(COVER){S[0].draw=n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
+  return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
+    +`<rect x="${m}" y="${m}" width="${w}" height="${h}" rx="4" fill="none" stroke="#3A2E22" stroke-width="1.4"/>`
+    +`<rect x="${m-5}" y="${m-5}" width="${w+10}" height="${h+10}" rx="6" fill="none" stroke="#8C7A52" stroke-width=".7"/></g>`};};}
+/* /cover */
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
 let cur=0, lastNarrow=null;
