@@ -56,10 +56,34 @@ function scA5(n){
   const b=bullets(n?24:30,ey+er+44,[['Surface receptors','detect molecules on the outside of microbes: lipoproteins, lipopolysaccharide, flagellin.'],['Endosomal receptors','detect nucleic acids released when microbes are broken down inside the cell. Keeping them in endosomes helps avoid responses to the body\u2019s own DNA and RNA.']],n?44:88,{d0:1.6,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
+function scA6(n){
+  const N=n?{a:{x:180,y:40,w:220,t:'step 1: a TLR signal',f:PAL.teal},b:{x:180,y:110,w:240,t:'more NLRP3 and pro-IL-1β made',f:CAT[5]},
+      c:{x:180,y:180,w:240,t:'step 2: NLRP3 senses cell stress',f:PAL.teal},d:{x:180,y:250,w:240,t:'NLRP3 + ASC + caspase-1',f:PAL.lilac},
+      e:{x:180,y:320,w:240,t:'IL-1β and IL-18 released',f:PAL.gold}}
+    :{a:{x:120,y:60,w:170,t:'step 1:|a TLR signal',f:PAL.teal},b:{x:120,y:170,w:170,t:'NLRP3 and|pro-IL-1β made',f:CAT[5]},
+      c:{x:330,y:60,w:170,t:'step 2: NLRP3|senses cell stress',f:PAL.teal},d:{x:330,y:170,w:170,t:'inflammasome:|NLRP3, ASC, caspase-1',f:PAL.lilac},
+      e:{x:530,y:170,w:150,t:'IL-1β, IL-18|released',f:PAL.gold}};
+  const E=[['a','b',''],['b','d',''],['c','d',''],['d','e','']];
+  let s=G('a-fade',0,flow(N,E));
+  const b=bullets(n?24:30,n?370:240,[['Two signals for safety','The first signal makes the parts; the second assembles them. Requiring both keeps IL-1β from being released by accident.'],['Caspase-1','cuts pro-IL-1β and pro-IL-18 into their active forms, and can also trigger an inflammatory form of cell death called pyroptosis.']],n?44:88,{d0:1,gap:22});
+  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
+}
+function scA7(n){
+  const rows=[['cDC1','CD8α⁺ (lymphoid organs), CD103⁺ (tissues); XCR1, CLEC9A','CD141 (BDCA-3); XCR1, CLEC9A','cross-presents to CD8 T cells; IL-12, Th1'],
+   ['cDC2','CD11b⁺, SIRPα⁺','CD1c (BDCA-1)','presents to CD4 T cells; Th2 and Th17'],
+   ['pDC','B220, Siglec-H','CD123, CD303 (BDCA-2)','large amounts of type I interferon'],
+   ['moDC','from Ly6C-high monocytes','from CD14⁺ monocytes','made during inflammation']];
+  const t=n?wtable(n,['Subset','Mouse / human','Main job'],rows.map(r=>[r[0],r[1]+' / '+r[2],r[3]]),[[10,6],[70,22],[230,16]],{y0:30,R:354})
+    :wtable(n,['Subset','Mouse','Human','Main job'],rows,[[24,6],[90,24],[300,18],[450,22]],{y0:30,R:620});
+  const p=para(n?16:24,t.y+14,'Mouse and human subsets are matched by gene expression and function rather than by the same surface markers. cDC1 depend on the transcription factors IRF8 and BATF3 in both species; cDC2 depend on IRF4.',n?50:92,'note start f13',17,.8);
+  return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
+}
 const S=[
  {p:1,title:'Two systems, one response',draw:scA1,text:"Adaptive lymphocytes are specific but cannot by themselves tell a dangerous antigen from a harmless one. Innate cells can, because they recognise conserved microbial molecules. This primer follows how that recognition is handed on to T cells."},
  {p:1,title:'Three signals',draw:scA2,text:"A naive T cell needs three signals from a dendritic cell. The first says which antigen, the second says it is worth responding to, and the third says what kind of response to make."},
  {p:1,title:'How the idea arrived',draw:scA3,text:"Dendritic cells were found in 1973. In 1989 Charles Janeway predicted receptors for conserved microbial patterns, and within a decade Toll in flies and Toll-like receptors in mammals were identified."},
  {p:2,title:'Receptor families',chips:'prr',draw:scA4,text:"Innate cells use several families of pattern-recognition receptors. Pick one to see where it sits, what it detects and what it switches on."},
- {p:2,title:'Where Toll-like receptors sit',draw:scA5,text:"Toll-like receptors are placed to match their targets. Those for the outer molecules of microbes sit in the plasma membrane; those for nucleic acids sit in endosomes, where microbes are digested."}];
+ {p:2,title:'Where Toll-like receptors sit',draw:scA5,text:"Toll-like receptors are placed to match their targets. Those for the outer molecules of microbes sit in the plasma membrane; those for nucleic acids sit in endosomes, where microbes are digested."},
+ {p:2,title:'The inflammasome',draw:scA6,text:"Some NOD-like receptors assemble into a large complex called the inflammasome. It needs two steps, one to make its parts and one to assemble them, and its output is the potent inflammatory cytokines IL-1β and IL-18."},
+ {p:3,title:'Dendritic-cell subsets',draw:scA7,text:"Dendritic cells come in several subsets with different jobs. Mouse and human subsets carry different surface markers, but they line up by function and by the transcription factors they depend on."}];
 const CHIPS={prr:{list:PRRS.map(p=>p.k),get:()=>prrSel,set:k=>prrSel=k}};
