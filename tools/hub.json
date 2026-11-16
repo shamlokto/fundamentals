@@ -460,5 +460,19 @@
    }
   ],
   "icon": "history"
+ },
+ {
+  "name": "Immunology",
+  "desc": "How the immune system recognises microbes and makes antibodies, from foundations to mucosal immunity.",
+  "icon": "immunology",
+  "decks": [
+   {
+    "slug": "immuno-innate-adaptive",
+    "psub": "Innate and adaptive",
+    "title": "Innate Instructs Adaptive",
+    "sub": "Three signals from a dendritic cell",
+    "blurb": "Pattern-recognition receptors, dendritic-cell subsets in mouse and human, maturation and migration, and signals 1, 2 and 3."
+   }
+  ]
  }
 ]

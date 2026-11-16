@@ -6,7 +6,7 @@ Animated, click-through teaching primers on bacterial molecular biology, drawn a
 
 Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html` locally. Each deck is one self-contained HTML file.
 
-54 primers in 12 sections: 613 plates, 69 of them interactive, across 51 primers.
+55 primers in 13 sections: 623 plates, 71 of them interactive, across 52 primers.
 
 | # | Primer | Section | Plates | Interactive | Folder |
 |---|---|---|---|---|---|
@@ -64,6 +64,7 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | LII | Griffith, Avery and DNA | History | 9 | 2 | [`decks/griffith-avery/`](decks/griffith-avery/) |
 | LIII | Lederberg and Bacterial Genetics | History | 8 | 2 | [`decks/lederberg/`](decks/lederberg/) |
 | LIV | Woese and the Tree of Life | History | 7 | 1 | [`decks/woese/`](decks/woese/) |
+| LV | Innate Instructs Adaptive | Immunology | 10 | 2 | [`decks/immuno-innate-adaptive/`](decks/immuno-innate-adaptive/) |
 
 Historical attributions, dates and figures in the History decks have been fact-checked twice; some are rounded for teaching.
 
