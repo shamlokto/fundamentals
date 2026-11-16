@@ -681,6 +681,14 @@ function artBullets(n,art,artW,artH,items,o={}){
 }
 
 /* ===================== deck ===================== */
+const PRRS=[
+ {k:'TLRs, surface',h:'Toll-like receptors on the cell surface',rows:[['Examples','TLR2 (with TLR1 or TLR6), TLR4, TLR5'],['Ligands','bacterial lipoproteins, lipopolysaccharide, flagellin'],['Adaptor','MyD88; TLR4 also uses TRIF'],['Output','NF-κB and inflammatory cytokines']]},
+ {k:'TLRs, endosomal',h:'Toll-like receptors in endosomes',rows:[['Examples','TLR3, TLR7, TLR8, TLR9'],['Ligands','viral and bacterial nucleic acids'],['Adaptor','TRIF (TLR3); MyD88 (TLR7, 8, 9)'],['Output','type I interferons and cytokines']]},
+ {k:'CLRs',h:'C-type lectin receptors',rows:[['Examples','Dectin-1, Dectin-2, Mincle'],['Ligands','fungal β-glucans and mannans, mycobacterial glycolipids'],['Adaptor','Syk kinase, then CARD9'],['Output','cytokines that favour Th17 responses']]},
+ {k:'NLRs',h:'NOD-like receptors in the cytosol',rows:[['Examples','NOD1, NOD2; NLRP3 and NLRC4'],['Ligands','peptidoglycan fragments; signs of cell stress'],['Adaptor','RIPK2 (NODs); ASC (inflammasomes)'],['Output','NF-κB; caspase-1, IL-1β and IL-18']]},
+ {k:'RLRs',h:'RIG-I-like receptors in the cytosol',rows:[['Examples','RIG-I, MDA5'],['Ligands','viral RNA in the cytoplasm'],['Adaptor','MAVS on mitochondria'],['Output','type I interferons']]},
+ {k:'cGAS–STING',h:'cytosolic DNA sensing',rows:[['Sensor','cGAS'],['Ligand','DNA in the cytoplasm'],['Adaptor','cGAMP activates STING'],['Output','type I interferons']]}];
+let prrSel=0;
 function stub(n,t){return {vb:n?slim(120):wide(120),s:T(n?180:320,60,t,'note mid f13')};}
 function scA1(n){return introPlate(n,{q:'How does a T cell know that an antigen is worth responding to?',
   belief:'A naive T cell cannot tell a microbial peptide from a harmless one by its sequence alone. Innate cells, above all dendritic cells, sense microbes through pattern-recognition receptors and tell the T cell three things: what the antigen is, that it is dangerous, and what kind of response to make.',
@@ -710,11 +718,31 @@ function scA3(n){
   const p=para(n?16:24,t.y+14,'Steinman shared the 2011 Nobel Prize with Beutler and Hoffmann, whose work identified the Toll and Toll-like receptors.',n?50:92,'note start f13',17,.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
+function scA4(n){
+  const c=PRRS[prrSel];
+  return explorer(n,{h:c.h,sub:c.k,rows:c.rows,note:'Each family sits where its microbes are found: outside the cell, in endosomes, or in the cytoplasm.'},{y:32});
+}
+function scA5(n){
+  const W=n?360:640, x1=n?20:40, x2=W-(n?20:40), my=n?70:70;
+  let s=G('a-fade',0,membraneBand(x1,x2,my,16,{sides:['outside','cytoplasm']}));
+  const surf=n?['TLR2','TLR4','TLR5']:['TLR1–TLR2','TLR2–TLR6','TLR4','TLR5'];
+  surf.forEach((t,i)=>{const x=x1+60+i*((x2-x1-120)/(surf.length-1));
+    s+=G('a-pop',(.3+i*.15).toFixed(2),box(x-6,my-26,12,52,PAL.teal,3)+T(x,my-34,t,'mono mid f11 halo'));});
+  const ex=n?180:320, ey=my+(n?120:118), er=n?52:62;
+  s+=G('a-fade',.8,`<circle cx="${ex}" cy="${ey}" r="${er}" fill="#F3EEE2" stroke="${INK}" stroke-width="1.4"/>`+T(ex,ey+er+18,'endosome','note mid f12'));
+  ['TLR3','TLR7','TLR8','TLR9'].forEach((t,i)=>{const a=Math.PI*(1.15+i*.23), x=ex+(er-10)*Math.cos(a), y=ey+(er-10)*Math.sin(a);
+    s+=G('a-pop',(1+i*.12).toFixed(2),T(FX(x),FX(y+4),t,'mono mid f11 halo'));});
+  s+=G('a-fade',1.4,T(ex,ey+6,'nucleic acids','note mid f12'));
+  const b=bullets(n?24:30,ey+er+44,[['Surface receptors','detect molecules on the outside of microbes: lipoproteins, lipopolysaccharide, flagellin.'],['Endosomal receptors','detect nucleic acids released when microbes are broken down inside the cell. Keeping them in endosomes helps avoid responses to the body\u2019s own DNA and RNA.']],n?44:88,{d0:1.6,gap:22});
+  return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
+}
 const S=[
  {p:1,title:'Two systems, one response',draw:scA1,text:"Adaptive lymphocytes are specific but cannot by themselves tell a dangerous antigen from a harmless one. Innate cells can, because they recognise conserved microbial molecules. This primer follows how that recognition is handed on to T cells."},
  {p:1,title:'Three signals',draw:scA2,text:"A naive T cell needs three signals from a dendritic cell. The first says which antigen, the second says it is worth responding to, and the third says what kind of response to make."},
- {p:1,title:'How the idea arrived',draw:scA3,text:"Dendritic cells were found in 1973. In 1989 Charles Janeway predicted receptors for conserved microbial patterns, and within a decade Toll in flies and Toll-like receptors in mammals were identified."}];
-const CHIPS={};
+ {p:1,title:'How the idea arrived',draw:scA3,text:"Dendritic cells were found in 1973. In 1989 Charles Janeway predicted receptors for conserved microbial patterns, and within a decade Toll in flies and Toll-like receptors in mammals were identified."},
+ {p:2,title:'Receptor families',chips:'prr',draw:scA4,text:"Innate cells use several families of pattern-recognition receptors. Pick one to see where it sits, what it detects and what it switches on."},
+ {p:2,title:'Where Toll-like receptors sit',draw:scA5,text:"Toll-like receptors are placed to match their targets. Those for the outer molecules of microbes sit in the plasma membrane; those for nucleic acids sit in endosomes, where microbes are digested."}];
+const CHIPS={prr:{list:PRRS.map(p=>p.k),get:()=>prrSel,set:k=>prrSel=k}};
 const NAR='Narrator';
 const $=id=>document.getElementById(id);
 const stage=$('stage'), chips=$('chips'), dots=$('dots');
