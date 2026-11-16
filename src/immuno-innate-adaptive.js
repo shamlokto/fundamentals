@@ -93,6 +93,14 @@ function P8B(n,s){
   const p=para(n?16:24,t.y+14,'CCR7 guides mature dendritic cells along lymphatics towards CCL19 and CCL21 in the lymph node T-cell zone.',n?50:92,'note start f13',17,1.2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
 }
+const POL=[
+ {k:'IL-12',h:'Th1',rows:[['Made by','cDC1 and macrophages after TLR signals'],['Transcription factor','T-bet'],['Signature cytokine','IFN-γ'],['Fights','intracellular bacteria and viruses']]},
+ {k:'IL-4',h:'Th2',rows:[['Made by','mainly other cells, such as basophils and T cells'],['Transcription factor','GATA3'],['Signature cytokines','IL-4, IL-5, IL-13'],['Fights','helminths; drives allergy']]},
+ {k:'IL-6 + TGF-β',h:'Th17',rows:[['Made by','cDC2 after fungal or bacterial signals; IL-23 sustains it'],['Transcription factor','RORγt'],['Signature cytokine','IL-17'],['Fights','extracellular bacteria and fungi']]},
+ {k:'TGF-β + IL-2',h:'induced Treg',rows:[['Made by','tolerogenic DCs, for example in the gut'],['Transcription factor','Foxp3'],['Signature cytokines','IL-10, TGF-β'],['Role','restrains responses; tolerance']]},
+ {k:'IL-6 + IL-21',h:'Tfh',rows:[['Made by','DCs, then B cells'],['Transcription factor','Bcl6'],['Signature cytokine','IL-21'],['Role','helps B cells make antibody']]}];
+let polSel=0;
+function scA9(n){const c=POL[polSel];return explorer(n,{h:c.h,sub:'signal 3: '+c.k,rows:c.rows,note:'Simplified; the subsets are covered in their own primer.'},{y:32});}
 const S=[
  {p:1,title:'Two systems, one response',draw:scA1,text:"Adaptive lymphocytes are specific but cannot by themselves tell a dangerous antigen from a harmless one. Innate cells can, because they recognise conserved microbial molecules. This primer follows how that recognition is handed on to T cells."},
  {p:1,title:'Three signals',draw:scA2,text:"A naive T cell needs three signals from a dendritic cell. The first says which antigen, the second says it is worth responding to, and the third says what kind of response to make."},
@@ -101,5 +109,6 @@ const S=[
  {p:2,title:'Where Toll-like receptors sit',draw:scA5,text:"Toll-like receptors are placed to match their targets. Those for the outer molecules of microbes sit in the plasma membrane; those for nucleic acids sit in endosomes, where microbes are digested."},
  {p:2,title:'The inflammasome',draw:scA6,text:"Some NOD-like receptors assemble into a large complex called the inflammasome. It needs two steps, one to make its parts and one to assemble them, and its output is the potent inflammatory cytokines IL-1β and IL-18."},
  {p:3,title:'Dendritic-cell subsets',draw:scA7,text:"Dendritic cells come in several subsets with different jobs. Mouse and human subsets carry different surface markers, but they line up by function and by the transcription factors they depend on."},
- {p:3,title:'Maturation and migration',draw:scA8,text:"A dendritic cell that senses a microbe matures: it stops taking up antigen, raises MHC and costimulatory molecules, and gains CCR7, which carries it to the lymph node."}];
-const CHIPS={prr:{list:PRRS.map(p=>p.k),get:()=>prrSel,set:k=>prrSel=k}};
+ {p:3,title:'Maturation and migration',draw:scA8,text:"A dendritic cell that senses a microbe matures: it stops taking up antigen, raises MHC and costimulatory molecules, and gains CCR7, which carries it to the lymph node."},
+ {p:4,title:'Signal 3 steers the response',chips:'pol',draw:scA9,text:"The cytokines present when a T cell is first activated decide what kind of helper it becomes. Pick a cytokine signal to see the subset it favours."}];
+const CHIPS={pol:{list:POL.map(p=>p.k),get:()=>polSel,set:k=>polSel=k},prr:{list:PRRS.map(p=>p.k),get:()=>prrSel,set:k=>prrSel=k}};
