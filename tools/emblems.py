@@ -71,10 +71,13 @@ EMBLEMS = {
                     + f'<path d="M6 53 C20 52 24 14 34 14 S48 52 60 53" fill="none" stroke="#A4473A" stroke-width="2" stroke-linecap="round"/>',
     'history': f'<ellipse cx="32" cy="32" rx="21" ry="26" fill="#E8D9B5" {S}/><ellipse cx="32" cy="32" rx="17.5" ry="22.5" fill="none" stroke="{INK}" stroke-width=".7"/>'
                f'<path d="M18 50 Q19 38 32 37 Q45 38 46 50" fill="#8C7A52" {s}/><circle cx="32" cy="27" r="8" fill="#8C7A52" {s}/>',
+    'immunology': f'<path d="M32 58 V34 M32 34 L16 14 M32 34 L48 14" fill="none" stroke="{INK}" stroke-width="5" stroke-linecap="round"/>'
+                  f'<path d="M32 58 V34 M32 34 L16 14 M32 34 L48 14" fill="none" stroke="#A9C4DC" stroke-width="2.6" stroke-linecap="round"/>'
+                  f'<circle cx="14" cy="11" r="4" fill="#E0C88A" {s}/><circle cx="50" cy="11" r="4" fill="#E0C88A" {s}/>',
 }
 
 KEYS = ['chemistry', 'dogma', 'cell', 'regulation', 'evolution', 'metabolism', 'growth', 'viruses', 'methods',
-        'antimicrobials', 'quantitative', 'history']
+        'antimicrobials', 'quantitative', 'history', 'immunology']
 
 
 def emblem(key, cls='emb', size=64):
