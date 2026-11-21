@@ -91,7 +91,10 @@ local runs flag text within 4% of the plate edge as an early warning (CI flags o
 crosses it). If CI fails on a plate that passes locally, download the `audit-report` artifact from the
 failed run and fix what it lists. Set `AUDIT_OUT=dir` to write somewhere else (useful when several people audit at once).
 
-The audit flags overlapping text, arrows running through text, crossing arrows, text cut off at the plate
+The audit flags overlapping text, labels on the same line less than 2 units apart (`text-close`; labels under 3
+characters such as bullets and symbols are skipped), text spilling out of the outlined box it sits in (`text-box`:
+flow nodes and `box()`; unoutlined bands and backdrops are not containers), arrows running through text, crossing
+arrows, text cut off at the plate
 edge, page errors and console errors, at desktop (900 px) and phone (390 px) width and for every chip. It
 exits non-zero on any finding not listed in `tools/audit_ignore.json` (known false positives, as regular
 expressions over keys such as `woese/wide/05`). Fix every finding, then look at every contact sheet and fix
