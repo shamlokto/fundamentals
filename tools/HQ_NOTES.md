@@ -49,5 +49,8 @@ Gmail (thread with support@anthropic.com, 16 November).
 * Molecular-cloning cover: insert sits on the scissor blade (optional redo).
 * Hand-built palette draws phage (PHG) in red, against STYLE.md §2.
 * `tools/base_helpers.js` prediction-table wrap width could be narrowed for all decks.
-* Software was asked to make the audit catch text overflowing flow boxes and touching labels.
+* Software's new audit checks (text outside its box; labels touching) are on claude/epic-turing-qv54qj @ 876fc4b,
+  NOT merged. Merging turns CI red until two findings are fixed: respiration narrow/02 ("III" 2 units past its
+  complex box) and stress-biofilms wide/02 chip 5 ("envelope proteins" 3 units out of its flow box). Fix both,
+  then merge.
 * Evolution plate 10 r/m values are banded; exact values need Vos & Didelot 2009, Table 1.
