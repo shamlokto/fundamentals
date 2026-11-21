@@ -33,11 +33,11 @@ committed or published).
 | 1 | Innate instructs adaptive | immuno-innate-adaptive | live, passed |
 | 2 | Antigen receptors and genes | immuno-antigen-receptors | live, passed |
 | 3 | Antigen presentation | immuno-antigen-presentation | live, passed |
-| 4 | Lymphocyte development | immuno-lymphocyte-development | built; all of B's findings (L1, F1, W1–W3) applied, awaiting B's re-check; NOT in hub.json yet, add it back when B passes |
+| 4 | Lymphocyte development | immuno-lymphocyte-development | built; all of B's findings (L1, F1, W1–W3) applied, awaiting B's re-check; held in tools/wip/ (CI rejects a built deck that the hub does not link); when B passes, move it back to src/, build, add it to hub.json |
 | 5 | T helper subsets | — | next to write |
 | 6–14 | see `tools/IMMUNOLOGY.md` | — | not started |
 
-Primer 4's deck file is built but deliberately left out of `tools/hub.json` until it passes.
+Primer 4's source is parked in `tools/wip/` until it passes; restore it to `src/` and add it to `tools/hub.json` then.
 
 Safety: the earlier scientist sessions and one HQ attempt (a paradigms primer and a fungi/protists brief)
 were stopped by safeguards. Primers 2–4, written plainly at textbook level, went through. If a step is
