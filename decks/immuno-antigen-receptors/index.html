@@ -706,7 +706,7 @@ function scR2(n){
   if(!n){s+=G('a-fade',.4,T(cx,cy-100,'antigen-binding sites at the tips','note mid f12')+T(cx,cy+92,'Fc stem: heavy-chain constant domains','note mid f12'));}
   const it=[['Two kinds of chain','Two identical heavy chains (blue) and two identical light chains (gold), held together by disulfide bonds.'],
    ['Variable and constant domains','The first domain of each chain varies between antibodies; the rest are constant. A VH and a VL domain pair to form each binding site.'],
-   ['Two business ends','The two Fab arms bind antigen; the Fc stem, made of heavy-chain constant domains, sets the isotype and the effector function.']];
+   ['Two business ends','The two Fab arms bind antigen. The heavy-chain constant region sets the isotype, and the Fc stem carries the effector functions.']];
   const b=bullets(lx,n?260:40,it,n?44:40,{d0:.6,gap:20});
   const h=n?b.y:Math.max(b.y,cy+110);
   return {vb:n?slim(h-4):wide(h),s:s+b.s};
@@ -714,7 +714,7 @@ function scR2(n){
 function scR3(n){
   const rows=[['Chains','two heavy + two light','α + β (most T cells), or γ + δ'],
    ['Binding sites','two per molecule','one per molecule'],
-   ['Recognises','intact antigen of almost any kind','peptide bound to an MHC molecule'],
+   ['Recognises','intact antigen of almost any kind','αβ: peptide bound to an MHC molecule; γδ: mostly other ligands'],
    ['Secreted form','yes: antibody','no'],
    ['Signalling partners','Igα and Igβ','the CD3 complex and ζ chains'],
    ['Changes after activation','class switching and somatic hypermutation','none: fixed once made']];
@@ -748,32 +748,36 @@ function scR5(n){
 }
 function scR6(n){
   const W=n?360:640, y=n?70:80, x0=n?20:40;
-  const g=n?52:90;
   let s='';
-  const seg=(x,lab,f)=>box(x,y-12,n?34:44,24,f,3)+T(x+(n?17:22),y+5,lab,'mono mid f12');
-  const rss=(x,sp,flip)=>{const w=n?30:44;return `<rect x="${x}" y="${y-6}" width="${w}" height="12" fill="${sp===12?CAT[4]:CAT[5]}" stroke="${INK}" stroke-width="1"/>`+T(x+w/2,y+26,sp+' bp','mono mid f11');};
-  const xs=n?[20,90,160,230]:[50,170,300,430];
+  const sw=n?30:42, rs=n?{12:22,23:38}:{12:30,23:52};
+  let x=x0+(n?4:20);
+  const seg=(lab,f)=>{const r=box(x,y-12,sw,24,f,3)+T(x+sw/2,y+5,lab,'mono mid f12');x+=sw;return r;};
+  const rss=sp=>{const w=rs[sp];const r=`<rect x="${x}" y="${y-6}" width="${w}" height="12" fill="${sp===12?CAT[4]:CAT[5]}" stroke="${INK}" stroke-width="1"/>`+T(x+w/2,y-14,String(sp),'mono mid f11');x+=w;return r;};
+  const gap=d=>{x+=d;return '';};
   s+=G('a-fade',0,ln(x0,y,W-(n?20:40),y,INK,1.2));
-  s+=G('a-pop',.2,seg(xs[0],'V',CAT[0])+rss(xs[0]+(n?36:46),23));
-  s+=G('a-pop',.4,rss(xs[1]-(n?2:6),12)+seg(xs[1]+(n?30:40),'D',CAT[1])+rss(xs[1]+(n?66:86),12));
-  s+=G('a-pop',.6,rss(xs[3]-(n?32:46),23)+seg(xs[3],'J',CAT[2]));
+  s+=G('a-pop',.2,seg('V',CAT[0])+rss(23)+gap(n?16:40));
+  s+=G('a-pop',.4,rss(12)+seg('D',CAT[1])+rss(12)+gap(n?16:40));
+  s+=G('a-pop',.6,rss(23)+seg('J',CAT[2]));
+  s+=G('a-fade',.8,`<rect x="${x0+(n?4:20)}" y="${y+24}" width="22" height="10" fill="${CAT[4]}" stroke="${INK}"/>`+T(x0+(n?32:48),y+33,'12-bp spacer',"note start f12")
+    +`<rect x="${x0+(n?150:200)}" y="${y+24}" width="38" height="10" fill="${CAT[5]}" stroke="${INK}"/>`+T(x0+(n?194:244),y+33,'23-bp spacer',"note start f12"));
+  s+=G('a-fade',.9,T(x0+(n?4:20),y+54,'shaded bars: recombination signal sequences (number = spacer length)','note start f12'));
   const it=[['Signal sequences','Each segment is flanked by a recombination signal sequence: a conserved heptamer and nonamer separated by a spacer of 12 or 23 base pairs.'],
    ['The rule','RAG joins a segment with a 12-bp spacer only to one with a 23-bp spacer. On the heavy-chain locus this lets D join J and V join D, but stops V joining J directly.'],
    ['Why it matters','The rule keeps the segments in the right order and makes sure a D segment is included in every heavy chain.']];
-  const b=bullets(n?24:30,y+60,it,n?44:88,{d0:.8,gap:20});
+  const b=bullets(n?24:30,y+80,it,n?44:88,{d0:.8,gap:20});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 const DIV=[
- {h:'Combinatorial diversity',rows:[['What varies','which V, D and J segments are chosen'],['Heavy chain','about 40 V × 23 D × 6 J ≈ 5,000 combinations'],['Light chains','about 200 κ and 120 λ V–J combinations'],['Limit','fixed by the number of inherited segments']]},
- {h:'Junctional diversity',rows:[['What varies','the sequence at each joint'],['Lost bases','nucleotides trimmed from the cut ends'],['P nucleotides','short palindromes left when the hairpin ends are opened'],['N nucleotides','random bases added by TdT, mostly in heavy chains'],['Effect','the third hypervariable loop (CDR3), at the centre of the binding site, is the most variable part']]},
- {h:'Chain pairing',rows:[['What varies','which heavy chain pairs with which light chain'],['Arithmetic','about 5,000 heavy × 320 light ≈ 1.6 million receptors before junctional diversity'],['With junctions','the potential repertoire is estimated at over a hundred billion'],['T cells','α and β chains pair in the same way']]}];
+ {h:'Combinatorial diversity',rows:[['What varies','which V, D and J segments are chosen'],['Heavy chain','about 40 V × 23 D × 6 J ≈ 5,500 combinations'],['Light chains','about 200 κ and 120 λ V–J combinations'],['Limit','fixed by the number of inherited segments']]},
+ {h:'Junctional diversity',rows:[['What varies','the sequence at each joint'],['Lost bases','nucleotides trimmed from the cut ends'],['P nucleotides','short palindromes left when the hairpin ends are opened'],['N nucleotides','random bases added by TdT: in B cells mostly in heavy chains, in T cells in both chains'],['Effect','the third hypervariable loop (CDR3), at the centre of the binding site, is the most variable part']]},
+ {h:'Chain pairing',rows:[['What varies','which heavy chain pairs with which light chain'],['Arithmetic','about 5,500 heavy × 320 light ≈ 1.8 million receptors before junctional diversity (Janeway gives about 1.9 million)'],['With junctions','the potential repertoire is estimated at over a hundred billion'],['T cells','α and β chains pair in the same way']]}];
 function scR7(n){const c=DIV[divSel];return explorer(n,{h:c.h,sub:'source of receptor diversity',rows:c.rows,note:'Round numbers for human B cells, from the segment counts on plate 4. Somatic hypermutation adds more diversity later, but only in B cells after activation.'},{y:32});}
 function scR8(n){
   const N=n?{h:{x:180,y:40,w:220,t:'heavy chain rearranges|first copy, then second',f:CAT[0]},p:{x:180,y:130,w:220,t:'pre-B-cell receptor|(heavy + surrogate light chain)',f:CAT[3]},s:{x:180,y:220,w:220,t:'stop heavy rearrangement;|start light chain',f:CAT[1]},l:{x:180,y:310,w:220,t:'κ first, then λ;|stop at the first that works',f:CAT[2]}}
-    :{h:{x:100,y:70,w:170,t:'heavy chain|rearranges',f:CAT[0]},p:{x:320,y:70,w:190,t:'pre-B-cell receptor|surrogate light chain',f:CAT[3]},s:{x:540,y:70,w:170,t:'stop heavy;|start light',f:CAT[1]},l:{x:320,y:190,w:240,t:'κ first, then λ;|stop at first that works',f:CAT[2]}};
+    :{h:{x:100,y:70,w:170,t:'heavy chain: one copy,|then the other if needed',f:CAT[0]},p:{x:320,y:70,w:190,t:'pre-B-cell receptor|surrogate light chain',f:CAT[3]},s:{x:540,y:70,w:170,t:'stop heavy;|start light',f:CAT[1]},l:{x:320,y:190,w:240,t:'κ first, then λ;|stop at first that works',f:CAT[2]}};
   const E=[['h','p','',{}],['p','s','',{}],['s','l','',{}]];
   let s=G('a-fade',0,flow(N,E));
-  const p=para(n?16:24,n?370:250,'A rearrangement is productive only if it keeps the reading frame, roughly one try in three, so the second copy is a back-up. Signals from the first working receptor shut the locus down. The result is one heavy and one light chain per cell (allelic exclusion), and either κ or λ, not both (isotypic exclusion).',n?48:90,'note start f13',17,.8);
+  const p=para(n?16:24,n?370:250,'A rearrangement is productive only if it keeps the reading frame, roughly one try in three, so the second copy is a back-up. Signals from the first working receptor shut the locus down. The result is one heavy and one light chain per cell (allelic exclusion), and either κ or λ, not both (isotypic exclusion). T cells exclude the β locus in the same way, but not α.',n?48:90,'note start f13',17,.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 function scR9(n){
@@ -783,18 +787,18 @@ function scR9(n){
    ['1987','Tonegawa','Nobel Prize for the genetic principle of antibody diversity'],
    ['1989–90','Schatz, Oettinger and Baltimore','RAG1 and RAG2, the genes that switch on recombination']];
   const t=wtable(n,['Year','Who','Finding'],rows,n?[[10,7],[66,14],[176,22]]:[[24,8],[100,22],[300,40]],{y0:30,R:n?354:620});
-  const p=para(n?16:24,t.y+14,'The 1976 experiment compared DNA from mouse embryos with DNA from a mouse plasma-cell tumour. Cut with a restriction enzyme, the same antibody sequences fell on different fragments in the two, showing that the genes had moved.',n?50:92,'note start f13',17,.8);
+  const p=para(n?16:24,t.y+14,'The 1976 experiment compared DNA from mouse embryos with DNA from a mouse plasma-cell tumour. In embryo DNA, probes for the V and C regions bound two different restriction fragments; in tumour DNA both bound a single, smaller fragment, showing that the segments had been brought together.',n?50:92,'note start f13',17,.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 const S=[
  {p:1,title:'One cell, one specificity',draw:scR1,text:"Each B or T cell carries receptors of a single specificity, yet the population as a whole can recognise almost any antigen. This primer explains how a modest set of inherited gene segments is cut and joined to make that variety."},
  {p:1,title:'The antibody molecule',draw:scR2,text:"An antibody is made of two identical heavy chains and two identical light chains. The variable domains at the tips of the arms form the antigen-binding site; the constant region of the heavy chain decides what the antibody does."},
  {p:1,title:'B-cell and T-cell receptors',draw:scR3,text:"The B-cell receptor is a membrane-bound antibody. The T-cell receptor is built on the same plan, but it has only one binding site, is never secreted, and recognises a peptide held by an MHC molecule rather than a free antigen."},
- {p:2,title:'Gene segments',draw:scR4,text:"Receptor genes are inherited in pieces. Heavy chains are assembled from V, D and J segments; light chains from V and J. Each locus carries dozens of V segments, a few D and J segments, and the constant-region exons."},
+ {p:2,title:'Gene segments',draw:scR4,text:"Receptor genes are inherited in pieces. Heavy chains are assembled from V, D and J segments; light chains from V and J. Each locus carries dozens of V segments, about two dozen D segments on the heavy-chain locus, a handful of J segments, and the constant-region exons."},
  {p:2,title:'V(D)J recombination',draw:scR5,text:"In a developing lymphocyte, the RAG enzymes cut the DNA next to two chosen segments, and the cell's DNA-repair machinery joins them. The heavy chain is joined D to J first, then V to DJ."},
  {p:2,title:'The 12/23 rule',draw:scR6,text:"Every segment is flanked by a recombination signal sequence with a spacer of either 12 or 23 base pairs. Joining happens only between a 12 and a 23 signal, which keeps segments joining in the right order."},
  {p:3,title:'Where the diversity comes from',chips:'div',draw:scR7,text:"Diversity comes from several sources that multiply together. Pick one to see how much it contributes."},
- {p:4,title:'Allelic exclusion',draw:scR8,text:"A lymphocyte has two copies of each receptor locus but makes receptors from only one. Once a productive rearrangement makes a chain, further rearrangement of the other copy is switched off, so each cell keeps a single specificity."},
+ {p:4,title:'Allelic exclusion',draw:scR8,text:"A B cell has two copies of each receptor locus but makes receptors from only one. Once a productive rearrangement makes a chain, further rearrangement of the other copy is switched off, so each cell keeps a single specificity."},
  {p:4,title:'How rearrangement was discovered',draw:scR9,text:"In 1965 Dreyer and Bennett proposed that one antibody chain is encoded by two separate genes. In 1976 Hozumi and Tonegawa showed that the gene segments lie far apart in embryonic DNA but close together in an antibody-making tumour."}];
 let divSel=0;
 const CHIPS={div:{list:['Combinatorial','Junctional','Chain pairing'],get:()=>divSel,set:k=>divSel=k}};
