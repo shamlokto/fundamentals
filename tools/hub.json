@@ -472,6 +472,13 @@
     "title": "Innate Instructs Adaptive",
     "sub": "Three signals from a dendritic cell",
     "blurb": "Pattern-recognition receptors, dendritic-cell subsets in mouse and human, maturation and migration, and signals 1, 2 and 3."
+   },
+   {
+    "slug": "immuno-antigen-receptors",
+    "psub": "Receptors",
+    "title": "Antigen Receptors and Genes",
+    "sub": "How a few hundred segments make millions of receptors",
+    "blurb": "Antibody and T-cell receptor structure, gene segments, V(D)J recombination and the 12/23 rule, sources of diversity, allelic exclusion, and how rearrangement was discovered."
    }
   ]
  }

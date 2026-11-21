@@ -6,7 +6,7 @@ Animated, click-through teaching primers on bacterial molecular biology, drawn a
 
 Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html` locally. Each deck is one self-contained HTML file.
 
-55 primers in 13 sections: 623 plates, 71 of them interactive, across 52 primers.
+56 primers in 13 sections: 632 plates, 72 of them interactive, across 53 primers.
 
 | # | Primer | Section | Plates | Interactive | Folder |
 |---|---|---|---|---|---|
@@ -65,6 +65,7 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | LIII | Lederberg and Bacterial Genetics | History | 8 | 2 | [`decks/lederberg/`](decks/lederberg/) |
 | LIV | Woese and the Tree of Life | History | 7 | 1 | [`decks/woese/`](decks/woese/) |
 | LV | Innate Instructs Adaptive | Immunology | 10 | 2 | [`decks/immuno-innate-adaptive/`](decks/immuno-innate-adaptive/) |
+| LVI | Antigen Receptors and Genes | Immunology | 9 | 1 | [`decks/immuno-antigen-receptors/`](decks/immuno-antigen-receptors/) |
 
 Historical attributions, dates and figures in the History decks have been fact-checked twice; some are rounded for teaching.
 
