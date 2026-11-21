@@ -58,3 +58,5 @@ motility cover, was rejected because the flagella waved instead of rotating. If 
 motion must be mechanically right: flagellar bundles rotate as rigid helices (they do not wave like whips),
 DNA stays right-handed, and nothing changes shape or appears from nowhere. A clip that shows the wrong
 mechanism is worse than none.
+
+Runpod (how to start, use and terminate a generation pod, REST v2 API): see `tools/RUNPOD.md`.

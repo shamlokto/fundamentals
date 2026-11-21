@@ -725,7 +725,7 @@ const S=[
  {p:3,title:'Reading a feature',chips:'gen',draw:scG11,text:"Most features of a genome have a small number of plausible explanations, and the distinguishing evidence is usually already in the data. Pick an observation to see what it most likely means and what would confirm it."}];
 const CHIPS={gen:{list:GENQ.map((q,i)=>String(i+1)),get:()=>gSel,set:k=>gSel=k}};
 /* cover: written by tools/covers.py */
-const COVER=null;
+const COVER={"src": "cover.webp", "w": 868, "h": 560};
 if(COVER)S.unshift({p:S[0].p, title:document.title||'Plate', text:(document.querySelector('meta[name="description"]')||{}).content||'',
   draw:n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
     return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`
