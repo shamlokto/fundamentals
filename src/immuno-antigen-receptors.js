@@ -109,10 +109,10 @@ const DIV=[
 function scR7(n){const c=DIV[divSel];return explorer(n,{h:c.h,sub:'source of receptor diversity',rows:c.rows,note:'Round numbers for human B cells, from the segment counts on plate 4. Somatic hypermutation adds more diversity later, but only in B cells after activation.'},{y:32});}
 function scR8(n){
   const N=n?{h:{x:180,y:40,w:220,t:'heavy chain: one copy,|then the other if needed',f:CAT[0]},p:{x:180,y:130,w:220,t:'pre-B-cell receptor|heavy + surrogate light',f:CAT[3]},s:{x:180,y:220,w:220,t:'stop heavy rearrangement;|start light chain',f:CAT[1]},l:{x:180,y:310,w:220,t:'κ first, then λ;|stop at first that works',f:CAT[2]}}
-    :{h:{x:125,y:70,w:230,t:'heavy chain: one copy,|then the other if needed',f:CAT[0]},p:{x:360,y:70,w:190,t:'pre-B-cell receptor|surrogate light chain',f:CAT[3]},s:{x:555,y:70,w:150,t:'stop heavy;|start light',f:CAT[1]},l:{x:320,y:190,w:240,t:'κ first, then λ;|stop at first that works',f:CAT[2]}};
+    :{h:{x:170,y:60,w:250,t:'heavy chain: one copy,|then the other if needed',f:CAT[0]},p:{x:470,y:60,w:250,t:'pre-B-cell receptor|heavy + surrogate light',f:CAT[3]},s:{x:470,y:170,w:250,t:'stop heavy rearrangement;|start light chain',f:CAT[1]},l:{x:170,y:170,w:250,t:'κ first, then λ;|stop at first that works',f:CAT[2]}};
   const E=[['h','p','',{}],['p','s','',{}],['s','l','',{}]];
   let s=G('a-fade',0,flow(N,E));
-  const p=para(n?16:24,n?370:250,'A rearrangement is productive only if it keeps the reading frame, roughly one try in three, so the second copy is a back-up. Signals from the first working receptor shut the locus down. The result is one heavy and one light chain per cell (allelic exclusion), and either κ or λ, not both (isotypic exclusion). T cells exclude the β locus in the same way, but not α.',n?48:90,'note start f13',17,.8);
+  const p=para(n?16:24,n?370:236,'A rearrangement is productive only if it keeps the reading frame, roughly one try in three, so the second copy is a back-up. Signals from the first working receptor shut the locus down. The result is one heavy and one light chain per cell (allelic exclusion), and either κ or λ, not both (isotypic exclusion). T cells exclude the β locus in the same way, but not α.',n?48:90,'note start f13',17,.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 function scR9(n){
