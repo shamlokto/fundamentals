@@ -486,6 +486,13 @@
     "title": "Antigen Presentation",
     "sub": "How cells show T cells what is inside them",
     "blurb": "MHC class I and II, the cytosolic and vesicular pathways, cross-presentation, CD1 and MR1, polymorphism and MHC restriction, with mouse and human compared."
+   },
+   {
+    "slug": "immuno-lymphocyte-development",
+    "psub": "Development",
+    "title": "Lymphocyte Development",
+    "sub": "Made, tested and kept tolerant",
+    "blurb": "B-cell stages and subsets, T-cell development in the thymus, positive and negative selection, B-cell tolerance, AIRE and thymic regulatory T cells, with mouse and human compared."
    }
   ]
  }

@@ -6,7 +6,7 @@ Animated, click-through teaching primers on bacterial molecular biology, drawn a
 
 Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html` locally. Each deck is one self-contained HTML file.
 
-57 primers in 13 sections: 652 plates, 73 of them interactive, across 54 primers.
+58 primers in 13 sections: 661 plates, 74 of them interactive, across 55 primers.
 
 | # | Primer | Section | Plates | Interactive | Folder |
 |---|---|---|---|---|---|
@@ -67,6 +67,7 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | LV | Innate Instructs Adaptive | Immunology | 10 | 2 | [`decks/immuno-innate-adaptive/`](decks/immuno-innate-adaptive/) |
 | LVI | Antigen Receptors and Genes | Immunology | 9 | 1 | [`decks/immuno-antigen-receptors/`](decks/immuno-antigen-receptors/) |
 | LVII | Antigen Presentation | Immunology | 9 | 1 | [`decks/immuno-antigen-presentation/`](decks/immuno-antigen-presentation/) |
+| LVIII | Lymphocyte Development | Immunology | 9 | 1 | [`decks/immuno-lymphocyte-development/`](decks/immuno-lymphocyte-development/) |
 
 Historical attributions, dates and figures in the History decks have been fact-checked twice; some are rounded for teaching.
 
