@@ -760,7 +760,7 @@ function scR6(n){
   s+=G('a-pop',.6,rss(23)+seg('J',CAT[2]));
   s+=G('a-fade',.8,`<rect x="${x0+(n?4:20)}" y="${y+24}" width="22" height="10" fill="${CAT[4]}" stroke="${INK}"/>`+T(x0+(n?32:48),y+33,'12-bp spacer',"note start f12")
     +`<rect x="${x0+(n?150:200)}" y="${y+24}" width="38" height="10" fill="${CAT[5]}" stroke="${INK}"/>`+T(x0+(n?194:244),y+33,'23-bp spacer',"note start f12"));
-  s+=G('a-fade',.9,T(x0+(n?4:20),y+54,'shaded bars: recombination signal sequences (number = spacer length)','note start f12'));
+  s+=G('a-fade',.9,T(x0+(n?4:20),y+54,'bars: recombination signal sequences (number = spacer length)','note start f12'));
   const it=[['Signal sequences','Each segment is flanked by a recombination signal sequence: a conserved heptamer and nonamer separated by a spacer of 12 or 23 base pairs.'],
    ['The rule','RAG joins a segment with a 12-bp spacer only to one with a 23-bp spacer. On the heavy-chain locus this lets D join J and V join D, but stops V joining J directly.'],
    ['Why it matters','The rule keeps the segments in the right order and makes sure a D segment is included in every heavy chain.']];
@@ -773,8 +773,8 @@ const DIV=[
  {h:'Chain pairing',rows:[['What varies','which heavy chain pairs with which light chain'],['Arithmetic','about 5,500 heavy × 320 light ≈ 1.8 million receptors before junctional diversity (Janeway gives about 1.9 million)'],['With junctions','the potential repertoire is estimated at over a hundred billion'],['T cells','α and β chains pair in the same way']]}];
 function scR7(n){const c=DIV[divSel];return explorer(n,{h:c.h,sub:'source of receptor diversity',rows:c.rows,note:'Round numbers for human B cells, from the segment counts on plate 4. Somatic hypermutation adds more diversity later, but only in B cells after activation.'},{y:32});}
 function scR8(n){
-  const N=n?{h:{x:180,y:40,w:220,t:'heavy chain rearranges|first copy, then second',f:CAT[0]},p:{x:180,y:130,w:220,t:'pre-B-cell receptor|(heavy + surrogate light chain)',f:CAT[3]},s:{x:180,y:220,w:220,t:'stop heavy rearrangement;|start light chain',f:CAT[1]},l:{x:180,y:310,w:220,t:'κ first, then λ;|stop at the first that works',f:CAT[2]}}
-    :{h:{x:100,y:70,w:170,t:'heavy chain: one copy,|then the other if needed',f:CAT[0]},p:{x:320,y:70,w:190,t:'pre-B-cell receptor|surrogate light chain',f:CAT[3]},s:{x:540,y:70,w:170,t:'stop heavy;|start light',f:CAT[1]},l:{x:320,y:190,w:240,t:'κ first, then λ;|stop at first that works',f:CAT[2]}};
+  const N=n?{h:{x:180,y:40,w:220,t:'heavy chain: one copy,|then the other if needed',f:CAT[0]},p:{x:180,y:130,w:220,t:'pre-B-cell receptor|heavy + surrogate light',f:CAT[3]},s:{x:180,y:220,w:220,t:'stop heavy rearrangement;|start light chain',f:CAT[1]},l:{x:180,y:310,w:220,t:'κ first, then λ;|stop at first that works',f:CAT[2]}}
+    :{h:{x:125,y:70,w:230,t:'heavy chain: one copy,|then the other if needed',f:CAT[0]},p:{x:360,y:70,w:190,t:'pre-B-cell receptor|surrogate light chain',f:CAT[3]},s:{x:555,y:70,w:150,t:'stop heavy;|start light',f:CAT[1]},l:{x:320,y:190,w:240,t:'κ first, then λ;|stop at first that works',f:CAT[2]}};
   const E=[['h','p','',{}],['p','s','',{}],['s','l','',{}]];
   let s=G('a-fade',0,flow(N,E));
   const p=para(n?16:24,n?370:250,'A rearrangement is productive only if it keeps the reading frame, roughly one try in three, so the second copy is a back-up. Signals from the first working receptor shut the locus down. The result is one heavy and one light chain per cell (allelic exclusion), and either κ or λ, not both (isotypic exclusion). T cells exclude the β locus in the same way, but not α.',n?48:90,'note start f13',17,.8);
@@ -793,7 +793,7 @@ function scR9(n){
 const S=[
  {p:1,title:'One cell, one specificity',draw:scR1,text:"Each B or T cell carries receptors of a single specificity, yet the population as a whole can recognise almost any antigen. This primer explains how a modest set of inherited gene segments is cut and joined to make that variety."},
  {p:1,title:'The antibody molecule',draw:scR2,text:"An antibody is made of two identical heavy chains and two identical light chains. The variable domains at the tips of the arms form the antigen-binding site; the constant region of the heavy chain decides what the antibody does."},
- {p:1,title:'B-cell and T-cell receptors',draw:scR3,text:"The B-cell receptor is a membrane-bound antibody. The T-cell receptor is built on the same plan, but it has only one binding site, is never secreted, and recognises a peptide held by an MHC molecule rather than a free antigen."},
+ {p:1,title:'B-cell and T-cell receptors',draw:scR3,text:"The B-cell receptor is a membrane-bound antibody. The T-cell receptor is built on the same plan, but it has only one binding site and is never secreted. Most T-cell receptors (αβ) recognise a peptide held by an MHC molecule rather than a free antigen."},
  {p:2,title:'Gene segments',draw:scR4,text:"Receptor genes are inherited in pieces. Heavy chains are assembled from V, D and J segments; light chains from V and J. Each locus carries dozens of V segments, about two dozen D segments on the heavy-chain locus, a handful of J segments, and the constant-region exons."},
  {p:2,title:'V(D)J recombination',draw:scR5,text:"In a developing lymphocyte, the RAG enzymes cut the DNA next to two chosen segments, and the cell's DNA-repair machinery joins them. The heavy chain is joined D to J first, then V to DJ."},
  {p:2,title:'The 12/23 rule',draw:scR6,text:"Every segment is flanked by a recombination signal sequence with a spacer of either 12 or 23 base pairs. Joining happens only between a 12 and a 23 signal, which keeps segments joining in the right order."},
