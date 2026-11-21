@@ -111,7 +111,7 @@ function scP7(n){
      dy:{x:560,y:60,w:150,t:'dysbiosis:|niches open',f:PAL.gold},
      cd:{x:420,y:190,w:160,t:'C. difficile|overgrows, colitis',f:PAL.lilac},
      ft:{x:180,y:190,w:180,t:'faecal transplant|restores resistance',f:PAL.green}};
-  const E=n?[['he','ab',''],['ab','dy',''],['dy','cd','',{side:-1}],['cd','ft','treat',{side:-1}]]
+  const E=n?[['he','ab',''],['ab','dy',''],['dy','cd','',{side:-1}],['cd','ft','',{side:-1}]]
     :[['he','ab',''],['ab','dy',''],['dy','cd','',{side:1}],['cd','ft','treat',{side:1}]];
   let s=G('a-fade',0,flow(N,E));
   const b=bullets(n?24:30,n?360:290,[
