@@ -18,7 +18,7 @@ function scB2(n){
   let s='';const y=112, x1=n?8:24, x2=n?352:616, w=n?32:50;
   const X=n?{I:46,Q:94,III:140,c:184,IV:226,A:314}:{I:110,Q:188,III:262,c:332,IV:396,A:488};
   s+=G('a-fade',0,membraneBand(x1,x2,y-14,28)+T(x1+2,y-82,n?'periplasm: P side, + charge, acidic':'periplasm (P side): positive charge, more acidic','note start f12')+T(x1+2,y+102,n?'cytoplasm: N side, − charge, alkaline':'cytoplasm (N side): negative charge, more alkaline','note start f12'));
-  const cx=k=>X[k], cplx=(k,lab,col,bot)=>`<rect x="${cx(k)-w/2}" y="${y-26}" width="${w}" height="${26+bot}" rx="7" fill="${col}" stroke="${INK}" class="tint"/>`+Tc(cx(k)+(n?6:10),y+5,lab,'#3A2E22',12,'mono mid','600');
+  const cx=k=>X[k], cplx=(k,lab,col,bot)=>`<rect x="${cx(k)-w/2}" y="${y-26}" width="${w}" height="${26+bot}" rx="7" fill="${col}" stroke="${INK}" class="tint"/>`+Tc(cx(k)+(n?3:10),y+5,lab,'#3A2E22',12,'mono mid','600');
   s+=G('a-fade',.3,cplx('I','I','#A9C4DC',44)+cplx('III','III','#C9A9D6',26)+cplx('IV','IV','#E7A99B',26)
     +`<ellipse cx="${cx('Q')}" cy="${y}" rx="${n?13:16}" ry="10" fill="${PAL.gold}" stroke="${INK}"/>`+Tc(cx('Q'),y+4,'Q','#3A2E22',12,'mono mid','600')
     +`<circle cx="${cx('c')}" cy="${y-42}" r="10" fill="#E8B4A0" stroke="${INK}"/>`+Tc(cx('c'),y-38,'c','#3A2E22',12,'mono mid','600')
