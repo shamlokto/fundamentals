@@ -719,7 +719,7 @@ function scM1(n){return introPlate(n,{q:'How do we turn microbes into factories,
   art:(cx,cy)=>reactor(cx,cy+6,1,false),artH:170});}
 function scM2(n){
   const p=PROD[prSel];
-  return explorer(n,{h:p.k,rows:[['Organisms',p.org],['Product and scale',p.sc],['Process',p.pr]],note:p.note},{y:32});
+  return explorer(n,{h:p.k,rows:[['Organisms',p.org],['Output',p.sc],['Process',p.pr]],note:p.note},{y:32});
 }
 function scM3(n){
   return artBullets(n,(cx,cy)=>reactor(cx,cy,n?1.05:1.1,true),n?200:250,n?200:210,[
