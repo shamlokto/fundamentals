@@ -9,7 +9,7 @@ function scM1(n){return introPlate(n,{q:'How do molecules held together by weak 
     pts.forEach((p,i)=>s+=`<circle cx="${cx+p[0]}" cy="${cy+p[1]}" r="7" fill="${i%3?PAL.gold:PAL.rose}" stroke="${INK}"/>`);
     return s+T(cx,cy+92,'a chain folds on itself','note mid f11');},artH:190});}
 function scM2(n){
-  const items=[['covalent C–C bond',350,'#A4473A','~350'],['salt bridge, buried',20,PAL.gold,'10–30'],['hydrogen bond',15,PAL.blue,'5–30'],['salt bridge in water',5,PAL.gold,'~5'],['hydrophobic effect, per CH₂',3,PAL.green,'~3'],['van der Waals contact',2,PAL.green,'0.5–4'],['thermal energy, RT',2.5,'#C9BFAB','2.5']];
+  const items=[['covalent C–C bond',350,PAL.lilac,'~350'],['salt bridge, buried',20,PAL.gold,'10–30'],['hydrogen bond',15,PAL.blue,'5–30'],['salt bridge in water',5,PAL.gold,'~5'],['hydrophobic effect, per CH₂',3,PAL.green,'~3'],['van der Waals contact',2,PAL.green,'0.5–4'],['thermal energy, RT',2.5,'#C9BFAB','2.5']];
   const top=para(n?16:24,30,'Bond energies in kJ/mol (log scale). Only covalent bonds are much stronger than thermal jostling; everything that shapes a macromolecule is within about a factor of ten of RT.',n?50:92,'lab start f13',17,0);
   const h=hbars(n,n?10:30,top.y+14,n?340:560,items.map(i=>[i[0],Math.log10(i[1]*10),i[2],i[3]]),{max:Math.log10(3500),lw:n?150:190});
   const bx=(n?10:30)+(n?150:190), bw=(n?340:560)-(n?150:190)-46, ay=h.y+2, tx=v=>FX(bx+bw*Math.log10(v*10)/Math.log10(3500));
