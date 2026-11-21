@@ -764,7 +764,7 @@ function scP8(n){
   tg.forEach(([lab,ok],i)=>{const x=n?196:420, y=y0+i*(n?56:56);
     s+=G('a-fade',(.4+i*.3).toFixed(1),arw(cx+40,y0+60,x-36,y+4,{w:1.2})+blob(x,y+4,28,20,CAT[2])+T(x+(n?36:40),y+8,lab,'note start f12')+mark(x,y+4,ok,10));});
   s+=G('a-fade',1.4,T(n?196:420,y0+(n?168:168),'✓ target killed   ✗ not killed','note mid f12'));
-  const p=para(n?16:24,y0+(n?190:190),'Zinkernagel and Doherty (1974) infected mice with lymphocytic choriomeningitis virus. Their killer T cells (now known to be CD8 T cells) destroyed infected target cells only when the targets shared the mouse\'s own MHC type. The finding showed that T cells recognise antigen together with self MHC, and earned the 1996 Nobel Prize. The structure of HLA-A2, solved by Bjorkman and colleagues in 1987, showed why: the peptide sits in a groove formed by the MHC molecule itself.',n?50:92,'note start f13',17,1.4);
+  const p=para(n?16:24,y0+(n?196:198),'Zinkernagel and Doherty (1974) infected mice with lymphocytic choriomeningitis virus. Their killer T cells (now known to be CD8 T cells) destroyed infected target cells only when the targets shared the mouse\'s own MHC type. The finding showed that T cells recognise antigen together with self MHC, and earned the 1996 Nobel Prize. The structure of HLA-A2, solved by Bjorkman and colleagues in 1987, showed why: the peptide sits in a groove formed by the MHC molecule itself.',n?50:92,'note start f13',17,1.4);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 function scP9(n){

@@ -32,13 +32,12 @@ committed or published).
 |---|---|---|---|
 | 1 | Innate instructs adaptive | immuno-innate-adaptive | live, passed |
 | 2 | Antigen receptors and genes | immuno-antigen-receptors | live, passed |
-| 3 | Antigen presentation | immuno-antigen-presentation | on HQ branch; B's fixes applied, awaiting B's re-check |
-| 4 | Lymphocyte development | immuno-lymphocyte-development | on HQ branch; awaiting B's vet |
+| 3 | Antigen presentation | immuno-antigen-presentation | live, passed |
+| 4 | Lymphocyte development | immuno-lymphocyte-development | built; B's findings (L1 plate 5 phone labels, F1 plate 9 narration, W1–W3) to apply; NOT in hub.json yet, add it back when B passes |
 | 5 | T helper subsets | — | next to write |
 | 6–14 | see `tools/IMMUNOLOGY.md` | — | not started |
 
-Primers 3 and 4 are already in `tools/hub.json` on the HQ branch; do not push that branch to main
-until B passes both (or remove the unpassed entry first).
+Primer 4's deck file is built but deliberately left out of `tools/hub.json` until it passes.
 
 Safety: the earlier scientist sessions and one HQ attempt (a paradigms primer and a fungi/protists brief)
 were stopped by safeguards. Primers 2–4, written plainly at textbook level, went through. If a step is
