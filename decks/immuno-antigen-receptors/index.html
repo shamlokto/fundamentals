@@ -735,15 +735,30 @@ function scR4(n){
   const p=para(n?16:24,y+50,'Numbers are functional segments in the human loci (Janeway, figure 5.4); some people carry more or fewer. The T-cell receptor loci are built the same way: β and δ chains have V, D and J segments, α and γ chains only V and J.',n?50:92,'note start f13',17,1.6);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
+function locRow(x0,y,items,sw,gs,gb,o={}){
+  const C={V:CAT[0],D:CAT[1],J:CAT[2],C:CAT[3]}; let x=x0, bx='';
+  items.forEach(it=>{if(it==='|'){x+=gb-gs;return;} if(it==='+'){x-=gs;return;}
+    bx+=box(x,y-11,sw,22,C[it[0]],3)+T(x+sw/2,y+4,it,'mono mid f11'); x+=sw+gs;});
+  const line=o.rna?`<path d="M${x0-6} ${y} H${FX(x-gs+6)}" stroke="${RNAC}" stroke-width="2.6"/>`
+    :`<path d="M${x0-10} ${y} H${FX(x-gs+10)}" stroke="${DNA}" stroke-width="2.2"/>`;
+  return {s:line+bx,x:x-gs};}
 function scR5(n){
-  const N=n?{g:{x:180,y:40,w:200,t:'germline: V … D … J … C',f:CAT[6]},dj:{x:180,y:120,w:200,t:'step 1: D joined to J',f:CAT[1]},vdj:{x:180,y:200,w:200,t:'step 2: V joined to DJ',f:CAT[0]},m:{x:180,y:280,w:200,t:'transcribe, splice|VDJ joined to C',f:CAT[2]}}
-    :{g:{x:110,y:70,w:170,t:'germline locus|V … D … J … C',f:CAT[6]},dj:{x:320,y:70,w:150,t:'step 1|D joined to J',f:CAT[1]},vdj:{x:530,y:70,w:150,t:'step 2|V joined to DJ',f:CAT[0]},m:{x:320,y:190,w:240,t:'RNA splicing joins|VDJ to the C exon',f:CAT[2]}};
-  const E=[['g','dj','',{}],['dj','vdj','',{}],['vdj','m','',{}]];
-  let s=G('a-fade',0,flow(N,E));
+  const sw=n?24:30, gs=n?3:5, gb=n?14:24, x0=n?20:170, dy=n?72:62, y0=n?60:44;
+  const rows=[['germline DNA',['V1','V2','V3','|','D1','D2','D3','|','J1','J2','J3','|','C']],
+    ['step 1: D joined to J',['V1','V2','V3','|','D1','D2','+','J2','J3','|','C']],
+    ['step 2: V joined to DJ',['V1','V2','+','D2','+','J2','J3','|','C']],
+    ['mRNA after splicing',['V2','+','D2','+','J2','+','C'],1]];
+  const lost=['','D3 and J1 cut out','V3 and D1 cut out','J3 spliced out'];
+  let s='';
+  rows.forEach((r,i)=>{const y=y0+i*dy, d=(i*.6).toFixed(1), R=locRow(x0,y,r[1],sw,gs,gb,{rna:r[2]});
+    const lab=n?T(x0-6,y-20,r[0],'lab start f13'):T(x0-24,y+5,r[0],'lab end f13');
+    s+=G('a-fade',d,lab+R.s+(lost[i]?T(R.x+(n?14:20),y+5,lost[i],'note start f12'):''));
+    if(i<3)s+=G('a-fade',d,arw(x0+(n?150:180),y+16,x0+(n?150:180),y+dy-(n?36:18),{w:1.2}));});
+  const yb=y0+3*dy+(n?40:44);
   const it=[['RAG1 and RAG2','Expressed only in developing lymphocytes, they recognise the signal sequences and cut the DNA beside the two chosen segments.'],
    ['Repair joins the ends','The cut ends are joined by the cell\'s general DNA double-strand-break repair (non-homologous end joining). The DNA between the segments is lost.'],
    ['Order','Heavy chains join D to J, then V to DJ. Light chains have no D and join V straight to J.']];
-  const b=bullets(n?24:30,n?330:250,it,n?44:88,{d0:.6,gap:20});
+  const b=bullets(n?24:30,yb,it,n?44:88,{d0:2,gap:20});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scR6(n){
