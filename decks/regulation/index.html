@@ -609,7 +609,7 @@ function scR3(n){
   let yy=y;
   sig.forEach((g,i)=>{const L=wrap(g[2],n?30:44);
     s+=G('a-fade',(i*.22).toFixed(2),`<rect x="${x}" y="${yy-11}" width="${n?14:16}" height="${n?14:16}" rx="3" fill="${g[3]}" fill-opacity=".6" stroke="${INK}" stroke-width=".7"/>`
-      +T(x+(n?22:26),yy,g[0],'cname start f13')+T(x+(n?96:120),yy,g[1],'mono acc start f11')
+      +T(x+(n?22:26),yy,g[0],'cname start f13')+T(x+(n?112:130),yy,g[1],'mono acc start f11')
       +L.map((l,j)=>T(x+(n?22:26),yy+16+j*14,l,'note start f11')).join(''));
     yy+=16+L.length*14+(n?12:12);});
   const b=bullets(n?24:30,yy+8,[['A sigma factor is a promoter-recognition subunit','RNA polymerase core has no sequence specificity of its own. Which promoters are read depends on which sigma is bound, so swapping sigma factors replaces an entire transcriptional programme in one step.'],
