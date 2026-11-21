@@ -772,8 +772,8 @@ function scG5(n){
     +ln(A.x,FX(A.py(c.D)),FX(A.px(Math.min(ss.S,200))),FX(A.py(c.D)),'#A4473A',1.4,'4 3')+(ss.wash?'':`<circle cx="${FX(A.px(ss.S))}" cy="${FX(A.py(c.D))}" r="4.5" fill="#A4473A"/>`)
     +T(FX(A.px(ss.wash?60:ss.S)+10),FX(A.py(c.D)+(ss.wash?-8:18)),ss.wash?'D above μ at any S':'μ = D at S*','note start f11 halo'));
   const by=n?A.y+A.h+80:A.y+A.h+60;
-  const rows=ss.wash?[['Steady state','none: cells are washed out faster than they can divide'],['Residual substrate','S rises to the feed concentration, 200 mg/L'],['Critical D',(n?'':'μmax·S_R/(Ks+S_R) ')+'≈ 0.95 per hour']]
-    :[['Growth rate',(n?'μ = D = ':'μ = D = ')+c.D.toFixed(1)+' per h ('+Math.round(60*Math.LN2/c.D)+' min doubling)'],['Residual substrate',(n?'S* = ':'S* = Ks·D/(μmax − D) = ')+FX(ss.S,1)+' mg/L'],['Biomass',(n?'X* = ':'X* = Y(S_R − S*) = ')+FX(ss.X,0)+' mg/L'],['Productivity','D·X* = '+FX(ss.P,0)+' mg/L per h']];
+  const rows=ss.wash?[['Steady state','none: cells are washed out faster than they can divide'],['Substrate left','S rises to the feed concentration, 200 mg/L'],['Critical D',(n?'':'μmax·S_R/(Ks+S_R) ')+'≈ 0.95 per hour']]
+    :[['Growth rate',(n?'μ = D = ':'μ = D = ')+c.D.toFixed(1)+' per h ('+Math.round(60*Math.LN2/c.D)+' min doubling)'],['Substrate left',(n?'S* = ':'S* = Ks·D/(μmax − D) = ')+FX(ss.S,1)+' mg/L'],['Biomass',(n?'X* = ':'X* = Y(S_R − S*) = ')+FX(ss.X,0)+' mg/L'],['Productivity','D·X* = '+FX(ss.P,0)+' mg/L per h']];
   let yy=by;const kx=n?16:24, vx2=n?140:190;
   s+=G('a-fade',.5,T(kx,yy-22,'Steady state at '+c.k.replace(': washout',''),'cname start f15'));
   rows.forEach((r,i)=>{const L=wrap(r[1],n?25:56);s+=G('a-fade',(.6+i*.08).toFixed(2),T(kx,yy,r[0],'lab start f13')+L.map((l,j)=>T(vx2,yy+j*16,l,'mono start f12')).join(''));yy+=L.length*16+8;});

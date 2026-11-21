@@ -405,7 +405,7 @@ function predictPlate(n,spec,sel){
   const cx=n?[16,148,338]:[24,300,606];
   s+=G('a-fade',.5,T(cx[0],y,n?'If it were…':'If the explanation were…','mono acc start f11')+T(cx[1],y,'we would expect','mono acc start f11')+ln(cx[0],y+6,n?346:616,y+6));
   y+=24;
-  H.forEach((h,i)=>{const A=wrap(h[0],n?20:40),P=wrap(tx(c.pred[i]),n?28:42),L=Math.max(A.length,P.length),ok=hit(c,i);
+  H.forEach((h,i)=>{const A=wrap(h[0],n?17:40),P=wrap(tx(c.pred[i]),n?28:42),L=Math.max(A.length,P.length),ok=hit(c,i);
     s+=G('a-fade',(.6+i*.2).toFixed(1),A.map((l,j)=>T(cx[0],y+j*16,l,'lab start f13')).join('')+P.map((l,j)=>T(cx[1],y+j*16,l,'note start f13')).join('')+mark(cx[2],y-4,ok,8));
     y+=L*16+10;});
   const O=wrap(tx(c.obs),n?28:42);
