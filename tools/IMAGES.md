@@ -8,7 +8,7 @@ file exists, so nothing breaks while a picture is missing.
 |---|---|---|---|
 | Hub header | `img/hero.jpg` | replaces the drawn "Plate I" vignette at the top of the hub | `python3 tools/hub.py` |
 | Hub card | `img/cards/<slug>.jpg` | fills the tinted strip at the top of that primer's card, behind its numeral | `python3 tools/hub.py` |
-| Opening plate | `decks/<slug>/cover.webp` (preferred) or `cover.jpg` | replaces the drawing on the opening plate; fitted inside the frame without cropping | generated primer (`src/<slug>.js`): `python3 tools/build.py <slug>`; hand-built primer: `python3 tools/covers.py` |
+| Opening plate | `decks/<slug>/cover.webp` (preferred) or `cover.jpg` | generated primer: replaces the drawing on the opening plate; hand-built primer: added as an extra plate before plate 1, leaving every plate in place; fitted inside the frame without cropping | generated primer (`src/<slug>.js`): `python3 tools/build.py <slug>`; hand-built primer: `python3 tools/covers.py` |
 
 History primers have their own portrait slots (see the README).
 

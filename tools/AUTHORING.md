@@ -131,9 +131,10 @@ of their opening plate. For the hand-built decks, run
 
     python3 tools/covers.py
 
-after adding or removing a cover: it writes the cover's file name and size into the deck, and the opening plate then
-shows the framed picture in place of its drawing (the plate title and narration stay). Without a cover nothing
-changes, and no page requests a file that is not there. CI runs `python3 tools/covers.py --check`.
+after adding or removing a cover: it writes the cover's file name and size into the deck, and the picture is then
+shown, framed on the plate paper, as an extra plate before plate 1, titled with the deck's title. Every existing plate
+is kept (their numbers move up by one; dots and part buttons follow). Without a cover nothing changes, and no page
+requests a file that is not there. CI runs `python3 tools/covers.py --check`.
 
 ## Password protection
 
