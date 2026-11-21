@@ -16,14 +16,20 @@ function scA1(n){return introPlate(n,{q:'How does a T cell know that an antigen 
     +arw(cx-24,cy-8,cx+32,cy-8,{w:1.4})+arw(cx-24,cy+4,cx+32,cy+4,{w:1.4})+arw(cx-24,cy+16,cx+32,cy+16,{w:1.4})
     +T(cx,cy-38,'signals 1, 2, 3','note mid f12'),artH:120});}
 function scA2(n){
-  const N=n?{dc:{x:90,y:150,w:120,t:'dendritic|cell',f:PAL.lilac},t:{x:270,y:150,w:110,t:'naive|T cell',f:PAL.blue}}
-    :{dc:{x:150,y:110,w:140,t:'dendritic cell',f:PAL.lilac},t:{x:490,y:110,w:140,t:'naive T cell',f:PAL.blue}};
-  const E=[['dc','t','1  peptide–MHC → TCR',{side:-1,off:n?26:22}],['dc','t','2  CD80/CD86 → CD28',{side:1,off:n?6:4}],['dc','t','3  cytokines (IL-12 …)',{side:1,off:n?34:30,blue:1}]];
-  let s=G('a-fade',0,flow(N,E));
+  const W=n?360:640, cw=n?122:170, lx=n?12:40, rx=W-(n?12:40)-cw, top=28, h=196, ys=[96,146,196];
+  let s=G('a-fade',0,box(lx,top,cw,h,PAL.lilac,14)+box(rx,top,cw,h,PAL.blue,14)
+    +T(lx+cw/2,top+26,n?'DC':'dendritic cell','cname mid')+T(rx+cw/2,top+26,n?'naive T':'naive T cell','cname mid'));
+  const L=['peptide–MHC','CD80 / CD86',n?'IL-12':'IL-12 and others'], R=['TCR','CD28',n?'IL-12R':'cytokine receptor'],
+    Q=['which antigen','is it dangerous?','what response'];
+  ys.forEach((y,i)=>{const d=(.4+i*.4).toFixed(1), x1=lx+cw, x2=rx;
+    s+=G('a-fade',d,T(lx+cw/2,y+4,L[i],'mono mid f12')+T(rx+cw/2,y+4,R[i],'mono mid f12')
+      +arw(x1+4,y,x2-4,y,{w:1.6,blue:i==2,dash:i==2?'5 4':0})+badge(n?(x1+x2)/2:x1+22,y-16,String(i+1))
+      +(n?'':T(x1+36,y-12,Q[i],'note start f12')));});
+  s+=G('a-fade',1.6,T(W/2,top+h+22,n?'dashed: a secreted signal':'1 and 2 need cell contact; 3 is secreted (dashed)','note mid f12'));
   const it=[['Signal 1: which antigen','A peptide bound to an MHC molecule is recognised by the T-cell receptor. It gives specificity, but on its own it switches the T cell off rather than on.'],
    ['Signal 2: is it dangerous','Costimulatory molecules, CD80 and CD86 (B7.1 and B7.2), bind CD28 on the T cell. Dendritic cells raise them only after sensing microbes. Signal 1 without signal 2 leads to anergy.'],
    ['Signal 3: what kind of response','Cytokines from the dendritic cell, such as IL-12, steer the T cell towards a particular effector type.']];
-  const b=bullets(n?24:30,n?250:200,it,n?44:88,{d0:.6,gap:22});
+  const b=bullets(n?24:30,top+h+52,it,n?44:88,{d0:.6,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scA3(n){
@@ -47,11 +53,13 @@ function scA5(n){
   const surf=n?['TLR2','TLR4','TLR5']:['TLR1–TLR2','TLR2–TLR6','TLR4','TLR5'];
   surf.forEach((t,i)=>{const x=x1+60+i*((x2-x1-120)/(surf.length-1));
     s+=G('a-pop',(.3+i*.15).toFixed(2),box(x-6,my-26,12,52,PAL.teal,3)+T(x,my-34,t,'mono mid f11 halo'));});
-  const ex=n?180:320, ey=my+(n?120:118), er=n?52:62;
+  const ex=n?180:320, ey=my+(n?122:124), er=n?58:66;
   s+=G('a-fade',.8,`<circle cx="${ex}" cy="${ey}" r="${er}" fill="#F3EEE2" stroke="${INK}" stroke-width="1.4"/>`+T(ex,ey+er+18,'endosome','note mid f12'));
-  ['TLR3','TLR7','TLR8','TLR9'].forEach((t,i)=>{const a=Math.PI*(1.15+i*.23), x=ex+(er-10)*Math.cos(a), y=ey+(er-10)*Math.sin(a);
-    s+=G('a-pop',(1+i*.12).toFixed(2),T(FX(x),FX(y+4),t,'mono mid f11 halo'));});
-  s+=G('a-fade',1.4,T(ex,ey+6,'nucleic acids','note mid f12'));
+  ['TLR3','TLR7','TLR8','TLR9'].forEach((t,i)=>{const a=Math.PI*(1.2+i*.2), bx=ex+er*Math.cos(a), by=ey+er*Math.sin(a),
+      deg=FX(a*180/Math.PI+90), lx=ex+(i%2?24:-24), ly=ey-(i<2?8:-12);
+    s+=G('a-pop',(1+i*.12).toFixed(2),`<rect x="${FX(bx-4)}" y="${FX(by-11)}" width="8" height="22" rx="2" fill="${PAL.teal}" stroke="${INK}" stroke-width=".8" transform="rotate(${deg} ${FX(bx)} ${FX(by)})"/>`
+      +T(lx,ly,t,'mono mid f11'));});
+  s+=G('a-fade',1.4,T(ex,ey+36,'nucleic acids','note mid f12'));
   const b=bullets(n?24:30,ey+er+44,[['Surface receptors','detect molecules on the outside of microbes: lipoproteins, lipopolysaccharide, flagellin.'],['Endosomal receptors','detect nucleic acids released when microbes are broken down inside the cell. Keeping them in endosomes helps avoid responses to the body\u2019s own DNA and RNA.']],n?44:88,{d0:1.6,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
