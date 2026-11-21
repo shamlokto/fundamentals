@@ -1,5 +1,6 @@
 // Layout audit for every plate (and every chip choice) at desktop (900 px) and phone (390 px) width.
-// Flags overlapping text, arrows running through text, crossing arrows and text clipped at the plate edge,
+// Flags overlapping or touching text, text spilling out of outlined boxes, arrows running through text, crossing arrows
+// and text clipped at the plate edge,
 // and records page errors and console errors.
 // Usage: node tools/audit.js [slug ...]       (all decks if none given)
 //   AUDIT_OUT=dir   where report.json and shots/ go (default: .audit/ in the repo, git-ignored)
@@ -58,6 +59,30 @@ const probe = WM => {
   function segX(p1, p2, p3, p4) { const d = (a, b, c) => (c[0] - a[0]) * (b[1] - a[1]) - (b[0] - a[0]) * (c[1] - a[1]); const d1 = d(p3, p4, p1), d2 = d(p3, p4, p2), d3 = d(p1, p2, p3), d4 = d(p1, p2, p4); return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0)) && d1 && d2 && d3 && d4; }
   // Text sets a few percent wider on GitHub's runner than in local runs, and varies on readers' platforms too:
   // CI (the reference) measures exactly; local runs require 4% slack as an early warning.
+  // text spilling out of the outlined box it sits in (flow nodes, box()): the smallest visible filled, outlined rect
+  // containing the label's centre, ignoring plate-sized backgrounds. Height uses ~1 em, close to the ink.
+  const area = vb.width * vb.height;
+  const rects = [...svg.querySelectorAll('rect')].filter(r => {
+    if (r.closest('clipPath,mask,defs,marker,pattern') || eff(r) <= 0.3) return false;
+    // containers are outlined (flow nodes, box()); bands, backdrops and table stripes have no stroke
+    const cs = getComputedStyle(r); if (cs.fill === 'none' || parseFloat(cs.fillOpacity) < 0.2 || cs.stroke === 'none' || !(parseFloat(cs.strokeWidth) > 0) || parseFloat(cs.strokeOpacity) < 0.2) return false;
+    r._b = toVB(r.getBoundingClientRect()); return r._b.w > 4 && r._b.h > 4 && r._b.w * r._b.h < 0.35 * area; });
+  texts.forEach(t => { const m = inv.multiply(t.el.getScreenCTM()); if (Math.abs(m.b) > 1e-6) return;
+    const em = parseFloat(getComputedStyle(t.el).fontSize) * Math.hypot(m.a, m.b), cx = t.b.x + t.b.w / 2, cy = t.b.y + t.b.h / 2;
+    const r = rects.filter(r => cx > r._b.x && cx < r._b.x + r._b.w && cy > r._b.y && cy < r._b.y + r._b.h).sort((a, b) => a._b.w * a._b.h - b._b.w * b._b.h)[0];
+    if (!r) return; const R = r._b, top = cy - em * 0.5, bot = cy + em * 0.5;
+    // bands and strips thinner than a line of text are drawings, not containers; a label mostly outside a rect sits beside it
+    if (R.h < em * 1.1 || (Math.min(t.b.x + t.b.w, R.x + R.w) - Math.max(t.b.x, R.x)) < 0.6 * t.b.w) return;
+    const over = Math.max(R.x - t.b.x, t.b.x + t.b.w - (R.x + R.w), R.y - top, bot - (R.y + R.h));
+    if (over > 1.5) issues.push(['text-box', t.s, Math.round(over), `box ${Math.round(R.w)}x${Math.round(R.h)}`]); });
+  // labels on the same line nearly touching (gap under 2 units); overlaps are reported as text-text above.
+  // Labels under 3 characters are skipped: bullets, symbols and per-letter colouring sit next to words on purpose.
+  const flat = texts.filter(t => t.s.length >= 3 && Math.abs(inv.multiply(t.el.getScreenCTM()).b) < 1e-6);
+  for (let i = 0; i < flat.length; i++) for (let j = i + 1; j < flat.length; j++) {
+    const a = flat[i].b, b = flat[j].b, vo = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+    if (vo < 0.5 * Math.min(a.h, b.h)) continue;
+    const gap = Math.max(b.x - (a.x + a.w), a.x - (b.x + b.w));
+    if (gap < 2 && gap > -3) issues.push(['text-close', flat[i].s, flat[j].s, +gap.toFixed(1)]); }
   texts.forEach(t => { const b = { ...t.b, x: t.b.x - t.b.w * WM / 2, w: t.b.w * (1 + WM) }; if (b.x < vb.x - 1 || b.y < vb.y - 1 || b.x + b.w > vb.x + vb.width + 1 || b.y + b.h > vb.y + vb.height + 1) issues.push(['clipped', t.s, `${Math.round(b.x)},${Math.round(b.y)},${Math.round(b.w)}x${Math.round(b.h)}`, `vb ${vb.width}x${vb.height}`]); });
   return issues;
 };
