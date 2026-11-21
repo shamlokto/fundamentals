@@ -395,7 +395,7 @@ function scOkazaki(n){
   let s=G('a-fade',0,ln(P.x0,P.y1,P.x1,P.y1,'#6A5B47',1.4)+ln(P.x0,P.y0,P.x0,P.y1,'#6A5B47',1.4)
     +T((P.x0+P.x1)/2,P.y1+26,'size of newly made DNA  →','note mid f12')+`<text x="${P.x0-14}" y="${(P.y0+P.y1)/2}" class="note mid f12" transform="rotate(-90 ${P.x0-14} ${(P.y0+P.y1)/2})">³H label</text>`
     +T(P.x0+6,P.y1+14,'short','mono start f10')+T(P.x1-4,P.y1+14,'long','mono end f10'));
-  s+=G('a-fade',.6,`<path d="${curve(.18,.07,.9)}" stroke="${RED}" stroke-width="2.6" fill="none"/>`+T(P.x0+W*.18+14,P.y0+H*.1+6,n?'5 s pulse':'after a 5-second pulse','lab start '+(n?'f14':'')));
+  s+=G('a-fade',.6,`<path d="${curve(.18,.07,.9)}" stroke="#6A5B47" stroke-width="2.4" stroke-dasharray="6 4" fill="none"/>`+T(P.x0+W*.18+14,P.y0+H*.1+6,n?'5 s pulse':'after a 5-second pulse','lab start '+(n?'f14':'')));
   s+=G('a-fade',1.8,`<path d="${curve(.78,.1,.7)}" stroke="${NEW}" stroke-width="2.6" fill="none"/>`+T(P.x0+W*.78,P.y0+H*.3-12,n?'after a chase':'after a chase','lab mid '+(n?'f14':'')));
   s+=G('a-fade',2.6,T(n?180:320,P.H-14,n?'Short pieces first, joined later':'New DNA appears first as short pieces, which are later joined','lab mid'));
   return {vb:n?slim(P.H):wide(P.H),s};
