@@ -697,7 +697,7 @@ function scE2(n){
   s+=G('a-fade',.4,`<path d="M${fx-24} ${py-46} H${fx+24} L${fx+8} ${py+8} V${py+40} H${fx-8} V${py+8} Z" fill="${PAL.gold}" stroke="${INK}" stroke-width="1" class="tint"/>`+T(fx,py+58,'selection','note mid f11')+T(fx,py+71,n?'(filter)':'(environment, partners)','note mid f10'));
   s+=G('a-fade',.4,arw(px+rr+4,py-10,fx-28,py-10,{w:1.4})+T((px+rr+fx-24)/2,py-18,'dispersal','note mid f11 halo'));
   s+=G('a-fade',.8,arw(fx+26,py-10,lx-lr-6,py-10,{w:1.4})+`<circle cx="${lx}" cy="${py}" r="${lr}" fill="#EFE6D2" stroke="${INK}"/>`+dotCloud(lx,py,lr,[14,7,0,4,0,1],8)+T(lx,py+lr+18,'local community','note mid f11'));
-  s+=G('a-fade',1.1,`<path d="M${FX(lx+lr*.25)} ${FX(py-lr*.97)} a18 18 0 1 1 ${FX(lr*.5)} ${FX(lr*.35)}" stroke="#A4473A" stroke-width="1.4" fill="none" marker-end="url(#ahr)"/>`+T(FX(lx+lr*.45),FX(py-lr-30),'drift','note start f11 halo')
+  s+=G('a-fade',1.1,`<path d="M${FX(lx+lr*.25)} ${FX(py-lr*.97)} a18 18 0 1 1 ${FX(lr*.5)} ${FX(lr*.35)}" stroke="#6A5B47" stroke-width="1.4" fill="none" marker-end="url(#ahp)"/>`+T(FX(lx+lr*.45),FX(py-lr-30),'drift','note start f11 halo')
     +`<path d="M${FX(lx-lr*.25)} ${FX(py-lr*.97)} a18 18 0 1 0 ${FX(-lr*.5)} ${FX(lr*.35)}" stroke="#2F5276" stroke-width="1.4" fill="none" marker-end="url(#ahb)"/>`+T(FX(lx-lr*.45),FX(py-lr-30),n?'new types':'diversification','note end f11 halo'));
   const rows=[['Selection','fitness differences among taxa in a given environment','pH is the best single predictor of soil bacterial communities across continents'],
     ['Drift','random births and deaths change abundances','strongest in small populations and when selection is weak'],
@@ -745,7 +745,7 @@ function scE3(n){
   ty+=46;
   s+=G('a-fade',.45,T(tx,ty,d.f,'mono start '+(n?'f12':(d.f.length>30?'f11':'f12'))));
   ty+=26;
-  d.v().forEach((v,i)=>{s+=G('a-fade',(.6+i*.1).toFixed(2),Tc(tx+i*(n?120:120),ty,v,'#A4473A',15,'mono start','600'));});
+  d.v().forEach((v,i)=>{s+=G('a-fade',(.6+i*.1).toFixed(2),Tc(tx+i*(n?120:120),ty,v,'#2F5276',15,'mono start','600'));});
   ty+=16;
   if(d.k==='UniFrac'){const th=90;s+=G('a-fade',.7,treeDraw(tx+4,ty+8,n?140:150,th)+T(tx+(n?170:180),ty+30,'red branches','note start f11')+T(tx+(n?170:180),ty+44,'lead only to taxa','note start f11')+T(tx+(n?170:180),ty+58,'unique to B','note start f11'));ty+=th+20;}
   const p=para(n?16:tx,ty+12,d.t,n?50:36,'note start f13',17,.8);
