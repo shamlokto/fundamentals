@@ -31,7 +31,7 @@ function scP3(n){
   let s=G('a-fade',0,flow(N,E));
   const it=[['Proteasome','A protease complex that degrades cytosolic proteins. Interferon-γ swaps in subunits that make the immunoproteasome, whose cuts suit class I better.'],
    ['TAP','A transporter in the endoplasmic-reticulum membrane that pumps peptides from the cytosol into the ER.'],
-   ['Peptide-loading complex','Tapasin, calreticulin and ERp57 hold the new class I molecule next to TAP until a good peptide binds; the enzyme ERAAP trims peptides to fit.']];
+   ['Peptide-loading complex','Tapasin, calreticulin and ERp57 hold the new class I molecule next to TAP until a good peptide binds; the ER aminopeptidase ERAAP (ERAP1 and ERAP2 in humans) trims peptides to fit.']];
   const b=bullets(n?24:30,n?400:240,it,n?44:88,{d0:.6,gap:20});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
@@ -63,17 +63,18 @@ function scP6(n){const c=PRES[presSel];return explorer(n,{h:c.h,sub:'antigen-pre
 function scP7(n){
   const W=n?360:640, cy=n?70:80;
   let s='';
-  const genes=n?[['A','B','C'],['DP','DQ','DR']]:[['HLA-A','HLA-B','HLA-C'],['HLA-DP','HLA-DQ','HLA-DR']];
+  const genes=n?[['B','C','A'],['DP','DQ','DR']]:[['HLA-B','HLA-C','HLA-A'],['HLA-DP','HLA-DQ','HLA-DR']];
   const x0=n?16:40, gw=n?40:70;
   ['from mother','from father'].forEach((who,r)=>{const y=cy+r*44;
     s+=G('a-fade',(.1+r*.2).toFixed(1),T(x0,y+5,who,'note start f12'));
     [...genes[1],...genes[0]].forEach((g,i)=>{const x=x0+(n?78:110)+i*(gw+(n?2:4));
       s+=G('a-pop',(.3+r*.2+i*.05).toFixed(2),box(x,y-11,gw,22,i<3?CAT[1]:CAT[0],3)+T(x+gw/2,y+5,g,'mono mid f11'));});});
+  s+=G('a-fade',1,T(n?x0:x0+110,cy+72,n?'chromosome 6 order; class III region not shown':'in chromosome 6 order (the class III region between the blocks is not shown)','note start f12'));
   s+=G('a-fade',.9,T(x0+(n?78:110),cy-24,'class II','note start f12')+T(x0+(n?78:110)+3*(gw+(n?2:4)),cy-24,'class I','note start f12'));
   const it=[['Polygenic','Each person has three classical class I genes and three class II gene pairs on each copy of chromosome 6.'],
    ['Codominant','Both parents\' sets are expressed together, so a cell can show up to six different class I molecules.'],
-   ['Polymorphic','Thousands of variants of each gene are known. The differences cluster in the peptide groove, so different variants bind different peptides through different anchor residues.']];
-  const b=bullets(n?24:30,cy+90,it,n?44:88,{d0:1,gap:20});
+   ['Polymorphic','Thousands of variants are known for the most polymorphic genes, such as HLA-B; the class II α chains, especially DRA, vary much less. The differences cluster in the peptide groove, so different variants bind different peptides through different anchor residues.']];
+  const b=bullets(n?24:30,cy+100,it,n?44:88,{d0:1,gap:20});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
 function scP8(n){
@@ -82,11 +83,12 @@ function scP8(n){
   const tg=[['infected, H-2ᵏ',true],['infected, H-2ᵇ',false],['uninfected, H-2ᵏ',false]];
   tg.forEach(([lab,ok],i)=>{const x=n?196:420, y=y0+i*(n?56:56);
     s+=G('a-fade',(.4+i*.3).toFixed(1),arw(cx+40,y0+60,x-36,y+4,{w:1.2})+blob(x,y+4,28,20,CAT[2])+T(x+(n?36:40),y+8,lab,'note start f12')+mark(x,y+4,ok,10));});
-  const p=para(n?16:24,y0+(n?190:190),'Zinkernagel and Doherty (1974) infected mice with lymphocytic choriomeningitis virus. Their killer T cells destroyed infected target cells only when the targets shared the mouse\'s own MHC type. The finding showed that T cells recognise antigen together with self MHC, and earned the 1996 Nobel Prize. The structure of HLA-A2, solved by Bjorkman and colleagues in 1987, showed why: the peptide sits in a groove formed by the MHC molecule itself.',n?50:92,'note start f13',17,1.4);
+  s+=G('a-fade',1.4,T(n?196:420,y0+(n?168:168),'✓ target killed   ✗ not killed','note mid f12'));
+  const p=para(n?16:24,y0+(n?190:190),'Zinkernagel and Doherty (1974) infected mice with lymphocytic choriomeningitis virus. Their killer T cells (now known to be CD8 T cells) destroyed infected target cells only when the targets shared the mouse\'s own MHC type. The finding showed that T cells recognise antigen together with self MHC, and earned the 1996 Nobel Prize. The structure of HLA-A2, solved by Bjorkman and colleagues in 1987, showed why: the peptide sits in a groove formed by the MHC molecule itself.',n?50:92,'note start f13',17,1.4);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+p.s};
 }
 function scP9(n){
-  const items=[['Gene names','Human MHC is HLA on chromosome 6 (class I: A, B, C; class II: DP, DQ, DR). Mouse MHC is H-2 on chromosome 17 (class I: K, D, L; class II: I-A, I-E).'],
+  const items=[['Gene names','Human MHC is HLA on chromosome 6 (class I: A, B, C; class II: DP, DQ, DR). Mouse MHC is H-2 on chromosome 17 (class I: K, D, L; class II: I-A, I-E; L and I-E are missing in some strains, I-E in C57BL/6).'],
    ['Strains and people','Inbred mice carry one fixed haplotype, named by a letter (H-2ᵇ in C57BL/6, H-2ᵈ in BALB/c). Each person carries two of thousands of HLA variants.'],
    ['CD1','Humans have CD1a, b, c, d and e; mice have only CD1d, so mouse studies of lipid antigens focus on iNKT cells.'],
    ['MAIT cells','Present in both, but far more abundant in humans (a few per cent of blood T cells) than in laboratory mice.']];
@@ -94,7 +96,7 @@ function scP9(n){
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }
 const S=[
- {p:1,title:'T cells see fragments',draw:scP1,text:"A T-cell receptor cannot recognise a whole protein. It recognises a short peptide held in the groove of an MHC molecule on another cell's surface. This primer follows how those peptides are made and loaded."},
+ {p:1,title:'T cells see fragments',draw:scP1,text:"Most T-cell receptors cannot recognise a whole protein. They recognise a short peptide held in the groove of an MHC molecule on another cell's surface. This primer follows how those peptides are made and loaded."},
  {p:1,title:'Class I and class II',draw:scP2,text:"There are two main classes of MHC molecule. Class I is on almost every nucleated cell and shows peptides from inside the cell to CD8 T cells. Class II is on specialised antigen-presenting cells and shows peptides from material taken up to CD4 T cells."},
  {p:2,title:'The class I pathway',draw:scP3,text:"Proteins in the cytosol, including those of viruses growing in the cell, are cut by the proteasome. The peptides are pumped into the endoplasmic reticulum by TAP, loaded onto new class I molecules, and carried to the surface."},
  {p:2,title:'The class II pathway',draw:scP4,text:"New class II molecules leave the endoplasmic reticulum with their groove blocked by the invariant chain. In endosomes the invariant chain is cut down to a small fragment, CLIP, which HLA-DM swaps for a peptide from material the cell has taken up."},
