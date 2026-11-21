@@ -73,8 +73,8 @@ function scV5(n){
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }
 function scV6(n){
-  const A=n?axes(58,36,268,150,{xr:[2,10],yr:[-9,-3],logx:0,xt:[[3,'DNA'],[9,'RNA']],yt:[[-4,'high'],[-8,'low']],xlab:'genome type',ylab:'error rate'})
-    :axes(72,40,300,160,{xr:[2,10],yr:[-9,-3],xt:[[3,'DNA pol'],[9,'RNA pol'],[6,'reverse transcr.']],yt:[[-4,'high'],[-8,'low']],xlab:'polymerase (less to more error-prone)',ylab:'mutation rate'});
+  const A=n?axes(58,36,268,150,{xr:[2,10],yr:[-9,-3],logx:0,xt:[[3,'DNA pol'],[6,'RT'],[9,'RNA pol']],yt:[[-4,'high'],[-8,'low']],xlab:'polymerase (more error-prone →)',ylab:'mutation rate'})
+    :axes(72,40,300,160,{xr:[2,10],yr:[-9,-3],xt:[[3,'DNA pol'],[9,'RNA pol'],[6,'reverse transcr.']],yt:[[-4,'high'],[-8,'low']],xlab:'polymerase (more error-prone →)',ylab:'mutation rate'});
   const pts=[[3,-8.2,'herpes (DNA)'],[6,-5.2,'HIV (RT)'],[9,-4.1,'influenza, polio (RNA)']];
   let s=A.s;
   s+=G('a-fade',.3,pts.map(p=>`<circle cx="${FX(A.px(p[0]))}" cy="${FX(A.py(p[1]))}" r="4.5" fill="${PAL.rose}" stroke="${INK}" stroke-width="1"/>`).join('')
