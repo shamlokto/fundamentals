@@ -728,7 +728,7 @@ const S=[
  {p:3,title:'Measuring the forces',draw:scE11,text:"Each force has a method designed to isolate it. Mutation accumulation removes selection by repeated bottlenecks so that drift fixes whatever appears; competition assays remove drift by using large populations; fluctuation tests separate mutation from selection. Knowing which force a method suppresses is the key to reading the result."}];
 const CHIPS={ld:{list:LDQ.map((q,i)=>String(i+1)),get:()=>ldSel,set:k=>ldSel=k}};
 /* cover: written by tools/covers.py */
-const COVER=null;
+const COVER={"src": "cover.webp", "w": 868, "h": 560};
 if(COVER)S.unshift({p:S[0].p, title:document.title||'Plate', text:(document.querySelector('meta[name="description"]')||{}).content||'',
   draw:n=>{const W=n?360:640, m=n?12:20, w=W-2*m, h=Math.round(w*COVER.h/COVER.w), H=h+2*m;
     return {vb:`0 0 ${W} ${H}`,s:`<g class="a-fade"><image href="${COVER.src}" x="${m}" y="${m}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`

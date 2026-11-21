@@ -6,7 +6,7 @@ Animated, click-through teaching primers on bacterial molecular biology, drawn a
 
 Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html` locally. Each deck is one self-contained HTML file.
 
-56 primers in 13 sections: 632 plates, 72 of them interactive, across 53 primers.
+56 primers in 13 sections: 643 plates, 72 of them interactive, across 53 primers.
 
 | # | Primer | Section | Plates | Interactive | Folder |
 |---|---|---|---|---|---|
@@ -15,26 +15,26 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | III | The Molecules of Life | Chemistry and physics of life | 8 | 0 | [`decks/macromolecules/`](decks/macromolecules/) |
 | IV | Enzyme Kinetics | Chemistry and physics of life | 23 | 2 | [`decks/enzyme-kinetics/`](decks/enzyme-kinetics/) |
 | V | Glycans and Glycosyltransferases | Chemistry and physics of life | 12 | 3 | [`decks/glycans/`](decks/glycans/) |
-| VI | How DNA Is Copied | The central dogma | 23 | 1 | [`decks/dna-replication/`](decks/dna-replication/) |
-| VII | How Genes Are Transcribed | The central dogma | 25 | 1 | [`decks/transcription/`](decks/transcription/) |
-| VIII | How Proteins Are Made | The central dogma | 31 | 2 | [`decks/translation/`](decks/translation/) |
+| VI | How DNA Is Copied | The central dogma | 24 | 1 | [`decks/dna-replication/`](decks/dna-replication/) |
+| VII | How Genes Are Transcribed | The central dogma | 26 | 1 | [`decks/transcription/`](decks/transcription/) |
+| VIII | How Proteins Are Made | The central dogma | 32 | 2 | [`decks/translation/`](decks/translation/) |
 | IX | Protein Targeting and Modification | The central dogma | 23 | 2 | [`decks/protein-targeting/`](decks/protein-targeting/) |
 | X | Repairing DNA | The central dogma | 21 | 2 | [`decks/dna-repair/`](decks/dna-repair/) |
 | XI | Cell Envelopes | The cell | 9 | 1 | [`decks/envelope/`](decks/envelope/) |
 | XII | Organelles and Endosymbiosis | The cell | 7 | 0 | [`decks/eukaryotic-cell/`](decks/eukaryotic-cell/) |
 | XIII | How Bacteria Divide | The cell | 18 | 2 | [`decks/cell-division/`](decks/cell-division/) |
 | XIV | Motility and Chemotaxis | The cell | 6 | 0 | [`decks/motility/`](decks/motility/) |
-| XV | Anatomy of a Prokaryotic Gene | Regulation and heterogeneity | 15 | 1 | [`decks/prokaryotic-gene/`](decks/prokaryotic-gene/) |
-| XVI | Regulation, Signalling and Development | Regulation and heterogeneity | 12 | 2 | [`decks/regulation/`](decks/regulation/) |
+| XV | Anatomy of a Prokaryotic Gene | Regulation and heterogeneity | 16 | 1 | [`decks/prokaryotic-gene/`](decks/prokaryotic-gene/) |
+| XVI | Regulation, Signalling and Development | Regulation and heterogeneity | 13 | 2 | [`decks/regulation/`](decks/regulation/) |
 | XVII | Epigenetics and Heterogeneity | Regulation and heterogeneity | 11 | 1 | [`decks/epigenetics/`](decks/epigenetics/) |
 | XVIII | Bateson's Epistasis | Genetics, genomes and evolution | 15 | 1 | [`decks/bateson-epistasis/`](decks/bateson-epistasis/) |
-| XIX | Mutation, Selection and Drift | Genetics, genomes and evolution | 11 | 1 | [`decks/evolution/`](decks/evolution/) |
+| XIX | Mutation, Selection and Drift | Genetics, genomes and evolution | 12 | 1 | [`decks/evolution/`](decks/evolution/) |
 | XX | Evolution in the Laboratory | Genetics, genomes and evolution | 6 | 1 | [`decks/lab-evolution/`](decks/lab-evolution/) |
-| XXI | Horizontal Gene Transfer | Genetics, genomes and evolution | 11 | 1 | [`decks/gene-transfer/`](decks/gene-transfer/) |
+| XXI | Horizontal Gene Transfer | Genetics, genomes and evolution | 12 | 1 | [`decks/gene-transfer/`](decks/gene-transfer/) |
 | XXII | Plasmid Biology | Genetics, genomes and evolution | 11 | 1 | [`decks/plasmids/`](decks/plasmids/) |
 | XXIII | Bacteriophages | Genetics, genomes and evolution | 6 | 1 | [`decks/phages/`](decks/phages/) |
 | XXIV | Bacterial Defence Systems | Genetics, genomes and evolution | 11 | 1 | [`decks/defence-systems/`](decks/defence-systems/) |
-| XXV | Genomes and Pangenomes | Genetics, genomes and evolution | 11 | 1 | [`decks/genomes/`](decks/genomes/) |
+| XXV | Genomes and Pangenomes | Genetics, genomes and evolution | 12 | 1 | [`decks/genomes/`](decks/genomes/) |
 | XXVI | Phylogenetics and Taxonomy | Genetics, genomes and evolution | 9 | 1 | [`decks/phylogenetics/`](decks/phylogenetics/) |
 | XXVII | Central Carbon Metabolism | Metabolism | 7 | 1 | [`decks/central-metabolism/`](decks/central-metabolism/) |
 | XXVIII | Respiration and Fermentation | Metabolism | 7 | 1 | [`decks/respiration/`](decks/respiration/) |
@@ -47,10 +47,10 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | XXXV | Pathogenesis and Epidemiology | Viruses, hosts and disease | 9 | 1 | [`decks/pathogenesis/`](decks/pathogenesis/) |
 | XXXVI | Microscopy and Structure | Methods and tools | 9 | 1 | [`decks/microscopy-structure/`](decks/microscopy-structure/) |
 | XXXVII | Methods in the Lab | Methods and tools | 9 | 1 | [`decks/lab-methods/`](decks/lab-methods/) |
-| XXXVIII | Tools for Molecular Cloning | Methods and tools | 21 | 2 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
+| XXXVIII | Tools for Molecular Cloning | Methods and tools | 22 | 2 | [`decks/molecular-cloning/`](decks/molecular-cloning/) |
 | XXXIX | How CRISPR–Cas9 Works | Methods and tools | 13 | 1 | [`decks/crispr-cas9/`](decks/crispr-cas9/) |
-| XL | Next-Generation Sequencing | Methods and tools | 15 | 2 | [`decks/sequencing/`](decks/sequencing/) |
-| XLI | How Tn-seq Works | Methods and tools | 11 | 1 | [`decks/tn-seq/`](decks/tn-seq/) |
+| XL | Next-Generation Sequencing | Methods and tools | 16 | 2 | [`decks/sequencing/`](decks/sequencing/) |
+| XLI | How Tn-seq Works | Methods and tools | 12 | 1 | [`decks/tn-seq/`](decks/tn-seq/) |
 | XLII | Bioinformatics | Methods and tools | 9 | 1 | [`decks/bioinformatics/`](decks/bioinformatics/) |
 | XLIII | Antimicrobials and Resistance | Antimicrobials and applications | 9 | 1 | [`decks/antimicrobials/`](decks/antimicrobials/) |
 | XLIV | Applied Microbiology | Antimicrobials and applications | 9 | 2 | [`decks/applied-microbiology/`](decks/applied-microbiology/) |
