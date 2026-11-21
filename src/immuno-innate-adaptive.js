@@ -5,9 +5,9 @@ const PRRS=[
  {k:'TLRs, surface',h:'Toll-like receptors on the cell surface',rows:[['Examples','TLR2 (with TLR1 or TLR6), TLR4, TLR5'],['Ligands','bacterial lipoproteins, lipopolysaccharide, flagellin'],['Adaptor','MyD88; TLR4 also uses TRIF'],['Output','NF-κB and inflammatory cytokines']]},
  {k:'TLRs, endosomal',h:'Toll-like receptors in endosomes',rows:[['Examples','TLR3, TLR7, TLR8, TLR9'],['Ligands','viral and bacterial nucleic acids'],['Adaptor','TRIF (TLR3); MyD88 (TLR7, 8, 9)'],['Output','type I interferons and cytokines']]},
  {k:'CLRs',h:'C-type lectin receptors',rows:[['Examples','Dectin-1, Dectin-2, Mincle'],['Ligands','fungal β-glucans and mannans, mycobacterial glycolipids'],['Adaptor','Syk kinase, then CARD9'],['Output','cytokines that favour Th17 responses']]},
- {k:'NLRs',h:'NOD-like receptors in the cytosol',rows:[['Examples','NOD1, NOD2; NLRP3 and NLRC4'],['Ligands','peptidoglycan fragments; signs of cell stress'],['Adaptor','RIPK2 (NODs); ASC (inflammasomes)'],['Output','NF-κB; caspase-1, IL-1β and IL-18']]},
+ {k:'NLRs',h:'NOD-like receptors in the cytosol',rows:[['Examples','NOD1, NOD2; NLRP3 and NLRC4'],['Ligands','peptidoglycan fragments (NODs); flagellin and secretion-system proteins (NLRC4); signs of cell stress (NLRP3)'],['Adaptor','RIPK2 (NODs); ASC (inflammasomes)'],['Output','NF-κB; caspase-1, IL-1β and IL-18']]},
  {k:'RLRs',h:'RIG-I-like receptors in the cytosol',rows:[['Examples','RIG-I, MDA5'],['Ligands','viral RNA in the cytoplasm'],['Adaptor','MAVS on mitochondria'],['Output','type I interferons']]},
- {k:'cGAS–STING',h:'cytosolic DNA sensing',rows:[['Sensor','cGAS'],['Ligand','DNA in the cytoplasm'],['Adaptor','cGAMP activates STING'],['Output','type I interferons']]}];
+ {k:'cGAS–STING',h:'cytosolic DNA sensing',rows:[['Sensor','cGAS'],['Ligand','DNA in the cytoplasm'],['Adaptor','STING (on the ER), activated by the second messenger cGAMP'],['Output','type I interferons']]}];
 let prrSel=0;
 function scA1(n){return introPlate(n,{q:'How does a T cell know that an antigen is worth responding to?',
   belief:'A naive T cell cannot tell a microbial peptide from a harmless one by its sequence alone. Innate cells, above all dendritic cells, sense microbes through pattern-recognition receptors and tell the T cell three things: what the antigen is, that it is dangerous, and what kind of response to make.',
@@ -40,7 +40,7 @@ function scA3(n){
    ['1997','Medzhitov and Janeway','a human Toll homologue activates NF-κB'],
    ['1998','Poltorak and colleagues','LPS-unresponsive mice carry Tlr4 mutations']];
   const t=wtable(n,['Year','Who','Finding'],rows,n?[[10,6],[60,14],[170,22]]:[[24,6],[90,22],[290,40]],{y0:30,R:n?354:620});
-  const p=para(n?16:24,t.y+14,'Steinman shared the 2011 Nobel Prize with Beutler and Hoffmann, whose work identified the Toll and Toll-like receptors.',n?50:92,'note start f13',17,.8);
+  const p=para(n?16:24,t.y+14,'Steinman shared the 2011 Nobel Prize with Beutler and Hoffmann, for discoveries on the activation of innate immunity: Hoffmann\'s lab showed that Toll defends flies against fungi, and Beutler\'s that TLR4 senses LPS.',n?50:92,'note start f13',17,.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scA4(n){
@@ -82,7 +82,7 @@ function scA7(n){
    ['moDC','from Ly6C-high monocytes','from CD14⁺ monocytes','made during inflammation']];
   const t=n?wtable(n,['Subset','Mouse / human','Main job'],rows.map(r=>[r[0],r[1]+' / '+r[2],r[3]]),[[10,6],[70,22],[230,16]],{y0:30,R:354})
     :wtable(n,['Subset','Mouse','Human','Main job'],rows,[[24,6],[90,24],[300,18],[450,22]],{y0:30,R:620});
-  const p=para(n?16:24,t.y+14,'Mouse and human subsets are matched by gene expression and function rather than by the same surface markers. cDC1 depend on the transcription factors IRF8 and BATF3 in both species; cDC2 depend on IRF4.',n?50:92,'note start f13',17,.8);
+  const p=para(n?16:24,t.y+14,'Mouse and human subsets are matched by gene expression and function rather than by the same surface markers. cDC1 depend on the transcription factor IRF8 (and, at least in mice, BATF3); cDC2 depend on IRF4.',n?50:92,'note start f13',17,.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 function scA8(n){
@@ -118,10 +118,10 @@ function scA10(n){
 const S=[
  {p:1,title:'Two systems, one response',draw:scA1,text:"Adaptive lymphocytes are specific but cannot by themselves tell a dangerous antigen from a harmless one. Innate cells can, because they recognise conserved microbial molecules. This primer follows how that recognition is handed on to T cells."},
  {p:1,title:'Three signals',draw:scA2,text:"A naive T cell needs three signals from a dendritic cell. The first says which antigen, the second says it is worth responding to, and the third says what kind of response to make."},
- {p:1,title:'How the idea arrived',draw:scA3,text:"Dendritic cells were found in 1973. In 1989 Charles Janeway predicted receptors for conserved microbial patterns, and within a decade Toll in flies and Toll-like receptors in mammals were identified."},
+ {p:1,title:'How the idea arrived',draw:scA3,text:"Dendritic cells were found in 1973. In 1989 Charles Janeway predicted receptors for conserved microbial patterns, and within a decade Toll was shown to defend flies against infection and its mammalian relatives, the Toll-like receptors, were found."},
  {p:2,title:'Receptor families',chips:'prr',draw:scA4,text:"Innate cells use several families of pattern-recognition receptors. Pick one to see where it sits, what it detects and what it switches on."},
  {p:2,title:'Where Toll-like receptors sit',draw:scA5,text:"Toll-like receptors are placed to match their targets. Those for the outer molecules of microbes sit in the plasma membrane; those for nucleic acids sit in endosomes, where microbes are digested."},
- {p:2,title:'The inflammasome',draw:scA6,text:"Some NOD-like receptors assemble into a large complex called the inflammasome. It needs two steps, one to make its parts and one to assemble them, and its output is the potent inflammatory cytokines IL-1β and IL-18."},
+ {p:2,title:'The inflammasome',draw:scA6,text:"Some NOD-like receptors assemble into a large complex called the inflammasome. The best-studied, NLRP3, needs two steps, one to make its parts and one to assemble them, and its output is the potent inflammatory cytokines IL-1β and IL-18."},
  {p:3,title:'Dendritic-cell subsets',draw:scA7,text:"Dendritic cells come in several subsets with different jobs. Mouse and human subsets carry different surface markers, but they line up by function and by the transcription factors they depend on."},
  {p:3,title:'Maturation and migration',draw:scA8,text:"A dendritic cell that senses a microbe matures: it stops taking up antigen, raises MHC and costimulatory molecules, and gains CCR7, which carries it to the lymph node."},
  {p:4,title:'Signal 3 steers the response',chips:'pol',draw:scA9,text:"The cytokines present when a T cell is first activated decide what kind of helper it becomes. Pick a cytokine signal to see the subset it favours."},
