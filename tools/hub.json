@@ -479,6 +479,13 @@
     "title": "Antigen Receptors and Genes",
     "sub": "How a few hundred segments make millions of receptors",
     "blurb": "Antibody and T-cell receptor structure, gene segments, V(D)J recombination and the 12/23 rule, sources of diversity, allelic exclusion, and how rearrangement was discovered."
+   },
+   {
+    "slug": "immuno-antigen-presentation",
+    "psub": "Presentation",
+    "title": "Antigen Presentation",
+    "sub": "How cells show T cells what is inside them",
+    "blurb": "MHC class I and II, the cytosolic and vesicular pathways, cross-presentation, CD1 and MR1, polymorphism and MHC restriction, with mouse and human compared."
    }
   ]
  }
