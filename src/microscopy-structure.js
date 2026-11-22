@@ -60,7 +60,7 @@ function scM4(n){
   [[-18,-12],[8,-20],[20,10],[-6,14],[-24,18],[14,-2]].forEach(([dx,dy],i)=>{pa+=i<2?`<circle cx="${xs[2]+dx}" cy="${cy+dy}" r="7" fill="#7FD08A" opacity=".45"/>`:'';pa+=`<circle cx="${xs[2]+dx}" cy="${cy+dy}" r="1.8" fill="#F3EEE2"/>`;});
   s+=G('a-fade',.6,pa+T(xs[2],cy+52,'PALM / STORM','lab mid f13')+SUB(xs[2],'find each|blinking centre'));
   const rows=[['STED','a doughnut of depletion light switches off fluorescence except at the centre','~30–80 nm','yes, scanned'],['SIM','patterned light; moiré fringes carry finer detail, recovered by computation','~100–120 nm','yes, fast'],['PALM / STORM','only a few molecules fluoresce at a time; each is localised to its centre over thousands of frames','~20–30 nm','mostly fixed'],['MINFLUX, expansion','localising with a light minimum; or swelling the sample in a gel about fourfold','a few nm to ~70 nm','fixed']];
-  const t=wtable(n,['Method','Principle','Resolution','Live?'],rows,n?[[10,10],[86,22],[230,10],[300,7]]:[[24,14],[140,46],[440,14],[540,12]],{y0:n?186:170,d0:.8,R:n?354:620});
+  const t=wtable(n,['Method','Principle','Resolution','Live?'],rows,n?[[10,10],[92,21],[230,10],[300,7]]:[[24,14],[140,46],[440,14],[540,12]],{y0:n?186:170,d0:.8,R:n?354:620});
   const p=para(n?16:24,t.y+12,'Eric Betzig, Stefan Hell and William Moerner shared the 2014 Nobel Prize in Chemistry. In bacteria these methods showed that the FtsZ division ring is patchy and treadmilling, and mapped the positions of chemoreceptor arrays and chromosome loci.',n?50:92,'note start f13',17,1.2);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:s+t.s+p.s};
 }

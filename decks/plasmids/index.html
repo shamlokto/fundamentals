@@ -744,7 +744,7 @@ function scP7(n){
    ['IV','protein–target','the antitoxin protects the target instead of binding the toxin','cbtA/cbeA'],
    ['V','antitoxin RNase','the antitoxin cuts the toxin mRNA','ghoST'],
    ['VI','adaptor to protease','the antitoxin delivers the toxin to a host protease','socAB']];
-  const t=wtable(n,['Type','Pairing','Mechanism','Example'],rows,n?[[10,4],[44,15],[140,19],[268,14]]:[[24,6],[80,16],[230,40],[520,16]],{y0:yy,d0:1.4});
+  const t=wtable(n,['Type','Pairing','Mechanism','Example'],rows,n?[[10,4],[50,13],[140,19],[268,14]]:[[24,6],[80,16],[230,40],[520,16]],{y0:yy,d0:1.4});
   const b=bullets(n?24:30,t.y+14,[['Post-segregational killing, not maintenance','A toxin–antitoxin system does not help the plasmid replicate or segregate. It kills the cells that lose it, so the population appears to keep the plasmid. From the host’s point of view it is addiction.'],
    [n?'Gyrase poisons and mRNA cutters':'The toxins are mostly mRNA-cutting RNases or gyrase poisons','CcdB and ParE jam DNA gyrase; RelE, MazF, HigB and YoeB cleave mRNA. The same families appear in chromosomes, where their function is argued over — persistence, phage defence, or simply parasitic elements of their own.'],
    ['They are a practical problem and a practical tool','They are why curing a clinical plasmid is hard. They are also why the ccdB gene is used for counter-selection in Gateway cloning, and why TA pairs are used to keep plasmids without antibiotics in production strains.']],n?44:88,{d0:2.2,gap:24});

@@ -738,7 +738,7 @@ function scA7(n){
 }
 function scA8(n){
   const rows=[['C fixation','cyanobacteria, algae, chemolithoautotrophs'],['N₂ fixation','diazotrophs: Rhizobium, cyanobacteria (Trichodesmium), Azotobacter, methanogens'],['NH₄⁺ → NO₂⁻','Nitrosomonas, ammonia-oxidising archaea (Nitrosopumilus)'],['NO₂⁻ → NO₃⁻','Nitrobacter, Nitrospira'],['NO₃⁻ → N₂','denitrifiers: Pseudomonas, Paracoccus, many others'],['NH₄⁺ + NO₂⁻ → N₂','anammox Planctomycetes (Brocadia, Kuenenia)'],['SO₄²⁻ → H₂S','Desulfovibrio, Desulfobacterota, some archaea'],['H₂S → SO₄²⁻','Beggiatoa, Thiobacillus, sulfur phototrophs'],['CO₂ → CH₄','methanogenic archaea'],['CH₄ → CO₂','methanotrophs; ANME archaea'],['Fe²⁺ ↔ Fe³⁺','Gallionella, Acidithiobacillus oxidise; Geobacter, Shewanella reduce']];
-  const t=wtable(n,['Step','Main players'],rows,n?[[10,16],[130,30]]:[[24,24],[220,56]],{y0:30,R:n?354:620});
+  const t=wtable(n,['Step','Main players'],rows,n?[[10,16],[142,28]]:[[24,24],[220,56]],{y0:30,R:n?354:620});
   const p=para(n?16:24,t.y+12,'Each element cycle depends on a few physiological groups, many discovered by Winogradsky’s and Beijerinck’s enrichment logic and many still being found by sequencing.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }

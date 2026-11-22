@@ -715,7 +715,7 @@ function scSB3(n){
   return {vb:n?slim(H):wide(H),s:s+b.s};
 }
 function scSB4(n){
-  const N=n?{in:{x:180,y:40,w:300,t:'starvation (ppGpp), stationary phase,|high osmolarity, low pH, cold'},m:{x:180,y:130,w:200,t:'rpoS mRNA',f:PAL.gold},p:{x:180,y:220,w:200,t:'σS protein',f:PAL.rose},d:{x:280,y:310,w:140,t:'ClpXP|degradation',f:PAL.grey},r:{x:90,y:310,w:150,t:'RNA polymerase|core + σS',f:PAL.blue},g:{x:90,y:400,w:170,t:'hundreds of genes',f:PAL.green}}
+  const N=n?{in:{x:180,y:40,w:320,t:'starvation (ppGpp), stationary phase,|high osmolarity, low pH, cold'},m:{x:180,y:130,w:200,t:'rpoS mRNA',f:PAL.gold},p:{x:180,y:220,w:200,t:'σS protein',f:PAL.rose},d:{x:280,y:310,w:140,t:'ClpXP|degradation',f:PAL.grey},r:{x:90,y:310,w:150,t:'RNA polymerase|core + σS',f:PAL.blue},g:{x:90,y:400,w:170,t:'hundreds of genes',f:PAL.green}}
     :{in:{x:110,y:70,w:180,t:'starvation (ppGpp),|stationary phase,|osmotic, acid, cold'},m:{x:290,y:70,w:120,t:'rpoS mRNA',f:PAL.gold},p:{x:520,y:70,w:120,t:'σS protein',f:PAL.rose},d:{x:520,y:190,w:130,t:'ClpXP|degradation',f:PAL.grey},r:{x:310,y:190,w:150,t:'RNA polymerase|core + σS',f:PAL.blue},g:{x:110,y:190,w:170,t:'hundreds of genes',f:PAL.green}};
   const E=n?[['in','m','transcription',{side:-1}],['m','p','translation:|DsrA, RprA, ArcZ + Hfq',{side:-1}],['p','d','RssB adaptor',{side:-1}],['p','r','Crl helps',{side:1}],['r','g','',{}]]
     :[['in','m',''],['m','p','translation|sRNAs + Hfq',{side:-1}],['p','d','RssB',{side:-1}],['p','r','Crl helps',{side:1}],['r','g','']];
