@@ -700,7 +700,7 @@ function scM2(n){
   const A=n?axes(50,30,286,170,{xr:[0,10],yr:[0,1.2],xt:[[0,'0'],[2,'2'],[4,'4'],[6,'6'],[8,'8'],[10,'10']],yt:[[0,'0'],[.5,'K/2'],[1,'K']],xlab:'time (h)',ylab:'cells'})
     :axes(70,36,300,200,{xr:[0,10],yr:[0,1.2],xt:[[0,'0'],[2,'2'],[4,'4'],[6,'6'],[8,'8'],[10,'10']],yt:[[0,'0'],[.5,'K/2'],[1,'K']],xlab:'time (h)',ylab:'cells'});
   let s=A.s+ln(A.x,FX(A.py(1)),A.x+A.w,FX(A.py(1)),'#9A8F7C',1,'4 3');
-  s+=G('a-fade',.2,curve(A,t=>N0*Math.exp(r*t),{col:'#A4473A',dash:'6 3',to:te})+T(FX(A.px(te)-6),FX(A.py(1.2)+12),'exponential','note end f11 halo'));
+  s+=G('a-fade',.2,curve(A,t=>N0*Math.exp(r*t),{col:'#6A5B47',dash:'6 3',to:te})+T(FX(A.px(te)-6),FX(A.py(1.2)+12),'exponential','note end f11 halo'));
   s+=G('a-fade',.5,curve(A,t=>1/(1+(1/N0-1)*Math.exp(-r*t)),{col:'#2F5276'})+T(FX(A.px(9.6)),FX(A.py(1)+16),'logistic','note end f11 halo'));
   const items=[['Exponential','dN/dt = rN. Each cell divides at a constant rate, so N = N₀·exp(rt) and the doubling time is ln 2 / r. E. coli in rich medium doubles in about 20 minutes.'],['Logistic','dN/dt = rN(1 − N/K). Growth slows as the population nears the carrying capacity K, set by nutrients or space. Fastest growth is at K/2.'],['Real batch cultures','Add a lag phase while cells adjust, and a death phase after stationary phase. Plot log N against time: the exponential phase is a straight line with slope r.']];
   const b=n?bullets(24,A.y+A.h+60,items,44,{d0:.8,gap:22}):bullets(410,52,items,28,{d0:.8,gap:22});
