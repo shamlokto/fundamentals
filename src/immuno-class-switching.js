@@ -26,8 +26,8 @@ function scC3(n){
   const after=['VDJ','γ1','α1','γ2','γ4','ε','α2'];
   let r=ln(x0,y2,x0+after.length*(gw+gap)-gap+6,y2,INK,1.2);
   after.forEach((g,i)=>{const x=x0+i*(gw+gap);r+=box(x,y2-12,gw,24,i===0?CAT[0]:(i===1?CAT[2]:CAT[6]),3)+T(x+gw/2,y2+5,g,'mono mid '+(n?'f10':'f12'));});
-  const cx=x0+after.length*(gw+gap)+(n?24:40), cr=n?15:20;
-  r+=`<circle cx="${cx}" cy="${y2}" r="${cr}" fill="none" stroke="${INK}" stroke-dasharray="3 2"/>`+T(cx,y2+4,'μ δ γ3','mono mid f10');
+  const cx=x0+after.length*(gw+gap)+(n?34:40), cr=n?19:20;
+  r+=`<circle cx="${cx}" cy="${y2}" r="${cr}" fill="none" stroke="${INK}" stroke-dasharray="3 2"/>`+T(cx,y2+4,n?'μδγ3':'μ δ γ3','mono mid f10');
   s+=G('a-fade',1.2,r+T(x0,y2+34,n?'after IgG1: μ, δ, γ3 lost as a switch circle':'after switching to IgG1: μ, δ and γ3 are lost as a switch circle; downstream genes remain','note start f12'));
   const it=[['Switch regions','Each constant gene except δ is preceded by a long repetitive switch region. AID creates breaks in the μ switch region and in the target switch region.'],
    ['Deletion','The two breaks are joined by end-joining repair and the DNA between them is lost as a circle, so switching is irreversible on that chromosome, although the cell can still switch further downstream, for example from IgG1 to IgE.'],
