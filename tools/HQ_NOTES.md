@@ -1,4 +1,4 @@
-# HQ notes (state at pause, 21 November 2026)
+# HQ notes (state at pause, 22 November 2026)
 
 Running notes for whoever picks up as HQ. Read with `tools/IMMUNOLOGY.md`, `tools/AUTHORING.md`,
 `tools/STYLE.md`, `tools/IMAGES.md` and `tools/RUNPOD.md`.
@@ -45,6 +45,13 @@ Safety: the earlier scientist sessions and one HQ attempt (a paradigms primer an
 were stopped by safeguards. Primers 2–4, written plainly at textbook level, went through. If a step is
 stopped, simplify that passage; do not reword the same detail. Support was emailed from the owner's
 Gmail (thread with support@anthropic.com, 16 November).
+
+## Final pass (22 November)
+
+Primers 1–8 are live and passed; Scientist B read all eight together for consistency (passed), Scientist A
+polished layout on all eight, and Artwork added card and cover pictures for primers 3, 4, 5, 6 and 8 (7 keeps its
+emblem by design). Optional nits left: the Th-subsets cover shows four daughter cells for five subsets; the
+germinal-centre "test/return" labels sit a little apart from their arrows.
 
 ## Open small items
 
