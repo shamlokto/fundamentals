@@ -27,7 +27,7 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | XV | Anatomy of a Prokaryotic Gene | Regulation and heterogeneity | 16 | 1 | [`decks/prokaryotic-gene/`](decks/prokaryotic-gene/) |
 | XVI | Regulation, Signalling and Development | Regulation and heterogeneity | 13 | 2 | [`decks/regulation/`](decks/regulation/) |
 | XVII | Epigenetics and Heterogeneity | Regulation and heterogeneity | 11 | 1 | [`decks/epigenetics/`](decks/epigenetics/) |
-| XVIII | Bateson's Epistasis | Genetics, genomes and evolution | 15 | 1 | [`decks/bateson-epistasis/`](decks/bateson-epistasis/) |
+| XVIII | Bateson’s Epistasis | Genetics, genomes and evolution | 15 | 1 | [`decks/bateson-epistasis/`](decks/bateson-epistasis/) |
 | XIX | Mutation, Selection and Drift | Genetics, genomes and evolution | 12 | 1 | [`decks/evolution/`](decks/evolution/) |
 | XX | Evolution in the Laboratory | Genetics, genomes and evolution | 6 | 1 | [`decks/lab-evolution/`](decks/lab-evolution/) |
 | XXI | Horizontal Gene Transfer | Genetics, genomes and evolution | 12 | 1 | [`decks/gene-transfer/`](decks/gene-transfer/) |
