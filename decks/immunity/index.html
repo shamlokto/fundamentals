@@ -749,7 +749,7 @@ function scI6(n){
   const xb=n?90:150, xa=n?270:470, w=n?172:210, ys=n?[56,134,212,290]:[62,138,214,290];
   const N={mb:{x:xa,y:ys[0],w,t:'microbe engulfed|into a phagosome'},lp:{x:xa,y:ys[1],w,t:'lysosomal proteases|cut it up',f:PAL.sand},
      m2:{x:xa,y:ys[2],w,t:'peptide loaded on|MHC II, to surface',f:PAL.gold},cd4:{x:xa,y:ys[3],w,t:'CD4 helper T cell|reads MHC II',f:PAL.blue},
-     cy:{x:xb,y:ys[0],w,t:'cytosolic protein|(virus-infected cell)'},pr:{x:xb,y:ys[1],w,t:'proteasome cuts;|TAP pumps peptide|into the ER',f:PAL.sand},
+     cy:{x:xb,y:ys[0],w,t:'cytosolic protein|(infected cell)'},pr:{x:xb,y:ys[1],w,t:'proteasome cuts;|TAP pumps peptide|into the ER',f:PAL.sand},
      m1:{x:xb,y:ys[2],w,t:'peptide loaded on|MHC I, to surface',f:PAL.rose},cd8:{x:xb,y:ys[3],w,t:'CD8 killer T cell|reads MHC I',f:PAL.lilac}};
   const E=[['mb','lp',''],['lp','m2',''],['m2','cd4',''],['cy','pr',''],['pr','m1',''],['m1','cd8','']];
   const hd=T(xa,22,'MHC class II route','lab mid f13')+T(xb,22,'MHC class I route','lab mid f13');

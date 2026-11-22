@@ -2,16 +2,19 @@
 {"title":"Antigen Presentation","eyebrow":"Immunology · an animated primer","h1":"How cells show T cells what is inside them","parts":["Two classes of MHC","Two pathways","Beyond peptides","Genes and history"],"foot":"Textbook level (Janeway, 9th edition, chapter 6). Pathways are simplified; peptide lengths and gene names are the commonly taught ones.","description":"MHC class I and II molecules, the cytosolic and vesicular processing pathways, cross-presentation, CD1 and MR1, MHC polymorphism, and MHC restriction."}
 META*/
 /* an MHC molecule seen from the side: two domains forming a groove, a peptide in it */
-function mhcIcon(cx,cy,k,f,lab){
+function mhcIcon(cx,cy,k,f,lab,two,sub){
   return `<path d="M${FX(cx-26*k)} ${FX(cy)} q${FX(6*k)} ${FX(-22*k)} ${FX(20*k)} ${FX(-24*k)} l${FX(12*k)} 0 q${FX(14*k)} ${FX(2*k)} ${FX(20*k)} ${FX(24*k)} z" fill="${f}" stroke="${INK}" stroke-width="1.2"/>`
    +`<rect x="${FX(cx-10*k)}" y="${FX(cy-22*k)}" width="${FX(20*k)}" height="${FX(5*k)}" rx="2" fill="${CAT[2]}" stroke="${INK}" stroke-width=".9"/>`
-   +`<rect x="${FX(cx-6*k)}" y="${FX(cy)}" width="${FX(12*k)}" height="${FX(22*k)}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
-   +(lab?T(cx,FX(cy+38*k),lab,'note mid f12'):'');
+   +(two?`<rect x="${FX(cx-13*k)}" y="${FX(cy)}" width="${FX(10*k)}" height="${FX(22*k)}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+        +`<rect x="${FX(cx+3*k)}" y="${FX(cy)}" width="${FX(10*k)}" height="${FX(22*k)}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+      :`<rect x="${FX(cx-11*k)}" y="${FX(cy)}" width="${FX(10*k)}" height="${FX(22*k)}" fill="${f}" stroke="${INK}" stroke-width="1"/>`
+        +`<circle cx="${FX(cx+7*k)}" cy="${FX(cy+7*k)}" r="${FX(7*k)}" fill="${CAT[6]}" stroke="${INK}" stroke-width="1"/>`)
+   +(lab?T(cx,FX(cy+38*k),lab,'note mid f12'):'')+(sub?T(cx,FX(cy+38*k+20),sub,'mono mid f11'):'');
 }
 function scP1(n){return introPlate(n,{q:'How does a T cell find out what is happening inside another cell?',
   belief:'Every cell keeps cutting up samples of its proteins and displaying the fragments on MHC molecules at its surface. A T cell scans these displays. A peptide it has never been tolerised to, presented with the right signals, means infection or damage.',
   items:['MHC class I and class II','The cytosolic (class I) pathway','The vesicular (class II) pathway','Cross-presentation','CD1 and MR1','Polymorphism and MHC restriction'],
-  art:(cx,cy)=>mhcIcon(cx-60,cy+10,1.4,CAT[0],'class I')+mhcIcon(cx+60,cy+10,1.4,CAT[1],'class II'),artH:140});}
+  art:(cx,cy)=>mhcIcon(cx-60,cy+10,1.4,CAT[0],'class I',0,'α + β₂m')+mhcIcon(cx+60,cy+10,1.4,CAT[1],'class II',1,'α + β'),artH:170});}
 function scP2(n){
   const rows=[['Found on','almost all nucleated cells','dendritic cells, macrophages, B cells (and thymic epithelium)'],
    ['Chains','α chain + β2-microglobulin','α chain + β chain'],
@@ -37,8 +40,8 @@ function scP3(n){
 }
 function scP4(n){
   const N=n?{e:{x:180,y:40,w:220,t:'class II made in ER,|groove blocked by Ii',f:CAT[1]},m:{x:180,y:115,w:220,t:'to endosomes; Ii cut|down to CLIP',f:CAT[3]},d:{x:180,y:190,w:220,t:'HLA-DM swaps CLIP|for a peptide',f:CAT[4]},u:{x:180,y:265,w:220,t:'peptide from taken-|up protein loads',f:CAT[2]},s:{x:180,y:340,w:220,t:'to the surface:|seen by CD4 T cells',f:CAT[0]}}
-    :{e:{x:100,y:60,w:170,t:'made in the ER;|groove blocked by Ii',f:CAT[1]},m:{x:300,y:60,w:170,t:'in endosomes, Ii|is cut to CLIP',f:CAT[3]},d:{x:500,y:60,w:170,t:'HLA-DM swaps|CLIP for peptide',f:CAT[4]},s:{x:300,y:170,w:200,t:'to the surface:|seen by CD4 T cells',f:CAT[0]}};
-  const E=n?[['e','m','',{}],['m','d','',{}],['d','u','',{}],['u','s','',{}]]:[['e','m','',{}],['m','d','',{}],['d','s','',{}]];
+    :{e:{x:100,y:60,w:170,t:'made in the ER;|groove blocked by Ii',f:CAT[1]},m:{x:300,y:60,w:170,t:'in endosomes, Ii|is cut to CLIP',f:CAT[3]},d:{x:500,y:60,w:170,t:'HLA-DM swaps|CLIP for peptide',f:CAT[4]},u:{x:500,y:170,w:200,t:'peptide from taken-|up protein loads',f:CAT[2]},s:{x:250,y:170,w:200,t:'to the surface:|seen by CD4 T cells',f:CAT[0]}};
+  const E=[['e','m','',{}],['m','d','',{}],['d','u','',{}],['u','s','',{}]];
   let s=G('a-fade',0,flow(N,E));
   const it=[['Invariant chain (Ii)','Binds new class II molecules in the ER, blocks the groove so ER peptides cannot load, and steers them to endosomes.'],
    ['CLIP','The small fragment of the invariant chain left sitting in the groove after the rest is cut away.'],

@@ -1,11 +1,5 @@
 [
  "^woese/(wide|narrow)/05$",
  "^protein-targeting/narrow/23(c\\d+)?$",
- "^regulation/(wide|narrow)/07$",
- "^autotrophy-cycles/narrow/08$",
- "^immunity/narrow/06$",
- "^microscopy-structure/narrow/04$",
- "^plasmids/narrow/07$",
- "^regulation/narrow/03c1$",
- "^stress-biofilms/narrow/04$"
+ "^regulation/(wide|narrow)/07$"
 ]

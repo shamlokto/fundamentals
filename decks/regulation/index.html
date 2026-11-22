@@ -539,7 +539,7 @@ function operonDraw(cx,y,w,on,capOn){
   s+=seg(.0,.12,'#D9C6E2','lacI')+seg(.14,.24,'#E0C88A','CAP')+seg(.24,.31,'#EFE6D2','P')+seg(.31,.38,'#C9A9D6','O')+seg(.39,.62,'#A9C4DC','lacZ')+seg(.62,.8,'#A9C4DC','lacY')+seg(.8,.95,'#A9C4DC','lacA');
   if(!on)s+=blob(x1+w*.345,y-26,18,11,'#7D4A98')+T(x1+w*.345,y-42,'LacI','mono mid f12');
   else s+=T(x1+w*.345,y-26,'LacI + allolactose: off','note start f12');
-  if(capOn)s+=blob(x1+w*.19,y-26,17,11,'#C99A2E')+T(x1+w*.19,y-42,'CAP–cAMP','mono mid f12');
+  if(capOn)s+=blob(x1+w*.19,y-26,17,11,'#C99A2E')+T(x1+w*.16,y-42,'CAP–cAMP','mono mid f12');
   const px=x1+w*.27, full=on&&capOn, weak=on&&!capOn;
   s+=`<ellipse cx="${FX(px)}" cy="${FX(y+36)}" rx="${FX(w*.06)}" ry="12" fill="#9DB4AE" stroke="${INK}" stroke-width="1" ${on?'':'opacity=".55"'} class="tint"/>`+Tc(FX(px),FX(y+40),'RNAP','#3A2E22',12,'mono mid','600');
   if(on){const xe=x1+w*.95;s+=`<g opacity="${full?1:.45}">`+wave(x1+w*.39,xe-8,y+40,'#C17A2C',full?2.6:1.6)+arw(xe-10,y+40,xe+2,y+40,{col:'#C17A2C'})+`</g>`
