@@ -50,14 +50,34 @@ Gmail (thread with support@anthropic.com, 16 November).
 
 Primers 1–8 are live and passed; Scientist B read all eight together for consistency (passed), Scientist A
 polished layout on all eight, and Artwork added card and cover pictures for primers 3, 4, 5, 6 and 8 (7 keeps its
-emblem by design). Optional nits left: the Th-subsets cover shows four daughter cells for five subsets; the
-germinal-centre "test/return" labels sit a little apart from their arrows.
+emblem by design). Optional nits left: the Th-subsets cover shows four daughter cells for five subsets.
+(The germinal-centre label nit was fixed in the polish hour.)
+
+## Polish hour (22 November, 05:50–06:50 UTC)
+
+Owner asked for one more polish of the whole site. Done and vetted by Scientist B:
+- Meta description and Open Graph tags on the 28 hand-built decks (tools/meta.py --write). The protected
+  shell still shows only "Fundamentals" with noindex, by design.
+- Copy-edits: British spellings (organisation, programme), curly apostrophes and quotation marks in plate text
+  (straight quotes render back to front in the plate font), hub Immunology line now ends "memory and vaccines"
+  (primers 9–14 are not written), prokaryotic-gene blurb, a double space.
+- Scientist A: germinal-centre test/return labels on their arrows; PHG colour moved off reserved red in 7
+  hand-built decks; modelling plate 2 comparison curve in muted ink; deck runtime (phone controls on their own
+  rows, chip keeps focus, link focus ring, modified arrows ignored, Home/End).
+- Scientist B round 2: macromolecules writhe label and graded permeability key; motility tumbles in gold.
+- By-eye caption-vs-plate checks passed: immunity, antimicrobials, pathogenesis, macromolecules, energy-redox,
+  envelope, motility, growth. Not yet read by eye this way: central-metabolism, respiration,
+  microscopy-structure, lab-methods, applied-microbiology, microbial-ecology, autotrophy-cycles, pasteur, koch,
+  winogradsky.
+- The 02:08 publish run failed on a GitHub artifact glitch; the 06:15 run published everything.
+
+Later: hand-built decks carry their own copy of the deck chrome, so the runtime improvements above reach only
+generated decks; syncing them is a Software job.
 
 ## Open small items
 
 
 * Molecular-cloning cover: insert sits on the scissor blade (optional redo).
-* Hand-built palette draws phage (PHG) in red, against STYLE.md §2.
 * `tools/base_helpers.js` prediction-table wrap width could be narrowed for all decks.
 * Software's new audit checks (text outside its box; labels touching) are merged; the two findings they raised
   (respiration plate 2, stress-biofilms plate 2) are fixed.
