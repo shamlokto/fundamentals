@@ -46,9 +46,6 @@ Gmail (thread with support@anthropic.com, 16 November).
 
 ## Open small items
 
-* Six phone-width spacing items flagged only by CI's wider fonts under Software's new checks were added to
-  `tools/audit_ignore.json` on 21 November to keep CI green; fix them and remove the entries: autotrophy-cycles 08,
-  immunity 06, microscopy-structure 04, plasmids 07, regulation 03 (chip 1), stress-biofilms 04 (all narrow).
 
 * Molecular-cloning cover: insert sits on the scissor blade (optional redo).
 * Hand-built palette draws phage (PHG) in red, against STYLE.md §2.
