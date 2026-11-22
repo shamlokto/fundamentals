@@ -105,7 +105,7 @@ const POL=[
  {k:'IL-4',h:'Th2',rows:[['Made by','mainly other cells, such as basophils and T cells'],['Master factor','GATA3'],['Cytokines','IL-4, IL-5, IL-13'],['Fights','helminths; drives allergy']]},
  {k:'IL-6 + TGF-β',h:'Th17',rows:[['Species','mouse recipe; human naive cells also need IL-1β, and the role of TGF-β is debated'],['Made by','cDC2 after fungal or bacterial signals; IL-23 sustains it'],['Master factor','RORγt'],['Cytokine','IL-17'],['Fights','extracellular bacteria and fungi']]},
  {k:'TGF-β + IL-2',h:'induced Treg',rows:[['Made by','tolerogenic DCs, for example in the gut'],['Master factor','Foxp3'],['Cytokines','IL-10, TGF-β'],['Role','restrains responses; tolerance']]},
- {k:'IL-6 + IL-21',h:'Tfh',rows:[['Made by','DCs, then B cells'],['Master factor','Bcl6'],['Cytokine','IL-21'],['Role','helps B cells make antibody']]}];
+ {k:'IL-6 + IL-21',h:'Tfh',rows:[['Species','mouse recipe; in humans IL-12 also drives Tfh'],['Made by','DCs, then B cells'],['Master factor','Bcl6'],['Cytokine','IL-21'],['Role','helps B cells make antibody']]}];
 let polSel=0;
 function scA9(n){const c=POL[polSel];return explorer(n,{h:c.h,sub:'signal 3: '+c.k,rows:c.rows,note:'Simplified; the subsets are covered in their own primer.'},{y:32});}
 function scA10(n){
