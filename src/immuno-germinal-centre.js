@@ -25,7 +25,7 @@ function scG3(n){
   const cx=n?180:180, cy=n?120:130, R=n?90:100;
   let s=G('a-fade',0,`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${CAT[6]}" stroke="${INK}" stroke-width="1.4"/>`+`<path d="M${cx-R} ${cy} a${R} ${R} 0 0 1 ${2*R} 0 z" fill="${CAT[0]}" stroke="${INK}" stroke-width="1.4"/>`);
   s+=G('a-fade',.3,T(cx,cy-R/2,'dark zone','lab mid f13')+T(cx,cy-R/2+18,'divide and mutate','note mid f12')+T(cx,cy+R/2-6,'light zone','lab mid f13')+T(cx,cy+R/2+12,'tested for binding','note mid f12'));
-  s+=G('a-fade',.6,arw(cx+R*0.55,cy-12,cx+R*0.55,cy+22,{w:1.6})+arw(cx-R*0.55,cy+22,cx-R*0.55,cy-12,{w:1.6}));
+  s+=G('a-fade',.6,arw(cx+R*0.55,cy-12,cx+R*0.55,cy+22,{w:1.6})+arw(cx-R*0.55,cy+22,cx-R*0.55,cy-12,{w:1.6})+T(cx+R+8,cy+4,'test','note start f12')+T(cx-R-8,cy+4,'return','note end f12'));
   const it=[['Dark zone','Centroblasts divide every few hours and express AID, which mutates their antibody V-region genes.'],
    ['Light zone','Centrocytes stop dividing and test their new receptors against antigen held on follicular dendritic cells, then compete for help from Tfh cells.'],
    ['Cycling','Cells that win help return to the dark zone for more rounds; the rest die.']];
