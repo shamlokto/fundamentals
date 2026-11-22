@@ -865,7 +865,7 @@ function scV8(n){
 function scV9(n){
   const rows=[['Membrane lipids','ester-linked fatty acids, G3P','ether-linked isoprenoids, G1P','ester-linked fatty acids, G3P'],['Wall','peptidoglycan (most)','S-layer; pseudomurein in some','none, or cellulose/chitin'],['RNA polymerase','one, 5 subunits','one, many subunits, eukaryote-like','three or more'],['Translation start','formyl-Met','Met','Met'],['Nucleus, organelles','no','no','yes'],['Histones','no (HU, H-NS)','many have histones','yes'],['Introns in genes','rare','rare (tRNA, rRNA)','common']];
   const t=wtable(n,['Feature','Bacteria','Archaea','Eukarya'],rows,n?[[10,9],[78,13],[178,11],[268,10]]:[[24,16],[170,24],[340,26],[500,20]],{y0:30,R:n?354:620});
-  const p=para(n?16:24,t.y+12,'The "lipid divide" between bacterial and archaeal membranes is one of the deepest differences in biology. Archaea share their information-processing machinery with eukaryotes but their cell plan with bacteria, a mosaic the Woese primer follows.',n?50:92,'note start f13',17,1);
+  const p=para(n?16:24,t.y+12,'The “lipid divide” between bacterial and archaeal membranes is one of the deepest differences in biology. Archaea share their information-processing machinery with eukaryotes but their cell plan with bacteria, a mosaic the Woese primer follows.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
 const S=[

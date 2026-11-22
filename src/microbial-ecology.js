@@ -22,7 +22,7 @@ function scE2(n){
     +`<path d="M${FX(lx-lr*.25)} ${FX(py-lr*.97)} a18 18 0 1 0 ${FX(-lr*.5)} ${FX(lr*.35)}" stroke="#2F5276" stroke-width="1.4" fill="none" marker-end="url(#ahb)"/>`+T(FX(lx-lr*.45),FX(py-lr-30),n?'new types':'diversification','note end f11 halo'));
   const rows=[['Selection','fitness differences among taxa in a given environment','pH is the best single predictor of soil bacterial communities across continents'],
     ['Drift','random births and deaths change abundances','strongest in small populations and when selection is weak'],
-    ['Dispersal','movement of cells between places','"everything is everywhere, but the environment selects" (Baas Becking, 1934); yet hot-spring Sulfolobus shows geographic isolation'],
+    ['Dispersal','movement of cells between places','“everything is everywhere, but the environment selects” (Baas Becking, 1934); yet hot-spring Sulfolobus shows geographic isolation'],
     ['Diversification','new genetic variants arise','mutation and horizontal gene transfer act on ecological timescales']];
   const t=wtable(n,['Process','What it does','Microbial example'],rows,n?[[10,12],[100,15],[208,24]]:[[24,16],[150,30],[360,42]],{y0:py+(n?110:120),d0:1.3,R:n?354:620});
   const p=para(n?16:24,t.y+12,'Vellend (2010) argued that all community ecology reduces to these four processes; Nemergut and colleagues (2013) applied the framework to microbes. Their relative weight differs between habitats and is measured by comparing observed communities with null models.',n?50:92,'note start f13',17,1.6);

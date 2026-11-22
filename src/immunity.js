@@ -22,7 +22,7 @@ function scI1(n){return introPlate(n,{q:'How does the body tell self from a micr
 function scI2(n){
   const items=[
    ['Barriers come first','Intact skin, the acid of the stomach, lysozyme in tears and saliva, mucus and its beating cilia, and the competition of the normal microbiota keep most microbes out before any sensing is needed.'],
-   ['Pattern recognition','Innate cells carry receptors (PRRs) for conserved microbial molecules (PAMPs) such as LPS, flagellin, peptidoglycan and microbial nucleic acids, and for host "danger" signals. Charles Janeway predicted these receptors; Hoffmann and Beutler shared the 2011 Nobel Prize for showing that Toll (in flies) and TLR4 (in mice) sense microbes.'],
+   ['Pattern recognition','Innate cells carry receptors (PRRs) for conserved microbial molecules (PAMPs) such as LPS, flagellin, peptidoglycan and microbial nucleic acids, and for host “danger” signals. Charles Janeway predicted these receptors; Hoffmann and Beutler shared the 2011 Nobel Prize for showing that Toll (in flies) and TLR4 (in mice) sense microbes.'],
    ['One pattern, one class of microbe','Because PAMPs are shared and essential, a handful of receptors covers huge groups of pathogens at once, and the microbe cannot easily discard the target.'],
    ['Output: inflammation and interferon','Engaged receptors switch on NF-κB and interferon programmes: cytokines, recruitment of phagocytes, fever, and an antiviral state in neighbouring cells.']];
   const c=cards(n,items,{y:20});
@@ -75,8 +75,8 @@ function scI6(n){
   const hd=T(xa,22,'MHC class II route','lab mid f13')+T(xb,22,'MHC class I route','lab mid f13');
   let s=G('a-fade',0,hd+flow(N,E));
   const b=bullets(n?24:30,n?340:345,[
-    ['MHC I: "what is inside me"','Almost every cell displays fragments of its own cytosolic proteins on MHC class I. A virus-infected or cancerous cell shows foreign peptides and is killed by a CD8 T cell. Many viruses fight back by downregulating MHC I, which then alerts NK cells.'],
-    ['MHC II: "what I have eaten"','Professional antigen-presenting cells (dendritic cells, macrophages, B cells) display fragments of engulfed material on MHC class II to CD4 helper T cells, which then coordinate the whole adaptive response.']],
+    ['MHC I: “what is inside me”','Almost every cell displays fragments of its own cytosolic proteins on MHC class I. A virus-infected or cancerous cell shows foreign peptides and is killed by a CD8 T cell. Many viruses fight back by downregulating MHC I, which then alerts NK cells.'],
+    ['MHC II: “what I have eaten”','Professional antigen-presenting cells (dendritic cells, macrophages, B cells) display fragments of engulfed material on MHC class II to CD4 helper T cells, which then coordinate the whole adaptive response.']],
     n?44:82,{d0:.6,gap:24});
   return {vb:n?slim(b.y-4):wide(Math.max(b.y-4,340)),s:s+b.s};
 }

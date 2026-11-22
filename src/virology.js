@@ -2,7 +2,7 @@
 {"title":"Viruses","eyebrow":"Virology · an animated primer","h1":"What viruses are and how they replicate","parts":["Particles","Classes","Replication","Evolution"],"foot":"Classifications and mutation rates are typical values that vary between families; figures are rounded. Bacteriophages are treated in the Bacteriophages primer and only mentioned here.","description":"What a virus is, capsid symmetry and envelopes, the Baltimore classification, the replication cycle, replication strategies, and viral evolution and zoonotic emergence."}
 META*/
 const BALT=[
- {k:'I · dsDNA',g:'double-stranded DNA',m:'host RNA polymerase II reads the DNA directly in the nucleus (poxviruses carry their own in the cytoplasm)',ex:'herpesviruses, adenoviruses, papillomaviruses, poxviruses',enz:'host RNA polymerase (poxviruses: own)',note:'The most "cell-like" strategy. Many are large and encode their own DNA-handling enzymes.'},
+ {k:'I · dsDNA',g:'double-stranded DNA',m:'host RNA polymerase II reads the DNA directly in the nucleus (poxviruses carry their own in the cytoplasm)',ex:'herpesviruses, adenoviruses, papillomaviruses, poxviruses',enz:'host RNA polymerase (poxviruses: own)',note:'The most “cell-like” strategy. Many are large and encode their own DNA-handling enzymes.'},
  {k:'II · ssDNA',g:'single-stranded DNA',m:'the strand is first copied to double-stranded DNA, which host polymerase then transcribes',ex:'parvoviruses (B19, adeno-associated virus)',enz:'host DNA and RNA polymerases',note:'Small, simple genomes; parvoviruses depend heavily on the host; adeno-associated viruses also need a helper virus such as an adenovirus.'},
  {k:'III · dsRNA',g:'double-stranded RNA, usually segmented',m:'a viral RNA-dependent RNA polymerase packaged in the particle copies mRNA from the negative strand inside a sub-particle',ex:'reoviruses, rotavirus (childhood diarrhoea)',enz:'viral RdRp (brought in)',note:'The cell has no way to read dsRNA, so the enzyme must travel inside the virion.'},
  {k:'IV · (+)ssRNA',g:'positive-sense single-stranded RNA',m:'the genome IS mRNA: ribosomes translate it on entry, making the polymerase that then copies the genome',ex:'picornaviruses (polio, rhinovirus), coronaviruses (SARS-CoV-2), flaviviruses (dengue, Zika)',enz:'viral RdRp (made after entry)',note:'The largest RNA class. The bare genome is infectious on its own.'},
@@ -34,7 +34,7 @@ function scV2(n){
     +complexPhage(xs[2],cy)+T(xs[2],cy+52,'complex','note mid f11')
     +enveloped(xs[3],cy,n?18:22)+T(xs[3],cy+48,'enveloped','note mid f11'));
   const b=bullets(n?24:30,n?150:150,[
-    ['The capsid','A shell of many copies of a few protein subunits, which saves genome space. Nearly all capsids are either icosahedral (a near-spherical cage, like poliovirus) or helical (a rod or coil wound round the genome, like tobacco mosaic virus and rabies). Poxviruses and tailed phages are "complex".'],
+    ['The capsid','A shell of many copies of a few protein subunits, which saves genome space. Nearly all capsids are either icosahedral (a near-spherical cage, like poliovirus) or helical (a rod or coil wound round the genome, like tobacco mosaic virus and rabies). Poxviruses and tailed phages are “complex”.'],
     ['The nucleocapsid and envelope','Capsid plus genome is the nucleocapsid. Many animal viruses wrap this in an envelope of host membrane, studded with viral glycoprotein spikes (influenza haemagglutinin, HIV Env, coronavirus spike) that bind the next cell.'],
     ['Enveloped versus naked','Enveloped viruses enter by membrane fusion and are fragile, needing close contact or droplets. Naked capsids (noroviruses, polioviruses) resist drying, acid and detergents, so they spread on surfaces and through the gut.']],
     n?44:82,{d0:.4,gap:22});
@@ -68,7 +68,7 @@ function scV5(n){
    ['RNA-dependent RNA polymerase','Cells never copy RNA from RNA, so RNA viruses must encode their own RdRp. It has no proofreading (coronaviruses, with an extra exonuclease, are the exception), which is the root of their high mutation rate. It is a prime drug target: remdesivir and molnupiravir attack the coronavirus RdRp.'],
    ['Reverse transcription','Retroviruses (class VI) and hepadnaviruses (class VII) copy RNA back into DNA with reverse transcriptase, discovered by Temin and Baltimore in 1970. Retroviral DNA integrates into the host chromosome; most anti-HIV drugs block this enzyme or integration.'],
    ['Segmented genomes','Some viruses split their genome into separate pieces (influenza has eight, rotavirus eleven). When two strains infect one cell, segments can be repackaged in new combinations, a fast route to novelty called reassortment.'],
-   ['Where replication happens','DNA viruses mostly replicate in the nucleus and borrow its polymerases; poxviruses are the exception. RNA viruses mostly stay in the cytoplasm (influenza and retroviruses are exceptions), often in membrane-bound "factories" that hide their RNA from host sensors.']];
+   ['Where replication happens','DNA viruses mostly replicate in the nucleus and borrow its polymerases; poxviruses are the exception. RNA viruses mostly stay in the cytoplasm (influenza and retroviruses are exceptions), often in membrane-bound “factories” that hide their RNA from host sensors.']];
   const c=cards(n,items,{y:20});
   return {vb:n?slim(c.y+4):wide(c.y+6),s:c.s};
 }
