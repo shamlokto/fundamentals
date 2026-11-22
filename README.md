@@ -6,7 +6,7 @@ Animated, click-through teaching primers on bacterial molecular biology, drawn a
 
 Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html` locally. Each deck is one self-contained HTML file.
 
-57 primers in 13 sections: 652 plates, 73 of them interactive, across 54 primers.
+62 primers in 13 sections: 696 plates, 78 of them interactive, across 59 primers.
 
 | # | Primer | Section | Plates | Interactive | Folder |
 |---|---|---|---|---|---|
@@ -67,6 +67,11 @@ Browse online at https://shamlokto.github.io/fundamentals/, or open `index.html`
 | LV | Innate Instructs Adaptive | Immunology | 10 | 2 | [`decks/immuno-innate-adaptive/`](decks/immuno-innate-adaptive/) |
 | LVI | Antigen Receptors and Genes | Immunology | 9 | 1 | [`decks/immuno-antigen-receptors/`](decks/immuno-antigen-receptors/) |
 | LVII | Antigen Presentation | Immunology | 9 | 1 | [`decks/immuno-antigen-presentation/`](decks/immuno-antigen-presentation/) |
+| LVIII | Lymphocyte Development | Immunology | 9 | 1 | [`decks/immuno-lymphocyte-development/`](decks/immuno-lymphocyte-development/) |
+| LIX | T Helper Subsets | Immunology | 8 | 1 | [`decks/immuno-th-subsets/`](decks/immuno-th-subsets/) |
+| LX | The Germinal Centre | Immunology | 9 | 1 | [`decks/immuno-germinal-centre/`](decks/immuno-germinal-centre/) |
+| LXI | Class Switching and Effector Functions | Immunology | 9 | 1 | [`decks/immuno-class-switching/`](decks/immuno-class-switching/) |
+| LXII | Memory and Vaccines | Immunology | 9 | 1 | [`decks/immuno-memory-vaccines/`](decks/immuno-memory-vaccines/) |
 
 Historical attributions, dates and figures in the History decks have been fact-checked twice; some are rounded for teaching.
 

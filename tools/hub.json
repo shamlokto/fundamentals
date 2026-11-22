@@ -486,6 +486,41 @@
     "title": "Antigen Presentation",
     "sub": "How cells show T cells what is inside them",
     "blurb": "MHC class I and II, the cytosolic and vesicular pathways, cross-presentation, CD1 and MR1, polymorphism and MHC restriction, with mouse and human compared."
+   },
+   {
+    "slug": "immuno-lymphocyte-development",
+    "psub": "Development",
+    "title": "Lymphocyte Development",
+    "sub": "Made, tested and kept tolerant",
+    "blurb": "B-cell stages and subsets, T-cell development in the thymus, positive and negative selection, B-cell tolerance, AIRE and thymic regulatory T cells, with mouse and human compared."
+   },
+   {
+    "slug": "immuno-th-subsets",
+    "psub": "Helpers",
+    "title": "T Helper Subsets",
+    "sub": "One naive cell, several kinds of helper",
+    "blurb": "Activation, the Th1, Th2, Th17, Tfh and regulatory subsets, master transcription factors and STAT signals, cross-regulation, plasticity and memory."
+   },
+   {
+    "slug": "immuno-germinal-centre",
+    "psub": "Germinal centre",
+    "title": "The Germinal Centre",
+    "sub": "Where antibodies get better",
+    "blurb": "T-cell help, dark and light zones, AID and somatic hypermutation, selection and affinity maturation, plasma cells, memory and long-lived antibody."
+   },
+   {
+    "slug": "immuno-class-switching",
+    "psub": "Switching",
+    "title": "Class Switching and Effector Functions",
+    "sub": "Same binding, new job",
+    "blurb": "The five classes, class-switch recombination and its cytokine control, Fc receptors, complement, FcRn, and human versus mouse IgG subclasses."
+   },
+   {
+    "slug": "immuno-memory-vaccines",
+    "psub": "Vaccines",
+    "title": "Memory and Vaccines",
+    "sub": "Why the second response is better",
+    "blurb": "Primary and secondary responses, memory cells, kinds of vaccine, adjuvants, prime–boost, correlates of protection, and mice versus people."
    }
   ]
  }
