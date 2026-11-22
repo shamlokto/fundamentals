@@ -6,7 +6,7 @@ const VAC=[
  {k:'Inactivated',rows:[['What it is','the whole microbe, killed'],['Examples','injected polio; hepatitis A; some influenza vaccines'],['Strengths','cannot cause infection'],['Limits','weaker T-cell responses; several doses and boosters needed']]},
  {k:'Subunit or protein',rows:[['What it is','one or a few purified or recombinant proteins'],['Examples','hepatitis B surface antigen; HPV virus-like particles; acellular pertussis'],['Strengths','well defined and very safe'],['Limits','usually needs an adjuvant and boosters']]},
  {k:'Toxoid',rows:[['What it is','a bacterial toxin made harmless'],['Examples','tetanus and diphtheria'],['Strengths','antibody to the toxin prevents disease'],['Limits','protects against the toxin, not colonisation; boosters needed']]},
- {k:'Conjugate',rows:[['What it is','a capsular polysaccharide linked to a carrier protein'],['Examples','Haemophilus influenzae type b; pneumococcal and meningococcal vaccines'],['Strengths','works in infants and gives memory, unlike polysaccharide alone'],['Covered in','the primer on antibodies to carbohydrates']]},
+ {k:'Conjugate',rows:[['What it is','a capsular polysaccharide linked to a carrier protein'],['Examples','Haemophilus influenzae type b; pneumococcal and meningococcal vaccines'],['Strengths','works in infants and gives memory, unlike polysaccharide alone'],['Limits','boosters needed; protects only against the serotypes included']]},
  {k:'mRNA and viral vector',rows:[['What it is','instructions for the antigen, delivered in lipid nanoparticles or a harmless virus'],['Examples','COVID-19 vaccines'],['Strengths','fast to design and make; antibody and T-cell responses'],['Limits','antibody levels wane; boosters are used']]}];
 let vacSel=0;
 function scM1(n){return introPlate(n,{q:'Why does a second meeting with the same microbe usually go so much better than the first?',
@@ -16,9 +16,9 @@ function scM1(n){return introPlate(n,{q:'Why does a second meeting with the same
 function scM2(n){
   const A=axes(n?60:70,n?40:40,n?276:500,n?150:170,{xr:[0,60],yr:[0,4],xt:[0,14,28,42,56],yt:[],xlab:'days',ylab:'antibody level'});
   let s=G('a-fade',0,A.s);
-  s+=G('a-draw',.3,curve(A,x=>x<28?1.0*Math.exp(-((x-12)**2)/40):0,{col:CAT[6]}));
-  s+=G('a-draw',.8,curve(A,x=>x<28?0:(x<37?3.5/(1+Math.exp(-(x-32)/1.3)):0.9+2.45*Math.exp(-((x-37)**2)/90)),{col:BLUE}));
-  s+=G('a-fade',1.2,T(A.px(12),A.py(1.25),'first dose','note mid f12')+T(A.px(30),A.py(3.2),'second dose','note end f12'));
+  s+=G('a-draw',.3,curve(A,x=>0.3*(1-Math.exp(-x/6))+0.9*Math.exp(-((x-12)**2)/40),{col:CAT[6],from:0,to:28}));
+  s+=G('a-draw',.8,curve(A,x=>{const t=x-28;return 0.3+0.6*(1-Math.exp(-t/4))+2.8*Math.pow(t/6,2)*Math.exp(2-2*t/6);},{col:BLUE,from:28,to:60}));
+  s+=G('a-fade',1.2,T(A.px(12),A.py(1.25),'first dose','note mid f12')+`<line x1="${A.px(28)}" y1="${A.py(0)}" x2="${A.px(28)}" y2="${A.py(3.9)}" stroke="${INK}" stroke-dasharray="4 3" stroke-width="1"/>`+T(A.px(28)-6,A.py(3.75),'second dose','note end f12'));
   const it=[['Primary','A lag of about a week, a modest peak, much of it IgM, of low affinity.'],
    ['Secondary','A shorter lag, a much higher peak, mostly IgG (or IgA or IgE), of higher affinity, lasting longer.'],
    ['Why','More antigen-specific cells to start with, already switched and mutated, and needing less help to respond.']];

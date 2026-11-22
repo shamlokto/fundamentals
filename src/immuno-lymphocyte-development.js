@@ -35,7 +35,7 @@ function scD4(n){
 }
 function scD5(n){
   const x0=n?24:60, x1=n?336:580, y=n?90:90, w=x1-x0;
-  const z=[[0,.3,n?'neglect':'death by neglect',CAT[6]],[.3,.7,n?'positive':'positive selection',CAT[1]],[.7,1,n?'deleted/Treg':'deleted, or Treg',CAT[3]]];
+  const z=[[0,.3,n?'neglect':'death by neglect',CAT[6]],[.3,.7,n?'positive':'positive selection',CAT[1]],[.7,1,n?'deleted, Treg':'deleted, or Treg',CAT[3]]];
   let s='';
   z.forEach(([a,b,lab,f],i)=>{s+=G('a-pop',(.2+i*.25).toFixed(2),box(x0+a*w,y-20,(b-a)*w,40,f,0)+T(x0+(a+b)/2*w,y+5,lab,'mono mid '+(n?'f10':'f12')));});
   s+=G('a-fade',.9,arw(x0,y+40,x1,y+40,{w:1.4})+T((x0+x1)/2,y+64,'strength of binding to self peptide–MHC','note mid f12'));

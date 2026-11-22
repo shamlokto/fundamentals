@@ -9,7 +9,7 @@ const SUB=[
  {k:'Treg',rows:[['Made with','TGF-β + IL-2 (induced Treg); also made in the thymus'],['Master factor','Foxp3 (STAT5)'],['Cytokines','IL-10, TGF-β'],['Main job','suppresses other T cells; keeps tolerance'],['Marker','high CD25 (the IL-2 receptor α chain)'],['Too little','multi-organ autoimmunity (IPEX; scurfy mice)']]}];
 let subSel=0;
 function scH1(n){return introPlate(n,{q:'Why does a naive helper T cell not always make the same response?',
-  belief:'A naive CD4 T cell is uncommitted. The cytokines present when it is first activated switch on one master transcription factor, which sets the cytokines it will make for the rest of its life and so the kind of immunity it calls up.',
+  belief:'A naive CD4 T cell is uncommitted. The cytokines present when it is first activated switch on one master transcription factor, which largely sets the cytokines it will go on to make and so the kind of immunity it calls up.',
   items:['Activation of a naive CD4 T cell','Th1, Th2, Th17, Tfh and Treg','Master factors and STAT signals','Cross-regulation and plasticity','Mouse and human differences'],
   art:(cx,cy)=>blob(cx,cy,24,22,CAT[6])+T(cx,cy+4,'CD4','lab mid f12')+[-110,-55,0,55,110].map((d,i)=>arw(cx+d*.25,cy+20,cx+d,cy+52,{w:1.1})+blob(cx+d,cy+66,16,14,CAT[i])).join(''),artH:140});}
 function scH2(n){
@@ -31,7 +31,7 @@ function scH4(n){
   let s=G('a-pop',.1,node('t1','Th1: T-bet',CAT[0])+node('t2','Th2: GATA3',CAT[1])+node('t17','Th17: RORγt',CAT[2])+node('tr','Treg: Foxp3',CAT[3]));
   const off=n?62:82;
   s+=G('a-fade',.6,inh(P.t1[0]+off,P.t1[1]-8,P.t2[0]-off,P.t2[1]-8,{})+inh(P.t2[0]-off,P.t2[1]+8,P.t1[0]+off,P.t1[1]+8,{})
-    +inh(P.t17[0]+off,P.t17[1],P.tr[0]-off,P.tr[1],{dash:'4 3'}));
+    +inh(P.t17[0]+off,P.t17[1]-8,P.tr[0]-off,P.tr[1]-8,{dash:'4 3'})+inh(P.tr[0]-off,P.tr[1]+8,P.t17[0]+off,P.t17[1]+8,{dash:'4 3'}));
   s+=G('a-fade',.9,T((P.t1[0]+P.t2[0])/2,P.t1[1]-24,'IFN-γ ⊣ Th2;  IL-4 ⊣ Th1','note mid f12')+T((P.t17[0]+P.tr[0])/2,P.t17[1]-24,'balanced by IL-6 vs IL-2','note mid f12'));
   const it=[['Self-reinforcing','Each subset\'s cytokine strengthens its own master factor: IFN-γ boosts T-bet, IL-4 boosts GATA3.'],
    ['Mutually inhibiting','T-bet and GATA3 suppress each other, so a response tends to tip one way and stay there.'],
@@ -64,7 +64,7 @@ function scH7(n){
 function scH8(n){
   const rows=[['1986','Mosmann and Coffman','mouse helper clones fall into two cytokine types, Th1 and Th2'],
    ['1995','Sakaguchi and colleagues','CD25⁺ CD4 cells prevent autoimmunity in mice'],
-   ['2000','three groups','CXCR5⁺ follicular helper T cells described'],
+   ['2000–01','Breitfeld; Schaerli; Kim and colleagues','CXCR5⁺ follicular helper T cells described'],
    ['2003','three groups','Foxp3 is the master factor of regulatory T cells'],
    ['2005','Harrington; Park and colleagues','Th17 cells identified as a separate lineage'],
    ['2009','three groups','Bcl6 is the master factor of Tfh cells']];

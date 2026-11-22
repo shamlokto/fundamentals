@@ -688,8 +688,8 @@ function scC1(n){return introPlate(n,{q:'How can one B-cell clone make IgM, then
 function scC2(n){
   const rows=[['IgM','pentamer (membrane monomer)','~1.5','first antibody made; strong complement activation'],
    ['IgD','monomer','~0.03','mostly on naive B cells, with IgM'],
-   ['IgG','monomer','~10','the main serum antibody; crosses the placenta; four subclasses in humans'],
-   ['IgA','monomer in blood; dimer in secretions','~2','the main antibody at mucosal surfaces; two subclasses in humans'],
+   ['IgG','monomer','~12','the main serum antibody; crosses the placenta; four subclasses in humans'],
+   ['IgA','monomer in blood; dimer in secretions','~3','the main antibody at mucosal surfaces; two subclasses in humans'],
    ['IgE','monomer','trace','binds mast cells and basophils; worms and allergy']];
   const t=wtable(n,['Class','Form','mg/mL','Main role'],rows,n?[[10,5],[60,10],[150,7],[214,16]]:[[24,6],[90,20],[290,10],[390,30]],{y0:30,R:n?354:620});
   const p=para(n?16:24,t.y+14,'The class is set by the heavy-chain constant region: μ, δ, γ, α or ε. Light chains (κ or λ) are shared by all classes.',n?50:92,'note start f13',17,.8);
@@ -703,11 +703,14 @@ function scC3(n){
   genes.forEach((g,i)=>{const x=x0+i*(gw+gap);s+=G('a-pop',(.1+i*.06).toFixed(2),box(x,y-12,gw,24,i===0?CAT[0]:(g==='γ1'?CAT[2]:CAT[6]),3)+T(x+gw/2,y+5,g,'mono mid '+(n?'f10':'f12')));});
   s+=G('a-fade',.9,T(x0,y+34,'human heavy-chain constant genes (pseudogenes not shown)','note start f12'));
   const y2=y+80;
-  s+=G('a-fade',1.2,ln(x0,y2,x0+2*(gw+gap)+6,y2,INK,1.2)+box(x0,y2-12,gw,24,CAT[0],3)+T(x0+gw/2,y2+5,'VDJ','mono mid '+(n?'f10':'f12'))
-    +box(x0+gw+gap,y2-12,gw,24,CAT[2],3)+T(x0+gw+gap+gw/2,y2+5,'γ1','mono mid '+(n?'f10':'f12'))
-    +T(x0,y2+32,'after switching to IgG1: μ, δ and γ3 are deleted','note start f12'));
+  const after=['VDJ','γ1','α1','γ2','γ4','ε','α2'];
+  let r=ln(x0,y2,x0+after.length*(gw+gap)-gap+6,y2,INK,1.2);
+  after.forEach((g,i)=>{const x=x0+i*(gw+gap);r+=box(x,y2-12,gw,24,i===0?CAT[0]:(i===1?CAT[2]:CAT[6]),3)+T(x+gw/2,y2+5,g,'mono mid '+(n?'f10':'f12'));});
+  const cx=x0+after.length*(gw+gap)+(n?24:40), cr=n?15:20;
+  r+=`<circle cx="${cx}" cy="${y2}" r="${cr}" fill="none" stroke="${INK}" stroke-dasharray="3 2"/>`+T(cx,y2+4,'μ δ γ3','mono mid f10');
+  s+=G('a-fade',1.2,r+T(x0,y2+34,n?'after IgG1: μ, δ, γ3 lost as a switch circle':'after switching to IgG1: μ, δ and γ3 are lost as a switch circle; downstream genes remain','note start f12'));
   const it=[['Switch regions','Each constant gene except δ is preceded by a long repetitive switch region. AID creates breaks in the μ switch region and in the target switch region.'],
-   ['Deletion','The two breaks are joined by end-joining repair and the DNA between them is lost as a circle, so switching is irreversible on that chromosome.'],
+   ['Deletion','The two breaks are joined by end-joining repair and the DNA between them is lost as a circle, so switching is irreversible on that chromosome, although the cell can still switch further downstream, for example from IgG1 to IgE.'],
    ['Same specificity','The VDJ exon is untouched, so the new antibody binds the same antigen.']];
   const b=bullets(n?24:30,y2+62,it,n?44:88,{d0:1.4,gap:20});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};

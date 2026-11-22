@@ -36,17 +36,17 @@ function scG3(n){
 function scG4(n){
   const items=[['What AID does','Activation-induced cytidine deaminase turns cytosine into uracil in DNA, but only in actively transcribed antibody genes.'],
    ['Somatic hypermutation','Error-prone repair of those lesions in the V regions introduces point mutations at about a million times the normal rate, roughly one per V region per division.'],
-   ['Class switching','The same enzyme acting on switch regions starts the DNA breaks that join a new constant region to the V region (next primer).'],
+   ['Class switching','The same enzyme acting on switch regions starts the DNA breaks that join a new constant region to the V region (primer 7).'],
    ['Without AID','Mice and people lacking AID make IgM but no switched antibody and no mutated receptors; in humans this is a form of hyper-IgM syndrome.']];
   const c=cards(n,items,{y:24});
   const p=para(n?16:24,c.y+12,'Muramatsu, Honjo and colleagues identified AID in 2000 and showed it was needed for both processes.',n?50:92,'note start f13',17,1);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:c.s+p.s};
 }
 function scG5(n){
-  const A=axes(n?62:70,n?40:40,n?274:500,n?150:170,{xr:[0,6],yr:[0,4],xt:[0,2,4,6],yt:[],xlab:'weeks after immunisation',ylab:'average affinity'});
+  const A=axes(n?62:70,n?40:40,n?274:500,n?150:170,{xr:[0,6],yr:[0,4],xt:[0,2,4,6],yt:[],xlab:'weeks after immunisation',ylab:'average affinity (illustrative)'});
   let s=G('a-fade',0,A.s);
-  s+=G('a-draw',.4,curve(A,x=>0.5+3.2*(1-Math.exp(-x/2.2)),{col:BLUE}));
-  s+=G('a-fade',.8,T(A.px(5.6),A.py(3.6),'booster','note end f12'));
+  s+=G('a-draw',.4,curve(A,x=>0.5+2.1*(1-Math.exp(-x/1.5))+(x>4?1.1*(1-Math.exp(-(x-4)/0.7)):0),{col:BLUE}));
+  s+=G('a-fade',.8,`<line x1="${A.px(4)}" y1="${A.py(0)}" x2="${A.px(4)}" y2="${A.py(3.9)}" stroke="${INK}" stroke-dasharray="4 3" stroke-width="1"/>`+T(A.px(4)+6,A.py(3.75),'booster','note start f12'));
   const it=[['Capture and present','A centrocyte with a better receptor pulls more antigen off follicular dendritic cells and shows more peptide–MHC to Tfh cells.'],
    ['Win help','More peptide–MHC wins more CD40L and IL-21 from the Tfh cell, and the cell is sent back to divide more.'],
    ['Affinity maturation','Over weeks, average affinity rises, often by 10- to 100-fold or more; boosters push it further. Eisen and Siskind measured the rise in 1964.']];
