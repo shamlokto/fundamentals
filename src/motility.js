@@ -42,9 +42,9 @@ function scF2(n){
 function scF3(n){
   let s='';const P0=[[30,150],[120,120],[150,180],[250,160],[300,90],[360,140],[450,120],[480,200],[570,170],[610,110]];
   const pts=P0.map(p=>n?[p[0]*.54+10,p[1]]:p);
-  s+=G('a-fade',0,`<path d="M${pts.map(p=>p.join(' ')).join(' L')}" stroke="#2F5276" stroke-width="1.8" fill="none"/>`+pts.slice(1,-1).map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#A4473A"/>`).join('')
+  s+=G('a-fade',0,`<path d="M${pts.map(p=>p.join(' ')).join(' L')}" stroke="#2F5276" stroke-width="1.8" fill="none"/>`+pts.slice(1,-1).map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#B8892E"/>`).join('')
     +arw(n?250:440,236,n?340:620,236,{w:1.2})+T(n?248:436,240,'attractant increases','note end f11'));
-  s+=G('a-fade',.4,T(n?16:24,28,'runs (blue, about 1 s) and tumbles (red, about 0.1 s)','note start f12'));
+  s+=G('a-fade',.4,T(n?16:24,28,'runs (blue, about 1 s) and tumbles (gold, about 0.1 s)','note start f12'));
   const b=bullets(n?24:30,n?280:280,[['Runs','All motors turn counter-clockwise; the flagella bundle and push the cell straight, at ~20–30 µm/s.'],['Tumbles','One or more motors reverse; the bundle flies apart and the cell reorients more or less at random.'],['Biased random walk','Moving up a gradient of attractant, the cell tumbles less often, so runs that go the right way last longer. It never steers directly.']],n?44:88,{d0:.8,gap:22});
   return {vb:n?slim(b.y-4):wide(b.y-4),s:s+b.s};
 }
