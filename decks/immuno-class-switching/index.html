@@ -684,7 +684,7 @@ function artBullets(n,art,artW,artH,items,o={}){
 function scC1(n){return introPlate(n,{q:'How can one B-cell clone make IgM, then IgG, then IgA, all binding the same antigen?',
   belief:'The variable region decides what an antibody binds; the constant region decides what it does. Class switching swaps the constant region by cutting out DNA, keeping the same variable region. Cytokines from helper T cells choose the new class, matching the antibody to the kind of infection.',
   items:['The five classes','Class-switch recombination','Cytokines choose the class','Fc receptors','Complement and FcRn','Human and mouse IgG subclasses'],
-  art:(cx,cy)=>['IgM','IgG','IgA','IgE'].map((t,i)=>box(cx-140+i*72,cy-14,60,28,CAT[i],4)+T(cx-110+i*72,cy+5,t,'mono mid f12')).join('')+T(cx,cy+40,'same V region, different C region','note mid f12'),artH:110});}
+  art:(cx,cy)=>['IgM','IgG','IgA','IgE'].map((t,i)=>{const x=cx-117+i*60;return box(x,cy-14,54,28,CAT[i],4)+T(x+27,cy+5,t,'mono mid f12');}).join('')+T(cx,cy+40,'same V region,','note mid f12')+T(cx,cy+56,'different C region','note mid f12'),artH:120});}
 function scC2(n){
   const rows=[['IgM','pentamer (membrane monomer)','~1.5','first antibody made; strong complement activation'],
    ['IgD','monomer','~0.03','mostly on naive B cells, with IgM'],

@@ -31,7 +31,7 @@ function scM3(n){
    ['Central memory T cells','lymph nodes (CCR7⁺)','divide and make new effectors'],
    ['Effector memory T cells','blood and tissues (CCR7⁻)','act fast at sites of infection'],
    ['Tissue-resident memory T cells','stay in skin, gut, lung','first line at the barrier']];
-  const t=wtable(n,['Cell','Where','On re-exposure'],rows,n?[[10,12],[120,15],[240,16]]:[[24,22],[230,28],[440,28]],{y0:30,R:n?354:620});
+  const t=wtable(n,['Cell','Where','On re-exposure'],rows,n?[[10,15],[128,14],[244,15]]:[[24,22],[230,28],[440,28]],{y0:30,R:n?354:620});
   const p=para(n?16:24,t.y+14,'Memory can last for decades. Memory T cells are kept up by low-level division driven by IL-7 and IL-15, without needing the antigen.',n?50:92,'note start f13',17,.8);
   return {vb:n?slim(p.y+6):wide(p.y+8),s:t.s+p.s};
 }
